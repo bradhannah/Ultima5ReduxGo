@@ -1,0 +1,39 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: MISCMAPS.DAT
+//   Authors: Brad Hannah  
+//   Version: 1.0
+//   Purpose: Decode maps and script data
+//  Category: Classic RPG
+//   History: 
+//------------------------------------------------
+typedef struct CutSceneMap {
+    struct CutSceneMapRow {
+        ubyte tiles[11];
+        ubyte zero_padding[5];
+    } cut_scene_map_row[11] <optimize=false>;
+};
+
+typedef struct IntroMap {
+    struct IntroMapRow {.
+        ubyte tiles[0x13];
+        ubyte zero_padding[13];
+    } intro_map_row[4] <optimize=false>;
+};
+
+typedef struct ScriptData {
+    struct ScriptItem {    
+        ubyte data[655];
+        //nibble data[1310];
+    } items[1] <optimize=false>;
+};
+//script_data[1] <optimize=false>;
+
+typedef struct ScriptInstruction {
+    
+};
+
+CutSceneMap cutSceneMaps[4];
+IntroMap introMaps[4];
+ScriptData scriptData[1];

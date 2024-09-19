@@ -1,0 +1,70 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: dungeon_cbt.bt
+//   Authors: Brad Hannah  
+//   Version: 0.1
+//   Purpose: To describe the dungeon based combat maps
+//  Category: gaming
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//     Notes: Grabbed details from https://wiki.ultimacodex.com/wiki/Ultima_V_internal_formats
+//------------------------------------------------
+BigEndian();
+//LittleEndian();
+local uint32 color = 0x00000000;
+
+typedef struct DungeonRoom {
+    
+    SetBackColor(color);
+    color = color + 0x00004000;
+    struct TriggerTiles {
+         ubyte tiles[11];
+         ubyte newTiles[8];
+         ubyte padding[13];
+    } trigger_tiles[1] <optimize=false>;
+    struct PlayerPosRow {
+        ubyte tiles[11];
+        ubyte initial_X[6]; // initial x position of each party member
+        ubyte initial_Y[6]; // initial y position of each party member
+        ubyte padding[9];
+    } player_pos_row[4] <optimize=false>;
+    struct MonsterTileRow {
+        ubyte tiles[11];
+        ubyte monster_tiles[16]; // tile for each monster
+        ubyte padding[5];
+    } monster_tile_row[1] <optimize=false>;
+    struct MonsterXPos {
+        ubyte tiles[11];
+        ubyte initial_X[16]; // initial x position of each monster
+        ubyte padding[5];
+    } monster_x_pos[1] <optimize=false>;
+    struct MonsterYPos {
+        ubyte tiles[11];
+        ubyte initial_Y[16]; // initial y position of each monster
+        ubyte padding[5];
+    } monster_y_pos[1] <optimize=false>;
+    struct MapTriggerPos {  // The position in which it triggers at
+        ubyte new_tile[11];        
+        ubyte x_pos[8];
+        ubyte y_pos[8];
+        ubyte padding[5];
+    } map_trigger_pos[1] <optimize=false>;
+    struct NewTiles1 { // position X of the new tiles
+        ubyte new_tile[11];        
+        ubyte x_pos[8];
+        ubyte y_pos[8];
+        ubyte padding[5];
+    } map_new_tile_x[1] <optimize=false>;
+    struct NewTiles2 { // position Y of the new tiles
+        ubyte new_tile[11];        
+        ubyte x_pos[8];
+        ubyte y_pos[8];
+        ubyte padding[5];
+    } map_new_tile_y[1] <optimize=false>;
+    
+
+};
+
+DungeonRoom dungeon_rooms[112] <optimize=false>;

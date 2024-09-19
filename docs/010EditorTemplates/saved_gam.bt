@@ -1,0 +1,149 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: saved_gam.bt
+//   Authors: Brad Hannah
+//   Version: 
+//   Purpose: to describe Ultima V save game format
+//  Category: gaming
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//SetBackColor(0x00006000);
+//SetForeColor(cWhite);
+
+
+enum <ubyte> Gender { Male = 0x0B, Female = 0x0C };
+enum <ubyte> Class { Avatar = 'A', Fighter = 'F', Bard = 'B', Wizard = 'M' };
+enum <ubyte> Status { Good = 'G', Poisoned = 'P', Charmed = 'C', Asleep = 'S', Dead = 'D' };
+enum <ubyte> PartyStatus { InTheParty = 0x00, HasntJoinedYet = 0xFF, AtTheInn = 0x01 };
+enum <ubyte> Location { };
+enum <ubyte> Boolean { False = 0, True = 1 };
+enum <ubyte> BritOrUnderworld { Britannia = 0, Underworld = 0xFF };
+enum <ubyte> MoonstoneStatus { Buried = 0, InInventory = 0xFF };
+enum <ubyte> DungeonOrientation { North = 0, East = 1, South = 2, West = 2 };
+enum <ubyte> DungeonType { Cave = 1, Mine = 2, Dungeon = 3 };
+
+struct XyPosition {
+    ubyte x;
+    ubyte y;
+};
+
+
+uint16 padding;
+
+// Players
+typedef struct Player {
+    char name[9];
+    Gender gender;
+    Class class;
+    Status status;
+    ubyte strength;
+    ubyte dexterity;
+    ubyte intelligence;
+    ubyte current_mp;
+    uint16 current_hp;
+    uint16 max_hp;
+    uint16 exp;
+    ubyte level;
+    ubyte months_at_inn;
+    ubyte unknown;
+    ubyte helmet;
+    ubyte armor;
+    ubyte weapon;
+    ubyte shield;
+    ubyte ring;
+    ubyte amulet;
+    PartyStatus party_status; 
+};
+Player players[16] <bgcolor=0x00006000,fgcolor=cWhite, comment="All available player characters">;
+
+// Provisions
+struct ProvisionQuantities {
+    uint16 quantity_food;
+    uint16 quantity_gold;
+    ubyte quantity_keys;
+    ubyte quantity_gems;
+    ubyte quantity_torches;
+    ubyte quantity_skull;
+    Boolean has_grapple;
+};
+
+FSeek(0x202);
+ProvisionQuantities provision_quantities <bgcolor=cRed,fgcolor=cWhite>;
+
+// Moonstones
+struct Moonstones {
+    ubyte x[8];
+    ubyte y[8];
+    MoonstoneStatus status[8];
+    BritOrUnderworld z[8];
+};
+
+struct Shrines {
+    ubyte honesty:1;
+    ubyte compassion:1;
+    ubyte valor:1;
+    ubyte justice:1;
+    ubyte sacrafice:1;
+    ubyte honor:1;
+    ubyte spirituality:1;
+    ubyte humility:1;
+};
+
+FSeek(0x28A);
+Moonstones moonstones <bgcolor=cRed, fgcolor=cBlack, comment="Location and status of all moonstones">;
+
+FSeek(0x2B5);
+ubyte number_of_party_members <bgcolor=cRed, fgcolor=cBlack>;
+
+FSeek(0x2D5);
+ubyte active_character <bgcolor=cRed, fgcolor=cBlack>;
+
+// Date and time
+
+FSeek(0x2CE);
+uint16 current_year <comment="Current Year">;
+
+FSeek(0x2D7);
+struct WorldDateTime {
+    ubyte month;
+    ubyte day;
+    ubyte hour;
+    ubyte minute;
+};
+WorldDateTime current_date <comment="Current Date and Time", bgcolor=cRed, fgcolor=cBlack>;
+
+
+FSeek(0x2E2);
+ubyte karma <bgcolor=cRed,fgcolor=cBlack>;
+
+FSeek(0x2ED);
+Location current_party_location <bgcolor=cRed, fgcolor=cBlack>;
+ubyte JUNK;
+ubyte party_z <bgcolor=cRed, fgcolor=cBlack>;
+
+FSeek(0x2F0);
+XyPosition party_xy <bgcolor=cRed, fgcolor=cWhite, comment="Current position of the party">;
+
+FSeek(0x301);
+ubyte turns_til_torch_extinguish <comment="Total number of turns until torch is extinguished">;
+
+FSeek(0x326);
+Shrines shrines_ordained <comment="Ordained Shrine Quests">;
+
+FSeek(0x328);
+Shrines shrines_completed <comment="Completed/Codex Shrine Quests">;
+
+//Fseek(0x5B4);
+//Boolean 
+
+FSeek(0x33A);
+ubyte dungeon_rooms_cleared[0xE];
+
+FSeek(0x105D);
+DungeonOrientation dungeon_orientation <comment="Dungeon Orientation", bgcolor=cRed, fgcolor=cBlack>;
+
+DungeonType dungeon_type <comment="Dungeon Type", bgcolor=cRed, fgcolor=cBlack>;

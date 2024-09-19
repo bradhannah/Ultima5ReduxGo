@@ -1,0 +1,89 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+BigEndian();
+//LittleEndian();
+local int nIndex = 0;
+local uint32 color = 0x00000000;
+typedef struct Dungeon {
+    
+    SetBackColor(color);
+    color = color + 0x00004000;
+    struct DungeonFloor {
+        struct DungeonRow {
+            if (nIndex % 2 == 0)
+            {            
+                SetBackColor(cBlack);
+            }
+            else
+            {
+                SetBackColor(cGreen);
+            }
+            nIndex++;            
+            
+            struct Tile 
+            {
+                enum <ubyte> TILE_TYPE { NOTHING=0, LADDER_UP=1, LADDER_DOWN=2, LADDER_UP_DOWN=3, CHEST=4, 
+                    FOUNTAIN=5, TRAP=6, OPEN_CHEST=7, ENERGY_FIELD=8, 
+                    ROOMS_BROKE=0xA, WALL=0xB, SECONDARY_WALL=0xC, 
+                    SECRET_DOOR=0xD, NORMAL_DOOR=0xE, ROOM=0xF } tiletype : 4;
+                
+
+                switch (tiletype)
+                {
+//<hidden=true>
+                    case NOTHING: ubyte thing_exp : 4 ; break;
+                    case LADDER_UP: 
+                    case LADDER_DOWN: 
+                    case LADDER_UP_DOWN: 
+                        enum <ubyte> LADDER_TRAP_TYPE { NO_TRAP=0, IS_TRAPPED=8 } laddertrap : 4;
+                        break;
+                    case CHEST:
+                    case OPEN_CHEST: 
+                        enum <ubyte> CHEST_TYPE { NORMAL=0, TRAPPED_1=1, TRAPPED_2=2, POISONED=4 } chesttype: 4;
+                        break;
+                    case FOUNTAIN: 
+                        enum <ubyte> FOUNTAIN_TYPE { CURE_POISON=0, HEAL=1, POISON_FOUNTAIN=2, BAD_TASTE_DAMAGE=3 } fountaintype : 4 ;
+                        break;
+                    case TRAP: 
+                        //ubyte trap_stuff_data :4;
+                        enum <ubyte> TRAP_TYPE { LOWER_TRAP_VISIBLE=0, BOMB_TRAP=1, INVISIBLE_TRAP=2, UPPER_TRAP_VISIBLE=8 } traptype : 4;
+                        break;
+                    case ENERGY_FIELD: 
+                        enum <ubyte> MAGIC_FIELD_TYPE { POISON=0, SLEEP=1, FIRE=2, ENERGY=3 } energyfieldtype : 4;
+                        break;
+                    case ROOMS_BROKE: 
+                        ubyte rooms_broke_data : 4;
+                        break;
+                    case WALL:
+                        ubyte wall_text :4;
+                        break;
+                    case SECONDARY_WALL:
+                        ubyte secondary_door_data : 4;
+                        break;
+                    case SECRET_DOOR: 
+                        ubyte secret_door_data: 4;
+                        break;
+                    case NORMAL_DOOR: 
+                        ubyte normal_door_data :4;
+                        break;
+                    case ROOM: 
+                        ubyte room_data :4;
+                        break;
+                    default: ubyte nothing : 4 <hidden=true>; break;
+                }
+            } tiles[8] <optimize=false, size=1>;
+        } rows[8] <optimize=false>;
+    } dungeonfloor[8] <optimize=false>;
+};
+
+Dungeon dungeons[8] <optimize=false>;
