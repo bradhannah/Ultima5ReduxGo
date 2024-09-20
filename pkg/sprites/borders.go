@@ -19,16 +19,16 @@ type BorderSprites struct {
 
 type ReferenceBorder struct {
 	border                    *ebiten.Image
-	referenceBorderDimensions *ReferenceBorderDimensions
-	referenceBorderBits       *BorderBits
+	referenceBorderDimensions *referenceBorderDimensions
+	referenceBorderBits       *borderBits
 }
 
-type ReferenceBorderDimensions struct {
+type referenceBorderDimensions struct {
 	topLeft, bottomLeft, topRight, bottomRight                 image.Rectangle
 	horizCopyLeft, horizCopyRight, vertCopyLeft, vertCopyRight image.Rectangle
 }
 
-type BorderBits struct {
+type borderBits struct {
 	topLeft        *ebiten.Image
 	bottomRight    *ebiten.Image
 	topRight       *ebiten.Image
@@ -46,10 +46,10 @@ func NewBorderSprites() *BorderSprites {
 	return borderSprites
 }
 
-func (sb *ReferenceBorder) CreateBorderImage(idealWidthForScaling, width, height int) *ebiten.Image {
+func (sb *ReferenceBorder) createBorderImage(idealWidthForScaling, width, height int) *ebiten.Image {
 	windowWidth, _ := ebiten.WindowSize()
 	idealScaleX := float64(windowWidth) / float64(idealWidthForScaling)
-	scaledDimensions := sb.referenceBorderDimensions.CreateScaledDimensions(idealScaleX, idealScaleX)
+	scaledDimensions := sb.referenceBorderDimensions.createScaledDimensions(idealScaleX, idealScaleX)
 
 	img := ebiten.NewImage(width, height)
 
@@ -143,8 +143,8 @@ func (sb *ReferenceBorder) CreateBorderImage(idealWidthForScaling, width, height
 
 }
 
-func (sb *ReferenceBorder) CreateBorderBits() *BorderBits {
-	bits := BorderBits{}
+func (sb *ReferenceBorder) createBorderBits() *borderBits {
+	bits := borderBits{}
 
 	// make our corner bits
 	bits.topLeft = ebiten.NewImageFromImage(sb.border.SubImage(sb.referenceBorderDimensions.topLeft))
@@ -182,8 +182,8 @@ func (sb *ReferenceBorder) CreateSizedAndScaledBorderSprite(idealWidthForScaling
 
 	op.GeoM.Translate(xLeft, yTop)
 
-	sb.referenceBorderBits = sb.CreateBorderBits()
-	goodBorder := sb.CreateBorderImage(idealWidthForScaling, int(targetWidth), int(targetHeight))
+	sb.referenceBorderBits = sb.createBorderBits()
+	goodBorder := sb.createBorderImage(idealWidthForScaling, int(targetWidth), int(targetHeight))
 
 	return goodBorder, op
 }
@@ -197,8 +197,8 @@ func ScalePoint(point *image.Point, scaleX, scaleY float64) image.Point {
 	}
 }
 
-func (r *ReferenceBorderDimensions) CreateScaledDimensions(scaleX, scaleY float64) *ReferenceBorderDimensions {
-	referenceBorderDimensions := ReferenceBorderDimensions{
+func (r *referenceBorderDimensions) createScaledDimensions(scaleX, scaleY float64) *referenceBorderDimensions {
+	referenceBorderDimensions := referenceBorderDimensions{
 		topLeft: image.Rectangle{
 			Min: ScalePoint(&r.topLeft.Min, scaleX, scaleY),
 			Max: ScalePoint(&r.topLeft.Max, scaleX, scaleY),
@@ -238,8 +238,8 @@ func (r *ReferenceBorderDimensions) CreateScaledDimensions(scaleX, scaleY float6
 // GetCornersOfReferenceBorder
 // Determines the corners for the border, plus the horizontal and vertical slices it will fill in the blanks with
 // NOTE: you must do this on the reference because you will muck up the aspect ratio if you do it AFTER a scale
-func getCornersOfReferenceBorder(width, height int) *ReferenceBorderDimensions {
-	referenceBorderDimensions := ReferenceBorderDimensions{}
+func getCornersOfReferenceBorder(width, height int) *referenceBorderDimensions {
+	referenceBorderDimensions := referenceBorderDimensions{}
 	//xMiddle := int(float64(width) / 2)
 	//yMiddle := int(float64(height) / 2)
 	xMiddle := int(math.Round(float64(width) / 2))
