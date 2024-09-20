@@ -33,40 +33,7 @@ func (m *IntroMenuScene) Update(game *Game) error {
 
 // Draw method for the IntroMenuScene
 func (m *IntroMenuScene) Draw(screen *ebiten.Image) {
-	op := &ebiten.DrawImageOptions{}
-	//op.GeoM.Translate(100, 100) // Position the sprite
-	//op.GeoM.Scale(float64(screenDimension.x), float64(screenDimension.y))
-	//op.GeoM.Translate(float64(screenDimension.x)+100, float64(screenDimension.y)+100) // Position the sprite
-	const xDiff = 100
-	targetWidth := float64(ScreenDimension.x - xDiff)
-	//targetHeight := float64(screenDimension.y - 100)
-
-	imgWidth := m.sprites.Ultima16Logo.Bounds().Dx()
-	//imgHeight := m.sprites.Ultima16Logo.Bounds().Dy()
-
-	scaleX := targetWidth / float64(imgWidth)
-	scaledWidth := scaleX * float64(imgWidth)
-
-	// Scale the height (Y-axis) by the same factor to maintain the aspect ratio
-	scaleY := scaleX
-	//targetHeight := float64(imgHeight) * scaleY
-	//offsetY := (float64(screenDimension.y) - targetHeight) / 2
-
-	// 320 across, 61 down
-	// 800 /2 = 400
-	// 400 - (320/2) = 400 - 160 = 240
-
-	//op.GeoM.Translate(0, 0)
-	op.GeoM.Scale(scaleX, scaleY)
-	//op.GeoM.Scale(1, 1)
-	//= 700 / 2 + 50 = 400
-	// 800 - 700 + 50
-	// 1024 - 924 + 50 = 150
-	topLeftX := (float64(ScreenDimension.x) - float64(scaledWidth)) / 2
-	//+ (xDiff / 2)
-	op.GeoM.Translate(topLeftX, 100)
-	//op.GeoM.Translate(240-50, 100)
-	//op.GeoM.Translate(50, offsetY)
+	op := sprites.GetCenteredXSprite(m.sprites.Ultima16Logo, 50, 100)
 
 	screen.DrawImage(m.sprites.Ultima16Logo, op)
 
