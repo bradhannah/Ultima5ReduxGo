@@ -8,7 +8,8 @@ import (
 )
 
 type IntroMenuScene struct {
-	sprites *sprites.IntroSprites
+	introSprites  *sprites.IntroSprites
+	borderSprites *sprites.BorderSprites
 }
 
 type screenDimensions struct {
@@ -34,17 +35,42 @@ func (m *IntroMenuScene) Update(game *Game) error {
 // Draw method for the IntroMenuScene
 func (m *IntroMenuScene) Draw(screen *ebiten.Image) {
 	// Ultima V Logo
-	opLogo := sprites.GetCenteredXSprite(m.sprites.Ultima16Logo, 50, 100)
-	screen.DrawImage(m.sprites.Ultima16Logo, opLogo)
+	opLogo := sprites.GetXSpriteWithPercents(m.introSprites.Ultima16Logo,
+		sprites.PercentXBasedPlacement{
+			StartPercentX: .10,
+			EndPercentX:   .90,
+			StartPercentY: .05,
+		})
+	screen.DrawImage(m.introSprites.Ultima16Logo, opLogo)
 
 	// Fire animation
-	fireSprite := m.sprites.FlameAnimation.GetCurrentSprite()
-	opFire := sprites.GetCenteredXSprite(fireSprite, 50, 300)
+	fireSprite := m.introSprites.FlameAnimation.GetCurrentSprite()
+	opFire := sprites.GetXSpriteWithPercents(fireSprite,
+		sprites.PercentXBasedPlacement{
+			StartPercentX: .10,
+			EndPercentX:   .90,
+			StartPercentY: .275,
+		})
+
 	screen.DrawImage(fireSprite, opFire)
 
 	// Redux overlay
-	opRedux := sprites.GetCenteredXSprite(m.sprites.Ultima16Logo, 250, 250)
-	screen.DrawImage(m.sprites.ReduxLogo, opRedux)
+	opRedux := sprites.GetXSpriteWithPercents(m.introSprites.Ultima16Logo,
+		sprites.PercentXBasedPlacement{
+			StartPercentX: .3,
+			EndPercentX:   1 - .3,
+			StartPercentY: .21,
+		})
+
+	screen.DrawImage(m.introSprites.ReduxLogo, opRedux)
+
+	menuBorder, menuBorderOp := m.borderSprites.VeryPixelatedRoundedBlueWhite.CreateSizedAndScaledBorderSprite(sprites.PercentBasedPlacement{
+		StartPercentX: .05,
+		EndPercentX:   .95,
+		StartPercentY: .50,
+		EndPercentY:   .95,
+	})
+	screen.DrawImage(menuBorder, menuBorderOp)
 
 	// Render the main menu
 	ebitenutil.DebugPrint(screen, "Main Menu: Press Enter to Start")
@@ -52,6 +78,7 @@ func (m *IntroMenuScene) Draw(screen *ebiten.Image) {
 
 func CreateIntroMenuScene() *IntroMenuScene {
 	return &IntroMenuScene{
-		sprites: sprites.NewIntroSprites(),
+		introSprites:  sprites.NewIntroSprites(),
+		borderSprites: sprites.NewBorderSprites(),
 	}
 }
