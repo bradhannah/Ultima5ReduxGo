@@ -4,7 +4,7 @@ import "testing"
 import "github.com/stretchr/testify/assert"
 
 func TestBordersEven(t *testing.T) {
-	borderDimensions := GetCornersOfReferenceBorder(100, 50)
+	borderDimensions := getCornersOfReferenceBorder(100, 50)
 
 	assert.Equal(t, 0, borderDimensions.bottomLeft.Min.X)
 	assert.Equal(t, 0, borderDimensions.topLeft.Min.X)
@@ -25,7 +25,7 @@ func TestBordersEven(t *testing.T) {
 }
 
 func TestBordersOdd(t *testing.T) {
-	borderDimensions := GetCornersOfReferenceBorder(101, 51)
+	borderDimensions := getCornersOfReferenceBorder(101, 51)
 
 	assert.Equal(t, 0, borderDimensions.bottomLeft.Min.X)
 	assert.Equal(t, 0, borderDimensions.topLeft.Min.X)
