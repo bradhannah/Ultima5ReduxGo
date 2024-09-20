@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image"
+	"math"
 )
 
 var (
@@ -159,7 +160,7 @@ func (sb *ReferenceBorder) CreateBorderBits() *BorderBits {
 }
 
 // CreateSizedAndScaledBorderSprite
-func (sb *ReferenceBorder) CreateSizedAndScaledBorderSprite(placement PercentBasedPlacement) (*ebiten.Image, *ebiten.DrawImageOptions) {
+func (sb *ReferenceBorder) CreateSizedAndScaledBorderSprite(idealWidthForScaling int, placement PercentBasedPlacement) (*ebiten.Image, *ebiten.DrawImageOptions) {
 
 	// get the corners and copies before we scale it
 	sb.referenceBorderDimensions = getCornersOfReferenceBorder(sb.border.Bounds().Dx(), sb.border.Bounds().Dy())
@@ -182,15 +183,17 @@ func (sb *ReferenceBorder) CreateSizedAndScaledBorderSprite(placement PercentBas
 	op.GeoM.Translate(xLeft, yTop)
 
 	sb.referenceBorderBits = sb.CreateBorderBits()
-	goodBorder := sb.CreateBorderImage(300, int(targetWidth), int(targetHeight))
+	goodBorder := sb.CreateBorderImage(idealWidthForScaling, int(targetWidth), int(targetHeight))
 
 	return goodBorder, op
 }
 
 func ScalePoint(point *image.Point, scaleX, scaleY float64) image.Point {
 	return image.Point{
-		X: int(float64(point.X) * scaleX),
-		Y: int(float64(point.Y) * scaleY),
+		X: int(math.Round(float64(point.X) * scaleX)),
+		Y: int(math.Round(float64(point.Y) * scaleY)),
+		//X: int(float64(point.X) * scaleX),
+		//Y: int(float64(point.Y) * scaleY),
 	}
 }
 
@@ -237,10 +240,10 @@ func (r *ReferenceBorderDimensions) CreateScaledDimensions(scaleX, scaleY float6
 // NOTE: you must do this on the reference because you will muck up the aspect ratio if you do it AFTER a scale
 func getCornersOfReferenceBorder(width, height int) *ReferenceBorderDimensions {
 	referenceBorderDimensions := ReferenceBorderDimensions{}
-	xMiddle := int(float64(width) / 2)
-	yMiddle := int(float64(height) / 2)
-	//xMiddle := int(math.Round(float64(width) / 2))
-	//yMiddle := int(math.Round(float64(height) / 2))
+	//xMiddle := int(float64(width) / 2)
+	//yMiddle := int(float64(height) / 2)
+	xMiddle := int(math.Round(float64(width) / 2))
+	yMiddle := int(math.Round(float64(height) / 2))
 
 	referenceBorderDimensions.topLeft = image.Rectangle{
 		Min: image.Point{0, 0},
@@ -268,11 +271,11 @@ func getCornersOfReferenceBorder(width, height int) *ReferenceBorderDimensions {
 	}
 	referenceBorderDimensions.horizCopyRight = image.Rectangle{
 		Min: image.Point{X: width / 2, Y: yMiddle},
-		Max: image.Point{X: width - 1, Y: yMiddle + 1},
+		Max: image.Point{X: width, Y: yMiddle + 1},
 	}
 	referenceBorderDimensions.vertCopyRight = image.Rectangle{
 		Min: image.Point{X: xMiddle, Y: height / 2},
-		Max: image.Point{X: xMiddle + 1, Y: height - 1},
+		Max: image.Point{X: xMiddle + 1, Y: height},
 	}
 
 	return &referenceBorderDimensions
