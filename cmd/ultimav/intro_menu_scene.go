@@ -33,9 +33,18 @@ func (m *IntroMenuScene) Update(game *Game) error {
 
 // Draw method for the IntroMenuScene
 func (m *IntroMenuScene) Draw(screen *ebiten.Image) {
-	op := sprites.GetCenteredXSprite(m.sprites.Ultima16Logo, 50, 100)
+	// Ultima V Logo
+	opLogo := sprites.GetCenteredXSprite(m.sprites.Ultima16Logo, 50, 100)
+	screen.DrawImage(m.sprites.Ultima16Logo, opLogo)
 
-	screen.DrawImage(m.sprites.Ultima16Logo, op)
+	// Fire animation
+	fireSprite := m.sprites.FlameAnimation.GetCurrentSprite()
+	opFire := sprites.GetCenteredXSprite(fireSprite, 50, 300)
+	screen.DrawImage(fireSprite, opFire)
+
+	// Redux overlay
+	opRedux := sprites.GetCenteredXSprite(m.sprites.Ultima16Logo, 250, 250)
+	screen.DrawImage(m.sprites.ReduxLogo, opRedux)
 
 	// Render the main menu
 	ebitenutil.DebugPrint(screen, "Main Menu: Press Enter to Start")
