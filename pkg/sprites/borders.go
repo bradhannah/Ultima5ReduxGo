@@ -79,6 +79,17 @@ func (sb *ReferenceBorder) CreateBorderImage(width, height int) *ebiten.Image {
 	)
 	img.DrawImage(sb.referenceBorderBits.bottomRight, &ebiten.DrawImageOptions{GeoM: bottomRightOp})
 
+	// now fill in the blanks with the horizontal and vertical bits
+	nStartX := scaledDimensions.topLeft.Max.Y
+	nEndX := height - scaledDimensions.bottomLeft.Min.Y
+	horizScaledOp := ebiten.GeoM{}
+	horizScaledOp.Scale(idealScaleX, 1)
+	horizScaledOp.Translate(0, float64(scaledDimensions.topRight.Max.Y))
+	for i := nStartX; i < nEndX; i++ {
+		img.DrawImage(sb.referenceBorderBits.horizCopy, &ebiten.DrawImageOptions{GeoM: horizScaledOp})
+		horizScaledOp.Translate(0, 1)
+	}
+
 	return img
 
 }
