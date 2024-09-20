@@ -90,6 +90,17 @@ func (sb *ReferenceBorder) CreateBorderImage(width, height int) *ebiten.Image {
 		horizScaledOp.Translate(0, 1)
 	}
 
+	nStartX = scaledDimensions.topLeft.Max.X
+	nEndX = width - scaledDimensions.topRight.Min.X
+	vertScaledOp := ebiten.GeoM{}
+	vertScaledOp.Scale(1, idealScaleX)
+	// todo: not sure why it needs a x/2-1
+	vertScaledOp.Translate(float64(scaledDimensions.topRight.Max.X)/2-1, 0)
+	for i := nStartX; i < nEndX; i++ {
+		img.DrawImage(sb.referenceBorderBits.vertCopy, &ebiten.DrawImageOptions{GeoM: vertScaledOp})
+		vertScaledOp.Translate(1, 0)
+	}
+
 	return img
 
 }
