@@ -23,17 +23,19 @@ type ReferenceBorder struct {
 }
 
 type ReferenceBorderDimensions struct {
-	topLeft, bottomLeft, topRight, bottomRight image.Rectangle
-	horizCopy, vertCopy                        image.Rectangle
+	topLeft, bottomLeft, topRight, bottomRight                 image.Rectangle
+	horizCopyLeft, horizCopyRight, vertCopyLeft, vertCopyRight image.Rectangle
 }
 
 type BorderBits struct {
-	topLeft     *ebiten.Image
-	bottomRight *ebiten.Image
-	topRight    *ebiten.Image
-	bottomLeft  *ebiten.Image
-	vertCopy    *ebiten.Image
-	horizCopy   *ebiten.Image
+	topLeft        *ebiten.Image
+	bottomRight    *ebiten.Image
+	topRight       *ebiten.Image
+	bottomLeft     *ebiten.Image
+	vertCopyLeft   *ebiten.Image
+	horizCopyLeft  *ebiten.Image
+	vertCopyRight  *ebiten.Image
+	horizCopyRight *ebiten.Image
 }
 
 func NewBorderSprites() *BorderSprites {
@@ -43,13 +45,70 @@ func NewBorderSprites() *BorderSprites {
 	return borderSprites
 }
 
-func (sb *ReferenceBorder) CreateBorderImage(width, height int) *ebiten.Image {
+func (sb *ReferenceBorder) CreateBorderImage(idealWidthForScaling, width, height int) *ebiten.Image {
 	windowWidth, _ := ebiten.WindowSize()
-	idealScaleX := float64(windowWidth) / float64(475)
+	idealScaleX := float64(windowWidth) / float64(idealWidthForScaling)
 	scaledDimensions := sb.referenceBorderDimensions.CreateScaledDimensions(idealScaleX, idealScaleX)
 
 	img := ebiten.NewImage(width, height)
 
+	//cornerHeight := scaledDimensions.topLeft.Max.Y
+	bothCornerHeight := scaledDimensions.topLeft.Bounds().Dy() + scaledDimensions.bottomRight.Bounds().Dy()
+	bothCornerWidth := scaledDimensions.topLeft.Bounds().Dx() + scaledDimensions.bottomRight.Bounds().Dx()
+
+	/// START WITH SIDE AND TOP BORDERS, THEY WILL GET OVERWRITTEN IF NASTY
+	// now fill in the blanks with the horizontal and vertical bits
+	// sprite is horizontal
+	// goes from LEFT SIDE, top to bottom
+	horizScaledOpLeft := ebiten.GeoM{}
+	horizScaledOpLeft.Scale(idealScaleX, 1)
+	horizScaledOpLeft.Translate(
+		0,
+		float64(scaledDimensions.topRight.Bounds().Dy()))
+	for i := 0; i < height-(bothCornerHeight); i++ {
+		img.DrawImage(sb.referenceBorderBits.horizCopyLeft, &ebiten.DrawImageOptions{GeoM: horizScaledOpLeft})
+		horizScaledOpLeft.Translate(0, 1)
+	}
+
+	// RIGHT HORIZONTAL
+	// sprite is horizontal
+	// goes from RIGHT, top to bottom
+	horizScaledOpRight := ebiten.GeoM{}
+	horizScaledOpRight.Scale(idealScaleX, 1)
+	horizScaledOpRight.Translate(
+		float64(width-scaledDimensions.horizCopyRight.Dx()),
+		float64(scaledDimensions.topRight.Dy()))
+	for i := 0; i < height-(bothCornerHeight); i++ {
+		img.DrawImage(sb.referenceBorderBits.horizCopyRight, &ebiten.DrawImageOptions{GeoM: horizScaledOpRight})
+		horizScaledOpRight.Translate(0, 1)
+	}
+
+	// LEFT VERTICAL
+	// sprite is vertical
+	// goes from TOP, left to right
+	vertScaledOpLeft := ebiten.GeoM{}
+	vertScaledOpLeft.Scale(1, idealScaleX)
+	vertScaledOpLeft.Translate(float64(scaledDimensions.topLeft.Dx()), 0)
+	for i := 0; i <= width-(bothCornerWidth); i++ {
+		img.DrawImage(sb.referenceBorderBits.vertCopyLeft, &ebiten.DrawImageOptions{GeoM: vertScaledOpLeft})
+		vertScaledOpLeft.Translate(1, 0)
+	}
+
+	// RIGHT VERTICAL
+	// sprite is vertical
+	// goes from BOTTOM, left to right
+	vertScaledOpRight := ebiten.GeoM{}
+	vertScaledOpRight.Scale(1, idealScaleX)
+	vertScaledOpRight.Translate(
+		float64(scaledDimensions.bottomLeft.Dx()),
+		float64(height-scaledDimensions.vertCopyRight.Dy()),
+	)
+	for i := 0; i < width-(bothCornerWidth); i++ {
+		img.DrawImage(sb.referenceBorderBits.vertCopyRight, &ebiten.DrawImageOptions{GeoM: vertScaledOpRight})
+		vertScaledOpRight.Translate(1, 0)
+	}
+
+	/// START CORNERS
 	topLeftOp := ebiten.GeoM{}
 	topLeftOp.Scale(idealScaleX, idealScaleX)
 	img.DrawImage(sb.referenceBorderBits.topLeft, &ebiten.DrawImageOptions{
@@ -59,14 +118,14 @@ func (sb *ReferenceBorder) CreateBorderImage(width, height int) *ebiten.Image {
 	bottomLeftOp := ebiten.GeoM{}
 	bottomLeftOp.Scale(idealScaleX, idealScaleX)
 	bottomLeftOp.Translate(0,
-		float64(height-scaledDimensions.bottomLeft.Min.Y),
+		float64(height-scaledDimensions.bottomLeft.Dy()),
 	)
 	img.DrawImage(sb.referenceBorderBits.bottomLeft, &ebiten.DrawImageOptions{GeoM: bottomLeftOp})
 
 	topRightOp := ebiten.GeoM{}
 	topRightOp.Scale(idealScaleX, idealScaleX)
 	topRightOp.Translate(
-		float64(width-scaledDimensions.topRight.Min.X),
+		float64(width-scaledDimensions.topRight.Dx()),
 		0,
 	)
 	img.DrawImage(sb.referenceBorderBits.topRight, &ebiten.DrawImageOptions{GeoM: topRightOp})
@@ -74,32 +133,10 @@ func (sb *ReferenceBorder) CreateBorderImage(width, height int) *ebiten.Image {
 	bottomRightOp := ebiten.GeoM{}
 	bottomRightOp.Scale(idealScaleX, idealScaleX)
 	bottomRightOp.Translate(
-		float64(width-scaledDimensions.bottomRight.Min.X),
-		float64(height-scaledDimensions.bottomRight.Min.Y),
+		float64(width-scaledDimensions.bottomRight.Dx()),
+		float64(height-scaledDimensions.bottomRight.Dy()),
 	)
 	img.DrawImage(sb.referenceBorderBits.bottomRight, &ebiten.DrawImageOptions{GeoM: bottomRightOp})
-
-	// now fill in the blanks with the horizontal and vertical bits
-	nStartX := scaledDimensions.topLeft.Max.Y
-	nEndX := height - scaledDimensions.bottomLeft.Min.Y
-	horizScaledOp := ebiten.GeoM{}
-	horizScaledOp.Scale(idealScaleX, 1)
-	horizScaledOp.Translate(0, float64(scaledDimensions.topRight.Max.Y))
-	for i := nStartX; i < nEndX; i++ {
-		img.DrawImage(sb.referenceBorderBits.horizCopy, &ebiten.DrawImageOptions{GeoM: horizScaledOp})
-		horizScaledOp.Translate(0, 1)
-	}
-
-	nStartX = scaledDimensions.topLeft.Max.X
-	nEndX = width - scaledDimensions.topRight.Min.X
-	vertScaledOp := ebiten.GeoM{}
-	vertScaledOp.Scale(1, idealScaleX)
-	// todo: not sure why it needs a x/2-1
-	vertScaledOp.Translate(float64(scaledDimensions.topRight.Max.X)/2-1, 0)
-	for i := nStartX; i < nEndX; i++ {
-		img.DrawImage(sb.referenceBorderBits.vertCopy, &ebiten.DrawImageOptions{GeoM: vertScaledOp})
-		vertScaledOp.Translate(1, 0)
-	}
 
 	return img
 
@@ -113,8 +150,10 @@ func (sb *ReferenceBorder) CreateBorderBits() *BorderBits {
 	bits.bottomLeft = ebiten.NewImageFromImage(sb.border.SubImage(sb.referenceBorderDimensions.bottomLeft))
 	bits.topRight = ebiten.NewImageFromImage(sb.border.SubImage(sb.referenceBorderDimensions.topRight))
 	bits.bottomRight = ebiten.NewImageFromImage(sb.border.SubImage(sb.referenceBorderDimensions.bottomRight))
-	bits.horizCopy = ebiten.NewImageFromImage(sb.border.SubImage(sb.referenceBorderDimensions.horizCopy))
-	bits.vertCopy = ebiten.NewImageFromImage(sb.border.SubImage(sb.referenceBorderDimensions.vertCopy))
+	bits.horizCopyLeft = ebiten.NewImageFromImage(sb.border.SubImage(sb.referenceBorderDimensions.horizCopyLeft))
+	bits.vertCopyLeft = ebiten.NewImageFromImage(sb.border.SubImage(sb.referenceBorderDimensions.vertCopyLeft))
+	bits.horizCopyRight = ebiten.NewImageFromImage(sb.border.SubImage(sb.referenceBorderDimensions.horizCopyRight))
+	bits.vertCopyRight = ebiten.NewImageFromImage(sb.border.SubImage(sb.referenceBorderDimensions.vertCopyRight))
 
 	return &bits
 }
@@ -140,86 +179,13 @@ func (sb *ReferenceBorder) CreateSizedAndScaledBorderSprite(placement PercentBas
 	targetWidth := xRight - xLeft
 	targetHeight := yBottom - yTop
 
-	//originalImgWidth := sb.border.Bounds().Dx()
-	//originalImgHeight := sb.border.Bounds().Dy()
-	//
-	//// we scale to X value, and match the ratio on Y so the image doesn't stretch and distort
-	//scaleX := targetWidth / float64(originalImgWidth)
-	//scaleY := targetHeight / float64(originalImgHeight)
-	//op.GeoM.Scale(scaleX, scaleY)
-	//
-	//scaledWidth := scaleX * float64(originalImgWidth)
-	////scaledHeight := scaleY * float64(originalImgHeight)
-	//
-	//topLeftX := (float64(screenWidth) - scaledWidth) / 2
-	//op.GeoM.Translate(topLeftX, yTop)
-	op.GeoM.Translate(50, 400)
+	op.GeoM.Translate(xLeft, yTop)
 
-	//scaledDimensions := sb.referenceBorderDimensions.CreateScaledDimensions(scaleX, scaleY)
-
-	// border bits
 	sb.referenceBorderBits = sb.CreateBorderBits()
-
-	// scale the border to screen scale
-
-	// find the corners
-	// scale the corners
-
-	// fill in horiz and vert
-	goodBorder := sb.CreateBorderImage(int(targetWidth), int(targetHeight))
+	goodBorder := sb.CreateBorderImage(300, int(targetWidth), int(targetHeight))
 
 	return goodBorder, op
 }
-
-//func (sb *ReferenceBorder) CreateSizedAndScaledBorderSprite(placement PercentBasedPlacement) (*ebiten.Image, *ebiten.DrawImageOptions) {
-//
-//	// get the corners and copies before we scale it
-//	sb.referenceBorderDimensions = getCornersOfReferenceBorder(sb.border.Bounds().Dx(), sb.border.Bounds().Dy())
-//
-//	op := &ebiten.DrawImageOptions{}
-//
-//	// THIS STUFF IS FOR PLACEMENT AFTER WE HAVE THE IMAGE
-//	// get screen sizes
-//	screenWidth, screenHeight := ebiten.WindowSize()
-//
-//	// get the x start and end values based on the percent
-//	var xLeft = float64(screenWidth) * placement.StartPercentX
-//	var xRight = float64(screenWidth) * placement.EndPercentX
-//	var yTop = float64(screenHeight) * placement.StartPercentY
-//	var yBottom = float64(screenHeight) * placement.EndPercentY
-//
-//	targetWidth := xRight - xLeft
-//	targetHeight := yBottom - yTop
-//
-//	originalImgWidth := sb.border.Bounds().Dx()
-//	originalImgHeight := sb.border.Bounds().Dy()
-//
-//	// we scale to X value, and match the ratio on Y so the image doesn't stretch and distort
-//	scaleX := targetWidth / float64(originalImgWidth)
-//	scaleY := targetHeight / float64(originalImgHeight)
-//	op.GeoM.Scale(scaleX, scaleY)
-//
-//	scaledWidth := scaleX * float64(originalImgWidth)
-//	//scaledHeight := scaleY * float64(originalImgHeight)
-//
-//	topLeftX := (float64(screenWidth) - scaledWidth) / 2
-//	op.GeoM.Translate(topLeftX, yTop)
-//
-//	//scaledDimensions := sb.referenceBorderDimensions.CreateScaledDimensions(scaleX, scaleY)
-//
-//	// border bits
-//	sb.referenceBorderBits = sb.CreateBorderBits()
-//
-//	// scale the border to screen scale
-//
-//	// find the corners
-//	// scale the corners
-//
-//	// fill in horiz and vert
-//	goodBorder := sb.CreateBorderImage(int(targetWidth), int(targetHeight))
-//
-//	return goodBorder, op
-//}
 
 func ScalePoint(point *image.Point, scaleX, scaleY float64) image.Point {
 	return image.Point{
@@ -246,13 +212,21 @@ func (r *ReferenceBorderDimensions) CreateScaledDimensions(scaleX, scaleY float6
 			Min: ScalePoint(&r.bottomRight.Min, scaleX, scaleY),
 			Max: ScalePoint(&r.bottomRight.Max, scaleX, scaleY),
 		},
-		horizCopy: image.Rectangle{
-			Min: ScalePoint(&r.horizCopy.Min, scaleX, 1),
-			Max: ScalePoint(&r.horizCopy.Max, scaleX, 1),
+		horizCopyLeft: image.Rectangle{
+			Min: ScalePoint(&r.horizCopyLeft.Min, scaleX, 1),
+			Max: ScalePoint(&r.horizCopyLeft.Max, scaleX, 1),
 		},
-		vertCopy: image.Rectangle{
-			Min: ScalePoint(&r.vertCopy.Min, 1, scaleY),
-			Max: ScalePoint(&r.vertCopy.Max, 1, scaleY),
+		vertCopyLeft: image.Rectangle{
+			Min: ScalePoint(&r.vertCopyLeft.Min, 1, scaleY),
+			Max: ScalePoint(&r.vertCopyLeft.Max, 1, scaleY),
+		},
+		horizCopyRight: image.Rectangle{
+			Min: ScalePoint(&r.horizCopyRight.Min, scaleX, 1),
+			Max: ScalePoint(&r.horizCopyRight.Max, scaleX, 1),
+		},
+		vertCopyRight: image.Rectangle{
+			Min: ScalePoint(&r.vertCopyRight.Min, 1, scaleY),
+			Max: ScalePoint(&r.vertCopyRight.Max, 1, scaleY),
 		},
 	}
 	return &referenceBorderDimensions
@@ -263,8 +237,10 @@ func (r *ReferenceBorderDimensions) CreateScaledDimensions(scaleX, scaleY float6
 // NOTE: you must do this on the reference because you will muck up the aspect ratio if you do it AFTER a scale
 func getCornersOfReferenceBorder(width, height int) *ReferenceBorderDimensions {
 	referenceBorderDimensions := ReferenceBorderDimensions{}
-	xMiddle := width / 2
-	yMiddle := height / 2
+	xMiddle := int(float64(width) / 2)
+	yMiddle := int(float64(height) / 2)
+	//xMiddle := int(math.Round(float64(width) / 2))
+	//yMiddle := int(math.Round(float64(height) / 2))
 
 	referenceBorderDimensions.topLeft = image.Rectangle{
 		Min: image.Point{0, 0},
@@ -282,15 +258,22 @@ func getCornersOfReferenceBorder(width, height int) *ReferenceBorderDimensions {
 		Min: image.Point{X: xMiddle + 1, Y: yMiddle + 1},
 		Max: image.Point{X: width - 1, Y: height - 1},
 	}
-	referenceBorderDimensions.horizCopy = image.Rectangle{
+	referenceBorderDimensions.horizCopyLeft = image.Rectangle{
 		Min: image.Point{X: 0, Y: yMiddle},
-		Max: image.Point{X: width - 1, Y: yMiddle + 1},
-		//Max: image.Point{X: width - 1, Y: yMiddle},
+		Max: image.Point{X: width / 2, Y: yMiddle + 1},
 	}
-	referenceBorderDimensions.vertCopy = image.Rectangle{
+	referenceBorderDimensions.vertCopyLeft = image.Rectangle{
 		Min: image.Point{X: xMiddle, Y: 0},
-		Max: image.Point{X: xMiddle + 1, Y: height - 1},
-		//Max: image.Point{X: xMiddle, Y: height - 1},
+		Max: image.Point{X: xMiddle + 1, Y: height / 2},
 	}
+	referenceBorderDimensions.horizCopyRight = image.Rectangle{
+		Min: image.Point{X: width / 2, Y: yMiddle},
+		Max: image.Point{X: width - 1, Y: yMiddle + 1},
+	}
+	referenceBorderDimensions.vertCopyRight = image.Rectangle{
+		Min: image.Point{X: xMiddle, Y: height / 2},
+		Max: image.Point{X: xMiddle + 1, Y: height - 1},
+	}
+
 	return &referenceBorderDimensions
 }

@@ -65,8 +65,8 @@ func (m *IntroMenuScene) Draw(screen *ebiten.Image) {
 	screen.DrawImage(m.introSprites.ReduxLogo, opRedux)
 
 	menuBorder, menuBorderOp := m.borderSprites.VeryPixelatedRoundedBlueWhite.CreateSizedAndScaledBorderSprite(sprites.PercentBasedPlacement{
-		StartPercentX: .05,
-		EndPercentX:   .95,
+		StartPercentX: .02,
+		EndPercentX:   .98,
 		StartPercentY: .50,
 		EndPercentY:   .95,
 	})
