@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -21,7 +22,7 @@ type screenDimensions struct {
 
 //var ScreenDimension = screenDimensions{x: 800, y: 600}
 
-var ScreenDimension = screenDimensions{x: 1024, y: 768}
+var ScreenDimension = screenDimensions{x: config.WindowWidth, y: config.WindowHeight}
 
 // Update method for the IntroMenuScene
 func (m *IntroMenuScene) Update(game *Game) error {
@@ -46,7 +47,7 @@ func (m *IntroMenuScene) drawStaticGraphics(screen *ebiten.Image) {
 	screen.DrawImage(m.introSprites.Ultima16Logo, opLogo)
 
 	// Fire animation
-	const fireStartX = 0.05
+	const fireStartX = 0.1
 	fireSprite := m.introSprites.FlameAnimation.GetCurrentSprite()
 	opFire := sprites.GetXSpriteWithPercents(fireSprite.Bounds(),
 		sprites.PercentXBasedPlacement{
@@ -58,23 +59,23 @@ func (m *IntroMenuScene) drawStaticGraphics(screen *ebiten.Image) {
 	screen.DrawImage(fireSprite, opFire)
 
 	// Redux overlay
-	const reduxStartX = .23
+	const reduxStartX = .3
 	opRedux := sprites.GetXSpriteWithPercents(m.introSprites.Ultima16Logo.Bounds(),
 		sprites.PercentXBasedPlacement{
 			StartPercentX: reduxStartX,
 			EndPercentX:   1 - reduxStartX,
-			StartPercentY: .25,
+			StartPercentY: .28,
 		})
 
 	screen.DrawImage(m.introSprites.ReduxLogo, opRedux)
 
 	menuBorder, menuBorderOp := m.borderSprites.VeryPixelatedRoundedBlueWhite.CreateSizedAndScaledBorderSprite(
-		305,
+		400,
 		sprites.PercentBasedPlacement{
 			StartPercentX: .02,
 			EndPercentX:   .98,
-			StartPercentY: .58,
-			EndPercentY:   .95,
+			StartPercentY: .61,
+			EndPercentY:   .99,
 		})
 	screen.DrawImage(menuBorder, menuBorderOp)
 

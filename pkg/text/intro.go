@@ -14,7 +14,7 @@ func (f *UltimaFont) DrawIntroChoices(screen *ebiten.Image, nSelection int) {
 	//gray := color.RGBA{0x80, 0x80, 0x80, 0xff}
 	const lineSpacing = 48
 	const percentBetweenLines = 0.04
-	const startPercent = 0.63
+	const startPercent = 0.665
 
 	for i, choice := range introChoices {
 		w, h := text.Measure(choice, f.textFace, lineSpacing)
@@ -32,7 +32,6 @@ func (f *UltimaFont) DrawIntroChoices(screen *ebiten.Image, nSelection int) {
 			LayoutOptions: text.LayoutOptions{
 				LineSpacing:  lineSpacing,
 				PrimaryAlign: text.AlignCenter,
-				//SecondaryAlign: text.AlignCenter,
 			},
 		}
 
@@ -42,13 +41,5 @@ func (f *UltimaFont) DrawIntroChoices(screen *ebiten.Image, nSelection int) {
 
 		text.Draw(screen, choice, f.textFace, &dop)
 		op.GeoM.Reset()
-	}
-	//screenWidth := screen.Bounds().Dx()
-
-	//gray := color.RGBA{0x80, 0x80, 0x80, 0xff}
-
-	{
-		const testText = "THIS IS my Ultima V Test 12349!#$[]"
-
 	}
 }

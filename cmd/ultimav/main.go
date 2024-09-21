@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/hajimehoshi/ebiten/v2"
 	"log"
 )
@@ -13,7 +14,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 func main() {
 	// Set the window title and size
-	ebiten.SetWindowSize(1024, 768)
+	ebiten.SetWindowSize(config.WindowWidth, config.WindowHeight)
 	ebiten.SetWindowTitle("Ultima V Redux")
 
 	game := &Game{
