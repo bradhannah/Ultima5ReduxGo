@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
@@ -10,6 +11,7 @@ import (
 type IntroMenuScene struct {
 	introSprites  *sprites.IntroSprites
 	borderSprites *sprites.BorderSprites
+	ultimaFont    *text.UltimaFont
 }
 
 type screenDimensions struct {
@@ -32,34 +34,36 @@ func (m *IntroMenuScene) Update(game *Game) error {
 	return nil
 }
 
-// Draw method for the IntroMenuScene
-func (m *IntroMenuScene) Draw(screen *ebiten.Image) {
+func (m *IntroMenuScene) drawStaticGraphics(screen *ebiten.Image) {
 	// Ultima V Logo
-	opLogo := sprites.GetXSpriteWithPercents(m.introSprites.Ultima16Logo,
+	const logoStartX = 0.05
+	opLogo := sprites.GetXSpriteWithPercents(m.introSprites.Ultima16Logo.Bounds(),
 		sprites.PercentXBasedPlacement{
-			StartPercentX: .10,
-			EndPercentX:   .90,
+			StartPercentX: logoStartX,
+			EndPercentX:   1 - logoStartX,
 			StartPercentY: .05,
 		})
 	screen.DrawImage(m.introSprites.Ultima16Logo, opLogo)
 
 	// Fire animation
+	const fireStartX = 0.05
 	fireSprite := m.introSprites.FlameAnimation.GetCurrentSprite()
-	opFire := sprites.GetXSpriteWithPercents(fireSprite,
+	opFire := sprites.GetXSpriteWithPercents(fireSprite.Bounds(),
 		sprites.PercentXBasedPlacement{
-			StartPercentX: .10,
-			EndPercentX:   .90,
-			StartPercentY: .275,
+			StartPercentX: fireStartX,
+			EndPercentX:   1 - fireStartX,
+			StartPercentY: .35,
 		})
 
 	screen.DrawImage(fireSprite, opFire)
 
 	// Redux overlay
-	opRedux := sprites.GetXSpriteWithPercents(m.introSprites.Ultima16Logo,
+	const reduxStartX = .23
+	opRedux := sprites.GetXSpriteWithPercents(m.introSprites.Ultima16Logo.Bounds(),
 		sprites.PercentXBasedPlacement{
-			StartPercentX: .3,
-			EndPercentX:   1 - .3,
-			StartPercentY: .21,
+			StartPercentX: reduxStartX,
+			EndPercentX:   1 - reduxStartX,
+			StartPercentY: .25,
 		})
 
 	screen.DrawImage(m.introSprites.ReduxLogo, opRedux)
@@ -69,10 +73,17 @@ func (m *IntroMenuScene) Draw(screen *ebiten.Image) {
 		sprites.PercentBasedPlacement{
 			StartPercentX: .02,
 			EndPercentX:   .98,
-			StartPercentY: .50,
+			StartPercentY: .58,
 			EndPercentY:   .95,
 		})
 	screen.DrawImage(menuBorder, menuBorderOp)
+
+	m.ultimaFont.DrawIntroChoices(screen, 0)
+}
+
+// Draw method for the IntroMenuScene
+func (m *IntroMenuScene) Draw(screen *ebiten.Image) {
+	m.drawStaticGraphics(screen)
 
 	// Render the main menu
 	ebitenutil.DebugPrint(screen, "Main Menu: Press Enter to Start")
@@ -82,5 +93,6 @@ func CreateIntroMenuScene() *IntroMenuScene {
 	return &IntroMenuScene{
 		introSprites:  sprites.NewIntroSprites(),
 		borderSprites: sprites.NewBorderSprites(),
+		ultimaFont:    text.NewUltimaFont(),
 	}
 }
