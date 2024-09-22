@@ -3,16 +3,21 @@ package main
 import (
 	"fmt"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"math"
 )
 
 type IntroMenuScene struct {
 	introSprites  *sprites.IntroSprites
 	borderSprites *sprites.BorderSprites
 	ultimaFont    *text.UltimaFont
+	keyboard      *input.Keyboard
+
+	nCurrentSelection int
 }
 
 type screenDimensions struct {
@@ -24,14 +29,28 @@ type screenDimensions struct {
 
 var ScreenDimension = screenDimensions{x: config.WindowWidth, y: config.WindowHeight}
 
+var boundKeys = []ebiten.Key{ebiten.KeyDown, ebiten.KeyUp, ebiten.KeyEnter}
+
 // Update method for the IntroMenuScene
 func (m *IntroMenuScene) Update(game *Game) error {
 	// Switch to the gameplay scene on keypress (e.g., pressing "Enter")
+
+	if !m.keyboard.IsBoundKeyPressed(boundKeys) {
+		return nil
+	}
+	if !m.keyboard.TryToRegisterKeyPress() {
+		return nil
+	}
 	if ebiten.IsKeyPressed(ebiten.KeyEnter) {
 		// Replace this with code to switch to the game scene
 		fmt.Println("Switching to Game Scene")
 		game.currentScene = &GameScene{}
+	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
+		m.nCurrentSelection = int(math.Max(float64(m.nCurrentSelection)-1, 0))
+	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
+		m.nCurrentSelection = int(math.Min(float64(m.nCurrentSelection+1), float64(len(text.IntroChoices)-1)))
 	}
+
 	return nil
 }
 
@@ -79,7 +98,7 @@ func (m *IntroMenuScene) drawStaticGraphics(screen *ebiten.Image) {
 		})
 	screen.DrawImage(menuBorder, menuBorderOp)
 
-	m.ultimaFont.DrawIntroChoices(screen, 1)
+	m.ultimaFont.DrawIntroChoices(screen, m.nCurrentSelection)
 }
 
 // Draw method for the IntroMenuScene
@@ -92,8 +111,10 @@ func (m *IntroMenuScene) Draw(screen *ebiten.Image) {
 
 func CreateIntroMenuScene() *IntroMenuScene {
 	return &IntroMenuScene{
-		introSprites:  sprites.NewIntroSprites(),
-		borderSprites: sprites.NewBorderSprites(),
-		ultimaFont:    text.NewUltimaFont(),
+		introSprites:      sprites.NewIntroSprites(),
+		borderSprites:     sprites.NewBorderSprites(),
+		ultimaFont:        text.NewUltimaFont(),
+		keyboard:          &input.Keyboard{MillisecondDelayBetweenKeyPresses: 100},
+		nCurrentSelection: 0,
 	}
 }

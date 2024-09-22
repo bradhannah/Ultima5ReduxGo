@@ -9,16 +9,16 @@ import (
 	"image"
 )
 
-var introChoices = []string{"Journey Onward", "Select Save Game", "Import from Legacy", "Set Data Directory", "Create Character", "Introduction", "Acknowledgments"}
+var IntroChoices = []string{"Journey Onward", "Select Save Game", "Import from Legacy", "Set Data Directory", "Create Character", "Introduction", "Acknowledgments"}
 
 func (f *UltimaFont) DrawIntroChoices(screen *ebiten.Image, nSelection int) {
-	//nChoices := len(introChoices)
+	//nChoices := len(IntroChoices)
 	const lineSpacing = 48
 	const percentBetweenLines = 0.0435
 	const startXFontPercent = 0.655
 	const endPercentYDiff = 0.035
 
-	for i, choice := range introChoices {
+	for i, choice := range IntroChoices {
 		w, h := text.Measure(choice, f.textFace, lineSpacing)
 		startYPercent := startXFontPercent + (percentBetweenLines * float64(i))
 		op, _ := sprites.GetYSpriteWithPercents(image.Rectangle{
