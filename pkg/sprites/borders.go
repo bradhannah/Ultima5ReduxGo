@@ -173,7 +173,7 @@ func (sb *ReferenceBorder) CreateSizedAndScaledBorderSprite(idealWidthForScaling
 
 	// get the x start and end values based on the percent
 	var xLeft = float64(screenWidth) * placement.StartPercentX
-	var xRight = float64(screenWidth) * placement.EndPercentX
+	var xRight = float64(screenWidth) * placement.EndXFontPercent
 	var yTop = float64(screenHeight) * placement.StartPercentY
 	var yBottom = float64(screenHeight) * placement.EndPercentY
 

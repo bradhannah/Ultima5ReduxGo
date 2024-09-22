@@ -72,14 +72,14 @@ func (m *IntroMenuScene) drawStaticGraphics(screen *ebiten.Image) {
 	menuBorder, menuBorderOp := m.borderSprites.VeryPixelatedRoundedBlueWhite.CreateSizedAndScaledBorderSprite(
 		400,
 		sprites.PercentBasedPlacement{
-			StartPercentX: .02,
-			EndPercentX:   .98,
-			StartPercentY: .61,
-			EndPercentY:   .99,
+			StartPercentX:   .02,
+			EndXFontPercent: .98,
+			StartPercentY:   .61,
+			EndPercentY:     .99,
 		})
 	screen.DrawImage(menuBorder, menuBorderOp)
 
-	m.ultimaFont.DrawIntroChoices(screen, 0)
+	m.ultimaFont.DrawIntroChoices(screen, 1)
 }
 
 // Draw method for the IntroMenuScene

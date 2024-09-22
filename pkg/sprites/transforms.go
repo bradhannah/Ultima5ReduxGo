@@ -15,7 +15,6 @@ type PercentXBasedPlacement struct {
 }
 
 type PercentYBasedPlacement struct {
-	StartPercentX float64
 	StartPercentY float64
 	EndPercentY   float64
 }
@@ -24,10 +23,26 @@ type PercentYBasedPlacement struct {
 // Structure used for placing sprite on screen based on x and y positions based on percentage
 // Note: this will not maintain an aspect ratio and there is a bottom Y value
 type PercentBasedPlacement struct {
-	StartPercentX float64
-	EndPercentX   float64
-	StartPercentY float64
-	EndPercentY   float64
+	StartPercentX   float64
+	EndXFontPercent float64
+	StartPercentY   float64
+	EndPercentY     float64
+}
+
+func GetRectangleFromPercents(placement PercentBasedPlacement) *image.Rectangle {
+	screenWidth, screenHeight := ebiten.WindowSize()
+
+	// get the x start and end values based on the percent
+	var xLeft = float64(screenWidth) * placement.StartPercentX
+	var xRight = float64(screenWidth) * placement.EndXFontPercent
+	var yTop = float64(screenHeight) * placement.StartPercentY
+	var yBottom = float64(screenHeight) * placement.EndPercentY
+
+	return &image.Rectangle{
+		Min: image.Point{X: int(xLeft), Y: int(yTop)},
+		Max: image.Point{X: int(xRight), Y: int(yBottom)},
+	}
+
 }
 
 func GetXSpriteWithPercents(rect image.Rectangle, placement PercentXBasedPlacement) *ebiten.DrawImageOptions {
@@ -58,16 +73,16 @@ func GetXSpriteWithPercents(rect image.Rectangle, placement PercentXBasedPlaceme
 
 // GetYSpriteWithPercents
 // Scales to the preferred Y % positions. It will center the X coordinate to the screen.
-func GetYSpriteWithPercents(rect image.Rectangle, placement PercentYBasedPlacement) *ebiten.DrawImageOptions {
+func GetYSpriteWithPercents(rect image.Rectangle, placement PercentYBasedPlacement) (*ebiten.DrawImageOptions, image.Point) {
 	screenWidth, screenHeight := ebiten.WindowSize()
 
 	op := &ebiten.DrawImageOptions{}
 
 	// get the x start and end values based on the percent
 	var yTop = float64(screenHeight) * placement.StartPercentY
-	var xBottom = float64(screenHeight) * placement.EndPercentY
+	var yBottom = float64(screenHeight) * placement.EndPercentY
 
-	targetHeight := xBottom - yTop
+	targetHeight := yBottom - yTop
 	originalImgHeight := rect.Bounds().Dy()
 
 	// we scale to X value, and match the ratio on Y so the image doesn't stretch and history
@@ -75,11 +90,13 @@ func GetYSpriteWithPercents(rect image.Rectangle, placement PercentYBasedPlaceme
 	scaleX := scaleY
 	op.GeoM.Scale(scaleX, scaleY)
 
-	scaledHeight := scaleY * float64(originalImgHeight)
-
-	topLeftX := float64(screenWidth)/2 - scaledHeight
+	topLeftX := float64(screenWidth) / 2
 
 	op.GeoM.Translate(topLeftX, yTop)
 
-	return op
+	return op, image.Point{
+		X: int(topLeftX),
+		Y: int(yTop),
+	}
+
 }
