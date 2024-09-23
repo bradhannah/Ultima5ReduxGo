@@ -31,12 +31,13 @@ func (g *GameScene) Update(game *Game) error {
 
 // Draw method for the GameScene
 func (g *GameScene) Draw(screen *ebiten.Image) {
+	screen.DrawImage(g.borders.outsideBorder, g.borders.outsideBorderOp)
 
 	g.drawMap(screen)
 
 	// Render the game scene
 	ebitenutil.DebugPrint(screen, "Game Scene: Enjoy the Game!")
-	screen.DrawImage(g.borders.outsideBorder, g.borders.outsideBorderOp)
+
 }
 
 func CreateGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
@@ -67,5 +68,7 @@ func CreateGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 func (g *GameScene) drawMap(screen *ebiten.Image) {
 	do := ebiten.DrawImageOptions{}
 	do.GeoM.Translate(0, 0)
-	screen.DrawImage(g.spriteSheet.SpriteImage, &do)
+
+	//screen.DrawImage(g.spriteSheet.SpriteImage, &do)
+	screen.DrawImage(g.spriteSheet.GetSprite(183), &do)
 }
