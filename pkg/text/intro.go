@@ -51,10 +51,10 @@ func (f *UltimaFont) DrawIntroChoices(screen *ebiten.Image, nSelection int) {
 			const endXHighlightPercent = 1 - startXHighlightPercent
 			const extraYHeightPercent = 0.003
 			rect := sprites.GetRectangleFromPercents(sprites.PercentBasedPlacement{
-				StartPercentX:   startXHighlightPercent,
-				EndXFontPercent: endXHighlightPercent,
-				StartPercentY:   startYPercent - extraYHeightPercent,
-				EndPercentY:     startYPercent + endPercentYDiff + extraYHeightPercent,
+				StartPercentX: startXHighlightPercent,
+				EndtPercentX:  endXHighlightPercent,
+				StartPercentY: startYPercent - extraYHeightPercent,
+				EndPercentY:   startYPercent + endPercentYDiff + extraYHeightPercent,
 			})
 			vector.DrawFilledRect(screen, float32(rect.Min.X), float32(rect.Min.Y), float32(rect.Dx()), float32(rect.Dy()), color.White, false)
 		}

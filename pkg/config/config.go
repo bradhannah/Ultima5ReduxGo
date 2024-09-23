@@ -20,3 +20,14 @@ var WindowHeight = 1080
 //
 //var WindowWidth = 2560
 //var WindowHeight = 1440
+
+type UltimaVConfiguration struct {
+	DataFilePath string
+}
+
+func NewUltimaVConfiguration(dataFilePath string) *UltimaVConfiguration {
+	uc := UltimaVConfiguration{
+		DataFilePath: dataFilePath,
+	}
+	return &uc
+}

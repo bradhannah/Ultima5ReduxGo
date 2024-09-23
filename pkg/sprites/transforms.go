@@ -23,10 +23,10 @@ type PercentYBasedPlacement struct {
 // Structure used for placing sprite on screen based on x and y positions based on percentage
 // Note: this will not maintain an aspect ratio and there is a bottom Y value
 type PercentBasedPlacement struct {
-	StartPercentX   float64
-	EndXFontPercent float64
-	StartPercentY   float64
-	EndPercentY     float64
+	StartPercentX float64
+	EndtPercentX  float64
+	StartPercentY float64
+	EndPercentY   float64
 }
 
 func GetRectangleFromPercents(placement PercentBasedPlacement) *image.Rectangle {
@@ -34,7 +34,7 @@ func GetRectangleFromPercents(placement PercentBasedPlacement) *image.Rectangle 
 
 	// get the x start and end values based on the percent
 	var xLeft = float64(screenWidth) * placement.StartPercentX
-	var xRight = float64(screenWidth) * placement.EndXFontPercent
+	var xRight = float64(screenWidth) * placement.EndtPercentX
 	var yTop = float64(screenHeight) * placement.StartPercentY
 	var yBottom = float64(screenHeight) * placement.EndPercentY
 
