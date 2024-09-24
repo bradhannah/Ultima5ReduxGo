@@ -5,6 +5,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -13,6 +14,8 @@ import (
 
 const (
 	borderWidthScaling = 601
+	xTilesInMap        = 19
+	yTilesInMap        = 14
 )
 
 type gameBorders struct {
@@ -69,7 +72,25 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 	screen.DrawImage(g.borders.rightSideBorder, g.borders.rightSideBorderOp)
 	screen.DrawImage(g.borders.outsideBorder, g.borders.outsideBorderOp)
 
-	g.drawMap(screen)
+	// make unscaled map image
+	//do := ebiten.DrawImageOptions{}
+
+	//const xTiles = 20
+	//const yTiles = 14
+
+	mapImage := ebiten.NewImage(sprites.TileSize*xTilesInMap, sprites.TileSize*yTilesInMap)
+
+	g.drawMap(mapImage)
+	g.drawMapUnits(mapImage)
+
+	op := sprites.GetDrawOptionsFromPercents(mapImage, sprites.PercentBasedPlacement{
+		StartPercentX: .015,
+		EndPercentX:   0.75, //(.98 - 0.015) / (16.0 / 9.0),
+		StartPercentY: 0.02,
+		EndPercentY:   0.98,
+	})
+
+	screen.DrawImage(mapImage, op)
 
 	// Render the game scene
 	ebitenutil.DebugPrint(screen, g.debugMessage)
@@ -115,28 +136,29 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	return &gameScene
 }
 
+// drawMapUnits
+func (g *GameScene) drawMapUnits(screen *ebiten.Image) {
+	do := ebiten.DrawImageOptions{}
+
+	do.GeoM.Translate(float64(sprites.TileSize*(xTilesInMap/2)), float64(sprites.TileSize*(yTilesInMap/2)))
+
+	//avatarImage := ebiten.NewImage(sprites.TileSize, sprites.TileSize)
+	screen.DrawImage(g.spriteSheet.GetSprite(indexes.Avatar), &do)
+
+}
+
+// drawMap
 func (g *GameScene) drawMap(screen *ebiten.Image) {
 	do := ebiten.DrawImageOptions{}
 
-	const xTiles = 20
-	const yTiles = 14
+	mapImage := ebiten.NewImage(sprites.TileSize*xTilesInMap, sprites.TileSize*yTilesInMap)
 
-	mapImage := ebiten.NewImage(sprites.TileSize*xTiles, sprites.TileSize*yTiles)
-
-	for x := 0; x < xTiles; x++ {
-		for y := 0; y < yTiles; y++ {
+	for x := 0; x < xTilesInMap; x++ {
+		for y := 0; y < yTilesInMap; y++ {
 			do.GeoM.Translate(float64(x*sprites.TileSize), float64(y*sprites.TileSize))
 			mapImage.DrawImage(g.spriteSheet.GetSprite(g.gameReferences.OverworldLargeMapReference.GetTileNumber(x+g.avatarX, y+g.avatarY)), &do)
 			do.GeoM.Reset()
 		}
 	}
-
-	op := sprites.GetDrawOptionsFromPercents(mapImage, sprites.PercentBasedPlacement{
-		StartPercentX: .015,
-		EndPercentX:   0.75, //(.98 - 0.015) / (16.0 / 9.0),
-		StartPercentY: 0.02,
-		EndPercentY:   0.98,
-	})
-
-	screen.DrawImage(mapImage, op)
+	screen.DrawImage(mapImage, &do)
 }
