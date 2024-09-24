@@ -11,7 +11,7 @@ func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences
 	gameRefs := &GameReferences{}
 
 	var err error
-	gameRefs.UnderworldLargeMapReference, err = NewLargeMapReference(gameConfig, OVERWORLD)
+	gameRefs.OverworldLargeMapReference, err = NewLargeMapReference(gameConfig, OVERWORLD)
 	if err != nil {
 		return nil, err
 	}

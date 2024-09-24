@@ -13,7 +13,7 @@ type SpriteSheet struct {
 const (
 	origTilesWidth  = 512
 	origTilesHeight = 256
-	origTileSize    = 16
+	TileSize        = 16
 	spritesPerRow   = 32
 	spriteRows      = 16
 	totalSprites    = spriteRows * spritesPerRow
@@ -31,10 +31,10 @@ func NewSpriteSheet() *SpriteSheet {
 }
 
 func (s *SpriteSheet) getSpriteImageRectangle(nSprite int) image.Rectangle {
-	topLeft := image.Point{X: (nSprite % spritesPerRow) * origTileSize, Y: (nSprite / spritesPerRow) * origTileSize}
+	topLeft := image.Point{X: (nSprite % spritesPerRow) * TileSize, Y: (nSprite / spritesPerRow) * TileSize}
 	bottomRight := image.Point{
-		X: topLeft.X + origTileSize,
-		Y: topLeft.Y + origTileSize,
+		X: topLeft.X + TileSize,
+		Y: topLeft.Y + TileSize,
 	}
 	return image.Rectangle{
 		Min: topLeft,

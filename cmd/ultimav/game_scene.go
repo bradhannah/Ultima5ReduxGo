@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -9,9 +11,15 @@ import (
 	"log"
 )
 
+const (
+	borderWidthScaling = 601
+)
+
 type gameBorders struct {
-	outsideBorder   *ebiten.Image
-	outsideBorderOp *ebiten.DrawImageOptions
+	outsideBorder     *ebiten.Image
+	outsideBorderOp   *ebiten.DrawImageOptions
+	rightSideBorder   *ebiten.Image
+	rightSideBorderOp *ebiten.DrawImageOptions
 }
 
 // GameScene is another scene (e.g., the actual game)
@@ -19,6 +27,11 @@ type GameScene struct {
 	gameConfig     *config.UltimaVConfiguration
 	gameReferences *references.GameReferences
 	spriteSheet    *sprites.SpriteSheet
+	keyboard       *input.Keyboard
+
+	debugMessage string
+
+	avatarX, avatarY int
 
 	borders gameBorders
 }
@@ -26,21 +39,44 @@ type GameScene struct {
 // Update method for the GameScene
 func (g *GameScene) Update(game *Game) error {
 	// Handle gameplay logic here
+	if !g.keyboard.IsBoundKeyPressed(boundKeys) {
+		return nil
+	}
+	if !g.keyboard.TryToRegisterKeyPress() {
+		return nil
+	}
+
+	if ebiten.IsKeyPressed(ebiten.KeyEnter) {
+		g.debugMessage = "enter"
+	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
+		g.debugMessage = "up"
+		g.avatarY = helpers.Max(g.avatarY-1, 0)
+	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
+		g.debugMessage = "down"
+		g.avatarY = (g.avatarY + 1) % references.YTiles
+	} else if ebiten.IsKeyPressed(ebiten.KeyLeft) {
+		g.debugMessage = "left"
+		g.avatarX = helpers.Max(g.avatarX-1, 0)
+	} else if ebiten.IsKeyPressed(ebiten.KeyRight) {
+		g.debugMessage = "right"
+		g.avatarX = (g.avatarX + 1) % references.XTiles
+	}
 	return nil
 }
 
 // Draw method for the GameScene
 func (g *GameScene) Draw(screen *ebiten.Image) {
+	screen.DrawImage(g.borders.rightSideBorder, g.borders.rightSideBorderOp)
 	screen.DrawImage(g.borders.outsideBorder, g.borders.outsideBorderOp)
 
 	g.drawMap(screen)
 
 	// Render the game scene
-	ebitenutil.DebugPrint(screen, "Game Scene: Enjoy the Game!")
+	ebitenutil.DebugPrint(screen, g.debugMessage)
 
 }
 
-func CreateGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
+func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	gameScene := GameScene{gameConfig: gameConfig}
 
 	// load the files man
@@ -50,25 +86,57 @@ func CreateGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 		log.Fatal(err)
 	}
 
-	border := sprites.NewBorderSprites()
-	image, op := border.VeryPixelatedRoundedBlueWhite.CreateSizedAndScaledBorderSprite(601, sprites.PercentBasedPlacement{
+	// initialize borders
+	mainBorder := sprites.NewBorderSprites()
+	image, op := mainBorder.VeryPixelatedRoundedBlueWhite.CreateSizedAndScaledBorderSprite(borderWidthScaling, sprites.PercentBasedPlacement{
 		StartPercentX: 0,
 		StartPercentY: 0,
 		EndPercentY:   1,
-		EndtPercentX:  1,
+		EndPercentX:   1,
 	})
 	gameScene.borders.outsideBorder = image
 	gameScene.borders.outsideBorderOp = op
+	rightSideBorder := sprites.NewBorderSprites()
+	image, op = rightSideBorder.VeryPixelatedRoundedBlueWhite.CreateSizedAndScaledBorderSprite(borderWidthScaling, sprites.PercentBasedPlacement{
+		StartPercentX: .75,
+		EndPercentX:   1,
+		StartPercentY: 0,
+		EndPercentY:   1,
+	})
+	gameScene.borders.rightSideBorder = image
+	gameScene.borders.rightSideBorderOp = op
 
 	gameScene.spriteSheet = sprites.NewSpriteSheet()
+
+	gameScene.keyboard = &input.Keyboard{MillisecondDelayBetweenKeyPresses: 100}
+	gameScene.avatarX = 75
+	gameScene.avatarY = 75
 
 	return &gameScene
 }
 
 func (g *GameScene) drawMap(screen *ebiten.Image) {
 	do := ebiten.DrawImageOptions{}
-	do.GeoM.Translate(0, 0)
 
-	//screen.DrawImage(g.spriteSheet.SpriteImage, &do)
-	screen.DrawImage(g.spriteSheet.GetSprite(183), &do)
+	const xTiles = 20
+	const yTiles = 14
+
+	mapImage := ebiten.NewImage(sprites.TileSize*xTiles, sprites.TileSize*yTiles)
+
+	for x := 0; x < xTiles; x++ {
+		for y := 0; y < yTiles; y++ {
+			do.GeoM.Translate(float64(x*sprites.TileSize), float64(y*sprites.TileSize))
+			mapImage.DrawImage(g.spriteSheet.GetSprite(g.gameReferences.OverworldLargeMapReference.GetTileNumber(x+g.avatarX, y+g.avatarY)), &do)
+			do.GeoM.Reset()
+		}
+	}
+
+	op := sprites.GetDrawOptionsFromPercents(mapImage, sprites.PercentBasedPlacement{
+		StartPercentX: .015,
+		EndPercentX:   0.75, //(.98 - 0.015) / (16.0 / 9.0),
+		StartPercentY: 0.02,
+		EndPercentY:   0.98,
+	})
+
+	screen.DrawImage(mapImage, op)
 }

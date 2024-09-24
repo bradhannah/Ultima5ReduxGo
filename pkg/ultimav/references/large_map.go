@@ -34,7 +34,10 @@ func NewLargeMapReference(gameConfig *config.UltimaVConfiguration, world World) 
 	} else {
 		return loadLargeMapFromFile(path.Join(gameConfig.DataFilePath, UNDER_DAT), "")
 	}
+}
 
+func (m *LargeMapReference) GetTileNumber(x int, y int) int {
+	return int(m.rawData[x][y])
 }
 
 func loadLargeMapFromFile(mapFileAndPath string, dataOvlFileAndPath string) (*LargeMapReference, error) {

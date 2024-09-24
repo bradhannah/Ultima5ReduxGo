@@ -29,7 +29,7 @@ type screenDimensions struct {
 
 var ScreenDimension = screenDimensions{x: config.WindowWidth, y: config.WindowHeight}
 
-var boundKeys = []ebiten.Key{ebiten.KeyDown, ebiten.KeyUp, ebiten.KeyEnter}
+var boundKeys = []ebiten.Key{ebiten.KeyDown, ebiten.KeyUp, ebiten.KeyEnter, ebiten.KeyLeft, ebiten.KeyRight}
 
 // Update method for the IntroMenuScene
 func (m *IntroMenuScene) Update(game *Game) error {
@@ -44,7 +44,7 @@ func (m *IntroMenuScene) Update(game *Game) error {
 	if ebiten.IsKeyPressed(ebiten.KeyEnter) {
 		// Replace this with code to switch to the game scene
 		fmt.Println("Switching to Game Scene")
-		game.currentScene = CreateGameScene(config.NewUltimaVConfiguration("/Users/bradhannah/games/Ultima_5/Gold"))
+		game.currentScene = NewGameScene(config.NewUltimaVConfiguration("/Users/bradhannah/games/Ultima_5/Gold"))
 	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
 		m.nCurrentSelection = int(math.Max(float64(m.nCurrentSelection)-1, 0))
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
@@ -92,7 +92,7 @@ func (m *IntroMenuScene) drawStaticGraphics(screen *ebiten.Image) {
 		400,
 		sprites.PercentBasedPlacement{
 			StartPercentX: .02,
-			EndtPercentX:  .98,
+			EndPercentX:   .98,
 			StartPercentY: .61,
 			EndPercentY:   .99,
 		})

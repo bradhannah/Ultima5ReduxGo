@@ -52,7 +52,7 @@ func (f *UltimaFont) DrawIntroChoices(screen *ebiten.Image, nSelection int) {
 			const extraYHeightPercent = 0.003
 			rect := sprites.GetRectangleFromPercents(sprites.PercentBasedPlacement{
 				StartPercentX: startXHighlightPercent,
-				EndtPercentX:  endXHighlightPercent,
+				EndPercentX:   endXHighlightPercent,
 				StartPercentY: startYPercent - extraYHeightPercent,
 				EndPercentY:   startYPercent + endPercentYDiff + extraYHeightPercent,
 			})
