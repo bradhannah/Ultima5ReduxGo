@@ -1,7 +1,6 @@
 package text
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 )
@@ -15,7 +14,8 @@ type Output struct {
 
 const (
 	maxCharsPerLine = 30
-	maxLines        = 12
+	maxLines        = 11
+	OutputFontPoint = 20
 )
 
 func NewOutput(font *UltimaFont) *Output {
@@ -42,13 +42,10 @@ func (o *Output) getOutputStr() string {
 }
 
 func (o *Output) Draw(screen *ebiten.Image) {
-	const lineSpacing = 85
-	op := sprites.GetDrawOptionsFromPercents(screen, sprites.PercentBasedPlacement{
-		StartPercentX: 0.75 + .015,
-		EndPercentX:   1 - 0.015,
-		StartPercentY: 0.485 + 0.03,
-		EndPercentY:   0.8 - 0.015,
-	})
+	const lineSpacing = 20
+
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(25, float64(screen.Bounds().Dy())*.52)
 
 	dop := text.DrawOptions{
 		DrawImageOptions: *op,

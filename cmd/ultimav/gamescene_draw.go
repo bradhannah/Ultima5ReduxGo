@@ -9,12 +9,20 @@ import (
 
 // Draw method for the GameScene
 func (g *GameScene) Draw(screen *ebiten.Image) {
+	const widthRatio = 16
+	const heightRatio = 9
 
-	mapImage := ebiten.NewImage(sprites.TileSize*xTilesInMap, sprites.TileSize*yTilesInMap)
+	mapWidth := sprites.TileSize * xTilesInMap
+	mapHeight := sprites.TileSize * yTilesInMap
+
+	rightSideWidth := mapWidth / 4
+	rightSideHeight := mapHeight
+
+	mapImage := ebiten.NewImage(mapWidth, mapHeight)
 	g.drawMap(mapImage)
 	g.drawMapUnits(mapImage)
 
-	op := sprites.GetDrawOptionsFromPercents(mapImage, sprites.PercentBasedPlacement{
+	op := sprites.GetDrawOptionsFromPercentsForWholeScreen(mapImage, sprites.PercentBasedPlacement{
 		StartPercentX: .015,
 		EndPercentX:   0.75,
 		StartPercentY: 0.02,
@@ -23,7 +31,18 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 
 	screen.DrawImage(mapImage, op)
 	g.drawBorders(screen)
-	g.output.Draw(screen)
+
+	//g.output.Draw(screen)
+
+	rightSideImage := ebiten.NewImage(rightSideWidth*5, rightSideHeight*4) //screen.Bounds().Dx()-mapWidth, screen.Bounds().Dy()-mapHeight)
+	op = sprites.GetDrawOptionsFromPercentsForWholeScreen(rightSideImage, sprites.PercentBasedPlacement{
+		StartPercentX: .751,
+		EndPercentX:   1.0,
+		StartPercentY: 0.02,
+		EndPercentY:   0.98,
+	})
+	g.output.Draw(rightSideImage)
+	screen.DrawImage(rightSideImage, op)
 
 	// Render the game scene
 	ebitenutil.DebugPrint(screen, g.debugMessage)

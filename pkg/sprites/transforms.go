@@ -44,7 +44,7 @@ func GetRectangleFromPercents(placement PercentBasedPlacement) *image.Rectangle 
 	}
 }
 
-func GetDrawOptionsFromPercents(origImage *ebiten.Image, placement PercentBasedPlacement) *ebiten.DrawImageOptions {
+func GetDrawOptionsFromPercentsForWholeScreen(origImage *ebiten.Image, placement PercentBasedPlacement) *ebiten.DrawImageOptions {
 	screenWidth, screenHeight := ebiten.WindowSize()
 
 	op := &ebiten.DrawImageOptions{}

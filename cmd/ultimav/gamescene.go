@@ -47,9 +47,8 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	gameScene.initializeBorders()
 
 	gameScene.spriteSheet = sprites.NewSpriteSheet()
-	gameScene.ultimaFont = text.NewUltimaFont(64)
+	gameScene.ultimaFont = text.NewUltimaFont(text.OutputFontPoint)
 	gameScene.output = text.NewOutput(gameScene.ultimaFont)
-	gameScene.output.AddToOutput("Michael")
 
 	gameScene.keyboard = &input.Keyboard{MillisecondDelayBetweenKeyPresses: keyPressDelay}
 	gameScene.avatarX = 75
