@@ -26,14 +26,22 @@ func NewOutput(font *UltimaFont, lineSpacing float64) *Output {
 }
 
 func (o *Output) DrawText(screen *ebiten.Image, textStr string, op *ebiten.DrawImageOptions) {
-
-	//op := &ebiten.DrawImageOptions{}
-	//op.GeoM.Translate(25, float64(screen.Bounds().Dy())*.52)
-
 	dop := text.DrawOptions{
 		DrawImageOptions: *op,
 		LayoutOptions: text.LayoutOptions{
 			LineSpacing: o.lineSpacing,
+		},
+	}
+
+	text.Draw(screen, textStr, o.Font.textFace, &dop)
+}
+
+func (o *Output) DrawTextRightToLeft(screen *ebiten.Image, textStr string, op *ebiten.DrawImageOptions) {
+	dop := text.DrawOptions{
+		DrawImageOptions: *op,
+		LayoutOptions: text.LayoutOptions{
+			LineSpacing:  o.lineSpacing,
+			PrimaryAlign: text.AlignEnd,
 		},
 	}
 

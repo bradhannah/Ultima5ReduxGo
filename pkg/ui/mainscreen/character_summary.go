@@ -57,6 +57,7 @@ func (c *CharacterSummary) Draw(gameState *game_state.GameState, screen *ebiten.
 	for i := 0; i < len(c.characterSummaryImage); i++ {
 		// draw onto single summary
 		character := gameState.Characters[i]
+		textTopYPercent := (float64(i) * .075) + 0.035
 
 		characterPortrait := c.spriteSheet.GetSprite(character.GetKeySpriteIndex())
 		dop := ebiten.DrawImageOptions{}
@@ -72,7 +73,7 @@ func (c *CharacterSummary) Draw(gameState *game_state.GameState, screen *ebiten.
 		screen.DrawImage(c.characterSummaryImage[i], spriteDop)
 
 		leftTextDop := ebiten.DrawImageOptions{}
-		leftTextX, leftTextY := GetTranslateXYByPercent(0.815, (float64(i)*.075)+0.035)
+		leftTextX, leftTextY := GetTranslateXYByPercent(0.815, textTopYPercent)
 		leftTextDop.GeoM.Translate(leftTextX, leftTextY)
 
 		leftTextOutput := fmt.Sprintf("%s\n%d/%dHP",
@@ -82,11 +83,11 @@ func (c *CharacterSummary) Draw(gameState *game_state.GameState, screen *ebiten.
 		c.output.DrawText(screen, leftTextOutput, &leftTextDop)
 
 		rightTextDop := ebiten.DrawImageOptions{}
-		rightTextX, rightTextY := GetTranslateXYByPercent(0.93, (float64(i)*.075)+0.035)
+		rightTextX, rightTextY := GetTranslateXYByPercent(0.98, textTopYPercent)
 		rightTextDop.GeoM.Translate(rightTextX, rightTextY)
 
-		rightTextOutput := fmt.Sprintf("%s\n%dMP", string(character.Status), character.CurrentMp)
-		c.output.DrawText(screen, rightTextOutput, &rightTextDop)
+		rightTextOutput := fmt.Sprintf("%s\n%dMP", game_state.CharacterStatuses.GetById(character.Status).FriendlyName, character.CurrentMp)
+		c.output.DrawTextRightToLeft(screen, rightTextOutput, &rightTextDop)
 	}
 
 }
