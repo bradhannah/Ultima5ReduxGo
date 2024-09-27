@@ -7,46 +7,64 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
+var oof = 0
+
 // Draw method for the GameScene
 func (g *GameScene) Draw(screen *ebiten.Image) {
+
 	const widthRatio = 16
 	const heightRatio = 9
 
 	mapWidth := sprites.TileSize * xTilesInMap
 	mapHeight := sprites.TileSize * yTilesInMap
 
-	rightSideWidth := mapWidth / 4
-	rightSideHeight := mapHeight
+	if g.mapImage == nil {
+		g.mapImage = ebiten.NewImage(mapWidth, mapHeight)
+	}
 
-	mapImage := ebiten.NewImage(mapWidth, mapHeight)
-	g.drawMap(mapImage)
-	g.drawMapUnits(mapImage)
+	g.drawMap(g.mapImage)
+	g.drawMapUnits(g.mapImage)
 
-	op := sprites.GetDrawOptionsFromPercentsForWholeScreen(mapImage, sprites.PercentBasedPlacement{
+	op := sprites.GetDrawOptionsFromPercentsForWholeScreen(g.mapImage, sprites.PercentBasedPlacement{
 		StartPercentX: .015,
 		EndPercentX:   0.75,
 		StartPercentY: 0.02,
 		EndPercentY:   0.98,
 	})
 
-	screen.DrawImage(mapImage, op)
+	screen.DrawImage(g.mapImage, op)
 	g.drawBorders(screen)
 
-	//g.output.Draw(screen)
-
-	rightSideImage := ebiten.NewImage(rightSideWidth*5, rightSideHeight*4) //screen.Bounds().Dx()-mapWidth, screen.Bounds().Dy()-mapHeight)
-	op = sprites.GetDrawOptionsFromPercentsForWholeScreen(rightSideImage, sprites.PercentBasedPlacement{
+	rightSideWidth := mapWidth / 4
+	rightSideHeight := mapHeight
+	if g.rightSideImage == nil {
+		g.rightSideImage = ebiten.NewImage(rightSideWidth*5, int(float64(rightSideHeight)*3.7))
+	} else {
+		g.rightSideImage.Clear()
+	}
+	op = sprites.GetDrawOptionsFromPercentsForWholeScreen(g.rightSideImage, sprites.PercentBasedPlacement{
 		StartPercentX: .751,
 		EndPercentX:   1.0,
 		StartPercentY: 0.02,
 		EndPercentY:   0.98,
 	})
-	g.output.Draw(rightSideImage)
-	screen.DrawImage(rightSideImage, op)
+
+	g.output.DrawContinuousOutputText(g.rightSideImage)
+
+	screen.DrawImage(g.rightSideImage, op)
+	g.characterSummary.Draw(g.gameState, screen) ///drawCharacterSummary(g.rightSideImage)
 
 	// Render the game scene
 	ebitenutil.DebugPrint(screen, g.debugMessage)
 }
+
+//func (g *GameScene) drawCharacterSummary(screen *ebiten.Image) {
+//	g.characterSummary.DrawContinuousOutputText(g.gameState)
+//	dop := ebiten.DrawImageOptions{}
+//	dop.GeoM.Translate(15, 15)
+//	dop.GeoM.Scale(5, 5)
+//	screen.DrawImage(g.characterSummary.FullSummaryImage, &dop)
+//}
 
 // drawBorders
 func (g *GameScene) drawBorders(screen *ebiten.Image) {
@@ -70,14 +88,17 @@ func (g *GameScene) drawMapUnits(screen *ebiten.Image) {
 func (g *GameScene) drawMap(screen *ebiten.Image) {
 	do := ebiten.DrawImageOptions{}
 
-	mapImage := ebiten.NewImage(sprites.TileSize*xTilesInMap, sprites.TileSize*yTilesInMap)
+	if g.unscaledMapImage == nil {
+		g.unscaledMapImage = ebiten.NewImage(sprites.TileSize*xTilesInMap, sprites.TileSize*yTilesInMap)
+	}
 
 	for x := 0; x < xTilesInMap; x++ {
 		for y := 0; y < yTilesInMap; y++ {
 			do.GeoM.Translate(float64(x*sprites.TileSize), float64(y*sprites.TileSize))
-			mapImage.DrawImage(g.spriteSheet.GetSprite(g.gameReferences.OverworldLargeMapReference.GetTileNumber(x+g.avatarX, y+g.avatarY)), &do)
+			tileNumber := g.gameReferences.OverworldLargeMapReference.GetTileNumber(x+g.avatarX, y+g.avatarY)
+			g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileNumber), &do)
 			do.GeoM.Reset()
 		}
 	}
-	screen.DrawImage(mapImage, &do)
+	screen.DrawImage(g.unscaledMapImage, &do)
 }

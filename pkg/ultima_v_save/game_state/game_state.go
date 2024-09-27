@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"reflect"
-	"strings"
 	"unsafe"
 )
 
@@ -70,40 +69,7 @@ func (g *GameState) LoadSaveGame(savedGamFilePath string) error {
 
 */
 
-// NOTE this copy used GOB - which is cool, but apparently doesn't overlay like I thought it would
-//func SaveCharactersOnSave(savedGamFilePath string, nCharPos uint, playerCharacter PlayerCharacter) error {
-//	saveFile, err := os.OpenFile(savedGamFilePath, os.O_RDWR, 0666)
-//	if err != nil {
-//		return err
-//	}
-//	saveFileBytes, err := io.ReadAll(saveFile)
-//	if err != nil {
-//		return nil
-//	}
-//
-//	var newName [9]byte
-//	newName[0] = 'B'
-//	newName[1] = 'R'
-//	newName[2] = 0
-//
-//	playerCharacter.Name = newName //[9]byte("OOF")
-//
-//	var characterBuffer bytes.Buffer
-//	enc := gob.NewEncoder(&characterBuffer)
-//	err = enc.Encode(playerCharacter)
-//	if err != nil {
-//		return err
-//	}
-//
-//	t := reflect.TypeOf(playerCharacter)
-//	startPos := startPositionOfCharacters + (uint(t.Size()) * nCharPos)
-//	newCharacterBytes := characterBuffer.Bytes()
-//	copy(saveFileBytes[startPos:], newCharacterBytes)
-//
-//	return nil
-//}
-
-func overlayCharactersOnSave(playerCharacters *[6]PlayerCharacter, saveGame *GameState) {
+func overlayCharactersOnSave(playerCharacters *[MAX_CHARACTERS_IN_PARTY]PlayerCharacter, saveGame *GameState) {
 	playerCharactersT := reflect.TypeOf(playerCharacters)
 	byteSizePlayerCharacter := uint(playerCharactersT.Size())
 
@@ -168,10 +134,6 @@ func (g *GameState) SaveCharactersOnSave(savedGamFilePath string, nCharPos uint,
 	//copy(saveFileBytes[startPos:], newCharacterBytes)
 
 	return nil
-}
-
-func (p *PlayerCharacter) GetNameAsString() string {
-	return strings.TrimRight(string(p.Name[:]), string(rune(0)))
 }
 
 //func getClassStr(characterClass ultima_v_save.CharacterClass) string {

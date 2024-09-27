@@ -96,13 +96,16 @@ const (
 	BrickWallArchway      = 135
 )
 const (
+	Wizard_KeyIndex  = 320
+	Bard_KeyIndex    = 324
+	Fighter_KeyIndex = 328
+	Avatar_KeyIndex  = 332
+
 	BardPlaying_KeyIndex   = 348
 	TownsPerson_KeyIndex   = 336
 	Ray_KeyIndex           = 400
 	Daemon1_KeyIndex       = 472
 	StoneGargoyle_KeyIndex = 440
-	Fighter_KeyIndex       = 328
-	Bard_KeyIndex          = 324
 	Bat_KeyIndex           = 404
 	ShadowLord_KeyIndex    = 508
 	Waterfall_KeyIndex     = 212

@@ -8,6 +8,8 @@ import (
 
 type SpriteSheet struct {
 	SpriteImage *ebiten.Image
+
+	spriteImageCache [1024]*ebiten.Image
 }
 
 const (
@@ -43,6 +45,13 @@ func (s *SpriteSheet) getSpriteImageRectangle(nSprite int) image.Rectangle {
 }
 
 func (s *SpriteSheet) GetSprite(nSprite int) *ebiten.Image {
-	sprite := ebiten.NewImageFromImage(s.SpriteImage.SubImage(s.getSpriteImageRectangle(nSprite)))
-	return sprite
+
+	if s.spriteImageCache[nSprite] == nil {
+		sprite := ebiten.NewImageFromImage(s.SpriteImage.SubImage(s.getSpriteImageRectangle(nSprite)))
+		s.spriteImageCache[nSprite] = sprite
+		return sprite
+	}
+	return s.spriteImageCache[nSprite]
+	//sprite := s.SpriteImage.SubImage(s.getSpriteImageRectangle(nSprite))
+	//return sprite
 }

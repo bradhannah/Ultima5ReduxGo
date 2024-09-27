@@ -20,6 +20,8 @@ CharacterClass
 enum <ubyte> Class { Avatar = 'A', Fighter = 'F', Bard = 'B', Wizard = 'M' };
 */
 
+const MAX_CHARACTERS_IN_PARTY = 6
+
 type CharacterClass byte
 
 const (
