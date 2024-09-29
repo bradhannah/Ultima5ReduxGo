@@ -33,6 +33,7 @@ type GameScene struct {
 	unscaledMapImage *ebiten.Image
 	rightSideImage   *ebiten.Image
 	characterSummary *mainscreen.CharacterSummary
+	provisionSummary *mainscreen.ProvisionSummary
 
 	debugMessage string
 
@@ -73,6 +74,7 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	}
 
 	gameScene.characterSummary = mainscreen.NewCharacterSummary(gameScene.spriteSheet)
+	gameScene.provisionSummary = mainscreen.NewProvisionSummary(gameScene.spriteSheet)
 
 	return &gameScene
 }

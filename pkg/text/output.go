@@ -29,7 +29,20 @@ func (o *Output) DrawText(screen *ebiten.Image, textStr string, op *ebiten.DrawI
 	dop := text.DrawOptions{
 		DrawImageOptions: *op,
 		LayoutOptions: text.LayoutOptions{
-			LineSpacing: o.lineSpacing,
+			LineSpacing:  o.lineSpacing,
+			PrimaryAlign: text.AlignStart,
+		},
+	}
+
+	text.Draw(screen, textStr, o.Font.textFace, &dop)
+}
+
+func (o *Output) DrawTextCenter(screen *ebiten.Image, textStr string, op *ebiten.DrawImageOptions) {
+	dop := text.DrawOptions{
+		DrawImageOptions: *op,
+		LayoutOptions: text.LayoutOptions{
+			LineSpacing:  o.lineSpacing,
+			PrimaryAlign: text.AlignCenter,
 		},
 	}
 

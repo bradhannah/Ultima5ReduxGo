@@ -52,7 +52,8 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 	g.output.DrawContinuousOutputText(g.rightSideImage)
 
 	screen.DrawImage(g.rightSideImage, op)
-	g.characterSummary.Draw(g.gameState, screen) ///drawCharacterSummary(g.rightSideImage)
+	g.characterSummary.Draw(g.gameState, screen)
+	g.provisionSummary.Draw(g.gameState, screen)
 
 	// Render the game scene
 	ebitenutil.DebugPrint(screen, g.debugMessage)

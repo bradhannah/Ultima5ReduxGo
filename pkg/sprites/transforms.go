@@ -124,3 +124,15 @@ func GetYSpriteWithPercents(rect image.Rectangle, placement PercentYBasedPlaceme
 	}
 
 }
+
+// GetTranslateXYByPercent
+// Use to get an X, Y transform based on the percentage of the screen. This is not for scale.
+// Used often for top left of fonts which should be scaled via point, not GeoM.Scale
+func GetTranslateXYByPercent(xPercent float64, yPercent float64) (float64, float64) {
+	screenWidth, screenHeight := ebiten.WindowSize()
+
+	// get the x start and end values based on the percent
+	var xLeft = float64(screenWidth) * xPercent
+	var yTop = float64(screenHeight) * yPercent
+	return xLeft, yTop
+}
