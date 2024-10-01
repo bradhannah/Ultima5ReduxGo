@@ -1,7 +1,7 @@
 package game_state
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultima_v_save/util"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state/util"
 )
 
 /*

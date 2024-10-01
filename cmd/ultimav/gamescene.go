@@ -1,13 +1,12 @@
 package main
 
 import (
+	mainscreen2 "github.com/bradhannah/Ultima5ReduxGo/internal/ui/mainscreen"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ui/mainscreen"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultima_v_save/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
 	"log"
@@ -32,12 +31,12 @@ type GameScene struct {
 	mapImage         *ebiten.Image
 	unscaledMapImage *ebiten.Image
 	rightSideImage   *ebiten.Image
-	characterSummary *mainscreen.CharacterSummary
-	provisionSummary *mainscreen.ProvisionSummary
+	characterSummary *mainscreen2.CharacterSummary
+	provisionSummary *mainscreen2.ProvisionSummary
 
 	debugMessage string
 
-	avatarX, avatarY int
+	//avatarX, avatarY int
 
 	gameState *game_state.GameState
 
@@ -54,6 +53,13 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 		log.Fatal(err)
 	}
 
+	// TODO: add a New function to GameState
+	gameScene.gameState = &game_state.GameState{}
+	err = gameScene.gameState.LoadLegacySaveGame(path.Join(gameScene.gameConfig.DataFilePath, "SAVED.GAM"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	gameScene.initializeBorders()
 
 	gameScene.spriteSheet = sprites.NewSpriteSheet()
@@ -61,20 +67,13 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	gameScene.output = text.NewOutput(gameScene.ultimaFont, 20)
 
 	gameScene.keyboard = &input.Keyboard{MillisecondDelayBetweenKeyPresses: keyPressDelay}
-	gameScene.avatarX = 75
-	gameScene.avatarY = 75
+	//gameScene.avatarX = gameScene.gameState.Position.X
+	//gameScene.avatarY = 75
 
 	ebiten.SetTPS(120)
 
-	// TODO: add a New function to GameState
-	gameScene.gameState = &game_state.GameState{}
-	err = gameScene.gameState.LoadSaveGame(path.Join(gameScene.gameConfig.DataFilePath, "SAVED.GAM"))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	gameScene.characterSummary = mainscreen.NewCharacterSummary(gameScene.spriteSheet)
-	gameScene.provisionSummary = mainscreen.NewProvisionSummary(gameScene.spriteSheet)
+	gameScene.characterSummary = mainscreen2.NewCharacterSummary(gameScene.spriteSheet)
+	gameScene.provisionSummary = mainscreen2.NewProvisionSummary(gameScene.spriteSheet)
 
 	return &gameScene
 }
@@ -95,19 +94,22 @@ func (g *GameScene) Update(game *Game) error {
 	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
 		g.debugMessage = "up"
 		g.output.AddToContinuousOutput("> North")
-		g.avatarY = helpers.Max(g.avatarY-1, 0)
+		//g.gameState.Position.Y = helpers.Max(g.gameState.Position.Y-1, 0)
+		g.gameState.Position.GoUp(true)
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
 		g.debugMessage = "down"
 		g.output.AddToContinuousOutput("> South")
-		g.avatarY = (g.avatarY + 1) % references.YTiles
+		//g.gameState.Position.Y = (g.gameState.Position.Y + 1) % references.YLargeMapTiles
+		g.gameState.Position.GoDown(true)
 	} else if ebiten.IsKeyPressed(ebiten.KeyLeft) {
 		g.debugMessage = "left"
 		g.output.AddToContinuousOutput("> West")
-		g.avatarX = helpers.Max(g.avatarX-1, 0)
+		g.gameState.Position.GoLeft(true)
 	} else if ebiten.IsKeyPressed(ebiten.KeyRight) {
 		g.debugMessage = "right"
 		g.output.AddToContinuousOutput("> East")
-		g.avatarX = (g.avatarX + 1) % references.XTiles
+		//g.gameState.Position.X = (g.gameState.Position.X + 1) % references.XLargeMapTiles
+		g.gameState.Position.GoRight(true)
 	}
 	return nil
 }

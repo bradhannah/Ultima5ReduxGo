@@ -1,10 +1,11 @@
 package mainscreen
 
 import (
+	"fmt"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultima_v_save/game_state"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -37,7 +38,11 @@ func (p *ProvisionSummary) Draw(gameState *game_state.GameState, screen *ebiten.
 			p.spriteSheet.GetSprite(indexes.ItemKey),
 			p.spriteSheet.GetSprite(indexes.ItemGem),
 		},
-		[3]string{"1234", "10", "333"},
+		[3]string{
+			fmt.Sprintf("%d", gameState.Provisions.QtyFood),
+			fmt.Sprintf("%d", gameState.Provisions.QtyKeys),
+			fmt.Sprintf("%d", gameState.Provisions.QtyGems),
+		},
 	)
 
 	p.drawRow(0.875, screen,
@@ -46,7 +51,11 @@ func (p *ProvisionSummary) Draw(gameState *game_state.GameState, screen *ebiten.
 			p.spriteSheet.GetSprite(indexes.ItemMoney),
 			p.spriteSheet.GetSprite(indexes.HolyFloorSymbol),
 		},
-		[3]string{"5", "9997", "40"},
+		[3]string{
+			fmt.Sprintf("%d", gameState.Provisions.QtyTorches),
+			fmt.Sprintf("%d", gameState.QtyGold),
+			fmt.Sprintf("%d", gameState.Karma),
+		},
 	)
 
 	p.drawBottomRow(.945, screen, gameState)
@@ -66,7 +75,7 @@ func (p *ProvisionSummary) drawRow(startY float64, screen *ebiten.Image, rowSpri
 				StartPercentX: leftImageStartX + percentIncreaseByX*float64(i+1) + imageOffsetPercent,
 				EndPercentX:   leftImageStartX + percentIncreaseByX*float64(i+1) + 0.02 + imageOffsetPercent,
 				StartPercentY: startY,
-				EndPercentY:   startY + percentBetweenImageAndText, //0.845,
+				EndPercentY:   startY + percentBetweenImageAndText,
 			})
 		screen.DrawImage(sprite, dop)
 
@@ -82,10 +91,11 @@ func (p *ProvisionSummary) drawBottomRow(startY float64, screen *ebiten.Image, s
 	textDop := ebiten.DrawImageOptions{}
 	textDop.GeoM.Translate(sprites.GetTranslateXYByPercent(
 		leftImageStartX+percentIncreaseByX, startY))
-	p.output.DrawTextCenter(screen, "4-6-139", &textDop)
+	//p.output.DrawTextCenter(screen, "4-6-139", &textDop)
+	p.output.DrawTextCenter(screen, state.DateTime.GetDateAsString(), &textDop)
 
 	textDop.GeoM.Reset()
 	textDop.GeoM.Translate(sprites.GetTranslateXYByPercent(
 		leftImageStartX+percentIncreaseByX*3, startY))
-	p.output.DrawTextCenter(screen, "2:14PM", &textDop)
+	p.output.DrawTextCenter(screen, state.DateTime.GetTimeAsString(), &textDop)
 }

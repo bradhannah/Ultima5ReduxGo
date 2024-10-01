@@ -1,12 +1,5 @@
 package game_state
 
-const savedGamFileSize = 4192
-const startPositionOfCharacters = 0x02
-
-type StartingMemoryAddressUb uint16
-type StartingMemoryAddressU16 uint16
-
-const NPlayers = 6
 const NMaxPlayerNameSize = 9
 
 const (
@@ -87,14 +80,6 @@ const (
 	Buried      MoonstoneStatus = 0x00
 	InInventory                 = 0xFF
 )
-
-type GameState struct {
-	RawSave          [savedGamFileSize]byte
-	Characters       [NPlayers]PlayerCharacter
-	Location         Location
-	BritOrUnderworld BritOrUnderworld
-	MoonstoneStatus  MoonstoneStatus
-}
 
 type PlayerCharacter struct {
 	Name         [NMaxPlayerNameSize]byte

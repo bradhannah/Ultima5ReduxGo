@@ -9,8 +9,10 @@ import (
 )
 
 const (
-	YTiles                = 256    // Total map height in tiles
-	XTiles                = 256    // Total map width in tiles
+	YLargeMapTiles        = int16(256) // Total map height in tiles
+	XLargeMapTiles        = int16(256) // Total map width in tiles
+	XSmallMapTiles        = int16(32)
+	YSmallMapTiles        = int16(32)
 	TotalChunks           = 256    // Number of chunks in the map
 	TilesPerChunkX        = 16     // Tiles per chunk on the x-axis
 	TilesPerChunkY        = 16     // Tiles per chunk on the y-axis
@@ -18,7 +20,7 @@ const (
 )
 
 type LargeMapReference struct {
-	rawData [XTiles][YTiles]byte
+	rawData [XLargeMapTiles][YLargeMapTiles]byte
 }
 
 type World int
@@ -36,7 +38,17 @@ func NewLargeMapReference(gameConfig *config.UltimaVConfiguration, world World) 
 	}
 }
 
-func (m *LargeMapReference) GetTileNumber(x int, y int) int {
+func (m *LargeMapReference) GetTileNumber(x int16, y int16) int {
+	if x < 0 {
+		x = x + XLargeMapTiles
+	} else if x >= XLargeMapTiles {
+		x = x % XLargeMapTiles
+	}
+	if y < 0 {
+		y = y + YLargeMapTiles
+	} else if y >= YLargeMapTiles {
+		y = y % YLargeMapTiles
+	}
 	return int(m.rawData[x][y])
 }
 

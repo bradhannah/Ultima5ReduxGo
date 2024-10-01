@@ -7,11 +7,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
-var oof = 0
-
 // Draw method for the GameScene
 func (g *GameScene) Draw(screen *ebiten.Image) {
-
 	const widthRatio = 16
 	const heightRatio = 9
 
@@ -59,14 +56,6 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 	ebitenutil.DebugPrint(screen, g.debugMessage)
 }
 
-//func (g *GameScene) drawCharacterSummary(screen *ebiten.Image) {
-//	g.characterSummary.DrawContinuousOutputText(g.gameState)
-//	dop := ebiten.DrawImageOptions{}
-//	dop.GeoM.Translate(15, 15)
-//	dop.GeoM.Scale(5, 5)
-//	screen.DrawImage(g.characterSummary.FullSummaryImage, &dop)
-//}
-
 // drawBorders
 func (g *GameScene) drawBorders(screen *ebiten.Image) {
 	screen.DrawImage(g.borders.outsideBorder, g.borders.outsideBorderOp)
@@ -93,10 +82,13 @@ func (g *GameScene) drawMap(screen *ebiten.Image) {
 		g.unscaledMapImage = ebiten.NewImage(sprites.TileSize*xTilesInMap, sprites.TileSize*yTilesInMap)
 	}
 
-	for x := 0; x < xTilesInMap; x++ {
-		for y := 0; y < yTilesInMap; y++ {
+	xCenter := int16(xTilesInMap / 2)
+	yCenter := int16(yTilesInMap / 2)
+	var x, y int16
+	for x = 0; x < xTilesInMap; x++ {
+		for y = 0; y < yTilesInMap; y++ {
 			do.GeoM.Translate(float64(x*sprites.TileSize), float64(y*sprites.TileSize))
-			tileNumber := g.gameReferences.OverworldLargeMapReference.GetTileNumber(x+g.avatarX, y+g.avatarY)
+			tileNumber := g.gameReferences.OverworldLargeMapReference.GetTileNumber(x+g.gameState.Position.X-xCenter, y+g.gameState.Position.Y-yCenter)
 			g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileNumber), &do)
 			do.GeoM.Reset()
 		}
