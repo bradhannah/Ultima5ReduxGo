@@ -36,8 +36,6 @@ type GameScene struct {
 
 	debugMessage string
 
-	//avatarX, avatarY int
-
 	gameState *game_state.GameState
 
 	borders gameBorders

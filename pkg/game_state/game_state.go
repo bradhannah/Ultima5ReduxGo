@@ -2,6 +2,7 @@ package game_state
 
 import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 const NPlayers = 6
@@ -11,7 +12,7 @@ type GameState struct {
 	Characters      [NPlayers]PlayerCharacter
 	MoonstoneStatus MoonstoneStatus
 
-	Location Location
+	Location references.Location
 	Position ultimav.Position
 	Floor    int8
 

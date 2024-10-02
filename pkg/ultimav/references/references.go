@@ -5,6 +5,8 @@ import "github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 type GameReferences struct {
 	OverworldLargeMapReference  *LargeMapReference
 	UnderworldLargeMapReference *LargeMapReference
+
+	SingleMapReferences *SingleMapReferences
 }
 
 func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences, error) {
@@ -19,6 +21,7 @@ func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences
 	if err != nil {
 		return nil, err
 	}
+	gameRefs.SingleMapReferences, err = NewSmallMapReferences(gameConfig)
 
 	return gameRefs, nil
 }
