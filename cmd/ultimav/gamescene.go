@@ -85,6 +85,7 @@ func (g *GameScene) Update(game *Game) error {
 	if !g.keyboard.TryToRegisterKeyPress() {
 		return nil
 	}
+	bLargeMap := g.gameState.Location == references.Britannia_Underworld
 
 	if ebiten.IsKeyPressed(ebiten.KeyEnter) {
 		g.debugMessage = "enter"
@@ -93,21 +94,30 @@ func (g *GameScene) Update(game *Game) error {
 		g.debugMessage = "up"
 		g.output.AddToContinuousOutput("> North")
 		//g.gameState.Position.Y = helpers.Max(g.gameState.Position.Y-1, 0)
-		g.gameState.Position.GoUp(true)
+		g.gameState.Position.GoUp(bLargeMap)
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
 		g.debugMessage = "down"
 		g.output.AddToContinuousOutput("> South")
 		//g.gameState.Position.Y = (g.gameState.Position.Y + 1) % references.YLargeMapTiles
-		g.gameState.Position.GoDown(true)
+		g.gameState.Position.GoDown(bLargeMap)
 	} else if ebiten.IsKeyPressed(ebiten.KeyLeft) {
 		g.debugMessage = "left"
 		g.output.AddToContinuousOutput("> West")
-		g.gameState.Position.GoLeft(true)
+		g.gameState.Position.GoLeft(bLargeMap)
 	} else if ebiten.IsKeyPressed(ebiten.KeyRight) {
 		g.debugMessage = "right"
 		g.output.AddToContinuousOutput("> East")
 		//g.gameState.Position.X = (g.gameState.Position.X + 1) % references.XLargeMapTiles
-		g.gameState.Position.GoRight(true)
+		g.gameState.Position.GoRight(bLargeMap)
+	} else if ebiten.IsKeyPressed(ebiten.KeyE) {
+		g.debugMessage = "Enter a place"
+		// hard code Britain for now
+		g.gameState.Position = references.Position{
+			X: 15,
+			Y: 15,
+		}
+		g.gameState.Location = references.Britain
+		g.gameState.Floor = 0
 	}
 	return nil
 }

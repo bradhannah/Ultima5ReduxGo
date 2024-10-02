@@ -29,7 +29,7 @@ type screenDimensions struct {
 
 var ScreenDimension = screenDimensions{x: config.WindowWidth, y: config.WindowHeight}
 
-var boundKeys = []ebiten.Key{ebiten.KeyDown, ebiten.KeyUp, ebiten.KeyEnter, ebiten.KeyLeft, ebiten.KeyRight}
+var boundKeys = []ebiten.Key{ebiten.KeyDown, ebiten.KeyUp, ebiten.KeyEnter, ebiten.KeyLeft, ebiten.KeyRight, ebiten.KeyE}
 
 // Update method for the IntroMenuScene
 func (m *IntroMenuScene) Update(game *Game) error {

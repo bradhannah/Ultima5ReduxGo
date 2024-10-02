@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
@@ -88,7 +89,22 @@ func (g *GameScene) drawMap(screen *ebiten.Image) {
 	for x = 0; x < xTilesInMap; x++ {
 		for y = 0; y < yTilesInMap; y++ {
 			do.GeoM.Translate(float64(x*sprites.TileSize), float64(y*sprites.TileSize))
-			tileNumber := g.gameReferences.OverworldLargeMapReference.GetTileNumber(x+g.gameState.Position.X-xCenter, y+g.gameState.Position.Y-yCenter)
+			var tileNumber int
+			if g.gameState.Location == references.Britannia_Underworld {
+				tileNumber = g.gameReferences.OverworldLargeMapReference.GetTileNumber(x+g.gameState.Position.X-xCenter, y+g.gameState.Position.Y-yCenter)
+			} else {
+				// small map for now
+				pos := references.Position{
+					X: x - xCenter + g.gameState.Position.X,
+					Y: y - yCenter + g.gameState.Position.Y,
+				}
+				if pos.X < 0 || pos.X >= references.XSmallMapTiles || pos.Y < 0 || pos.Y >= references.YSmallMapTiles {
+					tileNumber = 5
+				} else {
+					tileNumber = g.gameReferences.SingleMapReferences.GetSingleMapReference(g.gameState.Location,
+						int(g.gameState.Floor)).GetTileNumber(&pos)
+				}
+			}
 			g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileNumber), &do)
 			do.GeoM.Reset()
 		}

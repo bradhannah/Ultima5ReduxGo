@@ -59,12 +59,20 @@ type SingleSmallMapReference struct {
 }
 
 type SingleMapReferences struct {
-	maps   map[Location]map[int]SingleSmallMapReference
+	maps   map[Location]map[int]*SingleSmallMapReference
 	config *config.UltimaVConfiguration
 }
 
-func (s *SingleMapReferences) AddLocation(location Location, bHasBasement bool, nFloors int, nOffset int) int {
-	maps := make(map[int]SingleSmallMapReference)
+func (s *SingleSmallMapReference) GetTileNumber(position *Position) int {
+	return int(s.rawData[position.X][position.Y])
+}
+
+func (s *SingleMapReferences) GetSingleMapReference(location Location, nFloor int) *SingleSmallMapReference {
+	return s.maps[location][nFloor]
+}
+
+func (s *SingleMapReferences) addLocation(location Location, bHasBasement bool, nFloors int, nOffset int) int {
+	maps := make(map[int]*SingleSmallMapReference)
 	// get the file
 	mapFileAndPath := path.Join(s.config.DataFilePath, getSmallMapFile(getMapMasterFromLocation(location)))
 
@@ -88,7 +96,7 @@ func (s *SingleMapReferences) AddLocation(location Location, bHasBasement bool, 
 				smr.rawData[x][y] = theChunksSerial[byteIndex]
 			}
 		}
-		maps[i+floorModifier] = smr
+		maps[i+floorModifier] = &smr
 	}
 
 	// returns the next offset - a handy way of keeping count

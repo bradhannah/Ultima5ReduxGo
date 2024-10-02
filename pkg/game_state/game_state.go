@@ -1,7 +1,6 @@
 package game_state
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -13,7 +12,7 @@ type GameState struct {
 	MoonstoneStatus MoonstoneStatus
 
 	Location references.Location
-	Position ultimav.Position
+	Position references.Position
 	Floor    int8
 
 	DateTime UltimaDate
