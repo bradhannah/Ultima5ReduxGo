@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
@@ -110,4 +111,6 @@ func (g *GameScene) drawMap(screen *ebiten.Image) {
 		}
 	}
 	screen.DrawImage(g.unscaledMapImage, &do)
+
+	g.debugMessage = fmt.Sprintf("%d, %d", g.gameState.Position.X, g.gameState.Position.Y)
 }

@@ -1,15 +1,9 @@
 package references
 
-import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
-	"log"
-	"os"
-	"path"
-)
-
 type Location byte
 
 const (
+	EmptyLocation         Location = 0xFF
 	Britannia_Underworld  Location = 0x00
 	Moonglow              Location = 1
 	Britain               Location = 2
@@ -58,48 +52,6 @@ type SingleSmallMapReference struct {
 	rawData [XSmallMapTiles][YSmallMapTiles]byte
 }
 
-type SingleMapReferences struct {
-	maps   map[Location]map[int]*SingleSmallMapReference
-	config *config.UltimaVConfiguration
-}
-
 func (s *SingleSmallMapReference) GetTileNumber(position *Position) int {
 	return int(s.rawData[position.X][position.Y])
-}
-
-func (s *SingleMapReferences) GetSingleMapReference(location Location, nFloor int) *SingleSmallMapReference {
-	return s.maps[location][nFloor]
-}
-
-func (s *SingleMapReferences) addLocation(location Location, bHasBasement bool, nFloors int, nOffset int) int {
-	maps := make(map[int]*SingleSmallMapReference)
-	// get the file
-	mapFileAndPath := path.Join(s.config.DataFilePath, getSmallMapFile(getMapMasterFromLocation(location)))
-
-	// a bit wasteful since it's open a few times, but... fast computers...
-	theChunksSerial, err := os.ReadFile(mapFileAndPath)
-	if err != nil {
-		log.Fatal("OOf")
-	}
-
-	floorModifier := 0
-	if bHasBasement {
-		floorModifier = -1
-	}
-
-	for i := 0; i < nFloors; i++ {
-		smr := SingleSmallMapReference{}
-		var x, y int
-		for x = 0; x < int(XSmallMapTiles); x++ {
-			for y = 0; y < int(YSmallMapTiles); y++ {
-				byteIndex := nOffset + (i * smallMapSizeInBytes) + x + (y * int(YSmallMapTiles))
-				smr.rawData[x][y] = theChunksSerial[byteIndex]
-			}
-		}
-		maps[i+floorModifier] = &smr
-	}
-
-	// returns the next offset - a handy way of keeping count
-	s.maps[location] = maps
-	return nFloors*smallMapSizeInBytes + nOffset
 }

@@ -2,6 +2,7 @@ package references
 
 import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/legacy"
 )
 
 const (
@@ -26,15 +27,15 @@ const (
 func getSmallMapFile(smallMap SmallMapMasterTypes) string {
 	switch smallMap {
 	case Castle:
-		return CASTLE_DAT
+		return legacy.CASTLE_DAT
 	case Towne:
-		return TOWNE_DAT
+		return legacy.TOWNE_DAT
 	case Dwelling:
-		return DWELLING_DAT
+		return legacy.DWELLING_DAT
 	case Keep:
-		return KEEP_DAT
+		return legacy.KEEP_DAT
 	case Dungeon:
-		return DUNGEON_DAT
+		return legacy.DUNGEON_DAT
 	default:
 
 		panic("unhandled default case")
@@ -63,9 +64,7 @@ func getMapMasterFromLocation(location Location) SmallMapMasterTypes {
 }
 
 func NewSmallMapReferences(gameConfig *config.UltimaVConfiguration) (*SingleMapReferences, error) {
-	smr := &SingleMapReferences{
-		config: gameConfig,
-	}
+	smr := newSingleMapReferences(gameConfig)
 
 	smr.maps = make(map[Location]map[int]*SingleSmallMapReference)
 

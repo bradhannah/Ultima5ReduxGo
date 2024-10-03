@@ -56,3 +56,6 @@ func (p *Position) GoDown(bLarge bool) {
 	}
 	p.Y = move(p.Y, mapSize, false, bLarge)
 }
+func (p *Position) Equals(position Position) bool {
+	return p.X == position.X && p.Y == position.Y
+}

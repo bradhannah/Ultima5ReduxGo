@@ -1,4 +1,4 @@
-package references
+package legacy
 
 const (
 	BRIT_CBT              = "BRIT.CBT"

@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/legacy"
 	"os"
 	"path"
 )
@@ -30,9 +31,9 @@ const (
 
 func NewLargeMapReference(gameConfig *config.UltimaVConfiguration, world World) (*LargeMapReference, error) {
 	if world == OVERWORLD {
-		return loadLargeMapFromFile(path.Join(gameConfig.DataFilePath, BRIT_DAT), path.Join(gameConfig.DataFilePath, DATA_OVL))
+		return loadLargeMapFromFile(OVERWORLD, gameConfig)
 	} else {
-		return loadLargeMapFromFile(path.Join(gameConfig.DataFilePath, UNDER_DAT), "")
+		return loadLargeMapFromFile(UNDERWORLD, gameConfig)
 	}
 }
 
@@ -50,7 +51,14 @@ func (m *LargeMapReference) GetTileNumber(x int16, y int16) int {
 	return int(m.rawData[x][y])
 }
 
-func loadLargeMapFromFile(mapFileAndPath string, dataOvlFileAndPath string) (*LargeMapReference, error) {
+// func loadLargeMapFromFile(mapFileAndPath string, dataOvlFileAndPath string) (*LargeMapReference, error) {
+func loadLargeMapFromFile(world World, gameConfig *config.UltimaVConfiguration) (*LargeMapReference, error) {
+	mapFileAndPath, dataOvlFileAndPath := path.Join(gameConfig.DataFilePath, legacy.BRIT_DAT), path.Join(gameConfig.DataFilePath, legacy.DATA_OVL)
+	if world == UNDERWORLD {
+		mapFileAndPath = path.Join(gameConfig.DataFilePath, legacy.UNDER_DAT)
+		dataOvlFileAndPath = ""
+	}
+
 	ignoreOverlay := dataOvlFileAndPath == ""
 
 	theChunksSerial, err := os.ReadFile(mapFileAndPath)

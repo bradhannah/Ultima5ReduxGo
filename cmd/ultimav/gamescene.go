@@ -65,8 +65,6 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	gameScene.output = text.NewOutput(gameScene.ultimaFont, 20)
 
 	gameScene.keyboard = &input.Keyboard{MillisecondDelayBetweenKeyPresses: keyPressDelay}
-	//gameScene.avatarX = gameScene.gameState.Position.X
-	//gameScene.avatarY = 75
 
 	ebiten.SetTPS(120)
 
@@ -112,12 +110,16 @@ func (g *GameScene) Update(game *Game) error {
 	} else if ebiten.IsKeyPressed(ebiten.KeyE) {
 		g.debugMessage = "Enter a place"
 		// hard code Britain for now
-		g.gameState.Position = references.Position{
-			X: 15,
-			Y: 15,
+		newLocation := g.gameReferences.SingleMapReferences.WorldLocations.GetLocationByPosition(g.gameState.Position)
+		if newLocation != references.EmptyLocation {
+			g.gameState.Position = references.Position{
+				X: 15,
+				Y: 15,
+			}
+			g.gameState.Location = newLocation
+			g.gameState.Floor = 0
 		}
-		g.gameState.Location = references.Britain
-		g.gameState.Floor = 0
+
 	}
 	return nil
 }

@@ -1,5 +1,12 @@
 package config
 
+import (
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/legacy"
+	"log"
+	"os"
+	"path"
+)
+
 // always use 16x9 resolutions
 
 // 1280 x 720 (HD)
@@ -22,11 +29,19 @@ var WindowHeight = 1080
 
 type UltimaVConfiguration struct {
 	DataFilePath string
+	RawDataOvl   []byte
 }
 
 func NewUltimaVConfiguration(dataFilePath string) *UltimaVConfiguration {
 	uc := UltimaVConfiguration{
 		DataFilePath: dataFilePath,
 	}
+
+	var err error
+	uc.RawDataOvl, err = os.ReadFile(path.Join(dataFilePath, legacy.DATA_OVL))
+	if err != nil {
+		log.Fatal("Ooof, couldn't read DATA.OVL")
+	}
+
 	return &uc
 }
