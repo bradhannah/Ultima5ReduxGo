@@ -29,13 +29,13 @@ type screenDimensions struct {
 
 var ScreenDimension = screenDimensions{x: config.WindowWidth, y: config.WindowHeight}
 
-var boundKeys = []ebiten.Key{ebiten.KeyDown, ebiten.KeyUp, ebiten.KeyEnter, ebiten.KeyLeft, ebiten.KeyRight, ebiten.KeyE}
+var boundKeysIntro = []ebiten.Key{ebiten.KeyDown, ebiten.KeyUp, ebiten.KeyEnter}
 
 // Update method for the IntroMenuScene
 func (m *IntroMenuScene) Update(game *Game) error {
 	// Switch to the gameplay scene on keypress (e.g., pressing "Enter")
 
-	if !m.keyboard.IsBoundKeyPressed(boundKeys) {
+	if !m.keyboard.IsBoundKeyPressed(boundKeysIntro) {
 		return nil
 	}
 	if !m.keyboard.TryToRegisterKeyPress() {

@@ -15,6 +15,8 @@ type GameState struct {
 	Position references.Position
 	Floor    int8
 
+	LastLargeMapPosition references.Position
+
 	DateTime UltimaDate
 
 	Provisions Provisions

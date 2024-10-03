@@ -20,6 +20,8 @@ const (
 	keyPressDelay      = 115
 )
 
+var boundKeysGame = []ebiten.Key{ebiten.KeyDown, ebiten.KeyUp, ebiten.KeyEnter, ebiten.KeyLeft, ebiten.KeyRight, ebiten.KeyE, ebiten.KeyX}
+
 // GameScene is another scene (e.g., the actual game)
 type GameScene struct {
 	gameConfig       *config.UltimaVConfiguration
@@ -77,7 +79,7 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 // Update method for the GameScene
 func (g *GameScene) Update(game *Game) error {
 	// Handle gameplay logic here
-	if !g.keyboard.IsBoundKeyPressed(boundKeys) {
+	if !g.keyboard.IsBoundKeyPressed(boundKeysGame) {
 		return nil
 	}
 	if !g.keyboard.TryToRegisterKeyPress() {
@@ -107,11 +109,15 @@ func (g *GameScene) Update(game *Game) error {
 		g.output.AddToContinuousOutput("> East")
 		//g.gameState.Position.X = (g.gameState.Position.X + 1) % references.XLargeMapTiles
 		g.gameState.Position.GoRight(bLargeMap)
+	} else if ebiten.IsKeyPressed(ebiten.KeyX) {
+		g.gameState.Location = references.Britannia_Underworld
+		g.gameState.Floor = 0
+		g.gameState.Position = g.gameState.LastLargeMapPosition
 	} else if ebiten.IsKeyPressed(ebiten.KeyE) {
 		g.debugMessage = "Enter a place"
-		// hard code Britain for now
 		newLocation := g.gameReferences.SingleMapReferences.WorldLocations.GetLocationByPosition(g.gameState.Position)
 		if newLocation != references.EmptyLocation {
+			g.gameState.LastLargeMapPosition = g.gameState.Position
 			g.gameState.Position = references.Position{
 				X: 15,
 				Y: 15,
