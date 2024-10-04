@@ -100,6 +100,16 @@ func (s *SmallMapReference) getEnteringText() string {
 		return fmt.Sprintf("Enter Lighthouse\n\n%s", util.GetCenteredText(s.FriendlyLocationName))
 	case West_Britanny, East_Britanny, North_Britanny, Paws, Cove:
 		return fmt.Sprintf("Enter Village\n\n%s", util.GetCenteredText(s.FriendlyLocationName))
+	case Moonglow, Britain, Jhelom, Yew, Minoc, Trinsic, Skara_Brae, New_Magincia:
+		return fmt.Sprintf("Enter Towne\n\n%s", util.GetCenteredText(s.FriendlyLocationName))
+	case Iolos_Hut, Grendels_Hut, SinVraals_Hut, Suteks_Hut:
+		return fmt.Sprintf("Enter Hut\n\n%s", util.GetCenteredText(s.FriendlyLocationName))
+	case Ararat:
+		return fmt.Sprintf("Enter Ruins\n\n%s", util.GetCenteredText(s.FriendlyLocationName))
+	case Bordermarch, Farthing, Windemere, Stonegate, Lycaeum, Empath_Abbey, Serpents_Hold, Buccaneers_Den:
+		return fmt.Sprintf("Enter Keep\n\n%s", util.GetCenteredText(s.FriendlyLocationName))
+	case Deceit, Despise, Destard, Wrong, Covetous, Shame, Hythloth, Doom:
+		return fmt.Sprintf("Enter Dungeon\n\n%s", util.GetCenteredText(s.FriendlyLocationName))
 	}
 	return "NOT IMPLEMENTED"
 }
