@@ -8,6 +8,7 @@ type GameReferences struct {
 
 	SingleMapReferences *SingleMapReferences
 	DataOvl             *DataOvl
+	TileReferences      *Tiles
 }
 
 func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences, error) {
@@ -24,6 +25,8 @@ func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences
 	}
 	gameRefs.DataOvl = NewDataOvl(gameConfig)
 	gameRefs.SingleMapReferences, err = NewSmallMapReferences(gameConfig, gameRefs.DataOvl)
+
+	gameRefs.TileReferences = NewTileReferences()
 
 	return gameRefs, nil
 }

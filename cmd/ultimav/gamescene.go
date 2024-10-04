@@ -122,9 +122,8 @@ func (g *GameScene) Update(game *Game) error {
 			}
 			g.gameState.Location = newLocation
 			g.gameState.Floor = 0
-			//g.output.AddToContinuousOutput(fmt.Sprintf("Entering"))
-			//g.output.AddToContinuousOutput(fmt.Sprintf("%s", g.gameReferences.DataOvl.LocationNames[g.gameState.Location]))
-			g.output.AddToContinuousOutput(fmt.Sprintf("%s", g.gameReferences.SingleMapReferences.GetSingleMapReference(newLocation).EnteringText))
+			g.output.AddToContinuousOutput(fmt.Sprintf("%s",
+				g.gameReferences.SingleMapReferences.GetSingleMapReference(newLocation).EnteringText))
 		}
 	}
 	return nil

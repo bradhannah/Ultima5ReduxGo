@@ -91,6 +91,8 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string) error {
 	g.Provisions.QtyKeys = rawSaveGameBytesFromDisk[lbKeys]
 	g.Provisions.QtySkullKeys = rawSaveGameBytesFromDisk[lbSkullKeys]
 
+	g.LayeredMaps = *NewLayeredMaps()
+
 	return nil
 }
 
