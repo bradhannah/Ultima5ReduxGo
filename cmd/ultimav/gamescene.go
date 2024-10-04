@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	mainscreen2 "github.com/bradhannah/Ultima5ReduxGo/internal/ui/mainscreen"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
@@ -93,12 +94,10 @@ func (g *GameScene) Update(game *Game) error {
 	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
 		g.debugMessage = "up"
 		g.output.AddToContinuousOutput("> North")
-		//g.gameState.Position.Y = helpers.Max(g.gameState.Position.Y-1, 0)
 		g.gameState.Position.GoUp(bLargeMap)
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
 		g.debugMessage = "down"
 		g.output.AddToContinuousOutput("> South")
-		//g.gameState.Position.Y = (g.gameState.Position.Y + 1) % references.YLargeMapTiles
 		g.gameState.Position.GoDown(bLargeMap)
 	} else if ebiten.IsKeyPressed(ebiten.KeyLeft) {
 		g.debugMessage = "left"
@@ -107,7 +106,6 @@ func (g *GameScene) Update(game *Game) error {
 	} else if ebiten.IsKeyPressed(ebiten.KeyRight) {
 		g.debugMessage = "right"
 		g.output.AddToContinuousOutput("> East")
-		//g.gameState.Position.X = (g.gameState.Position.X + 1) % references.XLargeMapTiles
 		g.gameState.Position.GoRight(bLargeMap)
 	} else if ebiten.IsKeyPressed(ebiten.KeyX) {
 		g.gameState.Location = references.Britannia_Underworld
@@ -120,12 +118,14 @@ func (g *GameScene) Update(game *Game) error {
 			g.gameState.LastLargeMapPosition = g.gameState.Position
 			g.gameState.Position = references.Position{
 				X: 15,
-				Y: 15,
+				Y: 30,
 			}
 			g.gameState.Location = newLocation
 			g.gameState.Floor = 0
+			//g.output.AddToContinuousOutput(fmt.Sprintf("Entering"))
+			//g.output.AddToContinuousOutput(fmt.Sprintf("%s", g.gameReferences.DataOvl.LocationNames[g.gameState.Location]))
+			g.output.AddToContinuousOutput(fmt.Sprintf("%s", g.gameReferences.SingleMapReferences.GetSingleMapReference(newLocation).EnteringText))
 		}
-
 	}
 	return nil
 }

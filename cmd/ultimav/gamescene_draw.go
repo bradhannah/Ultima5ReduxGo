@@ -102,8 +102,7 @@ func (g *GameScene) drawMap(screen *ebiten.Image) {
 				if pos.X < 0 || pos.X >= references.XSmallMapTiles || pos.Y < 0 || pos.Y >= references.YSmallMapTiles {
 					tileNumber = 5
 				} else {
-					tileNumber = g.gameReferences.SingleMapReferences.GetSingleMapReference(g.gameState.Location,
-						int(g.gameState.Floor)).GetTileNumber(&pos)
+					tileNumber = g.gameReferences.SingleMapReferences.GetSingleMapReference(g.gameState.Location).GetTileNumber(int(g.gameState.Floor), &pos)
 				}
 			}
 			g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileNumber), &do)

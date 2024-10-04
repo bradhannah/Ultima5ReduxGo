@@ -3,6 +3,7 @@ package text
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
+	"strings"
 )
 
 type Output struct {
@@ -61,9 +62,67 @@ func (o *Output) DrawTextRightToLeft(screen *ebiten.Image, textStr string, op *e
 	text.Draw(screen, textStr, o.Font.textFace, &dop)
 }
 
+//func (o *Output) AddToContinuousOutput(outputStr string) {
+//	o.lines[o.nextLineToIndex] = outputStr
+//	o.nextLineToIndex = (o.nextLineToIndex + 1) % maxLines
+//}
+
 func (o *Output) AddToContinuousOutput(outputStr string) {
-	o.lines[o.nextLineToIndex] = outputStr
-	o.nextLineToIndex = (o.nextLineToIndex + 1) % maxLines
+	const maxCharsPerLine = 16
+
+	// Process the string line-by-line, splitting by '\n'
+	lines := splitByNewline(outputStr)
+
+	for _, line := range lines {
+		// Process each line, splitting by 16 characters or nearest space
+		for len(line) > 0 {
+			// Find the position to split the string, favoring a space before 16 characters
+			splitAt := maxCharsPerLine
+			if len(line) < maxCharsPerLine {
+				splitAt = len(line) // If the line is shorter, take the entire line
+			} else {
+				// Try to find the last space before the 16th character
+				spaceIndex := -1
+				for i := 0; i < maxCharsPerLine; i++ {
+					if line[i] == ' ' {
+						spaceIndex = i
+					}
+				}
+
+				// If a space is found, split there
+				if spaceIndex != -1 {
+					splitAt = spaceIndex
+				}
+			}
+
+			// Extract the chunk and remove leading spaces from the remaining line
+			chunk := line[:splitAt]
+			line = line[splitAt:]
+			line = trimLeadingSpaces(line) // Helper function to remove leading spaces
+
+			// Add hyphen if the chunk has the maximum length and there is more to process
+			if splitAt == maxCharsPerLine && len(line) > 0 {
+				chunk += "-"
+			}
+
+			// Add the chunk to the output slice
+			o.lines[o.nextLineToIndex] = chunk
+			o.nextLineToIndex = (o.nextLineToIndex + 1) % maxLines
+		}
+	}
+}
+
+// Helper function to split the input string by '\n' while keeping track of empty lines.
+func splitByNewline(input string) []string {
+	return strings.Split(input, "\n")
+}
+
+// Helper function to trim leading spaces
+func trimLeadingSpaces(s string) string {
+	for len(s) > 0 && s[0] == ' ' {
+		s = s[1:]
+	}
+	return s
 }
 
 func (o *Output) DrawContinuousOutputText(screen *ebiten.Image) {

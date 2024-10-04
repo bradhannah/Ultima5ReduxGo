@@ -1,7 +1,13 @@
 package references
 
+import (
+	"fmt"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/util"
+)
+
 type Location byte
 
+//go:generate stringer -type=Location
 const (
 	EmptyLocation         Location = 0xFF
 	Britannia_Underworld  Location = 0x00
@@ -48,10 +54,52 @@ const (
 	Combat_resting_shrine Location = 41
 )
 
-type SingleSmallMapReference struct {
-	rawData [XSmallMapTiles][YSmallMapTiles]byte
+type SmallMapReference struct {
+	rawData              map[int]*[XSmallMapTiles][YSmallMapTiles]byte
+	Location             Location
+	FriendlyLocationName string
+	EnteringText         string
+	SmallMapType         SmallMapMasterTypes
+	//config   *config.UltimaVConfiguration
 }
 
-func (s *SingleSmallMapReference) GetTileNumber(position *Position) int {
-	return int(s.rawData[position.X][position.Y])
+func NewSingleSmallMapReference(location Location, dataOvl *DataOvl) *SmallMapReference {
+	smr := &SmallMapReference{}
+	smr.Location = location
+	smr.rawData = make(map[int]*[XSmallMapTiles][YSmallMapTiles]byte)
+	// NOTE: this needs to be moved to a higher level
+	smr.FriendlyLocationName = dataOvl.LocationNames[location]
+	smr.SmallMapType = getMapMasterFromLocation(location)
+	smr.EnteringText = smr.getEnteringText()
+	return smr
+}
+
+func (s *SmallMapReference) AddBlankFloor(index int) {
+	// Initialize the array
+	tileData := &[XSmallMapTiles][YSmallMapTiles]byte{}
+
+	// Add the initialized array to the map at the given index
+	s.rawData[index] = tileData
+}
+
+func (s *SmallMapReference) GetTileNumber(nFloor int, position *Position) int {
+	return int(s.rawData[nFloor][position.X][position.Y])
+}
+
+func (s *SmallMapReference) GetEnteringText() string {
+	return s.Location.String()
+}
+
+func (s *SmallMapReference) getEnteringText() string {
+	switch s.Location {
+	case Lord_Britishs_Castle:
+		return "Enter the Castle of Lord British!"
+	case Palace_of_Blackthorn:
+		return "Enter the Palace of Lord Blackthorn"
+	case Fogsbane, Stormcrow, Waveguide, Greyhaven:
+		return fmt.Sprintf("Enter Lighthouse\n\n%s", util.GetCenteredText(s.FriendlyLocationName))
+	case West_Britanny, East_Britanny, North_Britanny, Paws, Cove:
+		return fmt.Sprintf("Enter Village\n\n%s", util.GetCenteredText(s.FriendlyLocationName))
+	}
+	return "NOT IMPLEMENTED"
 }

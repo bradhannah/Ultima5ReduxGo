@@ -20,7 +20,10 @@ test:
 	@echo "Running tests..."
 	@go test ./...
 
-build:
+generate:
+	go generate ./...
+
+build: generate
 	@echo "Building $(PROJECT_NAME)..."
 	cd ${MAIN_PATH}; go build -o ${BIN_PATH}/$(PROJECT_NAME)
 

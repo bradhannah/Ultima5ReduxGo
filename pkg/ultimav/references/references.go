@@ -7,6 +7,7 @@ type GameReferences struct {
 	UnderworldLargeMapReference *LargeMapReference
 
 	SingleMapReferences *SingleMapReferences
+	DataOvl             *DataOvl
 }
 
 func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences, error) {
@@ -21,7 +22,8 @@ func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences
 	if err != nil {
 		return nil, err
 	}
-	gameRefs.SingleMapReferences, err = NewSmallMapReferences(gameConfig)
+	gameRefs.DataOvl = NewDataOvl(gameConfig)
+	gameRefs.SingleMapReferences, err = NewSmallMapReferences(gameConfig, gameRefs.DataOvl)
 
 	return gameRefs, nil
 }

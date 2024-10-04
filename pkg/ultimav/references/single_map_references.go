@@ -10,24 +10,26 @@ import (
 // SingleMapReferences a collection of SingleSmallMapReferences. Provides an easier way to keep
 // the raw map data organized and accessible
 type SingleMapReferences struct {
-	maps           map[Location]map[int]*SingleSmallMapReference
+	maps           map[Location]*SmallMapReference
 	config         *config.UltimaVConfiguration
+	dataOvl        *DataOvl
 	WorldLocations *WorldLocations
 }
 
-func (s *SingleMapReferences) GetSingleMapReference(location Location, nFloor int) *SingleSmallMapReference {
-	return s.maps[location][nFloor]
+func (s *SingleMapReferences) GetSingleMapReference(location Location) *SmallMapReference {
+	return s.maps[location]
 }
 
-func newSingleMapReferences(config *config.UltimaVConfiguration) *SingleMapReferences {
+func newSingleMapReferences(config *config.UltimaVConfiguration, dataOvl *DataOvl) *SingleMapReferences {
 	smr := &SingleMapReferences{}
 	smr.config = config
+	smr.dataOvl = dataOvl
 	smr.WorldLocations = NewWorldLocations(smr.config)
 	return smr
 }
 
 func (s *SingleMapReferences) addLocation(location Location, bHasBasement bool, nFloors int, nOffset int) int {
-	maps := make(map[int]*SingleSmallMapReference)
+	maps := make(map[int]*SmallMapReference)
 	// get the file
 	mapFileAndPath := path.Join(s.config.DataFilePath, getSmallMapFile(getMapMasterFromLocation(location)))
 
@@ -42,19 +44,21 @@ func (s *SingleMapReferences) addLocation(location Location, bHasBasement bool, 
 		floorModifier = -1
 	}
 
+	smr := NewSingleSmallMapReference(location, s.dataOvl) //SmallMapReference{}
 	for i := 0; i < nFloors; i++ {
-		smr := SingleSmallMapReference{}
+		actualFloor := i + floorModifier
+		smr.AddBlankFloor(actualFloor)
 		var x, y int
 		for x = 0; x < int(XSmallMapTiles); x++ {
 			for y = 0; y < int(YSmallMapTiles); y++ {
 				byteIndex := nOffset + (i * smallMapSizeInBytes) + x + (y * int(YSmallMapTiles))
-				smr.rawData[x][y] = theChunksSerial[byteIndex]
+				smr.rawData[i+floorModifier][x][y] = theChunksSerial[byteIndex]
 			}
 		}
-		maps[i+floorModifier] = &smr
+		maps[actualFloor] = smr
 	}
 
 	// returns the next offset - a handy way of keeping count
-	s.maps[location] = maps
+	s.maps[location] = smr
 	return nFloors*smallMapSizeInBytes + nOffset
 }

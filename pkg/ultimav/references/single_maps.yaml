@@ -1,0 +1,8 @@
+0:
+  Name: Overworld_Underworld
+  MapType: Large
+  Floors: 2
+  HasBasement: true
+  DataFile: BRIT.DAT
+
+  EnteringText: Entering the Castle of Lord British
