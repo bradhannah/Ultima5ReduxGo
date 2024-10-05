@@ -15,7 +15,8 @@ type GameState struct {
 	Position references.Position
 	Floor    int8
 
-	LayeredMaps LayeredMaps
+	LayeredMaps  LayeredMaps
+	PartyVehicle references.PartyVehicle
 
 	LastLargeMapPosition references.Position
 
@@ -32,4 +33,11 @@ type Provisions struct {
 	QtyTorches   byte
 	QtyKeys      byte
 	QtySkullKeys byte
+}
+
+func (g *GameState) GetMapType() GeneralMapType {
+	if g.Location == references.Britannia_Underworld {
+		return LargeMap
+	}
+	return SmallMap
 }

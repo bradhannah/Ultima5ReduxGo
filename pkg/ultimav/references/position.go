@@ -25,6 +25,22 @@ func move(val, mapSize int16, decrease bool, bWrap bool) int16 {
 	return val + 1
 }
 
+func (p *Position) GetPositionToLeft() Position {
+	return Position{p.X - 1, p.Y}
+}
+
+func (p *Position) GetPositionToRight() Position {
+	return Position{p.X + 1, p.Y}
+}
+
+func (p *Position) GetPositionUp() Position {
+	return Position{p.X, p.Y - 1}
+}
+
+func (p *Position) GetPositionDown() Position {
+	return Position{p.X, p.Y + 1}
+}
+
 func (p *Position) GoLeft(bLarge bool) {
 	mapSize := XSmallMapTiles
 	if bLarge {

@@ -56,7 +56,7 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 
 	// TODO: add a New function to GameState
 	gameScene.gameState = &game_state.GameState{}
-	err = gameScene.gameState.LoadLegacySaveGame(path.Join(gameScene.gameConfig.DataFilePath, "SAVED.GAM"))
+	err = gameScene.gameState.LoadLegacySaveGame(path.Join(gameScene.gameConfig.DataFilePath, "SAVED.GAM"), gameScene.gameReferences)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -88,25 +88,42 @@ func (g *GameScene) Update(game *Game) error {
 	}
 	bLargeMap := g.gameState.Location == references.Britannia_Underworld
 
+	isPassable := func(pos *references.Position) bool {
+		topTile := g.gameState.LayeredMaps.LayeredMaps[g.gameState.GetMapType()].GetTopTile(pos)
+		return topTile.IsPassable(g.gameState.PartyVehicle)
+	}
+
 	if ebiten.IsKeyPressed(ebiten.KeyEnter) {
 		g.debugMessage = "enter"
 		g.output.AddToContinuousOutput("Enter")
 	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
 		g.debugMessage = "up"
 		g.output.AddToContinuousOutput("> North")
-		g.gameState.Position.GoUp(bLargeMap)
+		tempPos := g.gameState.Position.GetPositionUp()
+		if isPassable(&tempPos) {
+			g.gameState.Position.GoUp(bLargeMap)
+		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
 		g.debugMessage = "down"
 		g.output.AddToContinuousOutput("> South")
-		g.gameState.Position.GoDown(bLargeMap)
+		tempPos := g.gameState.Position.GetPositionDown()
+		if isPassable(&tempPos) {
+			g.gameState.Position.GoDown(bLargeMap)
+		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyLeft) {
 		g.debugMessage = "left"
 		g.output.AddToContinuousOutput("> West")
-		g.gameState.Position.GoLeft(bLargeMap)
+		tempPos := g.gameState.Position.GetPositionToLeft()
+		if isPassable(&tempPos) {
+			g.gameState.Position.GoLeft(bLargeMap)
+		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyRight) {
 		g.debugMessage = "right"
 		g.output.AddToContinuousOutput("> East")
-		g.gameState.Position.GoRight(bLargeMap)
+		tempPos := g.gameState.Position.GetPositionToRight()
+		if isPassable(&tempPos) {
+			g.gameState.Position.GoRight(bLargeMap)
+		}
 	} else if ebiten.IsKeyPressed(ebiten.KeyX) {
 		g.gameState.Location = references.Britannia_Underworld
 		g.gameState.Floor = 0

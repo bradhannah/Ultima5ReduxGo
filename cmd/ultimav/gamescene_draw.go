@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
@@ -21,8 +22,8 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 		g.mapImage = ebiten.NewImage(mapWidth, mapHeight)
 	}
 
-	g.drawMap(g.mapImage)
-	g.drawMapUnits(g.mapImage)
+	g.drawMap(g.mapImage, &g.gameState.LayeredMaps)
+	g.drawMapUnits(g.mapImage) //, &g.gameState.LayeredMaps)
 
 	op := sprites.GetDrawOptionsFromPercentsForWholeScreen(g.mapImage, sprites.PercentBasedPlacement{
 		StartPercentX: .015,
@@ -77,7 +78,7 @@ func (g *GameScene) drawMapUnits(screen *ebiten.Image) {
 }
 
 // drawMap
-func (g *GameScene) drawMap(screen *ebiten.Image) {
+func (g *GameScene) drawMap(screen *ebiten.Image, layeredMaps *game_state.LayeredMaps) {
 	do := ebiten.DrawImageOptions{}
 
 	if g.unscaledMapImage == nil {
@@ -87,23 +88,27 @@ func (g *GameScene) drawMap(screen *ebiten.Image) {
 	xCenter := int16(xTilesInMap / 2)
 	yCenter := int16(yTilesInMap / 2)
 	var x, y int16
+	var worldX, worldY int16
 	for x = 0; x < xTilesInMap; x++ {
 		for y = 0; y < yTilesInMap; y++ {
 			do.GeoM.Translate(float64(x*sprites.TileSize), float64(y*sprites.TileSize))
 			var tileNumber int
-			if g.gameState.Location == references.Britannia_Underworld {
-				tileNumber = g.gameReferences.OverworldLargeMapReference.GetTileNumber(x+g.gameState.Position.X-xCenter, y+g.gameState.Position.Y-yCenter)
-			} else {
+			if g.gameState.Location == references.Britannia_Underworld { // Large Map
+				worldX = x + g.gameState.Position.X - xCenter
+				worldY = y + g.gameState.Position.Y - yCenter
+				tileNumber = g.gameReferences.OverworldLargeMapReference.GetTileNumber(worldX, worldY)
+				layeredMaps.LayeredMaps[game_state.LargeMap].Layers[game_state.MapLayer][int(worldX)][int(worldY)] = tileNumber
+			} else { // Small Map
+				worldX = x - xCenter + g.gameState.Position.X
+				worldY = y - yCenter + g.gameState.Position.Y
 				// small map for now
-				pos := references.Position{
-					X: x - xCenter + g.gameState.Position.X,
-					Y: y - yCenter + g.gameState.Position.Y,
-				}
+				pos := references.Position{X: worldX, Y: worldY}
 				if pos.X < 0 || pos.X >= references.XSmallMapTiles || pos.Y < 0 || pos.Y >= references.YSmallMapTiles {
-					tileNumber = 5
+					tileNumber = indexes.Grass
 				} else {
 					tileNumber = g.gameReferences.SingleMapReferences.GetSingleMapReference(g.gameState.Location).GetTileNumber(int(g.gameState.Floor), &pos)
 				}
+				layeredMaps.LayeredMaps[game_state.SmallMap].Layers[game_state.MapLayer][int(worldX)][int(worldY)] = tileNumber
 			}
 			g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileNumber), &do)
 			do.GeoM.Reset()

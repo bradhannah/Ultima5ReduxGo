@@ -36,7 +36,7 @@ func (g *GameState) getLegacySavedGamRaw(savedGamFilePath string) ([]byte, error
 	return buffer, nil
 }
 
-func (g *GameState) LoadLegacySaveGame(savedGamFilePath string) error {
+func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *references.GameReferences) error {
 	// Open the file in read-only mode and as binary
 	rawSaveGameBytesFromDisk, err := g.getLegacySavedGamRaw(savedGamFilePath)
 	if err != nil {
@@ -91,7 +91,7 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string) error {
 	g.Provisions.QtyKeys = rawSaveGameBytesFromDisk[lbKeys]
 	g.Provisions.QtySkullKeys = rawSaveGameBytesFromDisk[lbSkullKeys]
 
-	g.LayeredMaps = *NewLayeredMaps()
+	g.LayeredMaps = *NewLayeredMaps(gameRefs.TileReferences)
 
 	return nil
 }
