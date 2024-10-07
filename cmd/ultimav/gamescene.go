@@ -18,7 +18,7 @@ const (
 	borderWidthScaling = 601
 	xTilesInMap        = 19
 	yTilesInMap        = 13
-	keyPressDelay      = 115
+	keyPressDelay      = 165
 )
 
 var boundKeysGame = []ebiten.Key{ebiten.KeyDown, ebiten.KeyUp, ebiten.KeyEnter, ebiten.KeyLeft, ebiten.KeyRight, ebiten.KeyE, ebiten.KeyX, ebiten.KeyO}
@@ -88,6 +88,7 @@ func (g *GameScene) Update(game *Game) error {
 	if !g.keyboard.IsBoundKeyPressed(boundKeysGame) {
 		return nil
 	}
+
 	if !g.keyboard.TryToRegisterKeyPress() {
 		return nil
 	}
@@ -96,13 +97,13 @@ func (g *GameScene) Update(game *Game) error {
 		g.debugMessage = "enter"
 		g.output.AddToContinuousOutput("Enter")
 	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
-		g.handleMovement("North", ebiten.KeyUp)
+		g.handleMovement(game_state.Up.GetDirectionCompassName(), ebiten.KeyUp)
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
-		g.handleMovement("South", ebiten.KeyDown)
+		g.handleMovement(game_state.Down.GetDirectionCompassName(), ebiten.KeyDown)
 	} else if ebiten.IsKeyPressed(ebiten.KeyLeft) {
-		g.handleMovement("West", ebiten.KeyLeft)
+		g.handleMovement(game_state.Left.GetDirectionCompassName(), ebiten.KeyLeft)
 	} else if ebiten.IsKeyPressed(ebiten.KeyRight) {
-		g.handleMovement("East", ebiten.KeyRight)
+		g.handleMovement(game_state.Right.GetDirectionCompassName(), ebiten.KeyRight)
 	} else if ebiten.IsKeyPressed(ebiten.KeyX) {
 		g.gameState.Location = references.Britannia_Underworld
 		g.gameState.Floor = 0
@@ -129,6 +130,8 @@ func (g *GameScene) Update(game *Game) error {
 			return nil
 		}
 		g.gameState.SecondaryKeyState = game_state.OpenDirectionInput
+		// we don't want the delay, it feels unnatural
+		g.keyboard.SetAllowKeyPressImmediately()
 	}
 
 	// only process end of turn if the turn is actually done.

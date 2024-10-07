@@ -18,13 +18,6 @@ const (
 
 type Layer int
 
-const (
-	MapLayer Layer = iota
-	MapOverrideLayer
-	MapUnitLayer
-	EffectLayer
-)
-
 type LayeredMap struct {
 	Layers   [totalLayers]map[int]map[int]int
 	tileRefs *references.Tiles
@@ -44,12 +37,4 @@ func GetMapTypeByLocation(location references.Location) GeneralMapType {
 		return LargeMap
 	}
 	return SmallMap
-}
-
-func (l *LayeredMap) SetTile(layer Layer, position *references.Position, nIndex int) {
-	l.Layers[layer][int(position.X)][int(position.Y)] = nIndex
-}
-
-func (l *LayeredMap) UnSetTile(layer Layer, position *references.Position) {
-	l.SetTile(layer, position, -1)
 }

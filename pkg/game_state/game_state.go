@@ -49,6 +49,17 @@ type Provisions struct {
 	QtySkullKeys byte
 }
 
+type DoorOpenState int
+
+const (
+	Locked DoorOpenState = iota
+	Unlocked
+	AlreadyUnlocked
+	LockedMagical
+	NotADoor
+	Opened
+)
+
 func (g *GameState) GetMapType() GeneralMapType {
 	if g.Location == references.Britannia_Underworld {
 		return LargeMap
@@ -67,10 +78,24 @@ func (g *GameState) ProcessEndOfTurn() {
 	}
 }
 
-func (g *GameState) OpenDoor(direction Direction) {
+func (g *GameState) OpenDoor(direction Direction) DoorOpenState {
 	const defaultTurnsForDoorOpen = 2
 	mapType := GetMapTypeByLocation(g.Location)
+
 	newPosition := direction.GetNewPositionInDirection(&g.Position)
+	targetTile := g.LayeredMaps.LayeredMaps[SmallMap].GetTileTopMapOnlyTile(newPosition)
+
+	switch targetTile.Index {
+	case indexes.MagicLockDoor, indexes.MagicLockDoorWithView:
+		return LockedMagical
+	case indexes.LockedDoor, indexes.LockedDoorView:
+		return Locked
+	case indexes.RegularDoor, indexes.RegularDoorView:
+		break
+	default:
+		return NotADoor
+	}
+
 	g.LayeredMaps.LayeredMaps[mapType].SetTile(MapOverrideLayer, newPosition, indexes.BrickFloor)
 
 	if g.openDoorPos != nil {
@@ -78,4 +103,5 @@ func (g *GameState) OpenDoor(direction Direction) {
 	}
 	g.openDoorPos = newPosition
 	g.openDoorTurns = defaultTurnsForDoorOpen
+	return Opened
 }

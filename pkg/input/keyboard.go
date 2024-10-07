@@ -30,3 +30,11 @@ func (k *Keyboard) IsBoundKeyPressed(boundKeys []ebiten.Key) bool {
 	}
 	return false
 }
+
+func (k *Keyboard) SetLastKeyPressedNow() {
+	k.timeOfLastKeyPress = time.Now().UnixMilli()
+}
+
+func (k *Keyboard) SetAllowKeyPressImmediately() {
+	k.timeOfLastKeyPress = 0
+}

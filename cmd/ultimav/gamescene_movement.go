@@ -5,6 +5,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
+	"log"
 )
 
 func isArrowKeyPressed() bool {
@@ -59,21 +60,42 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 }
 
 func (g *GameScene) handleSecondaryInput() {
-	if !g.keyboard.TryToRegisterKeyPress() {
-		return
-	}
+
+	bIsArrowKeyPressed := isArrowKeyPressed()
 
 	switch g.gameState.SecondaryKeyState {
 	case game_state.OpenDirectionInput:
-		if !isArrowKeyPressed() {
+		if !bIsArrowKeyPressed {
 			return
 		}
-		g.output.AddToContinuousOutput("K")
+		// TODO: don't love that this has to be in every single function - but may be required
+		// if it is not in each individually then stray keystrokes (like Action keys like 'O' )
+		// can reset the timer and delay the operation
+		if !g.keyboard.TryToRegisterKeyPress() {
+			return
+		}
 
-		g.gameState.OpenDoor(getCurrentPressedArrowKeyAsDirection())
+		g.output.AppendToOutput(getCurrentPressedArrowKeyAsDirection().GetDirectionCompassName())
+
+		switch g.gameState.OpenDoor(getCurrentPressedArrowKeyAsDirection()) {
+		case game_state.NotADoor:
+			g.output.AddToContinuousOutput("Nothing to open!")
+		case game_state.Locked:
+			g.output.AddToContinuousOutput("Locked!")
+		case game_state.LockedMagical:
+			g.output.AddToContinuousOutput("Magically Locked!")
+		case game_state.Opened:
+			g.output.AddToContinuousOutput("Opened!")
+		default:
+			log.Fatal("Unrecognized door open state")
+		}
 
 		g.gameState.SecondaryKeyState = game_state.PrimaryInput
 	default:
 		panic("unhandled default case")
+	}
+
+	if bIsArrowKeyPressed {
+		g.keyboard.SetLastKeyPressedNow()
 	}
 }

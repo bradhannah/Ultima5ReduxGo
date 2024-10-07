@@ -2,6 +2,13 @@ package game_state
 
 import "github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 
+const (
+	MapLayer Layer = iota
+	MapOverrideLayer
+	MapUnitLayer
+	EffectLayer
+)
+
 func newLayeredMap(xMax int, yMax int, tileRefs *references.Tiles) *LayeredMap {
 	const overflowTiles = 10
 	layeredMap := LayeredMap{}
@@ -15,13 +22,9 @@ func newLayeredMap(xMax int, yMax int, tileRefs *references.Tiles) *LayeredMap {
 	return &layeredMap
 }
 
-//func (l *LayeredMap) ClearTile(position *references.Position) {
-//
-//}
-
 func (l *LayeredMap) GetTopTile(position *references.Position) *references.Tile {
 	var tileValue int
-	for i := totalLayers - 1; i >= 0; i-- {
+	for i := EffectLayer; i >= MapLayer; i-- {
 		tileValue = l.Layers[i][int(position.X)][int(position.Y)]
 		if tileValue <= 0 {
 			continue
@@ -29,4 +32,24 @@ func (l *LayeredMap) GetTopTile(position *references.Position) *references.Tile 
 		return l.tileRefs.GetTile(tileValue)
 	}
 	return nil
+}
+
+func (l *LayeredMap) GetTileTopMapOnlyTile(position *references.Position) *references.Tile {
+	var tileValue int
+	for i := MapOverrideLayer; i >= MapLayer; i-- {
+		tileValue = l.Layers[i][int(position.X)][int(position.Y)]
+		if tileValue <= 0 {
+			continue
+		}
+		return l.tileRefs.GetTile(tileValue)
+	}
+	return nil
+}
+
+func (l *LayeredMap) SetTile(layer Layer, position *references.Position, nIndex int) {
+	l.Layers[layer][int(position.X)][int(position.Y)] = nIndex
+}
+
+func (l *LayeredMap) UnSetTile(layer Layer, position *references.Position) {
+	l.SetTile(layer, position, -1)
 }

@@ -46,3 +46,18 @@ func (d Direction) GetNewPositionInDirection(position *references.Position) *ref
 
 	return &newPosition
 }
+
+func (d Direction) GetDirectionCompassName() string {
+	switch d {
+	case Up:
+		return "North"
+	case Down:
+		return "South"
+	case Left:
+		return "West"
+	case Right:
+		return "East"
+	default:
+		panic("unhandled default case")
+	}
+}

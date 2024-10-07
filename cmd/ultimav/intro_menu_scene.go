@@ -115,7 +115,7 @@ func CreateIntroMenuScene() *IntroMenuScene {
 		introSprites:      sprites.NewIntroSprites(),
 		borderSprites:     sprites.NewBorderSprites(),
 		ultimaFont:        text.NewUltimaFont(24),
-		keyboard:          &input.Keyboard{MillisecondDelayBetweenKeyPresses: 100},
+		keyboard:          &input.Keyboard{MillisecondDelayBetweenKeyPresses: 10000},
 		nCurrentSelection: 0,
 	}
 }
