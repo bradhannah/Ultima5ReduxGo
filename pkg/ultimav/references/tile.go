@@ -9,6 +9,7 @@ const (
 )
 
 type Tile struct {
+	Index                     int
 	Name                      string `json:"Name"`
 	Description               string `json:"Description"`
 	IsWalkingPassable         bool   `json:"IsWalking_Passable"`

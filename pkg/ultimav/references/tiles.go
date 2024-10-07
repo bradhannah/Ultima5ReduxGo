@@ -36,6 +36,7 @@ func (t *Tiles) UnmarshalJSON(data []byte) error {
 		if err != nil {
 			return err
 		}
+		value.Index = intKey
 		tilesMap[intKey] = value
 	}
 

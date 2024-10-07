@@ -109,6 +109,9 @@ func (g *GameScene) drawMap(screen *ebiten.Image, layeredMaps *game_state.Layere
 					tileNumber = g.gameReferences.SingleMapReferences.GetSingleMapReference(g.gameState.Location).GetTileNumber(int(g.gameState.Floor), &pos)
 				}
 				layeredMaps.LayeredMaps[game_state.SmallMap].Layers[game_state.MapLayer][int(worldX)][int(worldY)] = tileNumber
+				// is it overridden? if so - then we favour that one
+				// should the calculating the map be separating from the drawing?
+				tileNumber = layeredMaps.LayeredMaps[game_state.SmallMap].GetTopTile(&pos).Index
 			}
 			g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileNumber), &do)
 			do.GeoM.Reset()

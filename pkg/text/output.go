@@ -152,3 +152,14 @@ func (o *Output) getOutputStr() string {
 	}
 	return outputStr
 }
+
+func (o *Output) AppendToOutput(outputStr string) {
+	lastLineAdded := (o.nextLineToIndex - 1) % maxLines
+	if lastLineAdded < 0 {
+		lastLineAdded = maxLines - 1
+	}
+	currentStr := o.lines[lastLineAdded]
+
+	o.nextLineToIndex = lastLineAdded
+	o.AddToContinuousOutput(currentStr + outputStr)
+}

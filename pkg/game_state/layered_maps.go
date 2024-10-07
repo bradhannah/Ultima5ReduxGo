@@ -39,31 +39,17 @@ func NewLayeredMaps(tileRefs *references.Tiles) *LayeredMaps {
 	return maps
 }
 
-//func (l *LayeredMap) ClearTile(position *references.Position) {
-//
-//}
-
-func (l *LayeredMap) GetTopTile(position *references.Position) *references.Tile {
-	var tileValue int
-	for i := totalLayers - 1; i >= 0; i-- {
-		tileValue = l.Layers[i][int(position.X)][int(position.Y)]
-		if tileValue == 0 {
-			continue
-		}
-		return l.tileRefs.GetTile(tileValue)
+func GetMapTypeByLocation(location references.Location) GeneralMapType {
+	if location == references.Britannia_Underworld {
+		return LargeMap
 	}
-	return nil
+	return SmallMap
 }
 
-func newLayeredMap(xMax int, yMax int, tileRefs *references.Tiles) *LayeredMap {
-	const overflowTiles = 10
-	layeredMap := LayeredMap{}
-	layeredMap.tileRefs = tileRefs
-	for i, _ := range layeredMap.Layers {
-		layeredMap.Layers[i] = make(map[int]map[int]int)
-		for j := -overflowTiles; j < yMax+10; j++ {
-			layeredMap.Layers[i][j] = make(map[int]int)
-		}
-	}
-	return &layeredMap
+func (l *LayeredMap) SetTile(layer Layer, position *references.Position, nIndex int) {
+	l.Layers[layer][int(position.X)][int(position.Y)] = nIndex
+}
+
+func (l *LayeredMap) UnSetTile(layer Layer, position *references.Position) {
+	l.SetTile(layer, position, -1)
 }

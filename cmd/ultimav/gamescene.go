@@ -21,7 +21,7 @@ const (
 	keyPressDelay      = 115
 )
 
-var boundKeysGame = []ebiten.Key{ebiten.KeyDown, ebiten.KeyUp, ebiten.KeyEnter, ebiten.KeyLeft, ebiten.KeyRight, ebiten.KeyE, ebiten.KeyX}
+var boundKeysGame = []ebiten.Key{ebiten.KeyDown, ebiten.KeyUp, ebiten.KeyEnter, ebiten.KeyLeft, ebiten.KeyRight, ebiten.KeyE, ebiten.KeyX, ebiten.KeyO}
 
 // GameScene is another scene (e.g., the actual game)
 type GameScene struct {
@@ -79,6 +79,11 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 
 // Update method for the GameScene
 func (g *GameScene) Update(game *Game) error {
+	if g.gameState.SecondaryKeyState != game_state.PrimaryInput {
+		g.handleSecondaryInput()
+		return nil
+	}
+
 	// Handle gameplay logic here
 	if !g.keyboard.IsBoundKeyPressed(boundKeysGame) {
 		return nil
@@ -86,44 +91,18 @@ func (g *GameScene) Update(game *Game) error {
 	if !g.keyboard.TryToRegisterKeyPress() {
 		return nil
 	}
-	bLargeMap := g.gameState.Location == references.Britannia_Underworld
-
-	isPassable := func(pos *references.Position) bool {
-		topTile := g.gameState.LayeredMaps.LayeredMaps[g.gameState.GetMapType()].GetTopTile(pos)
-		return topTile.IsPassable(g.gameState.PartyVehicle)
-	}
 
 	if ebiten.IsKeyPressed(ebiten.KeyEnter) {
 		g.debugMessage = "enter"
 		g.output.AddToContinuousOutput("Enter")
 	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
-		g.debugMessage = "up"
-		g.output.AddToContinuousOutput("> North")
-		tempPos := g.gameState.Position.GetPositionUp()
-		if isPassable(&tempPos) {
-			g.gameState.Position.GoUp(bLargeMap)
-		}
+		g.handleMovement("North", ebiten.KeyUp)
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
-		g.debugMessage = "down"
-		g.output.AddToContinuousOutput("> South")
-		tempPos := g.gameState.Position.GetPositionDown()
-		if isPassable(&tempPos) {
-			g.gameState.Position.GoDown(bLargeMap)
-		}
+		g.handleMovement("South", ebiten.KeyDown)
 	} else if ebiten.IsKeyPressed(ebiten.KeyLeft) {
-		g.debugMessage = "left"
-		g.output.AddToContinuousOutput("> West")
-		tempPos := g.gameState.Position.GetPositionToLeft()
-		if isPassable(&tempPos) {
-			g.gameState.Position.GoLeft(bLargeMap)
-		}
+		g.handleMovement("West", ebiten.KeyLeft)
 	} else if ebiten.IsKeyPressed(ebiten.KeyRight) {
-		g.debugMessage = "right"
-		g.output.AddToContinuousOutput("> East")
-		tempPos := g.gameState.Position.GetPositionToRight()
-		if isPassable(&tempPos) {
-			g.gameState.Position.GoRight(bLargeMap)
-		}
+		g.handleMovement("East", ebiten.KeyRight)
 	} else if ebiten.IsKeyPressed(ebiten.KeyX) {
 		g.gameState.Location = references.Britannia_Underworld
 		g.gameState.Floor = 0
@@ -142,6 +121,19 @@ func (g *GameScene) Update(game *Game) error {
 			g.output.AddToContinuousOutput(fmt.Sprintf("%s",
 				g.gameReferences.SingleMapReferences.GetSingleMapReference(newLocation).EnteringText))
 		}
+	} else if ebiten.IsKeyPressed(ebiten.KeyO) {
+		g.debugMessage = "Open"
+		g.output.AddToContinuousOutput("Open-")
+		if g.gameState.Location == references.Britannia_Underworld {
+			g.output.AppendToOutput("Cannot")
+			return nil
+		}
+		g.gameState.SecondaryKeyState = game_state.OpenDirectionInput
+	}
+
+	// only process end of turn if the turn is actually done.
+	if g.gameState.SecondaryKeyState == game_state.PrimaryInput {
+		g.gameState.ProcessEndOfTurn()
 	}
 	return nil
 }
