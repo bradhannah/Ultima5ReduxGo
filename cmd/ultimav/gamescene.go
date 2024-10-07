@@ -85,11 +85,12 @@ func (g *GameScene) Update(game *Game) error {
 	}
 
 	// Handle gameplay logic here
-	if !g.keyboard.IsBoundKeyPressed(boundKeysGame) {
+	boundKey := g.keyboard.GetBoundKeyPressed(&boundKeysGame)
+	if boundKey == nil {
 		return nil
 	}
 
-	if !g.keyboard.TryToRegisterKeyPress() {
+	if !g.keyboard.TryToRegisterKeyPress(*boundKey) {
 		return nil
 	}
 

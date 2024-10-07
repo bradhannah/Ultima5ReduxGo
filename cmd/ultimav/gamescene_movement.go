@@ -9,11 +9,33 @@ import (
 )
 
 func isArrowKeyPressed() bool {
-	return ebiten.IsKeyPressed(ebiten.KeyUp) || ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.IsKeyPressed(ebiten.KeyLeft) || ebiten.IsKeyPressed(ebiten.KeyRight)
+	return getArrowKeyPressed() != nil
+	//return ebiten.IsKeyPressed(ebiten.KeyUp) || ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.IsKeyPressed(ebiten.KeyLeft) || ebiten.IsKeyPressed(ebiten.KeyRight)
+}
+
+func getArrowKeyPressed() *ebiten.Key {
+	var keyPressed ebiten.Key = ebiten.KeyF24
+	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
+		keyPressed = ebiten.KeyLeft
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyRight) {
+		keyPressed = ebiten.KeyRight
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyUp) {
+		keyPressed = ebiten.KeyUp
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyDown) {
+		keyPressed = ebiten.KeyDown
+	}
+	if keyPressed == ebiten.KeyF24 {
+		return nil
+	}
+	return &keyPressed
 }
 
 func getCurrentPressedArrowKeyAsDirection() game_state.Direction {
-	if !isArrowKeyPressed() {
+	arrowKey := getArrowKeyPressed()
+	if arrowKey == nil {
 		return game_state.None
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyUp) {
@@ -61,17 +83,19 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 
 func (g *GameScene) handleSecondaryInput() {
 
-	bIsArrowKeyPressed := isArrowKeyPressed()
+	arrowKey := getArrowKeyPressed()
+	bIsArrowKeyPressed := arrowKey != nil
 
 	switch g.gameState.SecondaryKeyState {
 	case game_state.OpenDirectionInput:
+
 		if !bIsArrowKeyPressed {
 			return
 		}
 		// TODO: don't love that this has to be in every single function - but may be required
 		// if it is not in each individually then stray keystrokes (like Action keys like 'O' )
 		// can reset the timer and delay the operation
-		if !g.keyboard.TryToRegisterKeyPress() {
+		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
 			return
 		}
 

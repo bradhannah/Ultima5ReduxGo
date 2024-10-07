@@ -35,10 +35,11 @@ var boundKeysIntro = []ebiten.Key{ebiten.KeyDown, ebiten.KeyUp, ebiten.KeyEnter}
 func (m *IntroMenuScene) Update(game *Game) error {
 	// Switch to the gameplay scene on keypress (e.g., pressing "Enter")
 
-	if !m.keyboard.IsBoundKeyPressed(boundKeysIntro) {
+	pressedKey := m.keyboard.GetBoundKeyPressed(&boundKeysIntro)
+	if pressedKey == nil {
 		return nil
 	}
-	if !m.keyboard.TryToRegisterKeyPress() {
+	if !m.keyboard.TryToRegisterKeyPress(*pressedKey) {
 		return nil
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyEnter) {
