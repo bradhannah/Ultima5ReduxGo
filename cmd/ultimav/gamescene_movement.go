@@ -87,14 +87,44 @@ func (g *GameScene) handleSecondaryInput() {
 	bIsArrowKeyPressed := arrowKey != nil
 
 	switch g.gameState.SecondaryKeyState {
+	case game_state.JimmyDoorDirectionInput:
+		if g.gameState.Provisions.QtyKeys <= 0 {
+			g.output.AddToContinuousOutput("No Keys!")
+			g.gameState.SecondaryKeyState = game_state.PrimaryInput
+			g.keyboard.SetLastKeyPressedNow()
+			return
+		}
+
+		if !bIsArrowKeyPressed {
+			return
+		}
+		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
+			return
+		}
+
+		g.output.AppendToOutput(getCurrentPressedArrowKeyAsDirection().GetDirectionCompassName())
+
+		jimmyResult := g.gameState.JimmyDoor(getCurrentPressedArrowKeyAsDirection(), &g.gameState.Characters[0])
+
+		switch jimmyResult {
+		case game_state.JimmyUnlocked:
+			g.output.AddToContinuousOutput("Unlocked!")
+		case game_state.JimmyNotADoor:
+			g.output.AddToContinuousOutput("Not lock!")
+		case game_state.JimmyBrokenPick, game_state.JimmyLockedMagical:
+			g.output.AddToContinuousOutput("Key broke!")
+
+		default:
+			panic("unhandled default case")
+		}
+
+		g.gameState.SecondaryKeyState = game_state.PrimaryInput
+
 	case game_state.OpenDirectionInput:
 
 		if !bIsArrowKeyPressed {
 			return
 		}
-		// TODO: don't love that this has to be in every single function - but may be required
-		// if it is not in each individually then stray keystrokes (like Action keys like 'O' )
-		// can reset the timer and delay the operation
 		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
 			return
 		}
@@ -102,14 +132,14 @@ func (g *GameScene) handleSecondaryInput() {
 		g.output.AppendToOutput(getCurrentPressedArrowKeyAsDirection().GetDirectionCompassName())
 
 		switch g.gameState.OpenDoor(getCurrentPressedArrowKeyAsDirection()) {
-		case game_state.NotADoor:
+		case game_state.OpenDoorNotADoor:
 			g.output.AddToContinuousOutput("Nothing to open!")
-		case game_state.Locked:
-			g.output.AddToContinuousOutput("Locked!")
-		case game_state.LockedMagical:
-			g.output.AddToContinuousOutput("Magically Locked!")
-		case game_state.Opened:
-			g.output.AddToContinuousOutput("Opened!")
+		case game_state.OpenDoorLocked:
+			g.output.AddToContinuousOutput("OpenDoorLocked!")
+		case game_state.OpenDoorLockedMagical:
+			g.output.AddToContinuousOutput("Magically OpenDoorLocked!")
+		case game_state.OpenDoorOpened:
+			g.output.AddToContinuousOutput("OpenDoorOpened!")
 		default:
 			log.Fatal("Unrecognized door open state")
 		}

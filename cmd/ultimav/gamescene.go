@@ -21,7 +21,16 @@ const (
 	keyPressDelay      = 165
 )
 
-var boundKeysGame = []ebiten.Key{ebiten.KeyDown, ebiten.KeyUp, ebiten.KeyEnter, ebiten.KeyLeft, ebiten.KeyRight, ebiten.KeyE, ebiten.KeyX, ebiten.KeyO}
+var boundKeysGame = []ebiten.Key{ebiten.KeyDown,
+	ebiten.KeyUp,
+	ebiten.KeyEnter,
+	ebiten.KeyLeft,
+	ebiten.KeyRight,
+	ebiten.KeyE,
+	ebiten.KeyX,
+	ebiten.KeyO,
+	ebiten.KeyJ,
+}
 
 // GameScene is another scene (e.g., the actual game)
 type GameScene struct {
@@ -132,6 +141,16 @@ func (g *GameScene) Update(game *Game) error {
 		}
 		g.gameState.SecondaryKeyState = game_state.OpenDirectionInput
 		// we don't want the delay, it feels unnatural
+		g.keyboard.SetAllowKeyPressImmediately()
+	} else if ebiten.IsKeyPressed(ebiten.KeyJ) {
+		g.debugMessage = "Jimmy"
+		g.output.AddToContinuousOutput("Jimmy-")
+		if g.gameState.Location == references.Britannia_Underworld {
+			g.output.AppendToOutput("Cannot")
+			return nil
+		}
+
+		g.gameState.SecondaryKeyState = game_state.JimmyDoorDirectionInput
 		g.keyboard.SetAllowKeyPressImmediately()
 	}
 
