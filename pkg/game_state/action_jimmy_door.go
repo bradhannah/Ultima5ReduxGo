@@ -34,7 +34,7 @@ func (g *GameState) JimmyDoor(direction Direction, player *PlayerCharacter) Jimm
 			g.LayeredMaps.LayeredMaps[mapType].SetTile(MapOverrideLayer, newPosition, unlockedDoor)
 			return JimmyUnlocked
 		} else {
-			g.Provisions.QtyKeys = helpers.Max(g.Provisions.QtyKeys-1, 0)
+			//g.Provisions.QtyKeys = helpers.Max(g.Provisions.QtyKeys-1, 0)
 			return JimmyBrokenPick
 		}
 	case indexes.MagicLockDoor, indexes.MagicLockDoorWithView:
@@ -48,5 +48,6 @@ func (g *GameState) JimmyDoor(direction Direction, player *PlayerCharacter) Jimm
 
 func (g *GameState) isJimmySuccessful(player *PlayerCharacter) bool {
 	// TODO: actual jimmy logic required, currently forced to 50%
-	return rand.Int()%2 == 0
+	n := rand.Int()
+	return n%2 == 0
 }

@@ -30,6 +30,7 @@ var boundKeysGame = []ebiten.Key{ebiten.KeyDown,
 	ebiten.KeyX,
 	ebiten.KeyO,
 	ebiten.KeyJ,
+	ebiten.KeySlash,
 }
 
 // GameScene is another scene (e.g., the actual game)
@@ -103,22 +104,23 @@ func (g *GameScene) Update(game *Game) error {
 		return nil
 	}
 
-	if ebiten.IsKeyPressed(ebiten.KeyEnter) {
+	switch *boundKey {
+	case ebiten.KeyEnter:
 		g.debugMessage = "enter"
 		g.output.AddToContinuousOutput("Enter")
-	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
+	case ebiten.KeyUp:
 		g.handleMovement(game_state.Up.GetDirectionCompassName(), ebiten.KeyUp)
-	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
+	case ebiten.KeyDown:
 		g.handleMovement(game_state.Down.GetDirectionCompassName(), ebiten.KeyDown)
-	} else if ebiten.IsKeyPressed(ebiten.KeyLeft) {
+	case ebiten.KeyLeft:
 		g.handleMovement(game_state.Left.GetDirectionCompassName(), ebiten.KeyLeft)
-	} else if ebiten.IsKeyPressed(ebiten.KeyRight) {
+	case ebiten.KeyRight:
 		g.handleMovement(game_state.Right.GetDirectionCompassName(), ebiten.KeyRight)
-	} else if ebiten.IsKeyPressed(ebiten.KeyX) {
+	case ebiten.KeyX:
 		g.gameState.Location = references.Britannia_Underworld
 		g.gameState.Floor = 0
 		g.gameState.Position = g.gameState.LastLargeMapPosition
-	} else if ebiten.IsKeyPressed(ebiten.KeyE) {
+	case ebiten.KeyE:
 		g.debugMessage = "Enter a place"
 		newLocation := g.gameReferences.SingleMapReferences.WorldLocations.GetLocationByPosition(g.gameState.Position)
 		if newLocation != references.EmptyLocation {
@@ -132,7 +134,7 @@ func (g *GameScene) Update(game *Game) error {
 			g.output.AddToContinuousOutput(fmt.Sprintf("%s",
 				g.gameReferences.SingleMapReferences.GetSingleMapReference(newLocation).EnteringText))
 		}
-	} else if ebiten.IsKeyPressed(ebiten.KeyO) {
+	case ebiten.KeyO:
 		g.debugMessage = "Open"
 		g.output.AddToContinuousOutput("Open-")
 		if g.gameState.Location == references.Britannia_Underworld {
@@ -142,7 +144,7 @@ func (g *GameScene) Update(game *Game) error {
 		g.gameState.SecondaryKeyState = game_state.OpenDirectionInput
 		// we don't want the delay, it feels unnatural
 		g.keyboard.SetAllowKeyPressImmediately()
-	} else if ebiten.IsKeyPressed(ebiten.KeyJ) {
+	case ebiten.KeyJ:
 		g.debugMessage = "Jimmy"
 		g.output.AddToContinuousOutput("Jimmy-")
 		if g.gameState.Location == references.Britannia_Underworld {
