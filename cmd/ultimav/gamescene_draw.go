@@ -55,6 +55,10 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 	g.characterSummary.Draw(g.gameState, screen)
 	g.provisionSummary.Draw(g.gameState, screen)
 
+	if g.bShowDebugConsole {
+		g.debugConsole.drawDebugConsole(screen)
+	}
+
 	// Render the game scene
 	ebitenutil.DebugPrint(screen, g.debugMessage)
 }

@@ -31,6 +31,7 @@ var boundKeysGame = []ebiten.Key{ebiten.KeyDown,
 	ebiten.KeyO,
 	ebiten.KeyJ,
 	ebiten.KeySlash,
+	ebiten.KeyBackquote,
 }
 
 // GameScene is another scene (e.g., the actual game)
@@ -46,6 +47,9 @@ type GameScene struct {
 	rightSideImage   *ebiten.Image
 	characterSummary *mainscreen2.CharacterSummary
 	provisionSummary *mainscreen2.ProvisionSummary
+
+	debugConsole      *DebugConsole
+	bShowDebugConsole bool
 
 	debugMessage string
 
@@ -79,10 +83,13 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 
 	gameScene.keyboard = &input.Keyboard{MillisecondDelayBetweenKeyPresses: keyPressDelay}
 
-	ebiten.SetTPS(120)
+	//ebiten.SetTPS(120)
+	ebiten.SetTPS(60)
 
 	gameScene.characterSummary = mainscreen2.NewCharacterSummary(gameScene.spriteSheet)
 	gameScene.provisionSummary = mainscreen2.NewProvisionSummary(gameScene.spriteSheet)
+
+	gameScene.debugConsole = NewDebugConsole(gameScene.gameState)
 
 	return &gameScene
 }
@@ -105,6 +112,8 @@ func (g *GameScene) Update(game *Game) error {
 	}
 
 	switch *boundKey {
+	case ebiten.KeyBackquote:
+		g.bShowDebugConsole = !g.bShowDebugConsole
 	case ebiten.KeyEnter:
 		g.debugMessage = "enter"
 		g.output.AddToContinuousOutput("Enter")

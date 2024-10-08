@@ -29,6 +29,13 @@ type PercentBasedPlacement struct {
 	EndPercentY   float64
 }
 
+func (p *PercentBasedPlacement) ShrinkByPercent(percent float64) {
+	p.StartPercentX *= percent
+	p.EndPercentX *= percent
+	p.StartPercentY *= percent
+	p.EndPercentY *= percent
+}
+
 func GetRectangleFromPercents(placement PercentBasedPlacement) *image.Rectangle {
 	screenWidth, screenHeight := ebiten.WindowSize()
 
