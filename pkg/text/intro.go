@@ -19,7 +19,7 @@ func (f *UltimaFont) DrawIntroChoices(screen *ebiten.Image, nSelection int) {
 	const endPercentYDiff = 0.035
 
 	for i, choice := range IntroChoices {
-		w, h := text.Measure(choice, f.textFace, lineSpacing)
+		w, h := text.Measure(choice, f.TextFace, lineSpacing)
 		startYPercent := startXFontPercent + (percentBetweenLines * float64(i))
 		op, _ := sprites.GetYSpriteWithPercents(image.Rectangle{
 			Min: image.Point{X: 0, Y: 0},
@@ -46,7 +46,7 @@ func (f *UltimaFont) DrawIntroChoices(screen *ebiten.Image, nSelection int) {
 		}
 
 		if bIsSelected {
-			text.Measure(choice, f.textFace, lineSpacing)
+			text.Measure(choice, f.TextFace, lineSpacing)
 			const startXHighlightPercent = 0.2
 			const endXHighlightPercent = 1 - startXHighlightPercent
 			const extraYHeightPercent = 0.003
@@ -59,7 +59,7 @@ func (f *UltimaFont) DrawIntroChoices(screen *ebiten.Image, nSelection int) {
 			vector.DrawFilledRect(screen, float32(rect.Min.X), float32(rect.Min.Y), float32(rect.Dx()), float32(rect.Dy()), color.White, false)
 		}
 
-		text.Draw(screen, choice, f.textFace, &dop)
+		text.Draw(screen, choice, f.TextFace, &dop)
 		op.GeoM.Reset()
 	}
 }

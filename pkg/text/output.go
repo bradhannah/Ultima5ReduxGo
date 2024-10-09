@@ -35,7 +35,7 @@ func (o *Output) DrawText(screen *ebiten.Image, textStr string, op *ebiten.DrawI
 		},
 	}
 
-	text.Draw(screen, textStr, o.Font.textFace, &dop)
+	text.Draw(screen, textStr, o.Font.TextFace, &dop)
 }
 
 func (o *Output) DrawTextCenter(screen *ebiten.Image, textStr string, op *ebiten.DrawImageOptions) {
@@ -47,7 +47,7 @@ func (o *Output) DrawTextCenter(screen *ebiten.Image, textStr string, op *ebiten
 		},
 	}
 
-	text.Draw(screen, textStr, o.Font.textFace, &dop)
+	text.Draw(screen, textStr, o.Font.TextFace, &dop)
 }
 
 func (o *Output) DrawTextRightToLeft(screen *ebiten.Image, textStr string, op *ebiten.DrawImageOptions) {
@@ -59,7 +59,7 @@ func (o *Output) DrawTextRightToLeft(screen *ebiten.Image, textStr string, op *e
 		},
 	}
 
-	text.Draw(screen, textStr, o.Font.textFace, &dop)
+	text.Draw(screen, textStr, o.Font.TextFace, &dop)
 }
 
 //func (o *Output) AddToContinuousOutput(outputStr string) {
@@ -138,7 +138,7 @@ func (o *Output) DrawContinuousOutputText(screen *ebiten.Image) {
 		},
 	}
 
-	text.Draw(screen, o.getOutputStr(), o.Font.textFace, &dop)
+	text.Draw(screen, o.getOutputStr(), o.Font.TextFace, &dop)
 }
 
 func (o *Output) getOutputStr() string {

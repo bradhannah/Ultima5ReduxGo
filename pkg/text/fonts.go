@@ -16,7 +16,7 @@ var (
 type UltimaFont struct {
 	rawUltimaTTF     *[]byte
 	ultimaFaceSource *text.GoTextFaceSource
-	textFace         *text.GoTextFace
+	TextFace         *text.GoTextFace
 }
 
 func NewUltimaFont(size float64) *UltimaFont {
@@ -29,7 +29,7 @@ func NewUltimaFont(size float64) *UltimaFont {
 		log.Fatal(err)
 	}
 
-	ultimaFont.textFace = &text.GoTextFace{
+	ultimaFont.TextFace = &text.GoTextFace{
 		Source:    ultimaFont.ultimaFaceSource,
 		Direction: text.DirectionLeftToRight,
 		Size:      size,

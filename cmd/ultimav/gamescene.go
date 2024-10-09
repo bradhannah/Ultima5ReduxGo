@@ -89,13 +89,19 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	gameScene.characterSummary = mainscreen2.NewCharacterSummary(gameScene.spriteSheet)
 	gameScene.provisionSummary = mainscreen2.NewProvisionSummary(gameScene.spriteSheet)
 
-	gameScene.debugConsole = NewDebugConsole(gameScene.gameState)
+	gameScene.debugConsole = NewDebugConsole(&gameScene)
 
 	return &gameScene
 }
 
 // Update method for the GameScene
-func (g *GameScene) Update(game *Game) error {
+func (g *GameScene) Update(_ *Game) error {
+	if g.bShowDebugConsole {
+		// if debug console is showing, then we eat all the input
+		g.debugConsole.update()
+		return nil
+	}
+
 	if g.gameState.SecondaryKeyState != game_state.PrimaryInput {
 		g.handleSecondaryInput()
 		return nil
