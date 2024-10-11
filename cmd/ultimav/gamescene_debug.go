@@ -31,42 +31,39 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 
 	font := text.NewUltimaFont(14)
 
-	//rootContainer := widget.NewContainer(
-	//	// the container will use a plain color as its background
-	//
-	//	// the container will use an anchor layout to layout its single child widget
-	//	widget.ContainerOpts.Layout(widget.NewRowLayout(
-	//		widget.RowLayoutOpts.Padding(widget.NewInsetsSimple(30)),
-	//		widget.RowLayoutOpts.Direction(widget.DirectionVertical),
-	//	)),
-	//)
-
 	rootContainer := widget.NewContainer(
-		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(c_color.NRGBA{R: 0x13, G: 0x1a, B: 0x22, A: 0xff})),
+		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(c_color.NRGBA{R: 0x00, G: 0x00, B: 0x00, A: 0x77})),
 
-		widget.ContainerOpts.Layout(
-			widget.NewAnchorLayout(
-				widget.AnchorLayoutOpts.Padding(widget.NewInsetsSimple(0)),
-			),
-		))
+		//widget.ContainerOpts.Layout(widget.NewAnchorLayout()
+		widget.ContainerOpts.Layout(widget.NewRowLayout(
+			widget.RowLayoutOpts.Padding(widget.NewInsetsSimple(30)),
+			widget.RowLayoutOpts.Direction(widget.DirectionHorizontal),
+		)),
+	)
+
+	rect := sprites.GetRectangleFromPercents(sprites.PercentBasedPlacement{
+		StartPercentX: .015,
+		EndPercentX:   .745,
+		StartPercentY: .73,
+		EndPercentY:   0.98})
 
 	textarea := widget.NewTextArea(
-
 		widget.TextAreaOpts.ContainerOpts(
 			widget.ContainerOpts.WidgetOpts(
+				widget.WidgetOpts.LayoutData(widget.RowLayoutData{
+					Position:  widget.RowLayoutPositionEnd,
+					MaxWidth:  rect.Dx(),
+					MaxHeight: rect.Dy(),
+				}),
+				widget.WidgetOpts.MinSize(rect.Dx(), rect.Dy()),
 
-				//widget.WidgetOpts.MinSize(300, 50),
-
-				//	//Set the layout data for the textarea
-				//	//including a max height to ensure the scroll bar is visible
-				widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
-					HorizontalPosition: 0,
-					VerticalPosition:   0,
-					StretchHorizontal:  false,
-					StretchVertical:    false,
-					Padding:            widget.Insets{},
-				},
-				),
+				//widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+				//	HorizontalPosition: 0,
+				//	VerticalPosition:   500,
+				//	StretchHorizontal:  true,
+				//	StretchVertical:    false,
+				//	Padding:            widget.Insets{},
+				//}),
 			),
 		),
 		//Set gap between scrollbar and text
@@ -80,7 +77,7 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 		//Set the initial text for the textarea
 		//It will automatically line wrap and process newlines characters
 		//If ProcessBBCode is true it will parse out bbcode
-		widget.TextAreaOpts.Text("Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4"),
+		widget.TextAreaOpts.Text("Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4Hello World\nTest1\nTest2\n[color=ff0000]Red[/color]\n[color=00ff00]Green[/color]\n[color=0000ff]Blue[/color]\nTest3\nTest4"),
 		//Tell the TextArea to show the vertical scrollbar
 		widget.TextAreaOpts.ShowVerticalScrollbar(),
 		//Set padding between edge of the widget and where the text is drawn
@@ -88,8 +85,10 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 		//This sets the background images for the scroll container
 		widget.TextAreaOpts.ScrollContainerOpts(
 			widget.ScrollContainerOpts.Image(&widget.ScrollContainerImage{
-				Idle: image.NewNineSliceColor(c_color.NRGBA{R: 100, G: 100, B: 100, A: 255}),
+				Idle: image.NewNineSliceColor(color.BlackSemi),
 				Mask: image.NewNineSliceColor(c_color.NRGBA{R: 100, G: 100, B: 100, A: 255}),
+				//Idle: image.NewNineSliceColor(c_color.NRGBA{R: 100, G: 100, B: 100, A: 255}),
+				//Mask: image.NewNineSliceColor(c_color.NRGBA{R: 100, G: 100, B: 100, A: 255}),
 			}),
 		),
 		//This sets the images to use for the sliders
@@ -97,12 +96,16 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 			widget.SliderOpts.Images(
 				// Set the track images
 				&widget.SliderTrackImage{
-					Idle:  image.NewNineSliceColor(c_color.NRGBA{R: 200, G: 200, B: 200, A: 255}),
+
+					Idle:  image.NewNineSliceColor(color.Black),
 					Hover: image.NewNineSliceColor(c_color.NRGBA{R: 200, G: 200, B: 200, A: 255}),
+					//Idle:  image.NewNineSliceColor(c_color.NRGBA{R: 200, G: 200, B: 200, A: 255}),
+					//Hover: image.NewNineSliceColor(c_color.NRGBA{R: 200, G: 200, B: 200, A: 255}),
 				},
 				// Set the handle images
 				&widget.ButtonImage{
-					Idle:    image.NewNineSliceColor(c_color.NRGBA{R: 255, G: 100, B: 100, A: 255}),
+					Idle: image.NewNineSliceColor(color.LighterBlueSemi),
+					//Idle:    image.NewNineSliceColor(c_color.NRGBA{R: 255, G: 100, B: 100, A: 255}),
 					Hover:   image.NewNineSliceColor(c_color.NRGBA{R: 255, G: 100, B: 100, A: 255}),
 					Pressed: image.NewNineSliceColor(c_color.NRGBA{R: 255, G: 100, B: 100, A: 255}),
 				},
@@ -121,6 +124,7 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 }
 
 func (d *DebugConsole) update() {
+	d.ui.Update()
 
 	if ebiten.IsKeyPressed(ebiten.KeyBackquote) {
 		if !d.gameScene.keyboard.TryToRegisterKeyPress(ebiten.KeyBackquote) {
@@ -132,10 +136,10 @@ func (d *DebugConsole) update() {
 	return
 }
 
-func (d *DebugConsole) drawDebugConsole(screen *ebiten.Image, uiBox *ebiten.Image) {
+func (d *DebugConsole) drawDebugConsole(screen *ebiten.Image) {
 	screen.DrawImage(d.background, d.backgroundDrawOptions)
+	d.ui.Draw(screen)
 	screen.DrawImage(d.border, d.borderDrawOptions)
-	d.ui.Draw(uiBox)
 }
 
 func (d *DebugConsole) initializeDebugBorders() {
