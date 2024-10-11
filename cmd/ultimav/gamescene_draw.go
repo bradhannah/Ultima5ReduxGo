@@ -56,7 +56,25 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 	g.provisionSummary.Draw(g.gameState, screen)
 
 	if g.bShowDebugConsole {
-		g.debugConsole.drawDebugConsole(screen)
+		if g.debugWindowImage == nil {
+			g.debugWindowSizeRect = sprites.GetRectangleFromPercents(sprites.PercentBasedPlacement{
+				StartPercentX: .0,
+				EndPercentX:   .73,
+				StartPercentY: .0,
+				EndPercentY:   0.25})
+			newImageOptions := ebiten.NewImageOptions{}
+			g.debugWindowImage = ebiten.NewImageWithOptions(*g.debugWindowSizeRect, &newImageOptions)
+			g.debugWindowPosRect = sprites.GetRectangleFromPercents(sprites.PercentBasedPlacement{
+				StartPercentX: .015,
+				EndPercentX:   .50,
+				StartPercentY: .73,
+				EndPercentY:   0.98})
+		}
+		g.debugConsole.drawDebugConsole(screen, g.debugWindowImage)
+		dop := &ebiten.DrawImageOptions{}
+		x, y := g.debugWindowPosRect.Min.X, g.debugWindowPosRect.Min.Y
+		dop.GeoM.Translate(float64(x), float64(y))
+		screen.DrawImage(g.debugWindowImage, dop)
 	}
 
 	// Render the game scene

@@ -10,6 +10,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
+	"image"
 	"log"
 	"path"
 )
@@ -36,17 +37,20 @@ var boundKeysGame = []ebiten.Key{ebiten.KeyDown,
 
 // GameScene is another scene (e.g., the actual game)
 type GameScene struct {
-	gameConfig       *config.UltimaVConfiguration
-	gameReferences   *references.GameReferences
-	spriteSheet      *sprites.SpriteSheet
-	keyboard         *input.Keyboard
-	output           *text.Output
-	ultimaFont       *text.UltimaFont
-	mapImage         *ebiten.Image
-	unscaledMapImage *ebiten.Image
-	rightSideImage   *ebiten.Image
-	characterSummary *mainscreen2.CharacterSummary
-	provisionSummary *mainscreen2.ProvisionSummary
+	gameConfig          *config.UltimaVConfiguration
+	gameReferences      *references.GameReferences
+	spriteSheet         *sprites.SpriteSheet
+	keyboard            *input.Keyboard
+	output              *text.Output
+	ultimaFont          *text.UltimaFont
+	mapImage            *ebiten.Image
+	unscaledMapImage    *ebiten.Image
+	rightSideImage      *ebiten.Image
+	debugWindowImage    *ebiten.Image
+	debugWindowSizeRect *image.Rectangle
+	debugWindowPosRect  *image.Rectangle
+	characterSummary    *mainscreen2.CharacterSummary
+	provisionSummary    *mainscreen2.ProvisionSummary
 
 	debugConsole      *DebugConsole
 	bShowDebugConsole bool

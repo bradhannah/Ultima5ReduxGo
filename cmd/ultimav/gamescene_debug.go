@@ -33,7 +33,6 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 
 	//rootContainer := widget.NewContainer(
 	//	// the container will use a plain color as its background
-	//	//widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(c_color.NRGBA{R: 0x13, G: 0x1a, B: 0x22, A: 0xff})),
 	//
 	//	// the container will use an anchor layout to layout its single child widget
 	//	widget.ContainerOpts.Layout(widget.NewRowLayout(
@@ -43,60 +42,31 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 	//)
 
 	rootContainer := widget.NewContainer(
-		widget.ContainerOpts.Layout(widget.NewAnchorLayout(
-			widget.AnchorLayoutOpts.Padding(widget.NewInsetsSimple(30)),
-		)), // Use anchor layout to control positioning
-	)
+		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(c_color.NRGBA{R: 0x13, G: 0x1a, B: 0x22, A: 0xff})),
 
-	innerContainer := widget.NewContainer(
-		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(c_color.NRGBA{R: 255, A: 127})),
-		widget.ContainerOpts.WidgetOpts(
-			widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
-				HorizontalPosition: widget.AnchorLayoutPositionCenter,
-				VerticalPosition:   widget.AnchorLayoutPositionEnd,
-				StretchHorizontal:  true,
-				StretchVertical:    false,
-			}),
-			widget.WidgetOpts.MinSize(100, 100),
-		),
-	)
-	rootContainer.AddChild(innerContainer)
-
-	//bottomRow := widget.NewContainer(
-	//	//widget.ContainerOpts.BackgroundImage(widget.NewNineSliceColorImage(colornames.Red)), // Background color for visibility
-	//	widget.ContainerOpts.Layout(widget.NewAnchorLayout(
-	//	)),
-	//)
-
-	//rootContainer.AddChild(bottomRow,
-	//	widget.AnchorLayoutData{
-	//		StretchHorizontal:  true,  // Stretch across the full width
-	//		StretchVertical:    false, // Don't stretch vertically
-	//		HorizontalPosition: 100,
-	//		VerticalPosition:   100,
-	//		Padding: widget.Insets{
-	//			Top:    5,
-	//			Left:   5,
-	//			Right:  5,
-	//			Bottom: 5,
-	//		},
-	//		//Bottom: 0,                                       // Anchor to bottom
-	//		//Top:    -int(ebiten.WindowHeight() * rowHeight), // Position it to take up 25% of the screen
-	//	})
-	////widget.ContainerOpts.Layout()
+		widget.ContainerOpts.Layout(
+			widget.NewAnchorLayout(
+				widget.AnchorLayoutOpts.Padding(widget.NewInsetsSimple(0)),
+			),
+		))
 
 	textarea := widget.NewTextArea(
+
 		widget.TextAreaOpts.ContainerOpts(
 			widget.ContainerOpts.WidgetOpts(
-				//Set the layout data for the textarea
-				//including a max height to ensure the scroll bar is visible
-				widget.WidgetOpts.LayoutData(widget.RowLayoutData{
-					Position:  widget.RowLayoutPositionCenter,
-					MaxWidth:  300,
-					MaxHeight: 100,
-				}),
-				//Set the minimum size for the widget
-				widget.WidgetOpts.MinSize(300, 100),
+
+				//widget.WidgetOpts.MinSize(300, 50),
+
+				//	//Set the layout data for the textarea
+				//	//including a max height to ensure the scroll bar is visible
+				widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+					HorizontalPosition: 0,
+					VerticalPosition:   0,
+					StretchHorizontal:  false,
+					StretchVertical:    false,
+					Padding:            widget.Insets{},
+				},
+				),
 			),
 		),
 		//Set gap between scrollbar and text
@@ -140,7 +110,8 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 		),
 	)
 
-	innerContainer.AddChild(textarea)
+	//rootContainer.AddChild(innerContainer)
+	rootContainer.AddChild(textarea)
 
 	debugConsole.ui = ebitenui.UI{
 		Container: rootContainer,
@@ -161,10 +132,10 @@ func (d *DebugConsole) update() {
 	return
 }
 
-func (d *DebugConsole) drawDebugConsole(screen *ebiten.Image) {
+func (d *DebugConsole) drawDebugConsole(screen *ebiten.Image, uiBox *ebiten.Image) {
 	screen.DrawImage(d.background, d.backgroundDrawOptions)
 	screen.DrawImage(d.border, d.borderDrawOptions)
-	//d.ui.Draw(screen)
+	d.ui.Draw(uiBox)
 }
 
 func (d *DebugConsole) initializeDebugBorders() {
