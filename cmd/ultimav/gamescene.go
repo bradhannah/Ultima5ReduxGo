@@ -92,7 +92,7 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	gameScene.ultimaFont = text.NewUltimaFont(defaultOutputFontPoint)
 	gameScene.output = text.NewOutput(gameScene.ultimaFont, defaultLineSpacing, maxLinesForOutput, maxCharsPerLine)
 
-	gameScene.keyboard = &input.Keyboard{MillisecondDelayBetweenKeyPresses: keyPressDelay}
+	gameScene.keyboard = input.NewKeyboard(keyPressDelay)
 
 	//ebiten.SetTPS(120)
 	ebiten.SetTPS(60)

@@ -204,3 +204,10 @@ func (o *Output) getCurrentRow() int {
 func (o *Output) GetLengthOfCurrentRowStr() int {
 	return len(o.lines[o.getCurrentRow()])
 }
+
+func (o *Output) RemoveRightSideCharacter() {
+	nCurrentRow := o.getCurrentRow()
+	if len(o.lines[nCurrentRow]) > 0 {
+		o.lines[nCurrentRow] = o.lines[nCurrentRow][:len(o.lines[nCurrentRow])-1]
+	}
+}
