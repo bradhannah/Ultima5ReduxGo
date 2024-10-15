@@ -22,7 +22,7 @@ func NewProvisionSummary(spriteSheet *sprites.SpriteSheet) *ProvisionSummary {
 	provisionSummary.spriteSheet = spriteSheet
 
 	provisionSummary.ultimaFont = text.NewUltimaFont(fontPoint)
-	provisionSummary.output = text.NewOutput(provisionSummary.ultimaFont, lineSpacing)
+	provisionSummary.output = text.NewOutput(provisionSummary.ultimaFont, lineSpacing, 1)
 
 	//provisionSummary.FullSummaryImage = ebiten.NewImage(perCharacterSummaryWidth, perCharacterSummaryHeight*game_state.MAX_CHARACTERS_IN_PARTY)
 

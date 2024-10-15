@@ -62,6 +62,10 @@ type GameScene struct {
 	borders gameBorders
 }
 
+const (
+	defaultOutputFontPoint = 20
+)
+
 func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	gameScene := GameScene{gameConfig: gameConfig}
 
@@ -82,8 +86,8 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	gameScene.initializeBorders()
 
 	gameScene.spriteSheet = sprites.NewSpriteSheet()
-	gameScene.ultimaFont = text.NewUltimaFont(text.OutputFontPoint)
-	gameScene.output = text.NewOutput(gameScene.ultimaFont, 20)
+	gameScene.ultimaFont = text.NewUltimaFont(defaultOutputFontPoint)
+	gameScene.output = text.NewOutput(gameScene.ultimaFont, 20, 10)
 
 	gameScene.keyboard = &input.Keyboard{MillisecondDelayBetweenKeyPresses: keyPressDelay}
 
@@ -125,8 +129,7 @@ func (g *GameScene) Update(_ *Game) error {
 	case ebiten.KeyBackquote:
 		g.bShowDebugConsole = !g.bShowDebugConsole
 	case ebiten.KeyEnter:
-		g.debugMessage = "enter"
-		g.output.AddToContinuousOutput("Enter")
+		g.addRowStr("Enter")
 	case ebiten.KeyUp:
 		g.handleMovement(game_state.Up.GetDirectionCompassName(), ebiten.KeyUp)
 	case ebiten.KeyDown:
@@ -150,14 +153,14 @@ func (g *GameScene) Update(_ *Game) error {
 			}
 			g.gameState.Location = newLocation
 			g.gameState.Floor = 0
-			g.output.AddToContinuousOutput(fmt.Sprintf("%s",
+			g.addRowStr(fmt.Sprintf("%s",
 				g.gameReferences.SingleMapReferences.GetSingleMapReference(newLocation).EnteringText))
 		}
 	case ebiten.KeyO:
-		g.debugMessage = "Open"
-		g.output.AddToContinuousOutput("Open-")
+		g.debugConsole.Output.AddRowStr("Open")
+		g.addRowStr("Open-")
 		if g.gameState.Location == references.Britannia_Underworld {
-			g.output.AppendToOutput("Cannot")
+			g.appendToCurrentRowStr("Cannot")
 			return nil
 		}
 		g.gameState.SecondaryKeyState = game_state.OpenDirectionInput
@@ -165,9 +168,9 @@ func (g *GameScene) Update(_ *Game) error {
 		g.keyboard.SetAllowKeyPressImmediately()
 	case ebiten.KeyJ:
 		g.debugMessage = "Jimmy"
-		g.output.AddToContinuousOutput("Jimmy-")
+		g.addRowStr("Jimmy-")
 		if g.gameState.Location == references.Britannia_Underworld {
-			g.output.AppendToOutput("Cannot")
+			g.appendToCurrentRowStr("Cannot")
 			return nil
 		}
 
@@ -180,4 +183,14 @@ func (g *GameScene) Update(_ *Game) error {
 		g.gameState.ProcessEndOfTurn()
 	}
 	return nil
+}
+
+func (g *GameScene) appendToCurrentRowStr(str string) {
+	g.output.AppendToCurrentRowStr(str)
+	g.debugConsole.Output.AppendToCurrentRowStr(str)
+}
+
+func (g *GameScene) addRowStr(str string) {
+	g.output.AddRowStr(str)
+	g.debugConsole.Output.AddRowStr(str)
 }

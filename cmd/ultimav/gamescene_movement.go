@@ -65,7 +65,7 @@ func (g *GameScene) moveToNewPositionByDirection(direction game_state.Direction)
 
 func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 	g.debugMessage = directionStr
-	g.output.AddToContinuousOutput(fmt.Sprintf("> %s", directionStr))
+	g.addRowStr(fmt.Sprintf("> %s", directionStr))
 
 	isPassable := func(pos *references.Position) bool {
 		topTile := g.gameState.LayeredMaps.LayeredMaps[g.gameState.GetMapType()].GetTopTile(pos)
@@ -77,7 +77,7 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 	if isPassable(newPosition) {
 		g.moveToNewPositionByDirection(direction)
 	} else {
-		g.output.AddToContinuousOutput("Blocked!")
+		g.addRowStr("Blocked!")
 	}
 }
 
@@ -89,7 +89,7 @@ func (g *GameScene) handleSecondaryInput() {
 	switch g.gameState.SecondaryKeyState {
 	case game_state.JimmyDoorDirectionInput:
 		if g.gameState.Provisions.QtyKeys <= 0 {
-			g.output.AddToContinuousOutput("No Keys!")
+			g.addRowStr("No Keys!")
 			g.gameState.SecondaryKeyState = game_state.PrimaryInput
 			g.keyboard.SetLastKeyPressedNow()
 			return
@@ -102,17 +102,17 @@ func (g *GameScene) handleSecondaryInput() {
 			return
 		}
 
-		g.output.AppendToOutput(getCurrentPressedArrowKeyAsDirection().GetDirectionCompassName())
+		g.appendToCurrentRowStr(getCurrentPressedArrowKeyAsDirection().GetDirectionCompassName())
 
 		jimmyResult := g.gameState.JimmyDoor(getCurrentPressedArrowKeyAsDirection(), &g.gameState.Characters[0])
 
 		switch jimmyResult {
 		case game_state.JimmyUnlocked:
-			g.output.AddToContinuousOutput("Unlocked!")
+			g.addRowStr("Unlocked!")
 		case game_state.JimmyNotADoor:
-			g.output.AddToContinuousOutput("Not lock!")
+			g.addRowStr("Not lock!")
 		case game_state.JimmyBrokenPick, game_state.JimmyLockedMagical:
-			g.output.AddToContinuousOutput("Key broke!")
+			g.addRowStr("Key broke!")
 
 		default:
 			panic("unhandled default case")
@@ -129,17 +129,17 @@ func (g *GameScene) handleSecondaryInput() {
 			return
 		}
 
-		g.output.AppendToOutput(getCurrentPressedArrowKeyAsDirection().GetDirectionCompassName())
+		g.appendToCurrentRowStr(getCurrentPressedArrowKeyAsDirection().GetDirectionCompassName())
 
 		switch g.gameState.OpenDoor(getCurrentPressedArrowKeyAsDirection()) {
 		case game_state.OpenDoorNotADoor:
-			g.output.AddToContinuousOutput("Nothing to open!")
+			g.addRowStr("Nothing to open!")
 		case game_state.OpenDoorLocked:
-			g.output.AddToContinuousOutput("OpenDoorLocked!")
+			g.addRowStr("OpenDoorLocked!")
 		case game_state.OpenDoorLockedMagical:
-			g.output.AddToContinuousOutput("Magically OpenDoorLocked!")
+			g.addRowStr("Magically OpenDoorLocked!")
 		case game_state.OpenDoorOpened:
-			g.output.AddToContinuousOutput("OpenDoorOpened!")
+			g.addRowStr("OpenDoorOpened!")
 		default:
 			log.Fatal("Unrecognized door open state")
 		}

@@ -3,26 +3,30 @@ package text
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
+	"image"
 	"strings"
 )
 
 type Output struct {
 	Font            *UltimaFont
-	lines           [maxLines]string
+	lines           []string
 	nextLineToIndex int
 	lineSpacing     float64
+	maxLines        int
 }
 
 const (
-	maxCharsPerLine = 30
-	maxLines        = 10
-	OutputFontPoint = 20
+// maxCharsPerLine = 30
+// maxLines        = 10
+// OutputFontPoint = 20
 )
 
-func NewOutput(font *UltimaFont, lineSpacing float64) *Output {
+func NewOutput(font *UltimaFont, lineSpacing float64, maxLines int) *Output {
 	output := &Output{}
 	output.Font = font
 	output.lineSpacing = lineSpacing
+	output.maxLines = maxLines
+	output.lines = make([]string, maxLines)
 	return output
 }
 
@@ -62,12 +66,12 @@ func (o *Output) DrawTextRightToLeft(screen *ebiten.Image, textStr string, op *e
 	text.Draw(screen, textStr, o.Font.TextFace, &dop)
 }
 
-//func (o *Output) AddToContinuousOutput(outputStr string) {
+//func (o *Output) AddRowStr(outputStr string) {
 //	o.lines[o.nextLineToIndex] = outputStr
 //	o.nextLineToIndex = (o.nextLineToIndex + 1) % maxLines
 //}
 
-func (o *Output) AddToContinuousOutput(outputStr string) {
+func (o *Output) AddRowStr(outputStr string) {
 	const maxCharsPerLine = 16
 
 	// Process the string line-by-line, splitting by '\n'
@@ -107,7 +111,7 @@ func (o *Output) AddToContinuousOutput(outputStr string) {
 
 			// Add the chunk to the output slice
 			o.lines[o.nextLineToIndex] = chunk
-			o.nextLineToIndex = (o.nextLineToIndex + 1) % maxLines
+			o.nextLineToIndex = (o.nextLineToIndex + 1) % o.maxLines
 		}
 	}
 }
@@ -125,7 +129,9 @@ func trimLeadingSpaces(s string) string {
 	return s
 }
 
-func (o *Output) DrawContinuousOutputText(screen *ebiten.Image) {
+// DrawRightSideOutput
+// Draws to the correct x and y image position for the right side output panel
+func (o *Output) DrawRightSideOutput(screen *ebiten.Image) {
 	const lineSpacing = 20
 
 	op := &ebiten.DrawImageOptions{}
@@ -138,28 +144,47 @@ func (o *Output) DrawContinuousOutputText(screen *ebiten.Image) {
 		},
 	}
 
-	text.Draw(screen, o.getOutputStr(), o.Font.TextFace, &dop)
+	text.Draw(screen, o.getOutputStr(true), o.Font.TextFace, &dop)
 }
 
-func (o *Output) getOutputStr() string {
+func (o *Output) DrawContinuousOutputTexOnXy(screen *ebiten.Image, point image.Point, bShowEmptyNewLines bool) {
+	//const lineSpacing = 20
+
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(float64(point.X), float64(point.Y))
+
+	dop := text.DrawOptions{
+		DrawImageOptions: *op,
+		LayoutOptions: text.LayoutOptions{
+			LineSpacing:  o.lineSpacing,
+			PrimaryAlign: text.AlignStart,
+		},
+	}
+
+	text.Draw(screen, o.getOutputStr(bShowEmptyNewLines), o.Font.TextFace, &dop)
+}
+
+func (o *Output) getOutputStr(bShowEmptyNewLines bool) string {
 	var outputStr string
-	for i := 0; i < len(o.lines); i++ {
-		lineToAdd := o.lines[(i+o.nextLineToIndex)%maxLines]
-		if i != 0 {
+	nTotalLines := len(o.lines)
+	for i := 0; i < nTotalLines; i++ {
+		lineToAdd := o.lines[(i+o.nextLineToIndex)%o.maxLines]
+
+		outputStr += lineToAdd
+		if (bShowEmptyNewLines || lineToAdd != "") && i < nTotalLines-1 {
 			outputStr += " \n"
 		}
-		outputStr += lineToAdd
 	}
 	return outputStr
 }
 
-func (o *Output) AppendToOutput(outputStr string) {
-	lastLineAdded := (o.nextLineToIndex - 1) % maxLines
+func (o *Output) AppendToCurrentRowStr(outputStr string) {
+	lastLineAdded := (o.nextLineToIndex - 1) % o.maxLines
 	if lastLineAdded < 0 {
-		lastLineAdded = maxLines - 1
+		lastLineAdded = o.maxLines - 1
 	}
 	currentStr := o.lines[lastLineAdded]
 
 	o.nextLineToIndex = lastLineAdded
-	o.AddToContinuousOutput(currentStr + outputStr)
+	o.AddRowStr(currentStr + outputStr)
 }

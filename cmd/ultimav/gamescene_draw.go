@@ -49,7 +49,7 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 		EndPercentY:   0.98,
 	})
 
-	g.output.DrawContinuousOutputText(g.rightSideImage)
+	g.output.DrawRightSideOutput(g.rightSideImage)
 
 	screen.DrawImage(g.rightSideImage, op)
 	g.characterSummary.Draw(g.gameState, screen)
