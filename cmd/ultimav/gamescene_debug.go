@@ -4,6 +4,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/ui/widgets"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"image"
@@ -24,6 +25,8 @@ type DebugConsole struct {
 	font   *text.UltimaFont
 	Output *text.Output
 
+	TextInput *widgets.TextInput
+
 	gameScene *GameScene
 }
 
@@ -33,6 +36,7 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 	debugConsole.initializeDebugBorders()
 	debugConsole.font = text.NewUltimaFont(debugFontPoint)
 	debugConsole.Output = text.NewOutput(debugConsole.font, debugFontLineSpacing, maxDebugLines)
+	debugConsole.TextInput = widgets.NewTextInput(debugFontPoint)
 
 	return &debugConsole
 }
@@ -60,15 +64,13 @@ func (d *DebugConsole) drawDebugConsole(screen *ebiten.Image) {
 	d.Output.DrawContinuousOutputTexOnXy(screen, image.Point{
 		X: textRect.Min.X,
 		Y: textRect.Min.Y,
-		//X: 15,
-		//Y: 15,
 	}, false)
 	screen.DrawImage(d.border, d.borderDrawOptions)
+	d.TextInput.Draw(screen)
 }
 
 func (d *DebugConsole) initializeDebugBorders() {
 	mainBorder := sprites.NewBorderSprites()
-	//const percentOffEdge = 0.04
 	percentBased := sprites.PercentBasedPlacement{
 		StartPercentX: 0 + percentOffEdge,
 		EndPercentX:   .75 + .01 - percentOffEdge,

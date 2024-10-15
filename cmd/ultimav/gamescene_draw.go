@@ -23,7 +23,7 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 	}
 
 	g.drawMap(g.mapImage, &g.gameState.LayeredMaps)
-	g.drawMapUnits(g.mapImage) //, &g.gameState.LayeredMaps)
+	g.drawMapUnits(g.mapImage)
 
 	op := sprites.GetDrawOptionsFromPercentsForWholeScreen(g.mapImage, sprites.PercentBasedPlacement{
 		StartPercentX: .015,
@@ -56,17 +56,7 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 	g.provisionSummary.Draw(g.gameState, screen)
 
 	if g.bShowDebugConsole {
-		//if g.debugWindowImage == nil {
-		//	g.debugWindowSizeRect = sprites.GetRectangleFromPercents(sprites.PercentBasedPlacement{
-		//		StartPercentX: .0,
-		//		EndPercentX:   .73,
-		//		StartPercentY: .0,
-		//		EndPercentY:   0.25})
-		//	newImageOptions := ebiten.NewImageOptions{}
-		//	g.debugWindowImage = ebiten.NewImageWithOptions(*g.debugWindowSizeRect, &newImageOptions)
-		//}
-		g.debugConsole.drawDebugConsole(screen) //, g.debugWindowImage)
-
+		g.debugConsole.drawDebugConsole(screen)
 	}
 
 	// Render the game scene

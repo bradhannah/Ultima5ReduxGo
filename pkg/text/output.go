@@ -1,9 +1,11 @@
 package text
 
 import (
+	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"image"
+	"image/color"
 	"strings"
 )
 
@@ -13,6 +15,7 @@ type Output struct {
 	nextLineToIndex int
 	lineSpacing     float64
 	maxLines        int
+	color           color.Color
 }
 
 const (
@@ -27,7 +30,12 @@ func NewOutput(font *UltimaFont, lineSpacing float64, maxLines int) *Output {
 	output.lineSpacing = lineSpacing
 	output.maxLines = maxLines
 	output.lines = make([]string, maxLines)
+	output.SetColor(u_color.White)
 	return output
+}
+
+func (o *Output) SetColor(color color.Color) {
+	o.color = color
 }
 
 func (o *Output) DrawText(screen *ebiten.Image, textStr string, op *ebiten.DrawImageOptions) {
@@ -148,8 +156,6 @@ func (o *Output) DrawRightSideOutput(screen *ebiten.Image) {
 }
 
 func (o *Output) DrawContinuousOutputTexOnXy(screen *ebiten.Image, point image.Point, bShowEmptyNewLines bool) {
-	//const lineSpacing = 20
-
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(float64(point.X), float64(point.Y))
 
@@ -161,6 +167,7 @@ func (o *Output) DrawContinuousOutputTexOnXy(screen *ebiten.Image, point image.P
 		},
 	}
 
+	dop.ColorScale.ScaleWithColor(o.color)
 	text.Draw(screen, o.getOutputStr(bShowEmptyNewLines), o.Font.TextFace, &dop)
 }
 
