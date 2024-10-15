@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+//const maxCharsPerLine = 16
+
 type Output struct {
 	Font            *UltimaFont
 	lines           []string
@@ -16,19 +18,15 @@ type Output struct {
 	lineSpacing     float64
 	maxLines        int
 	color           color.Color
+	maxCharsPerLine int
 }
 
-const (
-// maxCharsPerLine = 30
-// maxLines        = 10
-// OutputFontPoint = 20
-)
-
-func NewOutput(font *UltimaFont, lineSpacing float64, maxLines int) *Output {
+func NewOutput(font *UltimaFont, lineSpacing float64, maxLines int, maxCharsPerLine int) *Output {
 	output := &Output{}
 	output.Font = font
 	output.lineSpacing = lineSpacing
 	output.maxLines = maxLines
+	output.maxCharsPerLine = maxCharsPerLine
 	output.lines = make([]string, maxLines)
 	output.SetColor(u_color.White)
 	return output
@@ -80,7 +78,6 @@ func (o *Output) DrawTextRightToLeft(screen *ebiten.Image, textStr string, op *e
 //}
 
 func (o *Output) AddRowStr(outputStr string) {
-	const maxCharsPerLine = 16
 
 	// Process the string line-by-line, splitting by '\n'
 	lines := splitByNewline(outputStr)
@@ -89,13 +86,13 @@ func (o *Output) AddRowStr(outputStr string) {
 		// Process each line, splitting by 16 characters or nearest space
 		for len(line) > 0 {
 			// Find the position to split the string, favoring a space before 16 characters
-			splitAt := maxCharsPerLine
-			if len(line) < maxCharsPerLine {
+			splitAt := o.maxCharsPerLine
+			if len(line) < o.maxCharsPerLine {
 				splitAt = len(line) // If the line is shorter, take the entire line
 			} else {
 				// Try to find the last space before the 16th character
 				spaceIndex := -1
-				for i := 0; i < maxCharsPerLine; i++ {
+				for i := 0; i < o.maxCharsPerLine; i++ {
 					if line[i] == ' ' {
 						spaceIndex = i
 					}
@@ -113,7 +110,7 @@ func (o *Output) AddRowStr(outputStr string) {
 			line = trimLeadingSpaces(line) // Helper function to remove leading spaces
 
 			// Add hyphen if the chunk has the maximum length and there is more to process
-			if splitAt == maxCharsPerLine && len(line) > 0 {
+			if splitAt == o.maxCharsPerLine && len(line) > 0 {
 				chunk += "-"
 			}
 
@@ -194,4 +191,16 @@ func (o *Output) AppendToCurrentRowStr(outputStr string) {
 
 	o.nextLineToIndex = lastLineAdded
 	o.AddRowStr(currentStr + outputStr)
+}
+
+func (o *Output) getCurrentRow() int {
+	lastLineAdded := (o.nextLineToIndex - 1) % o.maxLines
+	if lastLineAdded < 0 {
+		lastLineAdded = o.maxLines - 1
+	}
+	return lastLineAdded
+}
+
+func (o *Output) GetLengthOfCurrentRowStr() int {
+	return len(o.lines[o.getCurrentRow()])
 }

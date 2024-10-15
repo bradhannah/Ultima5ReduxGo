@@ -14,6 +14,7 @@ const percentOffEdge = 0.0
 const debugFontPoint = 13
 const debugFontLineSpacing = 17
 const maxDebugLines = 14
+const maxCharsForInput = 90
 
 type DebugConsole struct {
 	border            *ebiten.Image
@@ -35,8 +36,8 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 	debugConsole.gameScene = gameScene
 	debugConsole.initializeDebugBorders()
 	debugConsole.font = text.NewUltimaFont(debugFontPoint)
-	debugConsole.Output = text.NewOutput(debugConsole.font, debugFontLineSpacing, maxDebugLines)
-	debugConsole.TextInput = widgets.NewTextInput(debugFontPoint)
+	debugConsole.Output = text.NewOutput(debugConsole.font, debugFontLineSpacing, maxDebugLines, maxCharsForInput)
+	debugConsole.TextInput = widgets.NewTextInput(debugFontPoint, maxCharsForInput)
 
 	return &debugConsole
 }
@@ -47,6 +48,8 @@ func (d *DebugConsole) update() {
 			return
 		}
 		d.gameScene.bShowDebugConsole = false
+	} else {
+		d.TextInput.Update()
 	}
 
 	return

@@ -64,6 +64,9 @@ type GameScene struct {
 
 const (
 	defaultOutputFontPoint = 20
+	defaultLineSpacing     = 20
+	maxCharsPerLine        = 16
+	maxLinesForOutput      = 10
 )
 
 func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
@@ -87,7 +90,7 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 
 	gameScene.spriteSheet = sprites.NewSpriteSheet()
 	gameScene.ultimaFont = text.NewUltimaFont(defaultOutputFontPoint)
-	gameScene.output = text.NewOutput(gameScene.ultimaFont, 20, 10)
+	gameScene.output = text.NewOutput(gameScene.ultimaFont, defaultLineSpacing, maxLinesForOutput, maxCharsPerLine)
 
 	gameScene.keyboard = &input.Keyboard{MillisecondDelayBetweenKeyPresses: keyPressDelay}
 

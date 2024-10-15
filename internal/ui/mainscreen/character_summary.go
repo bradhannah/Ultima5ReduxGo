@@ -20,13 +20,14 @@ type CharacterSummary struct {
 const lineHeightPercent = .075
 const perCharacterSummaryWidth = 16 * 6
 const perCharacterSummaryHeight = 9 * 6
+const maxCharsPerLine = 16
 
 func NewCharacterSummary(spriteSheet *sprites.SpriteSheet) *CharacterSummary {
 	characterSummary := &CharacterSummary{}
 
 	characterSummary.spriteSheet = spriteSheet
 	characterSummary.ultimaFont = text.NewUltimaFont(fontPoint)
-	characterSummary.output = text.NewOutput(characterSummary.ultimaFont, lineSpacing, 10)
+	characterSummary.output = text.NewOutput(characterSummary.ultimaFont, lineSpacing, 10, maxCharsPerLine)
 
 	for i := 0; i < len(characterSummary.characterSummaryImage); i++ {
 		characterSummary.characterSummaryImage[i] = ebiten.NewImage(perCharacterSummaryWidth, perCharacterSummaryHeight)

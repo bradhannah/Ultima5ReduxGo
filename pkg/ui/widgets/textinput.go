@@ -9,17 +9,19 @@ import (
 )
 
 type TextInput struct {
-	textArea *TextArea
-
 	output     *text.Output
 	ultimaFont *text.UltimaFont
+
+	maxCharsPerLine int
+	hasFocus        bool
 }
 
-func NewTextInput(fontPointSize float64) *TextInput {
+func NewTextInput(fontPointSize float64, maxCharsPerLine int) *TextInput {
 	textInput := &TextInput{}
 	textInput.ultimaFont = text.NewUltimaFont(fontPointSize)
+	textInput.maxCharsPerLine = maxCharsPerLine
 	// NOTE: single line input only (for now?)
-	textInput.output = text.NewOutput(textInput.ultimaFont, 0, 1)
+	textInput.output = text.NewOutput(textInput.ultimaFont, 0, 1, maxCharsPerLine)
 	textInput.output.AddRowStr("TESTINPUT_oof")
 	textInput.output.SetColor(color.RGBA{
 		R: 0,
@@ -45,5 +47,18 @@ func (t *TextInput) Draw(screen *ebiten.Image) {
 }
 
 func (t *TextInput) GetText() string {
-	return t.textArea.GetText()
+	return ""
+	//return t.textArea.GetText()
+}
+
+func (t *TextInput) Update() {
+	//if !t.hasFocus {
+	//	return
+	//}
+
+	if ebiten.IsKeyPressed(ebiten.KeyA) {
+		if t.output.GetLengthOfCurrentRowStr() < t.maxCharsPerLine {
+			t.output.AppendToCurrentRowStr("a")
+		}
+	}
 }
