@@ -149,7 +149,7 @@ func (o *Output) DrawRightSideOutput(screen *ebiten.Image) {
 		},
 	}
 
-	text.Draw(screen, o.getOutputStr(true), o.Font.TextFace, &dop)
+	text.Draw(screen, o.GetOutputStr(true), o.Font.TextFace, &dop)
 }
 
 func (o *Output) DrawContinuousOutputTexOnXy(screen *ebiten.Image, point image.Point, bShowEmptyNewLines bool) {
@@ -165,10 +165,10 @@ func (o *Output) DrawContinuousOutputTexOnXy(screen *ebiten.Image, point image.P
 	}
 
 	dop.ColorScale.ScaleWithColor(o.color)
-	text.Draw(screen, o.getOutputStr(bShowEmptyNewLines), o.Font.TextFace, &dop)
+	text.Draw(screen, o.GetOutputStr(bShowEmptyNewLines), o.Font.TextFace, &dop)
 }
 
-func (o *Output) getOutputStr(bShowEmptyNewLines bool) string {
+func (o *Output) GetOutputStr(bShowEmptyNewLines bool) string {
 	var outputStr string
 	nTotalLines := len(o.lines)
 	for i := 0; i < nTotalLines; i++ {

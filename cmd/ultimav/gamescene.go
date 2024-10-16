@@ -121,6 +121,8 @@ func (g *GameScene) Update(_ *Game) error {
 	// Handle gameplay logic here
 	boundKey := g.keyboard.GetBoundKeyPressed(&boundKeysGame)
 	if boundKey == nil {
+		// allow quick tapping
+		g.keyboard.SetAllowKeyPressImmediately()
 		return nil
 	}
 

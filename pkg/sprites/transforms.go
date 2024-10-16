@@ -51,6 +51,21 @@ func GetRectangleFromPercents(placement PercentBasedPlacement) *image.Rectangle 
 	}
 }
 
+func GetRectangleFromYPercents(placement PercentYBasedPlacement) *image.Rectangle {
+	_, screenHeight := ebiten.WindowSize()
+
+	// get the x start and end values based on the percent
+	//var xLeft = float64(screenWidth) * placement.StartPercentX
+	//var xRight = float64(screenWidth) * placement.EndPercentX
+	var yTop = float64(screenHeight) * placement.StartPercentY
+	var yBottom = float64(screenHeight) * placement.EndPercentY
+
+	return &image.Rectangle{
+		Min: image.Point{X: 0, Y: int(yTop)},
+		Max: image.Point{X: 0, Y: int(yBottom)},
+	}
+}
+
 func GetDrawOptionsFromPercentsForWholeScreen(origImage *ebiten.Image, placement PercentBasedPlacement) *ebiten.DrawImageOptions {
 	screenWidth, screenHeight := ebiten.WindowSize()
 
