@@ -17,10 +17,13 @@ import (
 
 import "golang.org/x/image/font"
 
-// todo: cursor blink to show position
 // todo: different background for text?
+// todo: accelerate text after a period of time
 // todo: autocomplete?
 // todo:
+
+// /teleport/ , /0-255/ , /0-255/
+// /tplace/ ,
 
 const (
 	keyPressDelay            = 165
