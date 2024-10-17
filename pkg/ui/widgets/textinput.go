@@ -12,6 +12,7 @@ import (
 	"image"
 	"image/color"
 	"log"
+	"time"
 )
 
 import "golang.org/x/image/font"
@@ -22,8 +23,10 @@ import "golang.org/x/image/font"
 // todo:
 
 const (
-	keyPressDelay = 165
-	cursorWidth   = 10
+	keyPressDelay            = 165
+	cursorWidth              = 10
+	cursorBlinkRateInMs      = 1000
+	pauseBlinkKeyPressedInMs = 750
 )
 
 var (
@@ -77,25 +80,19 @@ func NewTextInput(fontPointSize float64, maxCharsPerLine int) *TextInput {
 	textInput.output.AddRowStr("")
 	textInput.output.SetColor(textColor)
 
-	textInput.getTtf()
+	textInput.getAndSetTtf(fontPointSize)
 
 	return textInput
 }
 
-func (t *TextInput) getTtf() {
-	// Load the font
-	//ttf, err := ioutil.ReadFile("path/to/your/fontfile.ttf")
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-
+func (t *TextInput) getAndSetTtf(fontPointSize float64) {
 	tt, err := opentype.Parse(rawUltimaTTF)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	t.face, err = opentype.NewFace(tt, &opentype.FaceOptions{
-		Size:    14, // Set font size here
+		Size:    fontPointSize, // Set font size here
 		DPI:     72,
 		Hinting: font.HintingFull,
 	})
@@ -114,11 +111,18 @@ func (t *TextInput) Draw(screen *ebiten.Image) {
 }
 
 func (t *TextInput) drawCursor(screen *ebiten.Image) {
+	if t.keyboard.GetMsSinceLastKeyPress() > pauseBlinkKeyPressedInMs {
+		blink := time.Now().UnixMilli() % cursorBlinkRateInMs
+		if blink <= cursorBlinkRateInMs/2 {
+			return
+		}
+	}
+
 	var cursorPlacement = sprites.PercentBasedPlacement{
 		StartPercentX: 0 + percentIntoBorder,
 		EndPercentX:   .75 + .01 - percentIntoBorder,
-		StartPercentY: .955,
-		EndPercentY:   .97,
+		StartPercentY: .952,
+		EndPercentY:   .968,
 	}
 	textRect := sprites.GetRectangleFromPercents(cursorPlacement)
 	width := t.CalculateTextWidth(t.output.GetOutputStr(false))

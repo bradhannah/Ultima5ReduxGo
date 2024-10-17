@@ -10,6 +10,7 @@ type Keyboard struct {
 	millisecondDelayBetweenKeyPresses int
 	timeOfLastKeyPress                int64
 	lastKeyPressed                    ebiten.Key
+	forceRegisterNextKeyPressed       bool
 }
 
 func NewKeyboard(millisecondDelayBetweenKeyPresses int) *Keyboard {
@@ -24,12 +25,17 @@ func NewKeyboard(millisecondDelayBetweenKeyPresses int) *Keyboard {
 // the previous key press
 func (k *Keyboard) TryToRegisterKeyPress(key ebiten.Key) bool {
 	nowMilli := time.Now().UnixMilli()
-	if key != k.lastKeyPressed || nowMilli-k.timeOfLastKeyPress > int64(k.millisecondDelayBetweenKeyPresses) {
+	if key != k.lastKeyPressed || nowMilli-k.timeOfLastKeyPress > int64(k.millisecondDelayBetweenKeyPresses) || k.forceRegisterNextKeyPressed {
 		k.lastKeyPressed = key
 		k.timeOfLastKeyPress = nowMilli
+		k.forceRegisterNextKeyPressed = false
 		return true
 	}
 	return false
+}
+
+func (k *Keyboard) GetMsSinceLastKeyPress() int {
+	return int(time.Now().UnixMilli() - k.timeOfLastKeyPress)
 }
 
 func (k *Keyboard) GetBoundKeyPressed(boundKeys *[]ebiten.Key) *ebiten.Key {
@@ -51,7 +57,8 @@ func (k *Keyboard) SetLastKeyPressedNow() {
 }
 
 func (k *Keyboard) SetAllowKeyPressImmediately() {
-	k.timeOfLastKeyPress = 0
+	//k.timeOfLastKeyPress = 0
+	k.forceRegisterNextKeyPressed = true
 }
 
 func (k *Keyboard) IsKeyPressedGetKey(key ebiten.Key) *ebiten.Key {
