@@ -2,11 +2,9 @@ package main
 
 import (
 	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ui/widgets"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"image"
@@ -111,49 +109,4 @@ func (d *DebugConsole) initializeDebugBorders() {
 		false)
 
 	d.backgroundDrawOptions.ColorScale.ScaleAlpha(.85)
-}
-
-func (d *DebugConsole) createDebugFunctions(gameScene *GameScene) *grammar.TextCommands {
-	textCommands := make(grammar.TextCommands, 0)
-	textCommands = append(textCommands,
-		*grammar.NewTextCommand([]grammar.Match{
-			grammar.StringMatch{
-				Str:           "teleport",
-				Description:   "Move to an X, Y coordinate on a given map",
-				CaseSensitive: false,
-			},
-			grammar.IntMatch{IntMin: 0, IntMax: 255},
-			grammar.IntMatch{IntMin: 0, IntMax: 255},
-		}, func(s string, command *grammar.TextCommand) {
-			outputStr := d.TextInput.GetText()
-			gameScene.gameState.DebugMoveOnMap(references.Position{
-				X: int16(command.GetIndexAsInt(1, outputStr)),
-				Y: int16(command.GetIndexAsInt(2, outputStr)),
-			})
-			d.Output.AddRowStr("Hit enter on teleport, which is nice")
-		}))
-	textCommands = append(textCommands,
-		*grammar.NewTextCommand([]grammar.Match{
-			grammar.StringMatch{
-				Str:           "fy",
-				Description:   "Go to the given floor",
-				CaseSensitive: false,
-			},
-			grammar.IntMatch{IntMin: -1, IntMax: 5, Description: "Floor number"},
-		}, nil))
-	textCommands = append(textCommands,
-		*grammar.NewTextCommand([]grammar.Match{
-			grammar.StringMatch{
-				Str:           "fu",
-				Description:   "Teleport a floor up if one exists",
-				CaseSensitive: false,
-			}}, nil))
-	textCommands = append(textCommands,
-		*grammar.NewTextCommand([]grammar.Match{
-			grammar.StringMatch{
-				Str:           "fd",
-				Description:   "Teleport a floor down if one exists",
-				CaseSensitive: false,
-			}}, nil))
-	return &textCommands
 }

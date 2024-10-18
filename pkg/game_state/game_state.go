@@ -14,10 +14,16 @@ const (
 	JimmyDoorDirectionInput
 )
 
+type DebugOptions struct {
+	FreeMove bool
+}
+
 type GameState struct {
 	RawSave         [savedGamFileSize]byte
 	Characters      [NPlayers]PlayerCharacter
 	MoonstoneStatus MoonstoneStatus
+
+	DebugOptions DebugOptions
 
 	SecondaryKeyState InputState
 

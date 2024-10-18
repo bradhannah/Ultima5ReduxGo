@@ -74,7 +74,7 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 
 	direction := game_state.GetKeyAsDirection(key)
 	newPosition := direction.GetNewPositionInDirection(&g.gameState.Position)
-	if isPassable(newPosition) {
+	if isPassable(newPosition) || g.gameState.DebugOptions.FreeMove {
 		g.moveToNewPositionByDirection(direction)
 	} else {
 		g.addRowStr("Blocked!")
