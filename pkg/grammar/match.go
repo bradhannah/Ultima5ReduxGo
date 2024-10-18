@@ -1,44 +1,51 @@
 package grammar
 
-import "strings"
+import (
+	"strconv"
+	"strings"
+)
 
 type Match interface {
-	PartiallyMatches(string) bool
+	PartiallyMatches(string) (bool, error)
 	GetSuffixHint(currentStr string) string
 }
 
 type StringMatch struct {
-	str string
+	Name        string
+	Str         string
+	Description string
 }
 
 type IntMatch struct {
-	intMin int
-	intMax int
+	IntMin int
+	IntMax int
 }
 
-func NewStringMatch(str string) StringMatch {
-	match := StringMatch{}
-	match.str = str
-	return match
-}
-
-func (m StringMatch) PartiallyMatches(str string) bool {
-	return strings.HasPrefix(m.str, str)
+func (m StringMatch) PartiallyMatches(str string) (bool, error) {
+	if str == "" {
+		return false, nil
+	}
+	return strings.HasPrefix(strings.ToUpper(m.Str), strings.ToUpper(str)), nil
 }
 func (m StringMatch) GetSuffixHint(currentStr string) string {
-	if !m.PartiallyMatches(currentStr) {
+	checkMatch, _ := m.PartiallyMatches(currentStr)
+	if !checkMatch {
 		// don't give a hint because it doesn't match in the first place
 		return ""
 	}
 
 	// return the second half after the matched prefix
-	return strings.TrimPrefix(m.str, currentStr)
+	return strings.TrimPrefix(m.Str, currentStr)
 }
 
-func (m IntMatch) PartiallyMatches(str string) bool {
-	return true
+func (m IntMatch) PartiallyMatches(str string) (bool, error) {
+	n, err := strconv.Atoi(str)
+	if err != nil {
+		return false, err
+	}
+	return n >= m.IntMin && n <= m.IntMax, nil
 }
 
-func (m IntMatch) GetSuffixHint(currentStr string) string {
+func (m IntMatch) GetSuffixHint(_ string) string {
 	return ""
 }

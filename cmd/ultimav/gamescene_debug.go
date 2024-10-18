@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ui/widgets"
@@ -28,6 +29,8 @@ type DebugConsole struct {
 
 	TextInput *widgets.TextInput
 
+	debugCommands *grammar.TextCommands
+
 	gameScene *GameScene
 }
 
@@ -38,8 +41,28 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 	debugConsole.font = text.NewUltimaFont(debugFontPoint)
 	debugConsole.Output = text.NewOutput(debugConsole.font, debugFontLineSpacing, maxDebugLines, maxCharsForInput)
 	debugConsole.TextInput = widgets.NewTextInput(debugFontPoint, maxCharsForInput)
-
+	debugConsole.TextInput.SetColor(u_color.Green)
+	debugConsole.debugCommands = createDebugFunctions(gameScene)
 	return &debugConsole
+}
+
+func createDebugFunctions(gameScene *GameScene) *grammar.TextCommands {
+	textCommands := make(grammar.TextCommands, 0)
+	textCommands = append(textCommands,
+		*grammar.NewTextCommand([]grammar.Match{
+			grammar.StringMatch{
+				Str: "teleport",
+			},
+			grammar.IntMatch{
+				IntMin: 0,
+				IntMax: 255,
+			},
+			grammar.IntMatch{
+				IntMin: 0,
+				IntMax: 255,
+			},
+		}))
+	return &textCommands
 }
 
 func (d *DebugConsole) update() {
@@ -69,6 +92,14 @@ func (d *DebugConsole) drawDebugConsole(screen *ebiten.Image) {
 		Y: textRect.Min.Y,
 	}, false)
 	screen.DrawImage(d.border, d.borderDrawOptions)
+
+	// before we draw the text input - first check if the text is valid
+	if d.debugCommands.OneOrMoreCommandsMatch(d.TextInput.GetText()) {
+		d.TextInput.SetColor(u_color.Green)
+	} else {
+		d.TextInput.SetColor(u_color.Red)
+	}
+
 	d.TextInput.Draw(screen)
 }
 
@@ -97,7 +128,7 @@ func (d *DebugConsole) initializeDebugBorders() {
 		float32(rect.Min.Y)+yDiff,
 		float32(rect.Dx())-xDiff*2,
 		float32(rect.Dy())-yDiff*2,
-		color.Black,
+		u_color.Black,
 		false)
 
 	d.backgroundDrawOptions.ColorScale.ScaleAlpha(.85)

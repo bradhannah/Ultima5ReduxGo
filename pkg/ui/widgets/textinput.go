@@ -45,6 +45,8 @@ type TextInput struct {
 	maxCharsPerLine int
 	hasFocus        bool
 
+	color color.Color
+
 	keyboard *input.Keyboard
 }
 
@@ -55,13 +57,6 @@ var mainTextPlacement = sprites.PercentBasedPlacement{
 	EndPercentX:   .75 + .01 - percentIntoBorder,
 	StartPercentY: .955,
 	EndPercentY:   1,
-}
-
-var textColor = color.RGBA{
-	R: 0,
-	G: 255,
-	B: 0,
-	A: 255,
 }
 
 var nonAlphaNumericBoundKeys = []ebiten.Key{ebiten.KeyDown,
@@ -81,11 +76,15 @@ func NewTextInput(fontPointSize float64, maxCharsPerLine int) *TextInput {
 	// NOTE: single line input only (for now?)
 	textInput.output = text.NewOutput(textInput.ultimaFont, 0, 1, maxCharsPerLine)
 	textInput.output.AddRowStr("")
-	textInput.output.SetColor(textColor)
 
 	textInput.getAndSetTtf(fontPointSize)
 
 	return textInput
+}
+
+func (t *TextInput) SetColor(c color.Color) {
+	t.color = c
+	t.output.SetColor(t.color)
 }
 
 func (t *TextInput) getAndSetTtf(fontPointSize float64) {
@@ -134,12 +133,13 @@ func (t *TextInput) drawCursor(screen *ebiten.Image) {
 		float32(textRect.Min.Y),
 		cursorWidth,
 		float32(textRect.Dy()),
-		textColor,
+		t.color,
 		false)
 }
 
 func (t *TextInput) GetText() string {
-	return ""
+	return t.output.GetOutputStr(false)
+	//return ""
 	//return t.textArea.GetText()
 }
 
