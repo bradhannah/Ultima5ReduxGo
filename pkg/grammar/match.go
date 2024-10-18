@@ -11,15 +11,15 @@ type Match interface {
 }
 
 type StringMatch struct {
-	Name          string
 	Str           string
 	Description   string
 	CaseSensitive bool
 }
 
 type IntMatch struct {
-	IntMin int
-	IntMax int
+	IntMin      int
+	IntMax      int
+	Description string
 }
 
 func (m StringMatch) PartiallyMatches(str string) (bool, error) {

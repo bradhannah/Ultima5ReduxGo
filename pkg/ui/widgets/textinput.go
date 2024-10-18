@@ -77,6 +77,7 @@ var nonAlphaNumericBoundKeys = []ebiten.Key{ebiten.KeyDown,
 	ebiten.KeyDelete,
 	ebiten.KeyEscape,
 	ebiten.KeyTab,
+	ebiten.KeyMinus,
 }
 
 func NewTextInput(fontPointSize float64, maxCharsPerLine int, textCommands *grammar.TextCommands) *TextInput {
@@ -213,6 +214,8 @@ func (t *TextInput) Update() {
 	}
 
 	switch *boundKey {
+	case ebiten.KeyMinus:
+		t.output.AppendToCurrentRowStr("-")
 	case ebiten.KeyEnter:
 		return
 	case ebiten.KeySpace, ebiten.KeyTab:

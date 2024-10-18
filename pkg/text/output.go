@@ -72,11 +72,6 @@ func (o *Output) DrawTextRightToLeft(screen *ebiten.Image, textStr string, op *e
 	text.Draw(screen, textStr, o.Font.TextFace, &dop)
 }
 
-//func (o *Output) AddRowStr(outputStr string) {
-//	o.lines[o.nextLineToIndex] = outputStr
-//	o.nextLineToIndex = (o.nextLineToIndex + 1) % maxLines
-//}
-
 func (o *Output) AddRowStr(outputStr string) {
 
 	// Process the string line-by-line, splitting by '\n'

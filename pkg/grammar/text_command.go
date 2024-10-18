@@ -24,16 +24,3 @@ func (t *TextCommand) GetAutoComplete(command string) string {
 
 	return t.Matches[highIndex].GetSuffixHint(command)
 }
-
-//func (t *TextCommand) AutoComplete(command string) string {
-//	splitStr := strings.Split(command, " ")
-//
-//	highIndex := len(splitStr) - 1
-//	bMatches, _ := t.Matches[highIndex].PartiallyMatches(splitStr[highIndex])
-//	if !bMatches {
-//		return command
-//	}
-//
-//	splitStr[highIndex] += t.Matches[highIndex].GetSuffixHint(command)
-//	return strings.Join(splitStr, " ")
-//}

@@ -43,25 +43,6 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 	return &debugConsole
 }
 
-func createDebugFunctions(gameScene *GameScene) *grammar.TextCommands {
-	textCommands := make(grammar.TextCommands, 0)
-	textCommands = append(textCommands,
-		*grammar.NewTextCommand([]grammar.Match{
-			grammar.StringMatch{
-				Str: "teleport",
-			},
-			grammar.IntMatch{
-				IntMin: 0,
-				IntMax: 255,
-			},
-			grammar.IntMatch{
-				IntMin: 0,
-				IntMax: 255,
-			},
-		}))
-	return &textCommands
-}
-
 func (d *DebugConsole) update() {
 	if ebiten.IsKeyPressed(ebiten.KeyBackquote) {
 		if !d.gameScene.keyboard.TryToRegisterKeyPress(ebiten.KeyBackquote) {
@@ -122,4 +103,42 @@ func (d *DebugConsole) initializeDebugBorders() {
 		false)
 
 	d.backgroundDrawOptions.ColorScale.ScaleAlpha(.85)
+}
+
+func createDebugFunctions(gameScene *GameScene) *grammar.TextCommands {
+	textCommands := make(grammar.TextCommands, 0)
+	textCommands = append(textCommands,
+		*grammar.NewTextCommand([]grammar.Match{
+			grammar.StringMatch{
+				Str:           "teleport",
+				Description:   "Move to an X, Y coordinate on a given map",
+				CaseSensitive: false,
+			},
+			grammar.IntMatch{IntMin: 0, IntMax: 255},
+			grammar.IntMatch{IntMin: 0, IntMax: 255},
+		}))
+	textCommands = append(textCommands,
+		*grammar.NewTextCommand([]grammar.Match{
+			grammar.StringMatch{
+				Str:           "fy",
+				Description:   "Go to the given floor",
+				CaseSensitive: false,
+			},
+			grammar.IntMatch{IntMin: -1, IntMax: 5, Description: "Floor number"},
+		}))
+	textCommands = append(textCommands,
+		*grammar.NewTextCommand([]grammar.Match{
+			grammar.StringMatch{
+				Str:           "fu",
+				Description:   "Teleport a floor up if one exists",
+				CaseSensitive: false,
+			}}))
+	textCommands = append(textCommands,
+		*grammar.NewTextCommand([]grammar.Match{
+			grammar.StringMatch{
+				Str:           "fd",
+				Description:   "Teleport a floor down if one exists",
+				CaseSensitive: false,
+			}}))
+	return &textCommands
 }
