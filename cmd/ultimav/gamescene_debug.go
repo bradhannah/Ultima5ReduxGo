@@ -38,7 +38,15 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 	debugConsole.initializeDebugBorders()
 	debugConsole.font = text.NewUltimaFont(debugFontPoint)
 	debugConsole.Output = text.NewOutput(debugConsole.font, debugFontLineSpacing, maxDebugLines, maxCharsForInput)
-	debugConsole.TextInput = widgets.NewTextInput(debugFontPoint, maxCharsForInput, createDebugFunctions(gameScene))
+	debugConsole.TextInput = widgets.NewTextInput(
+		debugFontPoint,
+		maxCharsForInput,
+		createDebugFunctions(gameScene),
+		widgets.TextInputCallbacks{
+			AmbiguousAutoComplete: func(message string) {
+				debugConsole.Output.AddRowStr(message)
+			},
+		})
 	//debugConsole.debugCommands = createDebugFunctions(gameScene)
 	return &debugConsole
 }

@@ -2,6 +2,7 @@ package widgets
 
 import (
 	_ "embed"
+	"fmt"
 	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
@@ -46,6 +47,10 @@ type TextInputColors struct {
 	MoreThanOneMatchColor color.Color
 }
 
+type TextInputCallbacks struct {
+	AmbiguousAutoComplete func(string)
+}
+
 type TextInput struct {
 	output     *text.Output
 	ultimaFont *text.UltimaFont
@@ -59,6 +64,8 @@ type TextInput struct {
 	textCommands *grammar.TextCommands
 
 	keyboard *input.Keyboard
+
+	TextInputCallbacks TextInputCallbacks
 }
 
 const percentIntoBorder = 0.02
@@ -80,12 +87,13 @@ var nonAlphaNumericBoundKeys = []ebiten.Key{ebiten.KeyDown,
 	ebiten.KeyMinus,
 }
 
-func NewTextInput(fontPointSize float64, maxCharsPerLine int, textCommands *grammar.TextCommands) *TextInput {
+func NewTextInput(fontPointSize float64, maxCharsPerLine int, textCommands *grammar.TextCommands, callbacks TextInputCallbacks) *TextInput {
 	textInput := &TextInput{}
 	textInput.ultimaFont = text.NewUltimaFont(fontPointSize)
 	textInput.maxCharsPerLine = maxCharsPerLine
 	textInput.keyboard = input.NewKeyboard(keyPressDelay)
 	textInput.textCommands = textCommands
+	textInput.TextInputCallbacks = callbacks
 
 	// NOTE: single line input only (for now?)
 	textInput.output = text.NewOutput(textInput.ultimaFont, 0, 1, maxCharsPerLine)
@@ -102,11 +110,6 @@ func NewTextInput(fontPointSize float64, maxCharsPerLine int, textCommands *gram
 
 	return textInput
 }
-
-//func (t *TextInput) SetColor(c color.Color) {
-//	t.defaultColor = c
-//	t.output.SetColor(t.defaultColor)
-//}
 
 func (t *TextInput) getAndSetTtf(fontPointSize float64) {
 	tt, err := opentype.Parse(rawUltimaTTF)
@@ -219,29 +222,42 @@ func (t *TextInput) Update() {
 	case ebiten.KeyEnter:
 		return
 	case ebiten.KeySpace, ebiten.KeyTab:
-		{
-			if !t.hasTextCommands() {
-				// fill in the autocomplete
-				t.addCharacter(" ")
-				break
-			}
-			outputStr := t.output.GetOutputStr(false)
-			nMatch := t.textCommands.HowManyCommandsMatch(outputStr)
-			if nMatch == 1 {
-				// need to feed into autocomplete
-				matches := t.textCommands.GetAllMatchingTextCommands(outputStr)
-				if len(*matches) > 1 {
-					log.Fatal("Should only be a single match")
-				}
-
-				t.output.AppendToCurrentRowStr((*matches)[0].GetAutoComplete(outputStr) + " ")
-			}
-			// do nothing - it must have a match
-		}
+		t.tryToAutoComplete()
 	case ebiten.KeyBackspace:
 		t.output.RemoveRightSideCharacter()
 	}
 	return
+}
+
+func (t *TextInput) tryToAutoComplete() {
+	if !t.hasTextCommands() {
+		// fill in the autocomplete
+		t.addCharacter(" ")
+		return
+	}
+	outputStr := t.output.GetOutputStr(false)
+	nMatch := t.textCommands.HowManyCommandsMatch(outputStr)
+	matches := t.textCommands.GetAllMatchingTextCommands(outputStr)
+
+	if nMatch == 1 {
+		// need to feed into autocomplete
+		if len(*matches) > 1 {
+			log.Fatal("Should only be a single match")
+		}
+
+		t.output.AppendToCurrentRowStr((*matches)[0].GetAutoComplete(outputStr) + " ")
+	} else if nMatch > 1 {
+		var commandNames string
+		for i, m := range *matches {
+			if i > 0 {
+				commandNames += ", "
+			}
+			commandNames += m.Matches[0].GetString()
+		}
+		t.TextInputCallbacks.AmbiguousAutoComplete(fmt.Sprintf("Ambigious - %s", commandNames))
+	}
+
+	// do nothing - it must have a match
 }
 
 func (t *TextInput) hasTextCommands() bool {

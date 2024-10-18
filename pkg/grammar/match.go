@@ -1,6 +1,7 @@
 package grammar
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -8,6 +9,7 @@ import (
 type Match interface {
 	PartiallyMatches(string) (bool, error)
 	GetSuffixHint(currentStr string) string
+	GetString() string
 }
 
 type StringMatch struct {
@@ -16,10 +18,18 @@ type StringMatch struct {
 	CaseSensitive bool
 }
 
+func (m StringMatch) GetString() string {
+	return m.Str
+}
+
 type IntMatch struct {
 	IntMin      int
 	IntMax      int
 	Description string
+}
+
+func (m IntMatch) GetString() string {
+	return fmt.Sprintf("%d to %d", m.IntMax, m.IntMax)
 }
 
 func (m StringMatch) PartiallyMatches(str string) (bool, error) {
