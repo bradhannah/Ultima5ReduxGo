@@ -2,6 +2,8 @@ package widgets
 
 import (
 	_ "embed"
+	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
@@ -37,6 +39,13 @@ var (
 	rawUltimaTTF []byte
 )
 
+type TextInputColors struct {
+	DefaultColor          color.Color
+	NoMatchesColor        color.Color
+	OneMatchColor         color.Color
+	MoreThanOneMatchColor color.Color
+}
+
 type TextInput struct {
 	output     *text.Output
 	ultimaFont *text.UltimaFont
@@ -45,7 +54,9 @@ type TextInput struct {
 	maxCharsPerLine int
 	hasFocus        bool
 
-	color color.Color
+	inputColors TextInputColors
+
+	textCommands *grammar.TextCommands
 
 	keyboard *input.Keyboard
 }
@@ -65,27 +76,36 @@ var nonAlphaNumericBoundKeys = []ebiten.Key{ebiten.KeyDown,
 	ebiten.KeyBackspace,
 	ebiten.KeyDelete,
 	ebiten.KeyEscape,
+	ebiten.KeyTab,
 }
 
-func NewTextInput(fontPointSize float64, maxCharsPerLine int) *TextInput {
+func NewTextInput(fontPointSize float64, maxCharsPerLine int, textCommands *grammar.TextCommands) *TextInput {
 	textInput := &TextInput{}
 	textInput.ultimaFont = text.NewUltimaFont(fontPointSize)
 	textInput.maxCharsPerLine = maxCharsPerLine
 	textInput.keyboard = input.NewKeyboard(keyPressDelay)
+	textInput.textCommands = textCommands
 
 	// NOTE: single line input only (for now?)
 	textInput.output = text.NewOutput(textInput.ultimaFont, 0, 1, maxCharsPerLine)
 	textInput.output.AddRowStr("")
+
+	textInput.inputColors = TextInputColors{
+		DefaultColor:          color.White,
+		NoMatchesColor:        u_color.Red,
+		OneMatchColor:         u_color.Green,
+		MoreThanOneMatchColor: u_color.Yellow,
+	}
 
 	textInput.getAndSetTtf(fontPointSize)
 
 	return textInput
 }
 
-func (t *TextInput) SetColor(c color.Color) {
-	t.color = c
-	t.output.SetColor(t.color)
-}
+//func (t *TextInput) SetColor(c color.Color) {
+//	t.defaultColor = c
+//	t.output.SetColor(t.defaultColor)
+//}
 
 func (t *TextInput) getAndSetTtf(fontPointSize float64) {
 	tt, err := opentype.Parse(rawUltimaTTF)
@@ -105,6 +125,7 @@ func (t *TextInput) getAndSetTtf(fontPointSize float64) {
 
 func (t *TextInput) Draw(screen *ebiten.Image) {
 	textRect := sprites.GetRectangleFromPercents(mainTextPlacement)
+	t.output.SetColor(t.getTextColor())
 	t.output.DrawContinuousOutputTexOnXy(screen, image.Point{
 		X: textRect.Min.X,
 		Y: textRect.Min.Y,
@@ -133,14 +154,26 @@ func (t *TextInput) drawCursor(screen *ebiten.Image) {
 		float32(textRect.Min.Y),
 		cursorWidth,
 		float32(textRect.Dy()),
-		t.color,
+		t.getTextColor(),
 		false)
+}
+
+func (t *TextInput) getTextColor() color.Color {
+	if t.textCommands == nil {
+		return t.inputColors.DefaultColor
+	}
+
+	// before we draw the text input - first check if the text is valid
+	if t.textCommands.OneOrMoreCommandsMatch(t.GetText()) {
+		return t.inputColors.OneMatchColor
+	} else {
+		return t.inputColors.NoMatchesColor
+	}
+
 }
 
 func (t *TextInput) GetText() string {
 	return t.output.GetOutputStr(false)
-	//return ""
-	//return t.textArea.GetText()
 }
 
 func (t *TextInput) addCharacter(keyStr string) {
@@ -182,12 +215,34 @@ func (t *TextInput) Update() {
 	switch *boundKey {
 	case ebiten.KeyEnter:
 		return
-	case ebiten.KeySpace:
-		t.addCharacter(" ")
+	case ebiten.KeySpace, ebiten.KeyTab:
+		{
+			if !t.hasTextCommands() {
+				// fill in the autocomplete
+				t.addCharacter(" ")
+				break
+			}
+			outputStr := t.output.GetOutputStr(false)
+			nMatch := t.textCommands.HowManyCommandsMatch(outputStr)
+			if nMatch == 1 {
+				// need to feed into autocomplete
+				matches := t.textCommands.GetAllMatchingTextCommands(outputStr)
+				if len(*matches) > 1 {
+					log.Fatal("Should only be a single match")
+				}
+
+				t.output.AppendToCurrentRowStr((*matches)[0].GetAutoComplete(outputStr) + " ")
+			}
+			// do nothing - it must have a match
+		}
 	case ebiten.KeyBackspace:
 		t.output.RemoveRightSideCharacter()
 	}
 	return
+}
+
+func (t *TextInput) hasTextCommands() bool {
+	return len(*t.textCommands) > 0
 }
 
 // CalculateTextWidth returns the total width of the string in pixels

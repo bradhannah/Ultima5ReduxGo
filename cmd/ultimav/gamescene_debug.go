@@ -29,8 +29,6 @@ type DebugConsole struct {
 
 	TextInput *widgets.TextInput
 
-	debugCommands *grammar.TextCommands
-
 	gameScene *GameScene
 }
 
@@ -40,9 +38,8 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 	debugConsole.initializeDebugBorders()
 	debugConsole.font = text.NewUltimaFont(debugFontPoint)
 	debugConsole.Output = text.NewOutput(debugConsole.font, debugFontLineSpacing, maxDebugLines, maxCharsForInput)
-	debugConsole.TextInput = widgets.NewTextInput(debugFontPoint, maxCharsForInput)
-	debugConsole.TextInput.SetColor(u_color.Green)
-	debugConsole.debugCommands = createDebugFunctions(gameScene)
+	debugConsole.TextInput = widgets.NewTextInput(debugFontPoint, maxCharsForInput, createDebugFunctions(gameScene))
+	//debugConsole.debugCommands = createDebugFunctions(gameScene)
 	return &debugConsole
 }
 
@@ -92,13 +89,6 @@ func (d *DebugConsole) drawDebugConsole(screen *ebiten.Image) {
 		Y: textRect.Min.Y,
 	}, false)
 	screen.DrawImage(d.border, d.borderDrawOptions)
-
-	// before we draw the text input - first check if the text is valid
-	if d.debugCommands.OneOrMoreCommandsMatch(d.TextInput.GetText()) {
-		d.TextInput.SetColor(u_color.Green)
-	} else {
-		d.TextInput.SetColor(u_color.Red)
-	}
 
 	d.TextInput.Draw(screen)
 }

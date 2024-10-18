@@ -11,9 +11,10 @@ type Match interface {
 }
 
 type StringMatch struct {
-	Name        string
-	Str         string
-	Description string
+	Name          string
+	Str           string
+	Description   string
+	CaseSensitive bool
 }
 
 type IntMatch struct {
@@ -35,7 +36,10 @@ func (m StringMatch) GetSuffixHint(currentStr string) string {
 	}
 
 	// return the second half after the matched prefix
-	return strings.TrimPrefix(m.Str, currentStr)
+	if m.CaseSensitive {
+		return strings.TrimPrefix(m.Str, currentStr)
+	}
+	return strings.TrimPrefix(strings.ToUpper(m.Str), strings.ToUpper(currentStr))
 }
 
 func (m IntMatch) PartiallyMatches(str string) (bool, error) {
