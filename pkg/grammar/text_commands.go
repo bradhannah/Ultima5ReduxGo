@@ -1,7 +1,5 @@
 package grammar
 
-import "strings"
-
 type TextCommands []TextCommand
 
 // OneOrMoreCommandsMatch
@@ -17,27 +15,26 @@ func (t *TextCommands) HowManyCommandsMatch(command string) int {
 }
 
 func (t *TextCommands) GetAllMatchingTextCommands(command string) *TextCommands {
-	splitCommand := strings.Split(command, " ")
-	if splitCommand[len(splitCommand)-1] == "" {
-		splitCommand = splitCommand[:len(splitCommand)-1]
-	}
-
 	allMatches := make(TextCommands, 0)
-
-	nSplitCommands := len(splitCommand)
 	for _, checkCommand := range *t {
-		if nSplitCommands > len(checkCommand.Matches) {
+		m := checkCommand.GetTextCommandIfAtLeastPartialMatch(command)
+		if m == nil {
 			continue
 		}
-		for i := 0; i < nSplitCommands; i++ {
-			bMatched, _ := checkCommand.Matches[i].PartiallyMatches(splitCommand[i])
-			if bMatched && i == nSplitCommands-1 {
-				allMatches = append(allMatches, checkCommand)
-				break
-			} else if !bMatched {
-				break
-			}
+		allMatches = append(allMatches, *m)
+	}
+
+	return &allMatches
+}
+
+func (t *TextCommands) IsOnePerfectMatch(command string) *TextCommands {
+	allMatches := make(TextCommands, 0)
+	for _, checkCommand := range *t {
+		m := checkCommand.GetTextCommandIfAtLeastPartialMatch(command)
+		if m == nil {
+			continue
 		}
+		allMatches = append(allMatches, *m)
 	}
 
 	return &allMatches

@@ -220,6 +220,15 @@ func (t *TextInput) Update() {
 	case ebiten.KeyMinus:
 		t.output.AppendToCurrentRowStr("-")
 	case ebiten.KeyEnter:
+
+		// check if it has single full match
+		command := t.output.GetOutputStr(false)
+		matches := t.textCommands.IsOnePerfectMatch(command)
+		if len(*matches) == 1 {
+			// call the callback function
+			//(*matches)[0].ExecuteCommand(command, matches)
+		}
+		// if it does then run execute
 		return
 	case ebiten.KeySpace, ebiten.KeyTab:
 		t.tryToAutoComplete()
