@@ -10,6 +10,7 @@ type Match interface {
 	PartiallyMatches(string) (bool, error)
 	GetSuffixHint(currentStr string) string
 	GetString() string
+	//GetAsInt() int
 }
 
 type StringMatch struct {
@@ -22,6 +23,14 @@ func (m StringMatch) GetString() string {
 	return m.Str
 }
 
+//func (m StringMatch) GetAsInt() int {
+//	n, err := strconv.Atoi(m.Str)
+//	if err != nil {
+//		return n
+//	}
+//	return 0
+//}
+
 type IntMatch struct {
 	IntMin      int
 	IntMax      int
@@ -31,6 +40,14 @@ type IntMatch struct {
 func (m IntMatch) GetString() string {
 	return fmt.Sprintf("%d to %d", m.IntMax, m.IntMax)
 }
+
+//func (m IntMatch) GetAsInt() int {
+//	n, err := strconv.Atoi(m.)
+//	if err != nil {
+//		return n
+//	}
+//	return 0
+//}
 
 func (m StringMatch) PartiallyMatches(str string) (bool, error) {
 	if str == "" {

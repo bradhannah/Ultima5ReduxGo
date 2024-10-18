@@ -15,6 +15,7 @@ import (
 	"image"
 	"image/color"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -220,13 +221,16 @@ func (t *TextInput) Update() {
 	case ebiten.KeyMinus:
 		t.output.AppendToCurrentRowStr("-")
 	case ebiten.KeyEnter:
-
 		// check if it has single full match
 		command := t.output.GetOutputStr(false)
-		matches := t.textCommands.IsOnePerfectMatch(command)
+		matches := t.textCommands.GetAllPerfectMatches(command)
 		if len(*matches) == 1 {
 			// call the callback function
-			//(*matches)[0].ExecuteCommand(command, matches)
+			firstMatch := (*matches)[0]
+			if firstMatch.ExecuteCommand == nil {
+				return
+			}
+			firstMatch.ExecuteCommand(command, &firstMatch)
 		}
 		// if it does then run execute
 		return
@@ -253,8 +257,9 @@ func (t *TextInput) tryToAutoComplete() {
 		if len(*matches) > 1 {
 			log.Fatal("Should only be a single match")
 		}
-
-		t.output.AppendToCurrentRowStr((*matches)[0].GetAutoComplete(outputStr) + " ")
+		if !strings.HasSuffix(outputStr, " ") {
+			t.output.AppendToCurrentRowStr((*matches)[0].GetAutoComplete(outputStr) + " ")
+		}
 	} else if nMatch > 1 {
 		var commandNames string
 		for i, m := range *matches {

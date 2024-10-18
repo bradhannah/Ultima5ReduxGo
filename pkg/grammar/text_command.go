@@ -1,17 +1,35 @@
 package grammar
 
-import "strings"
+import (
+	"strconv"
+	"strings"
+)
+
+const textCommandSeparator = " "
+
+type ExecuteFunc func(string, *TextCommand)
 
 type TextCommand struct {
-	Matches        []Match
-	ExecuteCommand func(string, *[]Match)
+	Matches        Matches
+	ExecuteCommand ExecuteFunc
 }
 
-func NewTextCommand(matches []Match) *TextCommand {
+func NewTextCommand(matches Matches, executeFunc ExecuteFunc) *TextCommand {
 	textCommand := TextCommand{}
 	textCommand.Matches = matches
+	textCommand.ExecuteCommand = executeFunc
 
 	return &textCommand
+}
+
+func (t *TextCommand) GetIndexAsInt(nIndex int, command string) int {
+	splitStr := strings.Split(command, textCommandSeparator)
+
+	n, err := strconv.Atoi(splitStr[nIndex])
+	if err != nil {
+		return 0
+	}
+	return n
 }
 
 func (t *TextCommand) GetAutoComplete(command string) string {

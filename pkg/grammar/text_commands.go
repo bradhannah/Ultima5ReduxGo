@@ -27,10 +27,10 @@ func (t *TextCommands) GetAllMatchingTextCommands(command string) *TextCommands 
 	return &allMatches
 }
 
-func (t *TextCommands) IsOnePerfectMatch(command string) *TextCommands {
+func (t *TextCommands) GetAllPerfectMatches(command string) *TextCommands {
 	allMatches := make(TextCommands, 0)
 	for _, checkCommand := range *t {
-		m := checkCommand.GetTextCommandIfAtLeastPartialMatch(command)
+		m := checkCommand.GetTextCommandIfPerfectMatch(command)
 		if m == nil {
 			continue
 		}
