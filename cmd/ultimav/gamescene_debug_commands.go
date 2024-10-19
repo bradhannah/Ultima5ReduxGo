@@ -11,12 +11,20 @@ func (d *DebugConsole) createDebugFunctions(gameScene *GameScene) *grammar.TextC
 
 	// Add each command by calling helper functions
 	textCommands = append(textCommands, *d.createTeleportCommand(gameScene))
-	textCommands = append(textCommands, *d.createFloorCommand())
+	textCommands = append(textCommands, *d.createFloorYCommand())
 	textCommands = append(textCommands, *d.createFloorUpCommand())
 	textCommands = append(textCommands, *d.createFloorDownCommand())
 	textCommands = append(textCommands, *d.createFreeMoveCommand())
 
 	return &textCommands
+}
+
+func (d *DebugConsole) dumpQuickState(prefix string) {
+	d.Output.AddRowStr(fmt.Sprintf("> %s\n  X=%d,Y=%d,Floor=%d",
+		prefix,
+		d.gameScene.gameState.Position.X,
+		d.gameScene.gameState.Position.Y,
+		d.gameScene.gameState.Floor))
 }
 
 // Helper function for the teleport command
@@ -35,12 +43,15 @@ func (d *DebugConsole) createTeleportCommand(gameScene *GameScene) *grammar.Text
 			X: int16(command.GetIndexAsInt(1, outputStr)),
 			Y: int16(command.GetIndexAsInt(2, outputStr)),
 		})
-		d.Output.AddRowStr("Hit enter on teleport, which is nice")
+		d.dumpQuickState(fmt.Sprintf("Teleported to X=%d,Y=%d",
+			int16(command.GetIndexAsInt(1, outputStr)),
+			int16(command.GetIndexAsInt(2, outputStr)),
+		))
 	})
 }
 
 // Helper function for the floor command
-func (d *DebugConsole) createFloorCommand() *grammar.TextCommand {
+func (d *DebugConsole) createFloorYCommand() *grammar.TextCommand {
 	return grammar.NewTextCommand([]grammar.Match{
 		grammar.StringMatch{
 			Str:           "fy",
@@ -52,7 +63,8 @@ func (d *DebugConsole) createFloorCommand() *grammar.TextCommand {
 		func(s string, command *grammar.TextCommand) {
 			outputStr := d.TextInput.GetText()
 
-			d.gameScene.DebugFloorY(int8(command.GetIndexAsInt(1, outputStr)))
+			res := d.gameScene.DebugFloorY(int8(command.GetIndexAsInt(1, outputStr)))
+			d.dumpQuickState(fmt.Sprintf("FloorTeleport Status=%t", res))
 		})
 }
 
@@ -65,7 +77,8 @@ func (d *DebugConsole) createFloorUpCommand() *grammar.TextCommand {
 			CaseSensitive: false,
 		}},
 		func(s string, command *grammar.TextCommand) {
-			d.gameScene.DebugFloorUp()
+			res := d.gameScene.DebugFloorUp()
+			d.dumpQuickState(fmt.Sprintf("FloorUp Status=%t", res))
 		})
 }
 
@@ -78,7 +91,8 @@ func (d *DebugConsole) createFloorDownCommand() *grammar.TextCommand {
 			CaseSensitive: false,
 		}},
 		func(s string, command *grammar.TextCommand) {
-			d.gameScene.DebugFloorDown()
+			res := d.gameScene.DebugFloorDown()
+			d.dumpQuickState(fmt.Sprintf("FloorDown Status=%t", res))
 		})
 }
 
@@ -91,6 +105,6 @@ func (d *DebugConsole) createFreeMoveCommand() *grammar.TextCommand {
 		}},
 		func(s string, command *grammar.TextCommand) {
 			d.gameScene.gameState.DebugOptions.FreeMove = !d.gameScene.gameState.DebugOptions.FreeMove
-			d.Output.AddRowStr(fmt.Sprintf("FreeMove = %t", d.gameScene.gameState.DebugOptions.FreeMove))
+			d.dumpQuickState(fmt.Sprintf("FreeMove = %t", d.gameScene.gameState.DebugOptions.FreeMove))
 		})
 }
