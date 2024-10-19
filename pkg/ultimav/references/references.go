@@ -6,7 +6,7 @@ type GameReferences struct {
 	OverworldLargeMapReference  *LargeMapReference
 	UnderworldLargeMapReference *LargeMapReference
 
-	SingleMapReferences *SingleMapReferences
+	SingleMapReferences *LocationReferences
 	DataOvl             *DataOvl
 	TileReferences      *Tiles
 }

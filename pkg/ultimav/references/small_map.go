@@ -63,10 +63,10 @@ func getMapMasterFromLocation(location Location) SmallMapMasterTypes {
 	return None
 }
 
-func NewSmallMapReferences(gameConfig *config.UltimaVConfiguration, dataOvl *DataOvl) (*SingleMapReferences, error) {
+func NewSmallMapReferences(gameConfig *config.UltimaVConfiguration, dataOvl *DataOvl) (*LocationReferences, error) {
 	smr := newSingleMapReferences(gameConfig, dataOvl)
 
-	smr.maps = make(map[Location]*SmallMapReference)
+	smr.maps = make(map[Location]*SmallLocationReference)
 
 	// Keepe.dat
 	nextOffset := smr.addLocation(Lord_Britishs_Castle, true, 5, 0)

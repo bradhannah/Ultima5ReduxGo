@@ -56,6 +56,14 @@ func (k *Keyboard) SetLastKeyPressedNow() {
 	k.timeOfLastKeyPress = time.Now().UnixMilli()
 }
 
+func (k *Keyboard) ForceLastKeyPressed(key ebiten.Key) {
+	k.lastKeyPressed = key
+}
+
+func (k *Keyboard) SetLastKeyPressedNowPlusMs(ms int) {
+	k.timeOfLastKeyPress = time.Now().UnixMilli() + int64(ms)
+}
+
 func (k *Keyboard) SetAllowKeyPressImmediately() {
 	//k.timeOfLastKeyPress = 0
 	k.forceRegisterNextKeyPressed = true

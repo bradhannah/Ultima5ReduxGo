@@ -192,12 +192,11 @@ func (t *TextInput) removeRightCharacter(keyStr string) {
 }
 
 func (t *TextInput) Update() {
-	//if !t.hasFocus {
-	//	return
-	//}
-	if ebiten.IsKeyPressed(ebiten.KeyControl) { //&& ebiten.IsKeyPressed(ebiten.KeyU) {
+	if ebiten.IsKeyPressed(ebiten.KeyControl) {
 		if ebiten.IsKeyPressed(ebiten.KeyU) {
 			t.output.Clear()
+			t.keyboard.SetLastKeyPressedNowPlusMs(500)
+			t.keyboard.ForceLastKeyPressed(ebiten.KeyU)
 		}
 		return
 	}

@@ -54,7 +54,7 @@ const (
 	Combat_resting_shrine Location = 41
 )
 
-type SmallMapReference struct {
+type SmallLocationReference struct {
 	rawData              map[int]*[XSmallMapTiles][YSmallMapTiles]byte
 	Location             Location
 	FriendlyLocationName string
@@ -63,8 +63,8 @@ type SmallMapReference struct {
 	//config   *config.UltimaVConfiguration
 }
 
-func NewSingleSmallMapReference(location Location, dataOvl *DataOvl) *SmallMapReference {
-	smr := &SmallMapReference{}
+func NewSingleSmallMapReference(location Location, dataOvl *DataOvl) *SmallLocationReference {
+	smr := &SmallLocationReference{}
 	smr.Location = location
 	smr.rawData = make(map[int]*[XSmallMapTiles][YSmallMapTiles]byte)
 	// NOTE: this needs to be moved to a higher level
@@ -74,7 +74,7 @@ func NewSingleSmallMapReference(location Location, dataOvl *DataOvl) *SmallMapRe
 	return smr
 }
 
-func (s *SmallMapReference) AddBlankFloor(index int) {
+func (s *SmallLocationReference) addBlankFloor(index int) {
 	// Initialize the array
 	tileData := &[XSmallMapTiles][YSmallMapTiles]byte{}
 
@@ -82,15 +82,27 @@ func (s *SmallMapReference) AddBlankFloor(index int) {
 	s.rawData[index] = tileData
 }
 
-func (s *SmallMapReference) GetTileNumber(nFloor int, position *Position) int {
+func (s *SmallLocationReference) GetFloorMinMax() (int8, int8) {
+	if s.HasBasement() {
+		return -1, int8(len(s.rawData) - 2)
+	}
+	return 0, int8(len(s.rawData) - 1)
+}
+
+func (s *SmallLocationReference) HasBasement() bool {
+	_, ok := s.rawData[-1]
+	return ok
+}
+
+func (s *SmallLocationReference) GetTileNumber(nFloor int, position *Position) int {
 	return int(s.rawData[nFloor][position.X][position.Y])
 }
 
-func (s *SmallMapReference) GetEnteringText() string {
+func (s *SmallLocationReference) GetEnteringText() string {
 	return s.Location.String()
 }
 
-func (s *SmallMapReference) getEnteringText() string {
+func (s *SmallLocationReference) getEnteringText() string {
 	switch s.Location {
 	case Lord_Britishs_Castle:
 		return "Enter the Castle of Lord British!"

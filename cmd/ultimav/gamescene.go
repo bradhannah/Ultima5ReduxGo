@@ -159,7 +159,7 @@ func (g *GameScene) Update(_ *Game) error {
 			g.gameState.Location = newLocation
 			g.gameState.Floor = 0
 			g.addRowStr(fmt.Sprintf("%s",
-				g.gameReferences.SingleMapReferences.GetSingleMapReference(newLocation).EnteringText))
+				g.gameReferences.SingleMapReferences.GetLocationReference(newLocation).EnteringText))
 		}
 	case ebiten.KeyO:
 		g.debugConsole.Output.AddRowStr("Open")
@@ -198,4 +198,8 @@ func (g *GameScene) appendToCurrentRowStr(str string) {
 func (g *GameScene) addRowStr(str string) {
 	g.output.AddRowStr(str)
 	g.debugConsole.Output.AddRowStr(str)
+}
+
+func (g *GameScene) GetCurrentLocationReference() *references.SmallLocationReference {
+	return g.gameReferences.SingleMapReferences.GetLocationReference(g.gameState.Location)
 }

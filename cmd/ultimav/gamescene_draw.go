@@ -100,7 +100,11 @@ func (g *GameScene) drawMap(screen *ebiten.Image, layeredMaps *game_state.Layere
 			if g.gameState.Location == references.Britannia_Underworld { // Large Map
 				worldX = x + g.gameState.Position.X - xCenter
 				worldY = y + g.gameState.Position.Y - yCenter
-				tileNumber = g.gameReferences.OverworldLargeMapReference.GetTileNumber(worldX, worldY)
+				if g.gameState.Floor == 0 {
+					tileNumber = g.gameReferences.OverworldLargeMapReference.GetTileNumber(worldX, worldY)
+				} else {
+					tileNumber = g.gameReferences.UnderworldLargeMapReference.GetTileNumber(worldX, worldY)
+				}
 				layeredMaps.LayeredMaps[game_state.LargeMap].Layers[game_state.MapLayer][int(worldX)][int(worldY)] = tileNumber
 			} else { // Small Map
 				worldX = x - xCenter + g.gameState.Position.X
@@ -110,7 +114,7 @@ func (g *GameScene) drawMap(screen *ebiten.Image, layeredMaps *game_state.Layere
 				if pos.X < 0 || pos.X >= references.XSmallMapTiles || pos.Y < 0 || pos.Y >= references.YSmallMapTiles {
 					tileNumber = indexes.Grass
 				} else {
-					tileNumber = g.gameReferences.SingleMapReferences.GetSingleMapReference(g.gameState.Location).GetTileNumber(int(g.gameState.Floor), &pos)
+					tileNumber = g.gameReferences.SingleMapReferences.GetLocationReference(g.gameState.Location).GetTileNumber(int(g.gameState.Floor), &pos)
 				}
 				layeredMaps.LayeredMaps[game_state.SmallMap].Layers[game_state.MapLayer][int(worldX)][int(worldY)] = tileNumber
 				// is it overridden? if so - then we favour that one

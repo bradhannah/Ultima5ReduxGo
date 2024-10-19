@@ -7,29 +7,29 @@ import (
 	"path"
 )
 
-// SingleMapReferences a collection of SingleSmallMapReferences. Provides an easier way to keep
+// LocationReferences a collection of SingleSmallMapReferences. Provides an easier way to keep
 // the raw map data organized and accessible
-type SingleMapReferences struct {
-	maps           map[Location]*SmallMapReference
+type LocationReferences struct {
+	maps           map[Location]*SmallLocationReference
 	config         *config.UltimaVConfiguration
 	dataOvl        *DataOvl
 	WorldLocations *WorldLocations
 }
 
-func (s *SingleMapReferences) GetSingleMapReference(location Location) *SmallMapReference {
+func (s *LocationReferences) GetLocationReference(location Location) *SmallLocationReference {
 	return s.maps[location]
 }
 
-func newSingleMapReferences(config *config.UltimaVConfiguration, dataOvl *DataOvl) *SingleMapReferences {
-	smr := &SingleMapReferences{}
+func newSingleMapReferences(config *config.UltimaVConfiguration, dataOvl *DataOvl) *LocationReferences {
+	smr := &LocationReferences{}
 	smr.config = config
 	smr.dataOvl = dataOvl
 	smr.WorldLocations = NewWorldLocations(smr.config)
 	return smr
 }
 
-func (s *SingleMapReferences) addLocation(location Location, bHasBasement bool, nFloors int, nOffset int) int {
-	maps := make(map[int]*SmallMapReference)
+func (s *LocationReferences) addLocation(location Location, bHasBasement bool, nFloors int, nOffset int) int {
+	maps := make(map[int]*SmallLocationReference)
 	// get the file
 	mapFileAndPath := path.Join(s.config.DataFilePath, getSmallMapFile(getMapMasterFromLocation(location)))
 
@@ -44,10 +44,10 @@ func (s *SingleMapReferences) addLocation(location Location, bHasBasement bool, 
 		floorModifier = -1
 	}
 
-	smr := NewSingleSmallMapReference(location, s.dataOvl) //SmallMapReference{}
+	smr := NewSingleSmallMapReference(location, s.dataOvl) //SmallLocationReference{}
 	for i := 0; i < nFloors; i++ {
 		actualFloor := i + floorModifier
-		smr.AddBlankFloor(actualFloor)
+		smr.addBlankFloor(actualFloor)
 		var x, y int
 		for x = 0; x < int(XSmallMapTiles); x++ {
 			for y = 0; y < int(YSmallMapTiles); y++ {

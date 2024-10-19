@@ -31,7 +31,7 @@ func (d *DebugConsole) createTeleportCommand(gameScene *GameScene) *grammar.Text
 		grammar.IntMatch{IntMin: 0, IntMax: 255},
 	}, func(s string, command *grammar.TextCommand) {
 		outputStr := d.TextInput.GetText()
-		gameScene.gameState.DebugMoveOnMap(references.Position{
+		gameScene.DebugMoveOnMap(references.Position{
 			X: int16(command.GetIndexAsInt(1, outputStr)),
 			Y: int16(command.GetIndexAsInt(2, outputStr)),
 		})
@@ -48,7 +48,12 @@ func (d *DebugConsole) createFloorCommand() *grammar.TextCommand {
 			CaseSensitive: false,
 		},
 		grammar.IntMatch{IntMin: -1, IntMax: 5, Description: "Floor number"},
-	}, nil)
+	},
+		func(s string, command *grammar.TextCommand) {
+			outputStr := d.TextInput.GetText()
+
+			d.gameScene.DebugFloorY(int8(command.GetIndexAsInt(1, outputStr)))
+		})
 }
 
 // Helper function for the floor up command
@@ -58,7 +63,10 @@ func (d *DebugConsole) createFloorUpCommand() *grammar.TextCommand {
 			Str:           "fu",
 			Description:   "Teleport a floor up if one exists",
 			CaseSensitive: false,
-		}}, nil)
+		}},
+		func(s string, command *grammar.TextCommand) {
+			d.gameScene.DebugFloorUp()
+		})
 }
 
 // Helper function for the floor down command
@@ -68,7 +76,10 @@ func (d *DebugConsole) createFloorDownCommand() *grammar.TextCommand {
 			Str:           "fd",
 			Description:   "Teleport a floor down if one exists",
 			CaseSensitive: false,
-		}}, nil)
+		}},
+		func(s string, command *grammar.TextCommand) {
+			d.gameScene.DebugFloorDown()
+		})
 }
 
 func (d *DebugConsole) createFreeMoveCommand() *grammar.TextCommand {
