@@ -195,6 +195,12 @@ func (t *TextInput) Update() {
 	//if !t.hasFocus {
 	//	return
 	//}
+	if ebiten.IsKeyPressed(ebiten.KeyControl) { //&& ebiten.IsKeyPressed(ebiten.KeyU) {
+		if ebiten.IsKeyPressed(ebiten.KeyU) {
+			t.output.Clear()
+		}
+		return
+	}
 
 	var boundKey *ebiten.Key
 	key, keyStr := t.keyboard.GetAlphaNumericPressed()

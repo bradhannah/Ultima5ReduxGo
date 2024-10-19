@@ -36,6 +36,12 @@ func (o *Output) SetColor(color color.Color) {
 	o.color = color
 }
 
+func (o *Output) Clear() {
+	for i, _ := range o.lines {
+		o.lines[i] = ""
+	}
+}
+
 func (o *Output) DrawText(screen *ebiten.Image, textStr string, op *ebiten.DrawImageOptions) {
 	dop := text.DrawOptions{
 		DrawImageOptions: *op,
