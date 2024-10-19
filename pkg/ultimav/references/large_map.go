@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/legacy"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"os"
 	"path"
 )
@@ -48,7 +49,7 @@ func (m *LargeMapReference) GetTileNumber(x int16, y int16) int {
 	} else if y >= YLargeMapTiles {
 		y = y % YLargeMapTiles
 	}
-	return int(m.rawData[x][y])
+	return sprites.GetTileNumberWithAnimationByTile(int(m.rawData[x][y]))
 }
 
 // func loadLargeMapFromFile(mapFileAndPath string, dataOvlFileAndPath string) (*LargeMapReference, error) {

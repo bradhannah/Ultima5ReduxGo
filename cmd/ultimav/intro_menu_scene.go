@@ -69,7 +69,7 @@ func (m *IntroMenuScene) drawStaticGraphics(screen *ebiten.Image) {
 
 	// Fire animation
 	const fireStartX = 0.1
-	fireSprite := m.introSprites.FlameAnimation.GetCurrentSprite()
+	fireSprite := m.introSprites.FlameAnimation.GetCurrentImage()
 	opFire := sprites.GetXSpriteWithPercents(fireSprite.Bounds(),
 		sprites.PercentXBasedPlacement{
 			StartPercentX: fireStartX,

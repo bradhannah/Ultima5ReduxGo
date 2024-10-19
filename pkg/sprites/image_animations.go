@@ -8,13 +8,13 @@ import (
 	"time"
 )
 
-type SpriteAnimation struct {
+type ImageAnimation struct {
 	images                    []*ebiten.Image
 	millisecondsBetweenChange int64
 }
 
-func NewSpriteAnimation(images []*ebiten.Image, millisecondsBetweenChange int64) *SpriteAnimation {
-	return &SpriteAnimation{images: images, millisecondsBetweenChange: millisecondsBetweenChange}
+func NewImageAnimation(images []*ebiten.Image, millisecondsBetweenChange int64) *ImageAnimation {
+	return &ImageAnimation{images: images, millisecondsBetweenChange: millisecondsBetweenChange}
 }
 
 func NewSpriteSlice(rawSprites [][]byte) []*ebiten.Image {
@@ -30,7 +30,7 @@ func NewSpriteSlice(rawSprites [][]byte) []*ebiten.Image {
 	return images
 }
 
-func (s *SpriteAnimation) GetCurrentSprite() *ebiten.Image {
+func (s *ImageAnimation) GetCurrentImage() *ebiten.Image {
 	// get current time
 
 	nFrame := int((time.Now().UnixMilli() / s.millisecondsBetweenChange) % int64(len(s.images)))

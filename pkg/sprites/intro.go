@@ -23,7 +23,7 @@ var (
 type IntroSprites struct {
 	Ultima16Logo   *ebiten.Image
 	ReduxLogo      *ebiten.Image
-	FlameAnimation *SpriteAnimation
+	FlameAnimation *ImageAnimation
 }
 
 func NewIntroSprites() *IntroSprites {
@@ -35,7 +35,7 @@ func NewIntroSprites() *IntroSprites {
 
 	// flame
 	flameImages := NewSpriteSlice([][]byte{flameLogo1, flameLogo2, flameLogo3, flameLogo4})
-	introSprites.FlameAnimation = NewSpriteAnimation(flameImages, 100)
+	introSprites.FlameAnimation = NewImageAnimation(flameImages, 100)
 
 	return introSprites
 }

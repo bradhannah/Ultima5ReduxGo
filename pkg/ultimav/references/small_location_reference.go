@@ -2,6 +2,8 @@ package references
 
 import (
 	"fmt"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/util"
 )
 
@@ -94,8 +96,17 @@ func (s *SmallLocationReference) HasBasement() bool {
 	return ok
 }
 
-func (s *SmallLocationReference) GetTileNumber(nFloor int, position *Position) int {
-	return int(s.rawData[nFloor][position.X][position.Y])
+func (s *SmallLocationReference) GetTileNumberWithAnimation(nFloor int, position *Position) int {
+	mainTile := int(s.rawData[nFloor][position.X][position.Y])
+	if (mainTile >= indexes.Waterfall_KeyIndex && mainTile <= indexes.Waterfall_KeyIndex+3) || mainTile == indexes.Fountain_KeyIndex || mainTile >= 308 {
+		return sprites.GetTileNumberWithAnimationByTile(mainTile)
+		// animation
+		// msPerFrame
+		//interval := time.Now().UnixMilli() / msPerFrame
+		//currentRotation := int(interval) % 4
+		//return mainTile + currentRotation
+	}
+	return mainTile
 }
 
 func (s *SmallLocationReference) GetEnteringText() string {

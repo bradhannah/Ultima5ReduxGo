@@ -114,7 +114,7 @@ func (g *GameScene) drawMap(screen *ebiten.Image, layeredMaps *game_state.Layere
 				if pos.X < 0 || pos.X >= references.XSmallMapTiles || pos.Y < 0 || pos.Y >= references.YSmallMapTiles {
 					tileNumber = indexes.Grass
 				} else {
-					tileNumber = g.gameReferences.SingleMapReferences.GetLocationReference(g.gameState.Location).GetTileNumber(int(g.gameState.Floor), &pos)
+					tileNumber = g.gameReferences.SingleMapReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(int(g.gameState.Floor), &pos)
 				}
 				layeredMaps.LayeredMaps[game_state.SmallMap].Layers[game_state.MapLayer][int(worldX)][int(worldY)] = tileNumber
 				// is it overridden? if so - then we favour that one
