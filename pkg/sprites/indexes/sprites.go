@@ -5,6 +5,7 @@ const (
 	Water                 = 1
 	Swamp                 = 4
 	Grass                 = 5
+	Desert                = 7
 	SmallMountains        = 12
 	LeftDesert2           = 30
 	RightDesert2          = 31

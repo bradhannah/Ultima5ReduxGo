@@ -97,7 +97,9 @@ func (s *SmallLocationReference) HasBasement() bool {
 }
 
 func (s *SmallLocationReference) GetTileNumberWithAnimation(nFloor int, position *Position) int {
+
 	mainTile := int(s.rawData[nFloor][position.X][position.Y])
+
 	if (mainTile >= indexes.Waterfall_KeyIndex && mainTile <= indexes.Waterfall_KeyIndex+3) || mainTile == indexes.Fountain_KeyIndex || mainTile >= 308 {
 		return sprites.GetTileNumberWithAnimationByTile(mainTile)
 		// animation
@@ -135,4 +137,16 @@ func (s *SmallLocationReference) getEnteringText() string {
 		return fmt.Sprintf("Enter Dungeon\n\n%s", util.GetCenteredText(s.FriendlyLocationName))
 	}
 	return "NOT IMPLEMENTED"
+}
+
+func (s *SmallLocationReference) GetOuterTile() int {
+	switch s.Location {
+	case SinVraals_Hut:
+		return indexes.Desert
+	case Grendels_Hut:
+		return indexes.Swamp
+	default:
+		return indexes.Grass
+
+	}
 }

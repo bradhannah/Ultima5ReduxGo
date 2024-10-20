@@ -135,11 +135,11 @@ func (g *GameScene) handleSecondaryInput() {
 		case game_state.OpenDoorNotADoor:
 			g.addRowStr("Nothing to open!")
 		case game_state.OpenDoorLocked:
-			g.addRowStr("OpenDoorLocked!")
+			g.addRowStr("Locked!")
 		case game_state.OpenDoorLockedMagical:
-			g.addRowStr("Magically OpenDoorLocked!")
+			g.addRowStr("Magically Locked!")
 		case game_state.OpenDoorOpened:
-			g.addRowStr("OpenDoorOpened!")
+			g.addRowStr("Opened!")
 		default:
 			log.Fatal("Unrecognized door open state")
 		}

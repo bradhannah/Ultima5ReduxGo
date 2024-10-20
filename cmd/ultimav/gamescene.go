@@ -203,3 +203,23 @@ func (g *GameScene) addRowStr(str string) {
 func (g *GameScene) GetCurrentLocationReference() *references.SmallLocationReference {
 	return g.gameReferences.SingleMapReferences.GetLocationReference(g.gameState.Location)
 }
+
+func (g *GameScene) GetTileIndex(position *references.Position) int {
+	var tileNumber = 0
+
+	if g.gameState.Location == references.Britannia_Underworld {
+		if g.gameState.Floor == 0 {
+			tileNumber = g.gameReferences.OverworldLargeMapReference.GetTileNumber(position.X, position.Y)
+		} else {
+			tileNumber = g.gameReferences.UnderworldLargeMapReference.GetTileNumber(position.X, position.Y)
+		}
+		return tileNumber
+	}
+
+	if position.X < 0 || position.X >= references.XSmallMapTiles || position.Y < 0 || position.Y >= references.YSmallMapTiles {
+		return g.GetCurrentLocationReference().GetOuterTile()
+	}
+
+	tileNumber = g.gameReferences.SingleMapReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(int(g.gameState.Floor), position)
+	return tileNumber
+}
