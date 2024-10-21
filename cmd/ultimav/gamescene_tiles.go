@@ -12,6 +12,10 @@ func (g *GameScene) getSmallCalculatedTileIndex(ogTileIndex int, pos *references
 	switch ogTileIndex {
 	case indexes.Mirror:
 		// is avatar in front of it
+		pos := pos.GetPositionDown()
+		if g.gameState.IsAvatarAtPosition(&pos) {
+			return indexes.MirrorAvatar
+		}
 	}
 
 	if !g.gameState.IsAvatarAtPosition(pos) {
@@ -20,7 +24,6 @@ func (g *GameScene) getSmallCalculatedTileIndex(ogTileIndex int, pos *references
 
 	switch ogTileIndex {
 	case indexes.LeftBed:
-		// is avatar on it?
 		return indexes.AvatarSleepingInBed
 	case indexes.ChairFacingRight, indexes.ChairFacingLeft, indexes.ChairFacingUp, indexes.ChairFacingDown:
 		return g.getCorrectAvatarOnChairTile(ogTileIndex, pos)
@@ -45,13 +48,6 @@ func (g *GameScene) getCorrectAvatarOnChairTile(tileIndex int, position *referen
 }
 
 func (g *GameScene) getCorrectAvatarEatingInChairTile(avatarChairTileIndex int, pos *references.Position) int {
-	//func isFoodTable(tileIndex) bool {
-	//	return avatarChairTileIndex != indexes.TableFoodTop &&
-	//		avatarChairTileIndex != indexes.TableFoodBottom &&
-	//		avatarChairTileIndex != indexes.TableFoodBoth
-	//
-	//}
-
 	switch avatarChairTileIndex {
 	case indexes.ChairFacingDown:
 		downPos := pos.GetPositionDown()
@@ -59,20 +55,20 @@ func (g *GameScene) getCorrectAvatarEatingInChairTile(avatarChairTileIndex int, 
 		if downPosTileIndex == indexes.TableFoodBoth || downPosTileIndex == indexes.TableFoodTop {
 			return sprites.GetTileNumberWithAnimationByTile(indexes.AvatarSittingAndEatingFacingDown)
 		}
-		return indexes.AvatarSittingFacingUp
+		return indexes.AvatarSittingFacingDown
 	case indexes.ChairFacingUp:
 		upPos := pos.GetPositionUp()
 		upPosTileIndex := g.gameReferences.SingleMapReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(int(g.gameState.Floor), &upPos)
 		if upPosTileIndex == indexes.TableFoodBoth || upPosTileIndex == indexes.TableFoodBottom {
 			return sprites.GetTileNumberWithAnimationByTile(indexes.AvatarSittingAndEatingFacingUp)
 		}
-		return indexes.AvatarSittingFacingDown
+		return indexes.AvatarSittingFacingUp
 	}
 
 	return avatarChairTileIndex
 }
 
-func (g *GameScene) refreshMap() {
+func (g *GameScene) refreshMapLayerTiles() {
 	if g.unscaledMapImage == nil {
 		g.unscaledMapImage = ebiten.NewImage(sprites.TileSize*xTilesInMap, sprites.TileSize*yTilesInMap)
 	}

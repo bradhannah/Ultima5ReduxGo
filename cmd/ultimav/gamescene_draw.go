@@ -19,7 +19,7 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 		g.mapImage = ebiten.NewImage(mapWidth, mapHeight)
 	}
 
-	g.refreshMap()
+	g.refreshMapLayerTiles()
 	g.drawMap(g.mapImage)
 	g.drawMapUnits(g.mapImage)
 
