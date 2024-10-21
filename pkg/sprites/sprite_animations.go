@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-const msPerFrame = 75
+const msPerFrame = 125
 
 func GetTileNumberWithAnimationByTile(nTile int) int {
 	//mainTile := int(s.rawData[nFloor][position.X][position.Y])

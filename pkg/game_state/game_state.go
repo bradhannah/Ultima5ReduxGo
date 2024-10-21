@@ -72,3 +72,7 @@ func (g *GameState) ProcessEndOfTurn() {
 		}
 	}
 }
+
+func (g *GameState) IsAvatarAtPosition(pos *references.Position) bool {
+	return g.Position.Equals(*pos)
+}

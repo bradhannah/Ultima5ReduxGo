@@ -2,10 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
@@ -78,57 +75,11 @@ func (g *GameScene) drawMapUnits(screen *ebiten.Image) {
 	do := ebiten.DrawImageOptions{}
 
 	do.GeoM.Translate(float64(sprites.TileSize*(xTilesInMap/2)), float64(sprites.TileSize*(yTilesInMap/2)))
-
-	screen.DrawImage(g.spriteSheet.GetSprite(indexes.Avatar), &do)
-}
-
-func (g *GameScene) refreshMap() {
-	if g.unscaledMapImage == nil {
-		g.unscaledMapImage = ebiten.NewImage(sprites.TileSize*xTilesInMap, sprites.TileSize*yTilesInMap)
-	}
-
-	do := ebiten.DrawImageOptions{}
-
-	xCenter := int16(xTilesInMap / 2)
-	yCenter := int16(yTilesInMap / 2)
-	var x, y int16
-	var worldX, worldY int16
-	for x = 0; x < xTilesInMap; x++ {
-		for y = 0; y < yTilesInMap; y++ {
-			do.GeoM.Translate(float64(x*sprites.TileSize), float64(y*sprites.TileSize))
-			var tileNumber int
-			if g.gameState.Location == references.Britannia_Underworld { // Large Map
-				worldX = x + g.gameState.Position.X - xCenter
-				worldY = y + g.gameState.Position.Y - yCenter
-				pos := references.Position{X: worldX, Y: worldY}
-
-				tileNumber = g.GetTileIndex(&pos)
-				g.gameState.LayeredMaps.LayeredMaps[game_state.LargeMap].Layers[game_state.MapLayer][int(worldX)][int(worldY)] = tileNumber
-			} else { // Small Map
-				worldX = x - xCenter + g.gameState.Position.X
-				worldY = y - yCenter + g.gameState.Position.Y
-				// small map for now
-				pos := references.Position{X: worldX, Y: worldY}
-				tileNumber = g.GetTileIndex(&pos)
-				g.gameState.LayeredMaps.LayeredMaps[game_state.SmallMap].Layers[game_state.MapLayer][int(worldX)][int(worldY)] = tileNumber
-				// is it overridden? if so - then we favour that one
-				// should the calculating the map be separating from the drawing?
-				tileNumber = g.gameState.LayeredMaps.LayeredMaps[game_state.SmallMap].GetTopTile(&pos).Index
-			}
-			g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileNumber), &do)
-			do.GeoM.Reset()
-		}
-	}
-
-	return
+	//screen.DrawImage(g.spriteSheet.GetSprite(indexes.Avatar), &do)
 }
 
 // drawMap
 func (g *GameScene) drawMap(screen *ebiten.Image) {
-
-	do := ebiten.DrawImageOptions{}
-
-	screen.DrawImage(g.unscaledMapImage, &do)
-
+	screen.DrawImage(g.unscaledMapImage, &ebiten.DrawImageOptions{})
 	g.debugMessage = fmt.Sprintf("%d, %d", g.gameState.Position.X, g.gameState.Position.Y)
 }

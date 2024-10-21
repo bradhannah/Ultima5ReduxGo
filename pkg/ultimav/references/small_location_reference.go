@@ -100,7 +100,7 @@ func (s *SmallLocationReference) GetTileNumberWithAnimation(nFloor int, position
 
 	mainTile := int(s.rawData[nFloor][position.X][position.Y])
 
-	if (mainTile >= indexes.Waterfall_KeyIndex && mainTile <= indexes.Waterfall_KeyIndex+3) || mainTile == indexes.Fountain_KeyIndex || mainTile >= 308 {
+	if (mainTile >= indexes.Waterfall_KeyIndex && mainTile <= indexes.Waterfall_KeyIndex+3) || mainTile == indexes.Fountain_KeyIndex || mainTile >= indexes.AvatarSittingAndEatingFacingDown {
 		return sprites.GetTileNumberWithAnimationByTile(mainTile)
 		// animation
 		// msPerFrame

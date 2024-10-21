@@ -1,6 +1,8 @@
 package game_state
 
-import "github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+import (
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+)
 
 const (
 	MapLayer Layer = iota
@@ -23,13 +25,13 @@ func newLayeredMap(xMax int, yMax int, tileRefs *references.Tiles) *LayeredMap {
 }
 
 func (l *LayeredMap) GetTopTile(position *references.Position) *references.Tile {
-	var tileValue int
+	var tileIndex int
 	for i := EffectLayer; i >= MapLayer; i-- {
-		tileValue = l.Layers[i][int(position.X)][int(position.Y)]
-		if tileValue <= 0 {
+		tileIndex = l.Layers[i][int(position.X)][int(position.Y)]
+		if tileIndex <= 0 {
 			continue
 		}
-		return l.tileRefs.GetTile(tileValue)
+		return l.tileRefs.GetTile(tileIndex)
 	}
 	return nil
 }

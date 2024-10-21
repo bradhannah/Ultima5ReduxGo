@@ -7,6 +7,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -208,6 +209,9 @@ func (g *GameScene) GetTileIndex(position *references.Position) int {
 	var tileNumber = 0
 
 	if g.gameState.Location == references.Britannia_Underworld {
+		if g.gameState.IsAvatarAtPosition(position) {
+			return indexes.Avatar_KeyIndex
+		}
 		if g.gameState.Floor == 0 {
 			tileNumber = g.gameReferences.OverworldLargeMapReference.GetTileNumber(position.X, position.Y)
 		} else {
@@ -221,5 +225,19 @@ func (g *GameScene) GetTileIndex(position *references.Position) int {
 	}
 
 	tileNumber = g.gameReferences.SingleMapReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(int(g.gameState.Floor), position)
+	// get an adjustment to tile if one is warranted
+	updatedTileNumber := g.getSmallCalculatedTileIndex(tileNumber, position)
+
+	// if there is an overridden tile, then we will always favour that
+	if tileNumber != updatedTileNumber {
+		return updatedTileNumber
+	}
+
+	// if it's the avatar's position and there wasn't an override then we favour showing the avatar
+	if g.gameState.IsAvatarAtPosition(position) {
+		return indexes.Avatar_KeyIndex
+	}
+
+	// stick to the original tile if no exceptions are made
 	return tileNumber
 }
