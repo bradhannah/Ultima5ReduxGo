@@ -96,12 +96,12 @@ func (s *SmallLocationReference) HasBasement() bool {
 	return ok
 }
 
-func (s *SmallLocationReference) GetTileNumberWithAnimation(nFloor int, position *Position) int {
+func (s *SmallLocationReference) GetTileNumberWithAnimation(nFloor int, position *Position) indexes.SpriteIndex {
 
-	mainTile := int(s.rawData[nFloor][position.X][position.Y])
+	mainTile := indexes.SpriteIndex(s.rawData[nFloor][position.X][position.Y])
 
 	if (mainTile >= indexes.Waterfall_KeyIndex && mainTile <= indexes.Waterfall_KeyIndex+3) || mainTile == indexes.Fountain_KeyIndex || mainTile >= indexes.AvatarSittingAndEatingFacingDown {
-		return sprites.GetTileNumberWithAnimationByTile(mainTile)
+		return sprites.GetSpriteIndexWithAnimationBySpriteIndex(mainTile)
 		// animation
 		// msPerFrame
 		//interval := time.Now().UnixMilli() / msPerFrame
@@ -139,7 +139,7 @@ func (s *SmallLocationReference) getEnteringText() string {
 	return "NOT IMPLEMENTED"
 }
 
-func (s *SmallLocationReference) GetOuterTile() int {
+func (s *SmallLocationReference) GetOuterTile() indexes.SpriteIndex {
 	switch s.Location {
 	case SinVraals_Hut:
 		return indexes.Desert

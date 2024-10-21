@@ -1,5 +1,7 @@
 package references
 
+import "github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+
 type PartyVehicle int
 
 const (
@@ -9,7 +11,7 @@ const (
 )
 
 type Tile struct {
-	Index                     int
+	Index                     indexes.SpriteIndex
 	Name                      string `json:"Name"`
 	Description               string `json:"Description"`
 	IsWalkingPassable         bool   `json:"IsWalking_Passable"`

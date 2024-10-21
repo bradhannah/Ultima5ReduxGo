@@ -2,6 +2,7 @@ package sprites
 
 import (
 	_ "embed"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image"
 )
@@ -32,7 +33,8 @@ func NewSpriteSheet() *SpriteSheet {
 	return spriteSheet
 }
 
-func (s *SpriteSheet) getSpriteImageRectangle(nSprite int) image.Rectangle {
+func (s *SpriteSheet) getSpriteImageRectangle(spriteIndex indexes.SpriteIndex) image.Rectangle {
+	nSprite := int(spriteIndex)
 	topLeft := image.Point{X: (nSprite % spritesPerRow) * TileSize, Y: (nSprite / spritesPerRow) * TileSize}
 	bottomRight := image.Point{
 		X: topLeft.X + TileSize,
@@ -44,7 +46,7 @@ func (s *SpriteSheet) getSpriteImageRectangle(nSprite int) image.Rectangle {
 	}
 }
 
-func (s *SpriteSheet) GetSprite(nSprite int) *ebiten.Image {
+func (s *SpriteSheet) GetSprite(nSprite indexes.SpriteIndex) *ebiten.Image {
 
 	if s.spriteImageCache[nSprite] == nil {
 		sprite := ebiten.NewImageFromImage(s.SpriteImage.SubImage(s.getSpriteImageRectangle(nSprite)))

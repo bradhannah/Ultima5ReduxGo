@@ -9,7 +9,7 @@ func (p *PlayerCharacter) GetNameAsString() string {
 	return strings.TrimRight(string(p.Name[:]), string(rune(0)))
 }
 
-func (p *PlayerCharacter) GetKeySpriteIndex() int {
+func (p *PlayerCharacter) GetKeySpriteIndex() indexes.SpriteIndex {
 	if p.Class == 'A' {
 		return indexes.Avatar_KeyIndex
 	}

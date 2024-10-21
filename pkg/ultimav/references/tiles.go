@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"log"
 	"strconv"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 )
 
 var (
@@ -12,9 +14,9 @@ var (
 	tileDataRaw []byte
 )
 
-type Tiles map[int]Tile
+type Tiles map[indexes.SpriteIndex]Tile
 
-func (t *Tiles) GetTile(tileNum int) *Tile {
+func (t *Tiles) GetTile(tileNum indexes.SpriteIndex) *Tile {
 	tile, exists := (*t)[tileNum]
 	if !exists {
 		return nil // Return nil if the tileNum doesn't exist
@@ -36,8 +38,8 @@ func (t *Tiles) UnmarshalJSON(data []byte) error {
 		if err != nil {
 			return err
 		}
-		value.Index = intKey
-		tilesMap[intKey] = value
+		value.Index = indexes.SpriteIndex(intKey)
+		tilesMap[indexes.SpriteIndex(intKey)] = value
 	}
 
 	// Set the result to the original Tiles map

@@ -1,6 +1,7 @@
 package game_state
 
 import (
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -65,7 +66,12 @@ func (g *GameState) GetMapType() GeneralMapType {
 func (g *GameState) ProcessEndOfTurn() {
 	if g.openDoorPos != nil {
 		if g.openDoorTurns == 0 {
-			g.LayeredMaps.LayeredMaps[SmallMap].UnSetTile(MapOverrideLayer, g.openDoorPos)
+			tile := g.LayeredMaps.GetTileRefByPosition(SmallMap, MapLayer, g.openDoorPos)
+			if tile.Index.IsWindowedDoor() {
+				g.LayeredMaps.LayeredMaps[SmallMap].SetTile(MapOverrideLayer, g.openDoorPos, indexes.RegularDoorView)
+			} else {
+				g.LayeredMaps.LayeredMaps[SmallMap].SetTile(MapOverrideLayer, g.openDoorPos, indexes.RegularDoor)
+			}
 			g.openDoorPos = nil
 		} else {
 			g.openDoorTurns--

@@ -25,7 +25,7 @@ func (g *GameState) JimmyDoor(direction Direction, player *PlayerCharacter) Jimm
 	switch targetTile.Index {
 	case indexes.LockedDoor, indexes.LockedDoorView:
 		if g.isJimmySuccessful(player) {
-			var unlockedDoor int
+			var unlockedDoor indexes.SpriteIndex
 			if targetTile.Index == indexes.LockedDoor {
 				unlockedDoor = indexes.RegularDoor
 			} else {

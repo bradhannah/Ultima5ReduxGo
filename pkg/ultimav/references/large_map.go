@@ -6,6 +6,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/legacy"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"os"
 	"path"
 )
@@ -38,7 +39,7 @@ func NewLargeMapReference(gameConfig *config.UltimaVConfiguration, world World) 
 	}
 }
 
-func (m *LargeMapReference) GetTileNumber(x int16, y int16) int {
+func (m *LargeMapReference) GetSpriteIndex(x int16, y int16) indexes.SpriteIndex {
 	if x < 0 {
 		x = x + XLargeMapTiles
 	} else if x >= XLargeMapTiles {
@@ -49,7 +50,7 @@ func (m *LargeMapReference) GetTileNumber(x int16, y int16) int {
 	} else if y >= YLargeMapTiles {
 		y = y % YLargeMapTiles
 	}
-	return sprites.GetTileNumberWithAnimationByTile(int(m.rawData[x][y]))
+	return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.SpriteIndex(m.rawData[x][y]))
 }
 
 // func loadLargeMapFromFile(mapFileAndPath string, dataOvlFileAndPath string) (*LargeMapReference, error) {

@@ -205,31 +205,31 @@ func (g *GameScene) GetCurrentLocationReference() *references.SmallLocationRefer
 	return g.gameReferences.SingleMapReferences.GetLocationReference(g.gameState.Location)
 }
 
-func (g *GameScene) GetTileIndex(position *references.Position) int {
-	var tileNumber = 0
+func (g *GameScene) GetSpriteIndex(position *references.Position) indexes.SpriteIndex {
+	var spriteIndex = indexes.SpriteIndex(0)
 
 	if g.gameState.Location == references.Britannia_Underworld {
 		if g.gameState.IsAvatarAtPosition(position) {
 			return indexes.Avatar_KeyIndex
 		}
 		if g.gameState.Floor == 0 {
-			tileNumber = g.gameReferences.OverworldLargeMapReference.GetTileNumber(position.X, position.Y)
+			spriteIndex = g.gameReferences.OverworldLargeMapReference.GetSpriteIndex(position.X, position.Y)
 		} else {
-			tileNumber = g.gameReferences.UnderworldLargeMapReference.GetTileNumber(position.X, position.Y)
+			spriteIndex = g.gameReferences.UnderworldLargeMapReference.GetSpriteIndex(position.X, position.Y)
 		}
-		return tileNumber
+		return spriteIndex
 	}
 
 	if position.X < 0 || position.X >= references.XSmallMapTiles || position.Y < 0 || position.Y >= references.YSmallMapTiles {
 		return g.GetCurrentLocationReference().GetOuterTile()
 	}
 
-	tileNumber = g.gameReferences.SingleMapReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(int(g.gameState.Floor), position)
+	spriteIndex = g.gameReferences.SingleMapReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(int(g.gameState.Floor), position)
 	// get an adjustment to tile if one is warranted
-	updatedTileNumber := g.getSmallCalculatedTileIndex(tileNumber, position)
+	updatedTileNumber := g.getSmallCalculatedTileIndex(spriteIndex, position)
 
 	// if there is an overridden tile, then we will always favour that
-	if tileNumber != updatedTileNumber {
+	if spriteIndex != updatedTileNumber {
 		return updatedTileNumber
 	}
 
@@ -239,5 +239,5 @@ func (g *GameScene) GetTileIndex(position *references.Position) int {
 	}
 
 	// stick to the original tile if no exceptions are made
-	return tileNumber
+	return spriteIndex
 }

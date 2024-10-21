@@ -6,7 +6,6 @@ const totalLayers = 4
 
 type LayeredMaps struct {
 	LayeredMaps map[GeneralMapType]*LayeredMap
-	//SmallMapLayers LayeredMap
 }
 
 type GeneralMapType int
@@ -17,11 +16,6 @@ const (
 )
 
 type Layer int
-
-type LayeredMap struct {
-	Layers   [totalLayers]map[int]map[int]int
-	tileRefs *references.Tiles
-}
 
 func NewLayeredMaps(tileRefs *references.Tiles) *LayeredMaps {
 	maps := &LayeredMaps{}
@@ -37,4 +31,10 @@ func GetMapTypeByLocation(location references.Location) GeneralMapType {
 		return LargeMap
 	}
 	return SmallMap
+}
+
+func (l *LayeredMaps) GetTileRefByPosition(mapType GeneralMapType, mapLayer Layer, pos *references.Position) *references.Tile {
+	index := l.LayeredMaps[mapType].Layers[mapLayer][int(pos.X)][int(pos.Y)]
+
+	return l.LayeredMaps[mapType].tileRefs.GetTile(index)
 }
