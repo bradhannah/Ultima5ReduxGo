@@ -84,11 +84,11 @@ func (s *SmallLocationReference) addBlankFloor(index int) {
 	s.rawData[index] = tileData
 }
 
-func (s *SmallLocationReference) GetFloorMinMax() (int8, int8) {
+func (s *SmallLocationReference) GetFloorMinMax() (FloorNumber, FloorNumber) {
 	if s.HasBasement() {
-		return -1, int8(len(s.rawData) - 2)
+		return -1, FloorNumber(len(s.rawData) - 2)
 	}
-	return 0, int8(len(s.rawData) - 1)
+	return 0, FloorNumber(len(s.rawData) - 1)
 }
 
 func (s *SmallLocationReference) HasBasement() bool {
@@ -149,4 +149,25 @@ func (s *SmallLocationReference) GetOuterTile() indexes.SpriteIndex {
 		return indexes.Grass
 
 	}
+}
+
+func (s *SmallLocationReference) GetNumberOfFloors() int {
+	return len(s.rawData)
+}
+
+func (s *SmallLocationReference) GetListOfFloors() []FloorNumber {
+	numFloors := s.GetNumberOfFloors()
+	startIndex := FloorNumber(0)
+
+	if s.HasBasement() {
+		startIndex = -1
+	}
+
+	// Initialize the floors slice with values directly
+	floors := make([]FloorNumber, numFloors)
+	for i := FloorNumber(0); i < FloorNumber(numFloors); i++ {
+		floors[i] = startIndex + i
+	}
+
+	return floors
 }

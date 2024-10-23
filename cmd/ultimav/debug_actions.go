@@ -45,7 +45,7 @@ func (g *GameScene) DebugFloorDown() bool {
 	return true
 }
 
-func (g *GameScene) DebugFloorY(nFloor int8) bool {
+func (g *GameScene) DebugFloorY(nFloor references.FloorNumber) bool {
 	if g.gameState.Location == references.Britannia_Underworld {
 		if nFloor < -1 {
 			g.gameState.Floor = -1

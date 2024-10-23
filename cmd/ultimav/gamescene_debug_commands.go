@@ -63,7 +63,7 @@ func (d *DebugConsole) createFloorYCommand() *grammar.TextCommand {
 		func(s string, command *grammar.TextCommand) {
 			outputStr := d.TextInput.GetText()
 
-			res := d.gameScene.DebugFloorY(int8(command.GetIndexAsInt(1, outputStr)))
+			res := d.gameScene.DebugFloorY(references.FloorNumber(command.GetIndexAsInt(1, outputStr)))
 			d.dumpQuickState(fmt.Sprintf("FloorTeleport Status=%t", res))
 		})
 }

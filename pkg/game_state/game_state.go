@@ -30,7 +30,7 @@ type GameState struct {
 
 	Location references.Location
 	Position references.Position
-	Floor    int8
+	Floor    references.FloorNumber
 
 	LayeredMaps  LayeredMaps
 	PartyVehicle references.PartyVehicle
@@ -64,13 +64,17 @@ func (g *GameState) GetMapType() GeneralMapType {
 }
 
 func (g *GameState) ProcessEndOfTurn() {
+	if g.Location == references.Britannia_Underworld {
+		return
+	}
+
 	if g.openDoorPos != nil {
 		if g.openDoorTurns == 0 {
-			tile := g.LayeredMaps.GetTileRefByPosition(SmallMap, MapLayer, g.openDoorPos)
+			tile := g.LayeredMaps.GetTileRefByPosition(SmallMap, MapLayer, g.openDoorPos, g.Floor)
 			if tile.Index.IsWindowedDoor() {
-				g.LayeredMaps.LayeredMaps[SmallMap].SetTile(MapOverrideLayer, g.openDoorPos, indexes.RegularDoorView)
+				g.LayeredMaps.GetLayeredMap(SmallMap, g.Floor).SetTile(MapOverrideLayer, g.openDoorPos, indexes.RegularDoorView)
 			} else {
-				g.LayeredMaps.LayeredMaps[SmallMap].SetTile(MapOverrideLayer, g.openDoorPos, indexes.RegularDoor)
+				g.LayeredMaps.GetLayeredMap(SmallMap, g.Floor).SetTile(MapOverrideLayer, g.openDoorPos, indexes.RegularDoor)
 			}
 			g.openDoorPos = nil
 		} else {

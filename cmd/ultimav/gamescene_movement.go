@@ -68,7 +68,7 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 	g.addRowStr(fmt.Sprintf("> %s", directionStr))
 
 	isPassable := func(pos *references.Position) bool {
-		topTile := g.gameState.LayeredMaps.LayeredMaps[g.gameState.GetMapType()].GetTopTile(pos)
+		topTile := g.gameState.LayeredMaps.GetLayeredMap(g.gameState.GetMapType(), g.gameState.Floor).GetTopTile(pos)
 		return topTile.IsPassable(g.gameState.PartyVehicle)
 	}
 

@@ -20,7 +20,7 @@ func (g *GameState) JimmyDoor(direction Direction, player *PlayerCharacter) Jimm
 	mapType := GetMapTypeByLocation(g.Location)
 
 	newPosition := direction.GetNewPositionInDirection(&g.Position)
-	targetTile := g.LayeredMaps.LayeredMaps[SmallMap].GetTileTopMapOnlyTile(newPosition)
+	targetTile := g.LayeredMaps.layeredMaps[SmallMap][g.Floor].GetTileTopMapOnlyTile(newPosition)
 
 	switch targetTile.Index {
 	case indexes.LockedDoor, indexes.LockedDoorView:
@@ -31,7 +31,7 @@ func (g *GameState) JimmyDoor(direction Direction, player *PlayerCharacter) Jimm
 			} else {
 				unlockedDoor = indexes.RegularDoorView
 			}
-			g.LayeredMaps.LayeredMaps[mapType].SetTile(MapOverrideLayer, newPosition, unlockedDoor)
+			g.LayeredMaps.GetLayeredMap(mapType, g.Floor).SetTile(MapOverrideLayer, newPosition, unlockedDoor)
 			return JimmyUnlocked
 		} else {
 			//g.Provisions.QtyKeys = helpers.Max(g.Provisions.QtyKeys-1, 0)

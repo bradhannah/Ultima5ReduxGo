@@ -15,10 +15,11 @@ const (
 
 func (g *GameState) OpenDoor(direction Direction) DoorOpenState {
 	const defaultTurnsForDoorOpen = 2
-	mapType := GetMapTypeByLocation(g.Location)
+	//  mapType := GetMapTypeByLocation(g.Location)
 
 	newPosition := direction.GetNewPositionInDirection(&g.Position)
-	targetTile := g.LayeredMaps.LayeredMaps[SmallMap].GetTileTopMapOnlyTile(newPosition)
+	theMap := g.LayeredMaps.GetLayeredMap(SmallMap, g.Floor)
+	targetTile := theMap.GetTileTopMapOnlyTile(newPosition)
 
 	switch targetTile.Index {
 	case indexes.MagicLockDoor, indexes.MagicLockDoorWithView:
@@ -31,10 +32,10 @@ func (g *GameState) OpenDoor(direction Direction) DoorOpenState {
 		return OpenDoorNotADoor
 	}
 
-	g.LayeredMaps.LayeredMaps[mapType].SetTile(MapOverrideLayer, newPosition, indexes.BrickFloor)
+	theMap.SetTile(MapOverrideLayer, newPosition, indexes.BrickFloor)
 
 	if g.openDoorPos != nil {
-		g.LayeredMaps.LayeredMaps[mapType].UnSetTile(MapOverrideLayer, g.openDoorPos)
+		theMap.UnSetTile(MapOverrideLayer, g.openDoorPos)
 	}
 	g.openDoorPos = newPosition
 	g.openDoorTurns = defaultTurnsForDoorOpen
