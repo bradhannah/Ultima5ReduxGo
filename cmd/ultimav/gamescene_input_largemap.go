@@ -22,7 +22,7 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyRight:
 		g.handleMovement(game_state.Right.GetDirectionCompassName(), ebiten.KeyRight)
 	case ebiten.KeyK:
-		g.gameState.SecondaryKeyState = game_state.KlimbDirectionInput
+		g.secondaryKeyState = KlimbDirectionInput
 	case ebiten.KeyX:
 	case ebiten.KeyE:
 		g.debugMessage = "Enter a place"
@@ -46,7 +46,7 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 	}
 
 	// only process end of turn if the turn is actually done.
-	if g.gameState.SecondaryKeyState == game_state.PrimaryInput {
+	if g.secondaryKeyState == PrimaryInput {
 		g.gameState.LargeMapProcessEndOfTurn()
 	}
 }

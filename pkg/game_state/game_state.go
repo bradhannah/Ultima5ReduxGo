@@ -7,15 +7,6 @@ import (
 
 const NPlayers = 6
 
-type InputState int
-
-const (
-	PrimaryInput InputState = iota
-	OpenDirectionInput
-	JimmyDoorDirectionInput
-	KlimbDirectionInput
-)
-
 type DebugOptions struct {
 	FreeMove bool
 }
@@ -26,8 +17,6 @@ type GameState struct {
 	MoonstoneStatus MoonstoneStatus
 
 	DebugOptions DebugOptions
-
-	SecondaryKeyState InputState
 
 	Location references.Location
 	Position references.Position

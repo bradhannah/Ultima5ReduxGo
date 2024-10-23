@@ -34,17 +34,17 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyO:
 		g.debugConsole.Output.AddRowStr("Open")
 		g.addRowStr("Open-")
-		g.gameState.SecondaryKeyState = game_state.OpenDirectionInput
+		g.secondaryKeyState = OpenDirectionInput
 		g.keyboard.SetAllowKeyPressImmediately()
 	case ebiten.KeyJ:
 		g.debugMessage = "Jimmy"
 		g.addRowStr("Jimmy-")
-		g.gameState.SecondaryKeyState = game_state.JimmyDoorDirectionInput
+		g.secondaryKeyState = JimmyDoorDirectionInput
 		g.keyboard.SetAllowKeyPressImmediately()
 	}
 
 	// only process end of turn if the turn is actually done.
-	if g.gameState.SecondaryKeyState == game_state.PrimaryInput {
+	if g.secondaryKeyState == PrimaryInput {
 		g.gameState.SmallMapProcessEndOfTurn()
 	}
 }
@@ -53,11 +53,11 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 	arrowKey := getArrowKeyPressed()
 	bIsArrowKeyPressed := arrowKey != nil
 
-	switch g.gameState.SecondaryKeyState {
-	case game_state.JimmyDoorDirectionInput:
+	switch g.secondaryKeyState {
+	case JimmyDoorDirectionInput:
 		if g.gameState.Provisions.QtyKeys <= 0 {
 			g.addRowStr("No Keys!")
-			g.gameState.SecondaryKeyState = game_state.PrimaryInput
+			g.secondaryKeyState = PrimaryInput
 			g.keyboard.SetLastKeyPressedNow()
 			return
 		}
@@ -85,10 +85,9 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 			panic("unhandled default case")
 		}
 
-		g.gameState.SecondaryKeyState = game_state.PrimaryInput
+		g.secondaryKeyState = PrimaryInput
 
-	case game_state.OpenDirectionInput:
-
+	case OpenDirectionInput:
 		if !bIsArrowKeyPressed {
 			return
 		}
@@ -111,7 +110,19 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 			log.Fatal("Unrecognized door open state")
 		}
 
-		g.gameState.SecondaryKeyState = game_state.PrimaryInput
+		g.secondaryKeyState = PrimaryInput
+	case KlimbDirectionInput:
+		if !bIsArrowKeyPressed {
+			return
+		}
+		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
+			return
+		}
+		g.appendToCurrentRowStr(getCurrentPressedArrowKeyAsDirection().GetDirectionCompassName())
+
+		g.smallMapKlimbSecondary(getCurrentPressedArrowKeyAsDirection())
+
+		g.secondaryKeyState = PrimaryInput
 	default:
 		panic("unhandled default case")
 	}
@@ -143,5 +154,12 @@ func (g *GameScene) smallMapKlimb() {
 			log.Fatal("Can't go higher my dude")
 		}
 	}
-	g.output.AddRowStr("Klimb what?")
+	g.output.AddRowStr("Klimb-")
+	g.secondaryKeyState = KlimbDirectionInput
+}
+
+func (g *GameScene) smallMapKlimbSecondary(direction game_state.Direction) {
+	if !g.gameState.KlimbSmallMap(direction) {
+		g.output.AddRowStr("What?")
+	}
 }

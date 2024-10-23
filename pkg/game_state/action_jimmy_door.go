@@ -21,7 +21,7 @@ func (g *GameState) JimmyDoor(direction Direction, player *PlayerCharacter) Jimm
 	mapType := GetMapTypeByLocation(g.Location)
 
 	newPosition := direction.GetNewPositionInDirection(&g.Position)
-	targetTile := g.LayeredMaps.layeredMaps[references.SmallMapType][g.Floor].GetTileTopMapOnlyTile(newPosition)
+	targetTile := g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).GetTileTopMapOnlyTile(newPosition)
 
 	switch targetTile.Index {
 	case indexes.LockedDoor, indexes.LockedDoorView:

@@ -1,9 +1,18 @@
 package game_state
 
-func (g *GameState) KlimbSmallMap() bool {
+import (
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+)
 
-	//g.LayeredMaps.GetTileRefByPosition()
-	return true
+func (g *GameState) KlimbSmallMap(direction Direction) bool {
+	newPosition := direction.GetNewPositionInDirection(&g.Position)
+	targetTile := g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).GetTileTopMapOnlyTile(newPosition)
+	if targetTile.Index == indexes.FenceHoriz || targetTile.Index == indexes.FenceVert {
+		g.Position = *newPosition
+		return true
+	}
+	return false
 }
 
 func (g *GameState) KlimbLargeMap() bool {

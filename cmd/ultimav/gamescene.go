@@ -28,6 +28,15 @@ const (
 	maxLinesForOutput      = 10
 )
 
+type InputState int
+
+const (
+	PrimaryInput InputState = iota
+	OpenDirectionInput
+	JimmyDoorDirectionInput
+	KlimbDirectionInput
+)
+
 // GameScene is another scene (e.g., the actual game)
 type GameScene struct {
 	gameConfig          *config.UltimaVConfiguration
@@ -51,6 +60,8 @@ type GameScene struct {
 	debugMessage string
 
 	gameState *game_state.GameState
+
+	secondaryKeyState InputState
 
 	borders gameBorders
 }

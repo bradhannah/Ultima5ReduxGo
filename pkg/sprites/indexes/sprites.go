@@ -59,6 +59,8 @@ const (
 	CookStove                            = 191
 	LadderUp                             = 200
 	LadderDown                           = 201
+	FenceHoriz                           = 202
+	FenceVert                            = 203
 	Clock1                               = 250
 	Clock2                               = 251
 	StarPattern                          = 256

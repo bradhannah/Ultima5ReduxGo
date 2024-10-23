@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -35,7 +34,7 @@ func (g *GameScene) Update(_ *Game) error {
 		return nil
 	}
 
-	if g.gameState.SecondaryKeyState != game_state.PrimaryInput {
+	if g.secondaryKeyState != PrimaryInput {
 		switch mapType {
 		case references.LargeMapType:
 			g.largeMapHandleSecondaryInput()
