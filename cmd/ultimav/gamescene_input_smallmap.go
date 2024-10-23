@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
 	"log"
@@ -23,7 +24,7 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyRight:
 		g.handleMovement(game_state.Right.GetDirectionCompassName(), ebiten.KeyRight)
 	case ebiten.KeyK:
-
+		g.smallMapKlimb()
 	case ebiten.KeyX:
 		g.gameState.Location = references.Britannia_Underworld
 		g.gameState.Floor = 0
@@ -118,4 +119,29 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 	if bIsArrowKeyPressed {
 		g.keyboard.SetLastKeyPressedNow()
 	}
+}
+
+func (g *GameScene) smallMapKlimb() {
+	currentTile := g.gameState.LayeredMaps.GetTileRefByPosition(references.SmallMapType, game_state.MapLayer, &g.gameState.Position, g.gameState.Floor)
+
+	switch currentTile.Index {
+	case indexes.AvatarOnLadderDown, indexes.Grate:
+		if g.GetCurrentLocationReference().CanGoDownOneFloor(g.gameState.Floor) {
+			g.gameState.Floor--
+			g.output.AddRowStr("Klimb-Down!")
+			return
+		} else {
+			log.Fatal("Can't go lower my dude")
+		}
+
+	case indexes.AvatarOnLadderUp:
+		if g.GetCurrentLocationReference().CanGoUpOneFloor(g.gameState.Floor) {
+			g.gameState.Floor++
+			g.output.AddRowStr("Klimb-Up!")
+			return
+		} else {
+			log.Fatal("Can't go higher my dude")
+		}
+	}
+	g.output.AddRowStr("Klimb what?")
 }

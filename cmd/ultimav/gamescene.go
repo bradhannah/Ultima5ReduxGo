@@ -103,7 +103,7 @@ func (g *GameScene) addRowStr(str string) {
 }
 
 func (g *GameScene) GetCurrentLocationReference() *references.SmallLocationReference {
-	return g.gameReferences.SingleMapReferences.GetLocationReference(g.gameState.Location)
+	return g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location)
 }
 
 func (g *GameScene) GetSpriteIndex(position *references.Position) indexes.SpriteIndex {
@@ -125,7 +125,7 @@ func (g *GameScene) GetSpriteIndex(position *references.Position) indexes.Sprite
 		return g.GetCurrentLocationReference().GetOuterTile()
 	}
 
-	spriteIndex = g.gameReferences.SingleMapReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(int(g.gameState.Floor), position)
+	spriteIndex = g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(int(g.gameState.Floor), position)
 	// get an adjustment to tile if one is warranted
 	updatedTileNumber := g.getSmallCalculatedTileIndex(spriteIndex, position)
 

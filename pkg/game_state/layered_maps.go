@@ -33,7 +33,7 @@ func (l *LayeredMaps) GetLayeredMap(generalMapType references.GeneralMapType, fl
 
 func (l *LayeredMaps) ResetAndCreateSmallMap(slr *references.SmallLocationReference, tileRefs *references.Tiles) {
 	l.layeredMaps[references.SmallMapType] = make(map[references.FloorNumber]*LayeredMap)
-	for _, floor := range slr.GetListOfFloors() {
+	for _, floor := range slr.ListOfFloors {
 		l.layeredMaps[references.SmallMapType][floor] = newLayeredMap(int(references.XSmallMapTiles), int(references.YSmallMapTiles), tileRefs)
 	}
 }

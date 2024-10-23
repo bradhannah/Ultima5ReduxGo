@@ -26,13 +26,13 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyX:
 	case ebiten.KeyE:
 		g.debugMessage = "Enter a place"
-		newLocation := g.gameReferences.SingleMapReferences.WorldLocations.GetLocationByPosition(g.gameState.Position)
+		newLocation := g.gameReferences.LocationReferences.WorldLocations.GetLocationByPosition(g.gameState.Position)
 
 		if newLocation != references.EmptyLocation {
-			maps := g.gameReferences.SingleMapReferences.GetLocationReference(newLocation)
+			maps := g.gameReferences.LocationReferences.GetLocationReference(newLocation)
 			g.gameState.EnterBuilding(maps, g.gameReferences.TileReferences)
 			g.addRowStr(fmt.Sprintf("%s",
-				g.gameReferences.SingleMapReferences.GetLocationReference(newLocation).EnteringText))
+				g.gameReferences.LocationReferences.GetLocationReference(newLocation).EnteringText))
 		} else {
 			g.addRowStr(fmt.Sprintf("Enter what?"))
 		}

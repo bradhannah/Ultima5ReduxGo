@@ -13,6 +13,7 @@ type SmallLocationReference struct {
 	FriendlyLocationName string
 	EnteringText         string
 	SmallMapType         SmallMapMasterTypes
+	ListOfFloors         []FloorNumber
 	//config   *config.UltimaVConfiguration
 }
 
@@ -33,6 +34,8 @@ func (s *SmallLocationReference) addBlankFloor(index int) {
 
 	// Add the initialized array to the map at the given index
 	s.rawData[index] = tileData
+
+	s.ListOfFloors = s.getListOfFloors()
 }
 
 func (s *SmallLocationReference) GetFloorMinMax() (FloorNumber, FloorNumber) {
@@ -106,7 +109,7 @@ func (s *SmallLocationReference) GetNumberOfFloors() int {
 	return len(s.rawData)
 }
 
-func (s *SmallLocationReference) GetListOfFloors() []FloorNumber {
+func (s *SmallLocationReference) getListOfFloors() []FloorNumber {
 	numFloors := s.GetNumberOfFloors()
 	startIndex := FloorNumber(0)
 
@@ -121,4 +124,23 @@ func (s *SmallLocationReference) GetListOfFloors() []FloorNumber {
 	}
 
 	return floors
+}
+
+func (s *SmallLocationReference) CanGoUpOneFloor(currentFloor FloorNumber) bool {
+	floorIndex := 0
+	if s.HasBasement() {
+		floorIndex = -1
+	}
+	nextFloor := currentFloor + 1
+	return int(nextFloor) < s.GetNumberOfFloors()+floorIndex
+}
+
+func (s *SmallLocationReference) CanGoDownOneFloor(currentFloor FloorNumber) bool {
+	if currentFloor < 0 {
+		if s.HasBasement() {
+			return true
+		}
+		return false
+	}
+	return true
 }
