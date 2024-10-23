@@ -5,7 +5,6 @@ import (
 )
 
 func (g *GameState) EnterBuilding(slr *references.SmallLocationReference, tileRefs *references.Tiles) {
-	//newLocation := g.gameReferences.SingleMapReferences.WorldLocations.GetLocationByPosition(g.gameState.Position)
 	if slr.Location != references.EmptyLocation {
 		g.LastLargeMapPosition = g.Position
 		g.Position = references.Position{

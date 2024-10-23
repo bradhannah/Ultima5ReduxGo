@@ -86,12 +86,12 @@ func (g *GameScene) refreshMapLayerTiles() {
 			spriteIndex := g.GetSpriteIndex(&pos)
 
 			if g.gameState.Location == references.Britannia_Underworld { // Large Map
-				g.gameState.LayeredMaps.GetLayeredMap(game_state.LargeMap, g.gameState.Floor).Layers[game_state.MapLayer][int(pos.X)][int(pos.Y)] = spriteIndex
+				g.gameState.LayeredMaps.GetLayeredMap(references.LargeMapType, g.gameState.Floor).Layers[game_state.MapLayer][int(pos.X)][int(pos.Y)] = spriteIndex
 			} else { // Small Map
-				g.gameState.LayeredMaps.GetLayeredMap(game_state.SmallMap, g.gameState.Floor).Layers[game_state.MapLayer][int(pos.X)][int(pos.Y)] = spriteIndex
+				g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).Layers[game_state.MapLayer][int(pos.X)][int(pos.Y)] = spriteIndex
 				// always favour the Avatar sprite if it is the actual map tile
 				if spriteIndex != indexes.Avatar_KeyIndex {
-					spriteIndex = g.gameState.LayeredMaps.GetLayeredMap(game_state.SmallMap, g.gameState.Floor).GetTopTile(&pos).Index
+					spriteIndex = g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).GetTopTile(&pos).Index
 				}
 			}
 			g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(spriteIndex), &do)

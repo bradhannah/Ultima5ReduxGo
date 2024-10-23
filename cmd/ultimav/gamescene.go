@@ -19,21 +19,14 @@ const (
 	borderWidthScaling = 601
 	xTilesInMap        = 19
 	yTilesInMap        = 13
-	keyPressDelay      = 165
 )
 
-var boundKeysGame = []ebiten.Key{ebiten.KeyDown,
-	ebiten.KeyUp,
-	ebiten.KeyEnter,
-	ebiten.KeyLeft,
-	ebiten.KeyRight,
-	ebiten.KeyE,
-	ebiten.KeyX,
-	ebiten.KeyO,
-	ebiten.KeyJ,
-	ebiten.KeySlash,
-	ebiten.KeyBackquote,
-}
+const (
+	defaultOutputFontPoint = 20
+	defaultLineSpacing     = 20
+	maxCharsPerLine        = 16
+	maxLinesForOutput      = 10
+)
 
 // GameScene is another scene (e.g., the actual game)
 type GameScene struct {
@@ -61,13 +54,6 @@ type GameScene struct {
 
 	borders gameBorders
 }
-
-const (
-	defaultOutputFontPoint = 20
-	defaultLineSpacing     = 20
-	maxCharsPerLine        = 16
-	maxLinesForOutput      = 10
-)
 
 func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	gameScene := GameScene{gameConfig: gameConfig}

@@ -3,6 +3,7 @@ package game_state
 import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"golang.org/x/exp/rand"
 )
 
@@ -20,7 +21,7 @@ func (g *GameState) JimmyDoor(direction Direction, player *PlayerCharacter) Jimm
 	mapType := GetMapTypeByLocation(g.Location)
 
 	newPosition := direction.GetNewPositionInDirection(&g.Position)
-	targetTile := g.LayeredMaps.layeredMaps[SmallMap][g.Floor].GetTileTopMapOnlyTile(newPosition)
+	targetTile := g.LayeredMaps.layeredMaps[references.SmallMapType][g.Floor].GetTileTopMapOnlyTile(newPosition)
 
 	switch targetTile.Index {
 	case indexes.LockedDoor, indexes.LockedDoorView:

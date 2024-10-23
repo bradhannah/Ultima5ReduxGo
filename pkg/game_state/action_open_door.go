@@ -1,6 +1,9 @@
 package game_state
 
-import "github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+import (
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+)
 
 type DoorOpenState int
 
@@ -18,7 +21,7 @@ func (g *GameState) OpenDoor(direction Direction) DoorOpenState {
 	//  mapType := GetMapTypeByLocation(g.Location)
 
 	newPosition := direction.GetNewPositionInDirection(&g.Position)
-	theMap := g.LayeredMaps.GetLayeredMap(SmallMap, g.Floor)
+	theMap := g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor)
 	targetTile := theMap.GetTileTopMapOnlyTile(newPosition)
 
 	switch targetTile.Index {

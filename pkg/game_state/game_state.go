@@ -13,6 +13,7 @@ const (
 	PrimaryInput InputState = iota
 	OpenDirectionInput
 	JimmyDoorDirectionInput
+	KlimbDirectionInput
 )
 
 type DebugOptions struct {
@@ -56,25 +57,18 @@ type Provisions struct {
 	QtySkullKeys byte
 }
 
-func (g *GameState) GetMapType() GeneralMapType {
-	if g.Location == references.Britannia_Underworld {
-		return LargeMap
-	}
-	return SmallMap
+func (g *GameState) LargeMapProcessEndOfTurn() {
+	return
 }
 
-func (g *GameState) ProcessEndOfTurn() {
-	if g.Location == references.Britannia_Underworld {
-		return
-	}
-
+func (g *GameState) SmallMapProcessEndOfTurn() {
 	if g.openDoorPos != nil {
 		if g.openDoorTurns == 0 {
-			tile := g.LayeredMaps.GetTileRefByPosition(SmallMap, MapLayer, g.openDoorPos, g.Floor)
+			tile := g.LayeredMaps.GetTileRefByPosition(references.SmallMapType, MapLayer, g.openDoorPos, g.Floor)
 			if tile.Index.IsWindowedDoor() {
-				g.LayeredMaps.GetLayeredMap(SmallMap, g.Floor).SetTile(MapOverrideLayer, g.openDoorPos, indexes.RegularDoorView)
+				g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).SetTile(MapOverrideLayer, g.openDoorPos, indexes.RegularDoorView)
 			} else {
-				g.LayeredMaps.GetLayeredMap(SmallMap, g.Floor).SetTile(MapOverrideLayer, g.openDoorPos, indexes.RegularDoor)
+				g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).SetTile(MapOverrideLayer, g.openDoorPos, indexes.RegularDoor)
 			}
 			g.openDoorPos = nil
 		} else {

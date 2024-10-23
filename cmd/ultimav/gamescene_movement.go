@@ -5,13 +5,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
-	"log"
 )
-
-func isArrowKeyPressed() bool {
-	return getArrowKeyPressed() != nil
-	//return ebiten.IsKeyPressed(ebiten.KeyUp) || ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.IsKeyPressed(ebiten.KeyLeft) || ebiten.IsKeyPressed(ebiten.KeyRight)
-}
 
 func getArrowKeyPressed() *ebiten.Key {
 	var keyPressed ebiten.Key = ebiten.KeyF24
@@ -49,7 +43,8 @@ func getCurrentPressedArrowKeyAsDirection() game_state.Direction {
 }
 
 func (g *GameScene) moveToNewPositionByDirection(direction game_state.Direction) {
-	bLargeMap := g.gameState.Location == references.Britannia_Underworld
+	// TODO: dear future Brad - you will need to change this big time when dungeons and combat come in
+	bLargeMap := g.gameState.Location.GetMapType() == references.LargeMapType
 	switch direction {
 	case game_state.Up:
 		g.gameState.Position.GoUp(bLargeMap)
@@ -68,7 +63,7 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 	g.addRowStr(fmt.Sprintf("> %s", directionStr))
 
 	isPassable := func(pos *references.Position) bool {
-		topTile := g.gameState.LayeredMaps.GetLayeredMap(g.gameState.GetMapType(), g.gameState.Floor).GetTopTile(pos)
+		topTile := g.gameState.LayeredMaps.GetLayeredMap(g.gameState.Location.GetMapType(), g.gameState.Floor).GetTopTile(pos)
 		return topTile.IsPassable(g.gameState.PartyVehicle)
 	}
 
@@ -78,78 +73,5 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 		g.moveToNewPositionByDirection(direction)
 	} else {
 		g.addRowStr("Blocked!")
-	}
-}
-
-func (g *GameScene) handleSecondaryInput() {
-
-	arrowKey := getArrowKeyPressed()
-	bIsArrowKeyPressed := arrowKey != nil
-
-	switch g.gameState.SecondaryKeyState {
-	case game_state.JimmyDoorDirectionInput:
-		if g.gameState.Provisions.QtyKeys <= 0 {
-			g.addRowStr("No Keys!")
-			g.gameState.SecondaryKeyState = game_state.PrimaryInput
-			g.keyboard.SetLastKeyPressedNow()
-			return
-		}
-
-		if !bIsArrowKeyPressed {
-			return
-		}
-		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
-			return
-		}
-
-		g.appendToCurrentRowStr(getCurrentPressedArrowKeyAsDirection().GetDirectionCompassName())
-
-		jimmyResult := g.gameState.JimmyDoor(getCurrentPressedArrowKeyAsDirection(), &g.gameState.Characters[0])
-
-		switch jimmyResult {
-		case game_state.JimmyUnlocked:
-			g.addRowStr("Unlocked!")
-		case game_state.JimmyNotADoor:
-			g.addRowStr("Not lock!")
-		case game_state.JimmyBrokenPick, game_state.JimmyLockedMagical:
-			g.addRowStr("Key broke!")
-
-		default:
-			panic("unhandled default case")
-		}
-
-		g.gameState.SecondaryKeyState = game_state.PrimaryInput
-
-	case game_state.OpenDirectionInput:
-
-		if !bIsArrowKeyPressed {
-			return
-		}
-		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
-			return
-		}
-
-		g.appendToCurrentRowStr(getCurrentPressedArrowKeyAsDirection().GetDirectionCompassName())
-
-		switch g.gameState.OpenDoor(getCurrentPressedArrowKeyAsDirection()) {
-		case game_state.OpenDoorNotADoor:
-			g.addRowStr("Nothing to open!")
-		case game_state.OpenDoorLocked:
-			g.addRowStr("Locked!")
-		case game_state.OpenDoorLockedMagical:
-			g.addRowStr("Magically Locked!")
-		case game_state.OpenDoorOpened:
-			g.addRowStr("Opened!")
-		default:
-			log.Fatal("Unrecognized door open state")
-		}
-
-		g.gameState.SecondaryKeyState = game_state.PrimaryInput
-	default:
-		panic("unhandled default case")
-	}
-
-	if bIsArrowKeyPressed {
-		g.keyboard.SetLastKeyPressedNow()
 	}
 }
