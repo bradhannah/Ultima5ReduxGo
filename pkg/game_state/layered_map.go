@@ -61,3 +61,14 @@ func (l *LayeredMap) SetTile(layer Layer, position *references.Position, nIndex 
 func (l *LayeredMap) UnSetTile(layer Layer, position *references.Position) {
 	l.SetTile(layer, position, -1)
 }
+
+func (l *LayeredMap) GetTile(layer Layer, position *references.Position) *references.Tile {
+	return l.tileRefs.GetTile(l.Layers[layer][int(position.X)][int(position.Y)])
+}
+
+func (l *LayeredMap) SwapTiles(pos1 *references.Position, pos2 *references.Position) {
+	tile1 := l.GetTile(MapLayer, pos1)
+	tile2 := l.GetTile(MapLayer, pos2)
+	l.SetTile(MapOverrideLayer, pos1, tile2.Index)
+	l.SetTile(MapOverrideLayer, pos2, tile1.Index)
+}

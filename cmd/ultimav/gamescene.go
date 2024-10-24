@@ -35,6 +35,7 @@ const (
 	OpenDirectionInput
 	JimmyDoorDirectionInput
 	KlimbDirectionInput
+	PushDirectionInput
 )
 
 // GameScene is another scene (e.g., the actual game)

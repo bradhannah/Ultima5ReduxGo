@@ -22,8 +22,12 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyRight:
 		g.handleMovement(game_state.Right.GetDirectionCompassName(), ebiten.KeyRight)
 	case ebiten.KeyK:
+		g.addRowStr("Klimb-")
 		g.secondaryKeyState = KlimbDirectionInput
 	case ebiten.KeyX:
+		g.addRowStr("X-it what?")
+	case ebiten.KeyP:
+		g.addRowStr("Push what?")
 	case ebiten.KeyE:
 		g.debugMessage = "Enter a place"
 		newLocation := g.gameReferences.LocationReferences.WorldLocations.GetLocationByPosition(g.gameState.Position)
@@ -53,4 +57,22 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 
 func (g *GameScene) largeMapHandleSecondaryInput() {
 
+	arrowKey := getArrowKeyPressed()
+	bIsArrowKeyPressed := arrowKey != nil
+
+	switch g.secondaryKeyState {
+	case KlimbDirectionInput:
+		if !bIsArrowKeyPressed {
+			return
+		}
+		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
+			return
+		}
+		g.appendDirectionToOutput()
+
+		g.secondaryKeyState = PrimaryInput
+	default:
+		// better safe than sorry
+		g.secondaryKeyState = PrimaryInput
+	}
 }

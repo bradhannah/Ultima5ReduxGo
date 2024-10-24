@@ -31,6 +31,10 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		g.gameState.Position = g.gameState.LastLargeMapPosition
 	case ebiten.KeyE:
 		g.addRowStr(fmt.Sprintf("Enter what?"))
+	case ebiten.KeyP:
+		g.addRowStr("Push-")
+		g.secondaryKeyState = PushDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
 	case ebiten.KeyO:
 		g.debugConsole.Output.AddRowStr("Open")
 		g.addRowStr("Open-")
@@ -68,8 +72,7 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
 			return
 		}
-
-		g.appendToCurrentRowStr(getCurrentPressedArrowKeyAsDirection().GetDirectionCompassName())
+		g.appendDirectionToOutput()
 
 		jimmyResult := g.gameState.JimmyDoor(getCurrentPressedArrowKeyAsDirection(), &g.gameState.Characters[0])
 
@@ -80,7 +83,6 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 			g.addRowStr("Not lock!")
 		case game_state.JimmyBrokenPick, game_state.JimmyLockedMagical:
 			g.addRowStr("Key broke!")
-
 		default:
 			panic("unhandled default case")
 		}
@@ -94,8 +96,7 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
 			return
 		}
-
-		g.appendToCurrentRowStr(getCurrentPressedArrowKeyAsDirection().GetDirectionCompassName())
+		g.appendDirectionToOutput()
 
 		switch g.gameState.OpenDoor(getCurrentPressedArrowKeyAsDirection()) {
 		case game_state.OpenDoorNotADoor:
@@ -118,10 +119,21 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
 			return
 		}
-		g.appendToCurrentRowStr(getCurrentPressedArrowKeyAsDirection().GetDirectionCompassName())
+		g.appendDirectionToOutput()
 
 		g.smallMapKlimbSecondary(getCurrentPressedArrowKeyAsDirection())
 
+		g.secondaryKeyState = PrimaryInput
+	case PushDirectionInput:
+		if !bIsArrowKeyPressed {
+			return
+		}
+		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
+			return
+		}
+		g.appendDirectionToOutput()
+
+		g.smallMapPushSecondary(getCurrentPressedArrowKeyAsDirection())
 		g.secondaryKeyState = PrimaryInput
 	default:
 		panic("unhandled default case")
@@ -162,4 +174,15 @@ func (g *GameScene) smallMapKlimbSecondary(direction game_state.Direction) {
 	if !g.gameState.KlimbSmallMap(direction) {
 		g.output.AddRowStr("What?")
 	}
+}
+
+func (g *GameScene) smallMapPushSecondary(direction game_state.Direction) {
+	pushThingPos := direction.GetNewPositionInDirection(&g.gameState.Position)
+	currentTile := g.gameState.LayeredMaps.GetTileRefByPosition(references.SmallMapType, game_state.MapLayer, pushThingPos, g.gameState.Floor)
+
+	if !currentTile.IsPushable {
+		g.output.AddRowStr("Won't budge!")
+	}
+	//switch spots
+	g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).SwapTiles(&g.gameState.Position, pushThingPos)
 }
