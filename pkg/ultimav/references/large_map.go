@@ -12,12 +12,12 @@ import (
 )
 
 const (
-	YLargeMapTiles        = int16(256) // Total map height in tiles
-	XLargeMapTiles        = int16(256) // Total map width in tiles
-	TotalChunks           = 256        // Number of chunks in the map
-	TilesPerChunkX        = 16         // Tiles per chunk on the x-axis
-	TilesPerChunkY        = 16         // Tiles per chunk on the y-axis
-	DatOverlayBritMap int = 0x3886     // Offset for overlay data (adjust as needed)
+	YLargeMapTiles        = Coordinate(256) // Total map height in tiles
+	XLargeMapTiles        = Coordinate(256) // Total map width in tiles
+	TotalChunks           = 256             // Number of chunks in the map
+	TilesPerChunkX        = 16              // Tiles per chunk on the x-axis
+	TilesPerChunkY        = 16              // Tiles per chunk on the y-axis
+	DatOverlayBritMap int = 0x3886          // Offset for overlay data (adjust as needed)
 )
 
 type LargeMapReference struct {
@@ -39,7 +39,7 @@ func NewLargeMapReference(gameConfig *config.UltimaVConfiguration, world World) 
 	}
 }
 
-func (m *LargeMapReference) GetSpriteIndex(x int16, y int16) indexes.SpriteIndex {
+func (m *LargeMapReference) GetSpriteIndex(x Coordinate, y Coordinate) indexes.SpriteIndex {
 	if x < 0 {
 		x = x + XLargeMapTiles
 	} else if x >= XLargeMapTiles {

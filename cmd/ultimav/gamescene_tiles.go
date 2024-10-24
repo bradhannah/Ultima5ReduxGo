@@ -75,9 +75,9 @@ func (g *GameScene) refreshMapLayerTiles() {
 
 	do := ebiten.DrawImageOptions{}
 
-	xCenter := int16(xTilesInMap / 2)
-	yCenter := int16(yTilesInMap / 2)
-	var x, y int16
+	xCenter := references.Coordinate(xTilesInMap / 2)
+	yCenter := references.Coordinate(yTilesInMap / 2)
+	var x, y references.Coordinate
 	for x = 0; x < xTilesInMap; x++ {
 		for y = 0; y < yTilesInMap; y++ {
 			do.GeoM.Translate(float64(x*sprites.TileSize), float64(y*sprites.TileSize))
@@ -86,9 +86,9 @@ func (g *GameScene) refreshMapLayerTiles() {
 			spriteIndex := g.GetSpriteIndex(&pos)
 
 			if g.gameState.Location == references.Britannia_Underworld { // Large Map
-				g.gameState.LayeredMaps.GetLayeredMap(references.LargeMapType, g.gameState.Floor).Layers[game_state.MapLayer][int(pos.X)][int(pos.Y)] = spriteIndex
+				g.gameState.LayeredMaps.GetLayeredMap(references.LargeMapType, g.gameState.Floor).SetTile(game_state.MapLayer, &pos, spriteIndex)
 			} else { // Small Map
-				g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).Layers[game_state.MapLayer][int(pos.X)][int(pos.Y)] = spriteIndex
+				g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).SetTile(game_state.MapLayer, &pos, spriteIndex)
 				// always favour the Avatar sprite if it is the actual map tile
 				if spriteIndex != indexes.Avatar_KeyIndex {
 					spriteIndex = g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).GetTopTile(&pos).Index

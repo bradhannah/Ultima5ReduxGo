@@ -40,8 +40,8 @@ func (d *DebugConsole) createTeleportCommand(gameScene *GameScene) *grammar.Text
 	}, func(s string, command *grammar.TextCommand) {
 		outputStr := d.TextInput.GetText()
 		gameScene.DebugMoveOnMap(references.Position{
-			X: int16(command.GetIndexAsInt(1, outputStr)),
-			Y: int16(command.GetIndexAsInt(2, outputStr)),
+			X: references.Coordinate(command.GetIndexAsInt(1, outputStr)),
+			Y: references.Coordinate(command.GetIndexAsInt(2, outputStr)),
 		})
 		d.dumpQuickState(fmt.Sprintf("Teleported to X=%d,Y=%d",
 			int16(command.GetIndexAsInt(1, outputStr)),

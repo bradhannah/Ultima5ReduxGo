@@ -1,10 +1,12 @@
 package references
 
+type Coordinate int16
+
 type Position struct {
-	X, Y int16
+	X, Y Coordinate
 }
 
-func move(val, mapSize int16, decrease bool, bWrap bool) int16 {
+func move(val, mapSize Coordinate, decrease bool, bWrap bool) Coordinate {
 	if decrease {
 		if val == 0 {
 			if bWrap {

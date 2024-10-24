@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	XSmallMapTiles         = int16(32)
-	YSmallMapTiles         = int16(32)
+	XSmallMapTiles         = Coordinate(32)
+	YSmallMapTiles         = Coordinate(32)
 	TotalSmallMapLocations = 32
 	smallMapSizeInBytes    = int(XSmallMapTiles * YSmallMapTiles)
 )

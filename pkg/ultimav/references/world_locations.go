@@ -22,8 +22,8 @@ func NewWorldLocations(gameConfig *config.UltimaVConfiguration) *WorldLocations 
 	wl.largeMapLocationPositions = make(map[Location]WorldLocation)
 
 	for i := 0; i < TotalLocations; i++ {
-		x := int16(gameConfig.RawDataOvl[xCoordsOffset+i])
-		y := int16(gameConfig.RawDataOvl[yCoordsOffset+i])
+		x := Coordinate(gameConfig.RawDataOvl[xCoordsOffset+i])
+		y := Coordinate(gameConfig.RawDataOvl[yCoordsOffset+i])
 		wl.largeMapLocationPositions[Location(i+1)] = WorldLocation{
 			Location: Location(i + 1),
 			Position: Position{

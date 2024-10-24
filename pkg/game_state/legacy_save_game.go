@@ -57,7 +57,7 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 	const lbY = 0x2F1
 	const lbFloor = 0x2EF
 	g.Location = references.Location(rawSaveGameBytesFromDisk[lbLocation])
-	g.Position = references.Position{X: int16(rawSaveGameBytesFromDisk[lbX]), Y: int16(rawSaveGameBytesFromDisk[lbY])}
+	g.Position = references.Position{X: references.Coordinate(rawSaveGameBytesFromDisk[lbX]), Y: references.Coordinate(rawSaveGameBytesFromDisk[lbY])}
 	//g.Position = ultimav.Position{X: 81, Y: 106}
 	g.Floor = references.FloorNumber(rawSaveGameBytesFromDisk[lbFloor])
 

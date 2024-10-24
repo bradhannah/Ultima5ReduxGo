@@ -5,65 +5,70 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
+const totalLayers = 5
+
 const (
-	MapLayer Layer = iota
+	MapLayer LayerType = iota
 	MapOverrideLayer
+	AvatarAndPartyLayer
 	MapUnitLayer
 	EffectLayer
 )
 
+type LayerType int
+
+type Layer map[references.Coordinate]map[references.Coordinate]indexes.SpriteIndex
+
 type LayeredMap struct {
-	Layers   [totalLayers]map[int]map[int]indexes.SpriteIndex
+	layers   [totalLayers]map[references.Coordinate]map[references.Coordinate]indexes.SpriteIndex
 	tileRefs *references.Tiles
 }
 
-func newLayeredMap(xMax int, yMax int, tileRefs *references.Tiles) *LayeredMap {
-	const overflowTiles = 10
+func newLayeredMap(xMax references.Coordinate, yMax references.Coordinate, tileRefs *references.Tiles) *LayeredMap {
+	const overflowTiles = references.Coordinate(10)
 	layeredMap := LayeredMap{}
 	layeredMap.tileRefs = tileRefs
-	for i, _ := range layeredMap.Layers {
-		layeredMap.Layers[i] = make(map[int]map[int]indexes.SpriteIndex)
-		for j := -overflowTiles; j < yMax+10; j++ {
-			layeredMap.Layers[i][j] = make(map[int]indexes.SpriteIndex)
+	for mapLayer, _ := range layeredMap.layers {
+		layeredMap.layers[mapLayer] = make(map[references.Coordinate]map[references.Coordinate]indexes.SpriteIndex)
+		for yRow := -overflowTiles; yRow < yMax+10; yRow++ {
+			layeredMap.layers[mapLayer][yRow] = make(map[references.Coordinate]indexes.SpriteIndex)
 		}
 	}
 	return &layeredMap
 }
 
 func (l *LayeredMap) GetTopTile(position *references.Position) *references.Tile {
-	var tileIndex indexes.SpriteIndex
 	for i := EffectLayer; i >= MapLayer; i-- {
-		tileIndex = l.Layers[i][int(position.X)][int(position.Y)]
-		if tileIndex <= 0 {
+		tile := l.GetTile(i, position)
+		if tile.Index <= 0 {
 			continue
 		}
-		return l.tileRefs.GetTile(tileIndex)
+		return tile
 	}
 	return nil
 }
 
 func (l *LayeredMap) GetTileTopMapOnlyTile(position *references.Position) *references.Tile {
-	var tileValue indexes.SpriteIndex
 	for i := MapOverrideLayer; i >= MapLayer; i-- {
-		tileValue = l.Layers[i][int(position.X)][int(position.Y)]
-		if tileValue <= 0 {
+		tile := l.GetTile(i, position)
+		if tile.Index <= 0 {
 			continue
 		}
-		return l.tileRefs.GetTile(tileValue)
+		return tile
 	}
 	return nil
 }
 
-func (l *LayeredMap) SetTile(layer Layer, position *references.Position, nIndex indexes.SpriteIndex) {
-	l.Layers[layer][int(position.X)][int(position.Y)] = nIndex
+func (l *LayeredMap) SetTile(layer LayerType, position *references.Position, nIndex indexes.SpriteIndex) {
+	l.layers[layer][position.X][position.Y] = nIndex
 }
 
-func (l *LayeredMap) UnSetTile(layer Layer, position *references.Position) {
+func (l *LayeredMap) UnSetTile(layer LayerType, position *references.Position) {
 	l.SetTile(layer, position, -1)
 }
 
-func (l *LayeredMap) GetTile(layer Layer, position *references.Position) *references.Tile {
-	return l.tileRefs.GetTile(l.Layers[layer][int(position.X)][int(position.Y)])
+func (l *LayeredMap) GetTile(layer LayerType, position *references.Position) *references.Tile {
+	return l.tileRefs.GetTile(l.layers[layer][position.X][position.Y])
 }
 
 func (l *LayeredMap) SwapTiles(pos1 *references.Position, pos2 *references.Position) {
