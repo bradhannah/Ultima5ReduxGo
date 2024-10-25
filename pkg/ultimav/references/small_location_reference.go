@@ -5,6 +5,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/util"
+	"log"
 )
 
 type SmallLocationReference struct {
@@ -107,6 +108,20 @@ func (s *SmallLocationReference) GetOuterTile() indexes.SpriteIndex {
 
 func (s *SmallLocationReference) GetNumberOfFloors() int {
 	return len(s.rawData)
+}
+
+func (s *SmallLocationReference) GetMaxY() Coordinate {
+	return s.GetMaxX()
+}
+
+func (s *SmallLocationReference) GetMaxX() Coordinate {
+	if s.Location.GetMapType() == LargeMapType {
+		return XLargeMapTiles
+	} else if s.Location.GetMapType() == SmallMapType {
+		return XSmallMapTiles
+	}
+	log.Fatal("missing max tiles")
+	return 0
 }
 
 func (s *SmallLocationReference) getListOfFloors() []FloorNumber {

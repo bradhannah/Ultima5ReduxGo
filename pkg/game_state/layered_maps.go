@@ -39,3 +39,11 @@ func (l *LayeredMaps) GetTileRefByPosition(mapType references.GeneralMapType, ma
 
 	return l.layeredMaps[mapType][nFloor].tileRefs.GetTile(index)
 }
+
+func (l *LayeredMaps) GetTileTopMapOnlyTileByPosition(mapType references.GeneralMapType, pos *references.Position, nFloor references.FloorNumber) *references.Tile {
+	return l.GetLayeredMap(mapType, nFloor).GetTileTopMapOnlyTile(pos)
+
+	//index := l.layeredMaps[mapType][nFloor].layers[mapLayer][pos.X][pos.Y]
+	//
+	//return l.layeredMaps[mapType][nFloor].tileRefs.GetTile(index)
+}

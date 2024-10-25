@@ -74,6 +74,11 @@ func (g *GameScene) refreshMapLayerTiles() {
 	}
 
 	do := ebiten.DrawImageOptions{}
+	mapType := g.gameState.Location.GetMapType()
+	// remove it so it doesn't stick around for a single frame
+	if mapType == references.SmallMapType {
+		g.gameState.WipeOldAvatarPosition()
+	}
 
 	xCenter := references.Coordinate(xTilesInMap / 2)
 	yCenter := references.Coordinate(yTilesInMap / 2)
@@ -85,19 +90,29 @@ func (g *GameScene) refreshMapLayerTiles() {
 			pos := references.Position{X: x + g.gameState.Position.X - xCenter, Y: y + g.gameState.Position.Y - yCenter}
 			spriteIndex := g.GetSpriteIndex(&pos)
 
-			if g.gameState.Location == references.Britannia_Underworld { // Large Map
-				g.gameState.LayeredMaps.GetLayeredMap(references.LargeMapType, g.gameState.Floor).SetTile(game_state.MapLayer, &pos, spriteIndex)
-			} else { // Small Map
-				g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).SetTile(game_state.MapLayer, &pos, spriteIndex)
-				// always favour the Avatar sprite if it is the actual map tile
-				if spriteIndex != indexes.Avatar_KeyIndex {
+			g.gameState.LayeredMaps.GetLayeredMap(mapType, g.gameState.Floor).SetTile(game_state.MapLayer, &pos, spriteIndex)
+			switch mapType {
+			case references.SmallMapType:
+				if g.gameState.Position.Equals(pos) {
+					// the avatar is on this tile
+					g.gameState.SetNewAvatarPosition(&pos)
+					spriteIndex = indexes.Avatar_KeyIndex
+				} else {
 					spriteIndex = g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).GetTopTile(&pos).Index
 				}
+			case references.LargeMapType:
+				_ = ""
+			default:
+				panic("unhandled default case")
 			}
+
 			g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(spriteIndex), &do)
 			do.GeoM.Reset()
 		}
 	}
+	// get the previous avatar position - wipe it
+
+	// re-add avatar to the avatar layer
 
 	return
 }

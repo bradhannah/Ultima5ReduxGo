@@ -80,6 +80,7 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	// TODO: add a New function to GameState
 	gameScene.gameState = &game_state.GameState{}
 	err = gameScene.gameState.LoadLegacySaveGame(path.Join(gameScene.gameConfig.DataFilePath, "SAVED.GAM"), gameScene.gameReferences)
+	gameScene.gameState.GameReferences = gameScene.gameReferences
 
 	if err != nil {
 		log.Fatal(err)
@@ -147,9 +148,9 @@ func (g *GameScene) GetSpriteIndex(position *references.Position) indexes.Sprite
 	}
 
 	// if it's the avatar's position and there wasn't an override then we favour showing the avatar
-	if g.gameState.IsAvatarAtPosition(position) {
-		return indexes.Avatar_KeyIndex
-	}
+	//if g.gameState.IsAvatarAtPosition(position) {
+	//	return indexes.Avatar_KeyIndex
+	//}
 
 	// stick to the original tile if no exceptions are made
 	return spriteIndex

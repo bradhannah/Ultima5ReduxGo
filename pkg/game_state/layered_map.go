@@ -1,6 +1,7 @@
 package game_state
 
 import (
+	"fmt"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
@@ -38,6 +39,9 @@ func newLayeredMap(xMax references.Coordinate, yMax references.Coordinate, tileR
 }
 
 func (l *LayeredMap) GetTopTile(position *references.Position) *references.Tile {
+	if position == nil {
+		fmt.Sprintf("oof")
+	}
 	for i := EffectLayer; i >= MapLayer; i-- {
 		tile := l.GetTile(i, position)
 		if tile.Index <= 0 {
@@ -72,8 +76,10 @@ func (l *LayeredMap) GetTile(layer LayerType, position *references.Position) *re
 }
 
 func (l *LayeredMap) SwapTiles(pos1 *references.Position, pos2 *references.Position) {
-	tile1 := l.GetTile(MapLayer, pos1)
-	tile2 := l.GetTile(MapLayer, pos2)
+	//var tile1 *references.Tile
+	//var tile2 *references.Tile
+	tile1 := l.GetTileTopMapOnlyTile(pos1) //l.GetTile(MapLayer, pos1)
+	tile2 := l.GetTileTopMapOnlyTile(pos2) //l.GetTile(MapLayer, pos2)
 	l.SetTile(MapOverrideLayer, pos1, tile2.Index)
 	l.SetTile(MapOverrideLayer, pos2, tile1.Index)
 }

@@ -18,9 +18,12 @@ type GameState struct {
 
 	DebugOptions DebugOptions
 
-	Location references.Location
-	Position references.Position
-	Floor    references.FloorNumber
+	GameReferences *references.GameReferences
+
+	Location       references.Location
+	Position       references.Position
+	Floor          references.FloorNumber
+	avatarPosition references.Position
 
 	LayeredMaps  LayeredMaps
 	PartyVehicle references.PartyVehicle
@@ -68,4 +71,33 @@ func (g *GameState) SmallMapProcessEndOfTurn() {
 
 func (g *GameState) IsAvatarAtPosition(pos *references.Position) bool {
 	return g.Position.Equals(*pos)
+}
+
+func (g *GameState) WipeOldAvatarPosition() {
+	g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).UnSetTile(AvatarAndPartyLayer, &g.avatarPosition)
+}
+
+func (g *GameState) SetNewAvatarPosition(pos *references.Position) {
+	g.WipeOldAvatarPosition()
+	g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).SetTile(AvatarAndPartyLayer, pos, indexes.Avatar_KeyIndex)
+	g.avatarPosition = *pos
+}
+
+func (g *GameState) GetCurrentSmallLocationReference() *references.SmallLocationReference {
+	return g.GameReferences.LocationReferences.GetLocationReference(g.Location)
+}
+
+func (g *GameState) IsOutOfBounds(position references.Position) bool {
+	if position.X < 0 || position.Y < 0 {
+		return true
+	}
+
+	if position.X > g.GetCurrentSmallLocationReference().GetMaxX() {
+		return true
+	}
+	if position.Y > g.GetCurrentSmallLocationReference().GetMaxY() {
+		return true
+	}
+
+	return false
 }

@@ -178,11 +178,18 @@ func (g *GameScene) smallMapKlimbSecondary(direction game_state.Direction) {
 
 func (g *GameScene) smallMapPushSecondary(direction game_state.Direction) {
 	pushThingPos := direction.GetNewPositionInDirection(&g.gameState.Position)
-	currentTile := g.gameState.LayeredMaps.GetTileRefByPosition(references.SmallMapType, game_state.MapLayer, pushThingPos, g.gameState.Floor)
+
+	//currentTile := g.gameState.LayeredMaps.GetTileRefByPosition(references.SmallMapType, game_state.MapLayer, pushThingPos, g.gameState.Floor)
+	currentTile := g.gameState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, pushThingPos, g.gameState.Floor)
 
 	if !currentTile.IsPushable {
 		g.output.AddRowStr("Won't budge!")
+		return
 	}
-	//switch spots
-	g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).SwapTiles(&g.gameState.Position, pushThingPos)
+
+	if g.gameState.ActionPushSmallMap(direction) {
+		// moved
+	} else {
+		// didn't move
+	}
 }
