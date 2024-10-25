@@ -16,13 +16,13 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyEnter:
 		g.addRowStr("Enter")
 	case ebiten.KeyUp:
-		g.handleMovement(game_state.Up.GetDirectionCompassName(), ebiten.KeyUp)
+		g.handleMovement(references.Up.GetDirectionCompassName(), ebiten.KeyUp)
 	case ebiten.KeyDown:
-		g.handleMovement(game_state.Down.GetDirectionCompassName(), ebiten.KeyDown)
+		g.handleMovement(references.Down.GetDirectionCompassName(), ebiten.KeyDown)
 	case ebiten.KeyLeft:
-		g.handleMovement(game_state.Left.GetDirectionCompassName(), ebiten.KeyLeft)
+		g.handleMovement(references.Left.GetDirectionCompassName(), ebiten.KeyLeft)
 	case ebiten.KeyRight:
-		g.handleMovement(game_state.Right.GetDirectionCompassName(), ebiten.KeyRight)
+		g.handleMovement(references.Right.GetDirectionCompassName(), ebiten.KeyRight)
 	case ebiten.KeyK:
 		g.smallMapKlimb()
 	case ebiten.KeyX:
@@ -170,13 +170,13 @@ func (g *GameScene) smallMapKlimb() {
 	g.secondaryKeyState = KlimbDirectionInput
 }
 
-func (g *GameScene) smallMapKlimbSecondary(direction game_state.Direction) {
+func (g *GameScene) smallMapKlimbSecondary(direction references.Direction) {
 	if !g.gameState.KlimbSmallMap(direction) {
 		g.output.AddRowStr("What?")
 	}
 }
 
-func (g *GameScene) smallMapPushSecondary(direction game_state.Direction) {
+func (g *GameScene) smallMapPushSecondary(direction references.Direction) {
 	pushThingPos := direction.GetNewPositionInDirection(&g.gameState.Position)
 
 	//currentTile := g.gameState.LayeredMaps.GetTileRefByPosition(references.SmallMapType, game_state.MapLayer, pushThingPos, g.gameState.Floor)

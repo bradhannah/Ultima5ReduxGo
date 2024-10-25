@@ -16,7 +16,7 @@ const (
 	OpenDoorOpened
 )
 
-func (g *GameState) OpenDoor(direction Direction) DoorOpenState {
+func (g *GameState) OpenDoor(direction references.Direction) DoorOpenState {
 	const defaultTurnsForDoorOpen = 2
 	//  mapType := GetMapTypeByLocation(g.Location)
 

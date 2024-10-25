@@ -55,3 +55,18 @@ func NewTileReferences() *Tiles {
 	}
 	return &tiles
 }
+
+func (t *Tiles) GetChairByPushDirection(direction Direction) *Tile {
+	switch direction {
+	case Down:
+		return t.GetTile(indexes.ChairFacingDown)
+	case Up:
+		return t.GetTile(indexes.ChairFacingUp)
+	case Left:
+		return t.GetTile(indexes.ChairFacingLeft)
+	case Right:
+		return t.GetTile(indexes.ChairFacingRight)
+	default:
+		return t.GetTile(indexes.ChairFacingDown)
+	}
+}

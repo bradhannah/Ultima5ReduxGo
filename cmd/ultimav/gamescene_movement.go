@@ -27,34 +27,34 @@ func getArrowKeyPressed() *ebiten.Key {
 	return &keyPressed
 }
 
-func getCurrentPressedArrowKeyAsDirection() game_state.Direction {
+func getCurrentPressedArrowKeyAsDirection() references.Direction {
 	arrowKey := getArrowKeyPressed()
 	if arrowKey == nil {
-		return game_state.None
+		return references.NoneDirection
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyUp) {
-		return game_state.Up
+		return references.Up
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
-		return game_state.Down
+		return references.Down
 	} else if ebiten.IsKeyPressed(ebiten.KeyLeft) {
-		return game_state.Left
+		return references.Left
 	}
-	return game_state.Right
+	return references.Right
 }
 
-func (g *GameScene) moveToNewPositionByDirection(direction game_state.Direction) {
+func (g *GameScene) moveToNewPositionByDirection(direction references.Direction) {
 	// TODO: dear future Brad - you will need to change this big time when dungeons and combat come in
 	bLargeMap := g.gameState.Location.GetMapType() == references.LargeMapType
 	switch direction {
-	case game_state.Up:
+	case references.Up:
 		g.gameState.Position.GoUp(bLargeMap)
-	case game_state.Down:
+	case references.Down:
 		g.gameState.Position.GoDown(bLargeMap)
-	case game_state.Left:
+	case references.Left:
 		g.gameState.Position.GoLeft(bLargeMap)
-	case game_state.Right:
+	case references.Right:
 		g.gameState.Position.GoRight(bLargeMap)
-	case game_state.None:
+	case references.NoneDirection:
 	}
 }
 

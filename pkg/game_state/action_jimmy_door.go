@@ -17,7 +17,7 @@ const (
 	JimmyBrokenPick
 )
 
-func (g *GameState) JimmyDoor(direction Direction, player *PlayerCharacter) JimmyDoorState {
+func (g *GameState) JimmyDoor(direction references.Direction, player *PlayerCharacter) JimmyDoorState {
 	mapType := GetMapTypeByLocation(g.Location)
 
 	newPosition := direction.GetNewPositionInDirection(&g.Position)

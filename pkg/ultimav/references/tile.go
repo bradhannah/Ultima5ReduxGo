@@ -55,3 +55,7 @@ func (t *Tile) IsPassable(vehicle PartyVehicle) bool {
 	}
 	return false
 }
+
+func (t *Tile) IsChair() bool {
+	return t.Index == indexes.ChairFacingDown || t.Index == indexes.ChairFacingUp || t.Index == indexes.ChairFacingRight || t.Index == indexes.ChairFacingLeft
+}
