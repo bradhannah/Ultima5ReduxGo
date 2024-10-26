@@ -77,3 +77,17 @@ func (p *Position) GoDown(bLarge bool) {
 func (p *Position) Equals(position Position) bool {
 	return p.X == position.X && p.Y == position.Y
 }
+
+func (p *Position) GetWrapped(maxX Coordinate, maxY Coordinate) *Position {
+	if p.X < 0 {
+		p.X = p.X + maxX
+	} else if p.X >= maxX {
+		p.X = p.X % maxX
+	}
+	if p.Y < 0 {
+		p.Y = p.Y + maxY
+	} else if p.Y >= maxY {
+		p.Y = p.Y % maxY
+	}
+	return p
+}

@@ -40,17 +40,19 @@ func NewLargeMapReference(gameConfig *config.UltimaVConfiguration, world World) 
 }
 
 func (m *LargeMapReference) GetSpriteIndex(x Coordinate, y Coordinate) indexes.SpriteIndex {
-	if x < 0 {
-		x = x + XLargeMapTiles
-	} else if x >= XLargeMapTiles {
-		x = x % XLargeMapTiles
-	}
-	if y < 0 {
-		y = y + YLargeMapTiles
-	} else if y >= YLargeMapTiles {
-		y = y % YLargeMapTiles
-	}
-	return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.SpriteIndex(m.rawData[x][y]))
+	//if x < 0 {
+	//	x = x + XLargeMapTiles
+	//} else if x >= XLargeMapTiles {
+	//	x = x % XLargeMapTiles
+	//}
+	//if y < 0 {
+	//	y = y + YLargeMapTiles
+	//} else if y >= YLargeMapTiles {
+	//	y = y % YLargeMapTiles
+	//}
+	pos := Position{X: x, Y: y}
+	wrappedPos := pos.GetWrapped(XLargeMapTiles, YLargeMapTiles)
+	return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.SpriteIndex(m.rawData[wrappedPos.X][wrappedPos.Y]))
 }
 
 // func loadLargeMapFromFile(mapFileAndPath string, dataOvlFileAndPath string) (*LargeMapReference, error) {

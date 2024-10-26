@@ -1,8 +1,10 @@
 package game_state
 
 import (
+	"fmt"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	"log"
 )
 
 const NPlayers = 6
@@ -73,25 +75,19 @@ func (g *GameState) IsAvatarAtPosition(pos *references.Position) bool {
 	return g.Position.Equals(*pos)
 }
 
-//func (g *GameState) WipeOldAvatarPosition() {
-//	g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).UnSetTileByLayer(AvatarAndPartyLayer, &g.avatarPosition)
-//}
-
-//func (g *GameState) SetNewAvatarPosition(pos *references.Position) {
-//	g.WipeOldAvatarPosition()
-//	g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).SetTileByLayer(AvatarAndPartyLayer, pos, indexes.Avatar_KeyIndex)
-//	g.avatarPosition = *pos
-//}
-//
-//func (g *GameState) GetAvatarPosition() *references.Position {
-//	return &g.avatarPosition
-//}
-
 func (g *GameState) GetCurrentSmallLocationReference() *references.SmallLocationReference {
 	return g.GameReferences.LocationReferences.GetLocationReference(g.Location)
 }
 
 func (g *GameState) IsOutOfBounds(position references.Position) bool {
+	if g.Location.GetMapType() == references.LargeMapType {
+		if position.X > references.XLargeMapTiles-1 || position.Y > references.YLargeMapTiles {
+			//|| position.X < 0 || position.Y < 0 {
+			log.Fatal(fmt.Sprintf("Exceeded large map tiles: X=%d, Y=%d", position.X, position.Y))
+		}
+		return false
+	}
+
 	if position.X < 0 || position.Y < 0 {
 		return true
 	}

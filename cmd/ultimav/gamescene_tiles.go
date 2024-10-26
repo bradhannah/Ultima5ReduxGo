@@ -95,6 +95,9 @@ func (g *GameScene) refreshMapLayerTiles() {
 	for x = 0; x < xTilesInMap; x++ {
 		for y = 0; y < yTilesInMap; y++ {
 			pos := references.Position{X: x + g.gameState.Position.X - xCenter, Y: y + g.gameState.Position.Y - yCenter}
+			if mapType == references.LargeMapType {
+				pos = *pos.GetWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
+			}
 			do.GeoM.Translate(float64(x*sprites.TileSize), float64(y*sprites.TileSize))
 
 			tile := theMap.GetTileTopMapOnlyTile(&pos)

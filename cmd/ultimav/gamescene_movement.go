@@ -65,11 +65,20 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 	isPassable := func(pos *references.Position) bool {
 		theMap := g.gameState.LayeredMaps.GetLayeredMap(g.gameState.Location.GetMapType(), g.gameState.Floor)
 		topTile := theMap.GetTopTile(pos)
+		if topTile == nil {
+			return false
+		}
 		return topTile.IsPassable(g.gameState.PartyVehicle)
 	}
 
 	direction := game_state.GetKeyAsDirection(key)
 	newPosition := direction.GetNewPositionInDirection(&g.gameState.Position)
+
+	if g.gameState.IsOutOfBounds(*newPosition) {
+		g.addRowStr("OUT OF BOUNDS")
+		return
+	}
+
 	if isPassable(newPosition) || g.gameState.DebugOptions.FreeMove {
 		g.moveToNewPositionByDirection(direction)
 	} else {
