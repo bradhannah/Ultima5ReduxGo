@@ -148,7 +148,7 @@ func (g *GameScene) smallMapKlimb() {
 	currentTile := g.gameState.LayeredMaps.GetTileRefByPosition(references.SmallMapType, game_state.MapLayer, &g.gameState.Position, g.gameState.Floor)
 
 	switch currentTile.Index {
-	case indexes.AvatarOnLadderDown, indexes.Grate:
+	case indexes.AvatarOnLadderDown, indexes.LadderDown, indexes.Grate:
 		if g.GetCurrentLocationReference().CanGoDownOneFloor(g.gameState.Floor) {
 			g.gameState.Floor--
 			g.output.AddRowStr("Klimb-Down!")
@@ -157,7 +157,7 @@ func (g *GameScene) smallMapKlimb() {
 			log.Fatal("Can't go lower my dude")
 		}
 
-	case indexes.AvatarOnLadderUp:
+	case indexes.AvatarOnLadderUp, indexes.LadderUp:
 		if g.GetCurrentLocationReference().CanGoUpOneFloor(g.gameState.Floor) {
 			g.gameState.Floor++
 			g.output.AddRowStr("Klimb-Up!")
@@ -171,7 +171,7 @@ func (g *GameScene) smallMapKlimb() {
 }
 
 func (g *GameScene) smallMapKlimbSecondary(direction references.Direction) {
-	if !g.gameState.KlimbSmallMap(direction) {
+	if !g.gameState.ActionKlimbSmallMap(direction) {
 		g.output.AddRowStr("What?")
 	}
 }
@@ -179,7 +179,6 @@ func (g *GameScene) smallMapKlimbSecondary(direction references.Direction) {
 func (g *GameScene) smallMapPushSecondary(direction references.Direction) {
 	pushThingPos := direction.GetNewPositionInDirection(&g.gameState.Position)
 
-	//currentTile := g.gameState.LayeredMaps.GetTileRefByPosition(references.SmallMapType, game_state.MapLayer, pushThingPos, g.gameState.Floor)
 	currentTile := g.gameState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, pushThingPos, g.gameState.Floor)
 
 	if !currentTile.IsPushable {

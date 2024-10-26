@@ -32,7 +32,7 @@ func (g *GameState) JimmyDoor(direction references.Direction, player *PlayerChar
 			} else {
 				unlockedDoor = indexes.RegularDoorView
 			}
-			g.LayeredMaps.GetLayeredMap(mapType, g.Floor).SetTile(MapOverrideLayer, newPosition, unlockedDoor)
+			g.LayeredMaps.GetLayeredMap(mapType, g.Floor).SetTileByLayer(MapOverrideLayer, newPosition, unlockedDoor)
 			return JimmyUnlocked
 		} else {
 			//g.Provisions.QtyKeys = helpers.Max(g.Provisions.QtyKeys-1, 0)

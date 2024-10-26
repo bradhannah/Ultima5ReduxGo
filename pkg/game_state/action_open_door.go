@@ -35,10 +35,10 @@ func (g *GameState) OpenDoor(direction references.Direction) DoorOpenState {
 		return OpenDoorNotADoor
 	}
 
-	theMap.SetTile(MapOverrideLayer, newPosition, indexes.BrickFloor)
+	theMap.SetTileByLayer(MapOverrideLayer, newPosition, indexes.BrickFloor)
 
 	if g.openDoorPos != nil {
-		theMap.UnSetTile(MapOverrideLayer, g.openDoorPos)
+		theMap.UnSetTileByLayer(MapOverrideLayer, g.openDoorPos)
 	}
 	g.openDoorPos = newPosition
 	g.openDoorTurns = defaultTurnsForDoorOpen

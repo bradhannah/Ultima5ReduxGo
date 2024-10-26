@@ -43,7 +43,7 @@ func (l *LayeredMap) GetTopTile(position *references.Position) *references.Tile 
 		fmt.Sprintf("oof")
 	}
 	for i := EffectLayer; i >= MapLayer; i-- {
-		tile := l.GetTile(i, position)
+		tile := l.GetTileByLayer(i, position)
 		if tile.Index <= 0 {
 			continue
 		}
@@ -54,7 +54,7 @@ func (l *LayeredMap) GetTopTile(position *references.Position) *references.Tile 
 
 func (l *LayeredMap) GetTileTopMapOnlyTile(position *references.Position) *references.Tile {
 	for i := MapOverrideLayer; i >= MapLayer; i-- {
-		tile := l.GetTile(i, position)
+		tile := l.GetTileByLayer(i, position)
 		if tile.Index <= 0 {
 			continue
 		}
@@ -63,23 +63,21 @@ func (l *LayeredMap) GetTileTopMapOnlyTile(position *references.Position) *refer
 	return nil
 }
 
-func (l *LayeredMap) SetTile(layer LayerType, position *references.Position, nIndex indexes.SpriteIndex) {
+func (l *LayeredMap) SetTileByLayer(layer LayerType, position *references.Position, nIndex indexes.SpriteIndex) {
 	l.layers[layer][position.X][position.Y] = nIndex
 }
 
-func (l *LayeredMap) UnSetTile(layer LayerType, position *references.Position) {
-	l.SetTile(layer, position, -1)
+func (l *LayeredMap) UnSetTileByLayer(layer LayerType, position *references.Position) {
+	l.SetTileByLayer(layer, position, -1)
 }
 
-func (l *LayeredMap) GetTile(layer LayerType, position *references.Position) *references.Tile {
+func (l *LayeredMap) GetTileByLayer(layer LayerType, position *references.Position) *references.Tile {
 	return l.tileRefs.GetTile(l.layers[layer][position.X][position.Y])
 }
 
 func (l *LayeredMap) SwapTiles(pos1 *references.Position, pos2 *references.Position) {
-	//var tile1 *references.Tile
-	//var tile2 *references.Tile
-	tile1 := l.GetTileTopMapOnlyTile(pos1) //l.GetTile(MapLayer, pos1)
-	tile2 := l.GetTileTopMapOnlyTile(pos2) //l.GetTile(MapLayer, pos2)
-	l.SetTile(MapLayer, pos1, tile2.Index)
-	l.SetTile(MapLayer, pos2, tile1.Index)
+	tile1 := l.GetTileTopMapOnlyTile(pos1)
+	tile2 := l.GetTileTopMapOnlyTile(pos2)
+	l.SetTileByLayer(MapLayer, pos1, tile2.Index)
+	l.SetTileByLayer(MapLayer, pos2, tile1.Index)
 }

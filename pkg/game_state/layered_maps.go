@@ -35,7 +35,7 @@ func (l *LayeredMaps) GetLayeredMap(generalMapType references.GeneralMapType, fl
 func (l *LayeredMaps) SetInitialLargeMap(nFloor references.FloorNumber, lrg *references.LargeMapReference) {
 	for x := references.Coordinate(0); x < references.XLargeMapTiles; x++ {
 		for y := references.Coordinate(0); y < references.YLargeMapTiles; y++ {
-			l.layeredMaps[references.LargeMapType][nFloor].SetTile(MapLayer, &references.Position{X: x, Y: y}, lrg.GetSpriteIndex(x, y)) //slr.GetTileNumber(floor, x, y))
+			l.layeredMaps[references.LargeMapType][nFloor].SetTileByLayer(MapLayer, &references.Position{X: x, Y: y}, lrg.GetSpriteIndex(x, y)) //slr.GetTileNumber(floor, x, y))
 		}
 	}
 }
@@ -48,7 +48,7 @@ func (l *LayeredMaps) ResetAndCreateSmallMap(slr *references.SmallLocationRefere
 		// populate the MapLayer immediately
 		for x := references.Coordinate(0); x < references.XSmallMapTiles; x++ {
 			for y := references.Coordinate(0); y < references.YSmallMapTiles; y++ {
-				theFloor.SetTile(MapLayer, &references.Position{X: x, Y: y}, slr.GetTileNumber(floor, x, y))
+				theFloor.SetTileByLayer(MapLayer, &references.Position{X: x, Y: y}, slr.GetTileNumber(floor, x, y))
 			}
 		}
 	}
@@ -62,8 +62,4 @@ func (l *LayeredMaps) GetTileRefByPosition(mapType references.GeneralMapType, ma
 
 func (l *LayeredMaps) GetTileTopMapOnlyTileByPosition(mapType references.GeneralMapType, pos *references.Position, nFloor references.FloorNumber) *references.Tile {
 	return l.GetLayeredMap(mapType, nFloor).GetTileTopMapOnlyTile(pos)
-
-	//index := l.layeredMaps[mapType][nFloor].layers[mapLayer][pos.X][pos.Y]
-	//
-	//return l.layeredMaps[mapType][nFloor].tileRefs.GetTile(index)
 }

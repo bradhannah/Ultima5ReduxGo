@@ -58,9 +58,9 @@ func (g *GameState) SmallMapProcessEndOfTurn() {
 		if g.openDoorTurns == 0 {
 			tile := g.LayeredMaps.GetTileRefByPosition(references.SmallMapType, MapLayer, g.openDoorPos, g.Floor)
 			if tile.Index.IsWindowedDoor() {
-				g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).SetTile(MapOverrideLayer, g.openDoorPos, indexes.RegularDoorView)
+				g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).SetTileByLayer(MapOverrideLayer, g.openDoorPos, indexes.RegularDoorView)
 			} else {
-				g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).SetTile(MapOverrideLayer, g.openDoorPos, indexes.RegularDoor)
+				g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).SetTileByLayer(MapOverrideLayer, g.openDoorPos, indexes.RegularDoor)
 			}
 			g.openDoorPos = nil
 		} else {
@@ -74,12 +74,12 @@ func (g *GameState) IsAvatarAtPosition(pos *references.Position) bool {
 }
 
 //func (g *GameState) WipeOldAvatarPosition() {
-//	g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).UnSetTile(AvatarAndPartyLayer, &g.avatarPosition)
+//	g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).UnSetTileByLayer(AvatarAndPartyLayer, &g.avatarPosition)
 //}
 
 //func (g *GameState) SetNewAvatarPosition(pos *references.Position) {
 //	g.WipeOldAvatarPosition()
-//	g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).SetTile(AvatarAndPartyLayer, pos, indexes.Avatar_KeyIndex)
+//	g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).SetTileByLayer(AvatarAndPartyLayer, pos, indexes.Avatar_KeyIndex)
 //	g.avatarPosition = *pos
 //}
 //

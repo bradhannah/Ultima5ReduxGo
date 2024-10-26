@@ -1,6 +1,7 @@
 package game_state
 
 import (
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -13,16 +14,16 @@ func (g *GameState) ActionPushSmallMap(direction references.Direction) bool {
 	farSideOfPushableThingPosition := direction.GetNewPositionInDirection(pushableThingPosition)
 
 	farSideTile := smallMap.GetTileTopMapOnlyTile(farSideOfPushableThingPosition)
-	bFarSideAccessible := !(g.IsOutOfBounds(*farSideOfPushableThingPosition) || !farSideTile.IsWalkingPassable)
+	bFarSideAccessible := !g.IsOutOfBounds(*farSideOfPushableThingPosition) && farSideTile.Index == indexes.BrickFloor
 
 	// chair pushing is different
 	if pushableThingTile.IsChair() {
 		if bFarSideAccessible {
 			smallMap.SwapTiles(pushableThingPosition, farSideOfPushableThingPosition)
-			smallMap.SetTile(MapLayer, farSideOfPushableThingPosition, g.GameReferences.TileReferences.GetChairByPushDirection(direction).Index)
+			smallMap.SetTileByLayer(MapLayer, farSideOfPushableThingPosition, g.GameReferences.TileReferences.GetChairByPushDirection(direction).Index)
 		} else {
 			smallMap.SwapTiles(&g.Position, pushableThingPosition)
-			smallMap.SetTile(MapLayer, &g.Position, g.GameReferences.TileReferences.GetChairByPushDirection(direction.GetOppositeDirection()).Index)
+			smallMap.SetTileByLayer(MapLayer, &g.Position, g.GameReferences.TileReferences.GetChairByPushDirection(direction.GetOppositeDirection()).Index)
 
 		}
 		// move avatar to the swapped spot

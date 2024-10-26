@@ -5,7 +5,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
-func (g *GameState) KlimbSmallMap(direction references.Direction) bool {
+func (g *GameState) ActionKlimbSmallMap(direction references.Direction) bool {
 	newPosition := direction.GetNewPositionInDirection(&g.Position)
 	targetTile := g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).GetTileTopMapOnlyTile(newPosition)
 	if targetTile.Index == indexes.FenceHoriz || targetTile.Index == indexes.FenceVert {
