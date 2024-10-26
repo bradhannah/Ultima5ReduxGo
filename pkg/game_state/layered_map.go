@@ -80,6 +80,6 @@ func (l *LayeredMap) SwapTiles(pos1 *references.Position, pos2 *references.Posit
 	//var tile2 *references.Tile
 	tile1 := l.GetTileTopMapOnlyTile(pos1) //l.GetTile(MapLayer, pos1)
 	tile2 := l.GetTileTopMapOnlyTile(pos2) //l.GetTile(MapLayer, pos2)
-	l.SetTile(MapOverrideLayer, pos1, tile2.Index)
-	l.SetTile(MapOverrideLayer, pos2, tile1.Index)
+	l.SetTile(MapLayer, pos1, tile2.Index)
+	l.SetTile(MapLayer, pos2, tile1.Index)
 }

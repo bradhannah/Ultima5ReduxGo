@@ -119,35 +119,54 @@ func (g *GameScene) GetCurrentLocationReference() *references.SmallLocationRefer
 	return g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location)
 }
 
+func (g *GameScene) GetSpriteIndexFromReference(position *references.Position) indexes.SpriteIndex {
+	if g.gameState.Location.GetMapType() == references.LargeMapType {
+		if g.gameState.Floor == 0 {
+			return g.gameReferences.OverworldLargeMapReference.GetSpriteIndex(position.X, position.Y)
+		} else {
+			return g.gameReferences.UnderworldLargeMapReference.GetSpriteIndex(position.X, position.Y)
+		}
+	} else if g.gameState.Location.GetMapType() == references.SmallMapType {
+		if g.gameState.IsOutOfBounds(*position) {
+			//position.X < 0 || position.X >= references.XSmallMapTiles || position.Y < 0 || position.Y >= references.YSmallMapTiles {
+			return g.GetCurrentLocationReference().GetOuterTile()
+		}
+
+		return g.GetCurrentLocationReference().GetTileNumberWithAnimation(g.gameState.Floor, position)
+	}
+	return 0
+}
+
 func (g *GameScene) GetSpriteIndex(position *references.Position) indexes.SpriteIndex {
 	var spriteIndex = indexes.SpriteIndex(0)
 
 	if g.gameState.Location == references.Britannia_Underworld {
 		if g.gameState.IsAvatarAtPosition(position) {
+			// TODO: this will have to change when we introduce vehicles
 			return indexes.Avatar_KeyIndex
 		}
-		if g.gameState.Floor == 0 {
-			spriteIndex = g.gameReferences.OverworldLargeMapReference.GetSpriteIndex(position.X, position.Y)
-		} else {
-			spriteIndex = g.gameReferences.UnderworldLargeMapReference.GetSpriteIndex(position.X, position.Y)
-		}
-		return spriteIndex
+		return g.GetSpriteIndexFromReference(position)
 	}
 
-	if position.X < 0 || position.X >= references.XSmallMapTiles || position.Y < 0 || position.Y >= references.YSmallMapTiles {
+	if g.gameState.IsOutOfBounds(*position) {
+		//position.X < 0 || position.X >= references.XSmallMapTiles || position.Y < 0 || position.Y >= references.YSmallMapTiles {
 		return g.GetCurrentLocationReference().GetOuterTile()
 	}
+	//spriteIndex = g.GetSpriteIndexFromReference()
+	spriteIndex = g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(g.gameState.Floor, position)
 
-	spriteIndex = g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(int(g.gameState.Floor), position)
 	// get an adjustment to tile if one is warranted
-	updatedTileNumber := g.getSmallCalculatedTileIndex(spriteIndex, position)
-
-	// if there is an overridden tile, then we will always favour that
-	if spriteIndex != updatedTileNumber {
-		return updatedTileNumber
-	}
+	//updatedTileNumber := g.getSmallCalculatedTileIndex(spriteIndex, position)
+	//
+	//// if there is an overridden tile, then we will always favour that
+	//if spriteIndex != updatedTileNumber {
+	//	return updatedTileNumber
+	//}
 
 	// if it's the avatar's position and there wasn't an override then we favour showing the avatar
+	//if bIsAvatarPos {
+	//	return indexes.Avatar_KeyIndex
+	//}
 	//if g.gameState.IsAvatarAtPosition(position) {
 	//	return indexes.Avatar_KeyIndex
 	//}

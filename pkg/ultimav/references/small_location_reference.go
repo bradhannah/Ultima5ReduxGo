@@ -51,19 +51,19 @@ func (s *SmallLocationReference) HasBasement() bool {
 	return ok
 }
 
-func (s *SmallLocationReference) GetTileNumberWithAnimation(nFloor int, position *Position) indexes.SpriteIndex {
+func (s *SmallLocationReference) GetTileNumberWithAnimation(nFloor FloorNumber, position *Position) indexes.SpriteIndex {
 
-	mainTile := indexes.SpriteIndex(s.rawData[nFloor][position.X][position.Y])
+	mainTile := s.GetTileNumber(nFloor, position.X, position.Y)
+	//indexes.SpriteIndex(s.rawData[int(nFloor)][position.X][position.Y])
 
 	if (mainTile >= indexes.Waterfall_KeyIndex && mainTile <= indexes.Waterfall_KeyIndex+3) || mainTile == indexes.Fountain_KeyIndex || mainTile >= indexes.AvatarSittingAndEatingFacingDown {
 		return sprites.GetSpriteIndexWithAnimationBySpriteIndex(mainTile)
-		// animation
-		// msPerFrame
-		//interval := time.Now().UnixMilli() / msPerFrame
-		//currentRotation := int(interval) % 4
-		//return mainTile + currentRotation
 	}
 	return mainTile
+}
+
+func (s *SmallLocationReference) GetTileNumber(nFloor FloorNumber, x Coordinate, y Coordinate) indexes.SpriteIndex {
+	return indexes.SpriteIndex(s.rawData[int(nFloor)][x][y])
 }
 
 func (s *SmallLocationReference) GetEnteringText() string {
@@ -116,9 +116,9 @@ func (s *SmallLocationReference) GetMaxY() Coordinate {
 
 func (s *SmallLocationReference) GetMaxX() Coordinate {
 	if s.Location.GetMapType() == LargeMapType {
-		return XLargeMapTiles
+		return XLargeMapTiles - 1
 	} else if s.Location.GetMapType() == SmallMapType {
-		return XSmallMapTiles
+		return XSmallMapTiles - 1
 	}
 	log.Fatal("missing max tiles")
 	return 0

@@ -6,12 +6,17 @@ type LayeredMaps struct {
 	layeredMaps map[references.GeneralMapType]map[references.FloorNumber]*LayeredMap
 }
 
-func NewLayeredMaps(tileRefs *references.Tiles) *LayeredMaps {
+func NewLayeredMaps(tileRefs *references.Tiles,
+	overworldRef *references.LargeMapReference,
+	underworldRef *references.LargeMapReference) *LayeredMaps {
 	maps := &LayeredMaps{}
 	maps.layeredMaps = make(map[references.GeneralMapType]map[references.FloorNumber]*LayeredMap)
 	maps.layeredMaps[references.LargeMapType] = make(map[references.FloorNumber]*LayeredMap)
 	maps.layeredMaps[references.LargeMapType][0] = newLayeredMap(references.XLargeMapTiles, references.YLargeMapTiles, tileRefs)
 	maps.layeredMaps[references.LargeMapType][-1] = newLayeredMap(references.XLargeMapTiles, references.YLargeMapTiles, tileRefs)
+
+	maps.SetInitialLargeMap(0, overworldRef)
+	maps.SetInitialLargeMap(-1, underworldRef)
 
 	return maps
 }
@@ -27,10 +32,25 @@ func (l *LayeredMaps) GetLayeredMap(generalMapType references.GeneralMapType, fl
 	return l.layeredMaps[generalMapType][floorNumber]
 }
 
+func (l *LayeredMaps) SetInitialLargeMap(nFloor references.FloorNumber, lrg *references.LargeMapReference) {
+	for x := references.Coordinate(0); x < references.XLargeMapTiles; x++ {
+		for y := references.Coordinate(0); y < references.YLargeMapTiles; y++ {
+			l.layeredMaps[references.LargeMapType][nFloor].SetTile(MapLayer, &references.Position{X: x, Y: y}, lrg.GetSpriteIndex(x, y)) //slr.GetTileNumber(floor, x, y))
+		}
+	}
+}
+
 func (l *LayeredMaps) ResetAndCreateSmallMap(slr *references.SmallLocationReference, tileRefs *references.Tiles) {
 	l.layeredMaps[references.SmallMapType] = make(map[references.FloorNumber]*LayeredMap)
 	for _, floor := range slr.ListOfFloors {
 		l.layeredMaps[references.SmallMapType][floor] = newLayeredMap(references.XSmallMapTiles, references.YSmallMapTiles, tileRefs)
+		theFloor := l.layeredMaps[references.SmallMapType][floor]
+		// populate the MapLayer immediately
+		for x := references.Coordinate(0); x < references.XSmallMapTiles; x++ {
+			for y := references.Coordinate(0); y < references.YSmallMapTiles; y++ {
+				theFloor.SetTile(MapLayer, &references.Position{X: x, Y: y}, slr.GetTileNumber(floor, x, y))
+			}
+		}
 	}
 }
 

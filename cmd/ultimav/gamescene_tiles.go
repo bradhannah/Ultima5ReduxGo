@@ -1,12 +1,31 @@
 package main
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
+	"log"
 )
+
+func (g *GameScene) getSmallCalculatedAvatarTileIndex(ogSpriteIndex indexes.SpriteIndex) indexes.SpriteIndex {
+	//pos := g.gameState.Position
+	//if !g.gameState.IsAvatarAtPosition(pos) {
+	//	return ogSpriteIndex
+	//}
+
+	switch ogSpriteIndex {
+	case indexes.LeftBed:
+		return indexes.AvatarSleepingInBed
+	case indexes.ChairFacingRight, indexes.ChairFacingLeft, indexes.ChairFacingUp, indexes.ChairFacingDown:
+		return g.getCorrectAvatarOnChairTile(ogSpriteIndex, &g.gameState.Position)
+	case indexes.LadderUp:
+		return indexes.AvatarOnLadderUp
+	case indexes.LadderDown:
+		return indexes.AvatarOnLadderDown
+	}
+	return indexes.Avatar_KeyIndex
+}
 
 func (g *GameScene) getSmallCalculatedTileIndex(ogSpriteIndex indexes.SpriteIndex, pos *references.Position) indexes.SpriteIndex {
 	switch ogSpriteIndex {
@@ -16,21 +35,6 @@ func (g *GameScene) getSmallCalculatedTileIndex(ogSpriteIndex indexes.SpriteInde
 		if g.gameState.IsAvatarAtPosition(&pos) {
 			return indexes.MirrorAvatar
 		}
-	}
-
-	if !g.gameState.IsAvatarAtPosition(pos) {
-		return ogSpriteIndex
-	}
-
-	switch ogSpriteIndex {
-	case indexes.LeftBed:
-		return indexes.AvatarSleepingInBed
-	case indexes.ChairFacingRight, indexes.ChairFacingLeft, indexes.ChairFacingUp, indexes.ChairFacingDown:
-		return g.getCorrectAvatarOnChairTile(ogSpriteIndex, pos)
-	case indexes.LadderUp:
-		return indexes.AvatarOnLadderUp
-	case indexes.LadderDown:
-		return indexes.AvatarOnLadderDown
 	}
 	return ogSpriteIndex
 }
@@ -51,14 +55,15 @@ func (g *GameScene) getCorrectAvatarEatingInChairTile(avatarChairTileIndex index
 	switch avatarChairTileIndex {
 	case indexes.ChairFacingDown:
 		downPos := pos.GetPositionDown()
-		downPosTileIndex := g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(int(g.gameState.Floor), &downPos)
+		// THIS SHOULD GET THE ACTUAL TILE - NOT THE TILE FROM THE REFERENCE
+		downPosTileIndex := g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(g.gameState.Floor, &downPos)
 		if downPosTileIndex == indexes.TableFoodBoth || downPosTileIndex == indexes.TableFoodTop {
 			return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.AvatarSittingAndEatingFacingDown)
 		}
 		return indexes.AvatarSittingFacingDown
 	case indexes.ChairFacingUp:
 		upPos := pos.GetPositionUp()
-		upPosTileIndex := g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(int(g.gameState.Floor), &upPos)
+		upPosTileIndex := g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(g.gameState.Floor, &upPos)
 		if upPosTileIndex == indexes.TableFoodBoth || upPosTileIndex == indexes.TableFoodBottom {
 			return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.AvatarSittingAndEatingFacingUp)
 		}
@@ -73,46 +78,52 @@ func (g *GameScene) refreshMapLayerTiles() {
 		g.unscaledMapImage = ebiten.NewImage(sprites.TileSize*xTilesInMap, sprites.TileSize*yTilesInMap)
 	}
 
-	do := ebiten.DrawImageOptions{}
 	mapType := g.gameState.Location.GetMapType()
-	// remove it so it doesn't stick around for a single frame
-	if mapType == references.SmallMapType {
-		g.gameState.WipeOldAvatarPosition()
-	}
+
+	do := ebiten.DrawImageOptions{}
 
 	xCenter := references.Coordinate(xTilesInMap / 2)
 	yCenter := references.Coordinate(yTilesInMap / 2)
+
+	var avatarPos references.Position
+	var avatarDo ebiten.DrawImageOptions
+
+	theMap := g.gameState.LayeredMaps.GetLayeredMap(mapType, g.gameState.Floor)
+
 	var x, y references.Coordinate
+	// get and set tiles
 	for x = 0; x < xTilesInMap; x++ {
 		for y = 0; y < yTilesInMap; y++ {
+			pos := references.Position{X: x + g.gameState.Position.X - xCenter, Y: y + g.gameState.Position.Y - yCenter}
 			do.GeoM.Translate(float64(x*sprites.TileSize), float64(y*sprites.TileSize))
 
-			pos := references.Position{X: x + g.gameState.Position.X - xCenter, Y: y + g.gameState.Position.Y - yCenter}
-			spriteIndex := g.GetSpriteIndex(&pos)
-
-			g.gameState.LayeredMaps.GetLayeredMap(mapType, g.gameState.Floor).SetTile(game_state.MapLayer, &pos, spriteIndex)
-			switch mapType {
-			case references.SmallMapType:
-				if g.gameState.Position.Equals(pos) {
-					// the avatar is on this tile
-					g.gameState.SetNewAvatarPosition(&pos)
-					spriteIndex = indexes.Avatar_KeyIndex
+			tile := theMap.GetTileTopMapOnlyTile(&pos)
+			var spriteIndex indexes.SpriteIndex
+			if tile == nil {
+				if g.gameState.IsOutOfBounds(pos) {
+					spriteIndex = 5
 				} else {
-					spriteIndex = g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).GetTopTile(&pos).Index
+					log.Fatal("bad index")
 				}
-			case references.LargeMapType:
-				_ = ""
-			default:
-				panic("unhandled default case")
+			} else {
+				spriteIndex = tile.Index
+			}
+
+			// get from the reference
+			spriteIndex = g.getSmallCalculatedTileIndex(spriteIndex, &pos)
+
+			if g.gameState.Position.Equals(pos) {
+				avatarPos = pos
+				avatarDo = do
 			}
 
 			g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(spriteIndex), &do)
 			do.GeoM.Reset()
 		}
 	}
-	// get the previous avatar position - wipe it
 
-	// re-add avatar to the avatar layer
+	avatarSpriteIndex := theMap.GetTileTopMapOnlyTile(&avatarPos).Index
+	avatarSpriteIndex = g.getSmallCalculatedAvatarTileIndex(avatarSpriteIndex)
 
-	return
+	g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(avatarSpriteIndex), &avatarDo)
 }

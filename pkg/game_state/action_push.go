@@ -18,14 +18,11 @@ func (g *GameState) ActionPushSmallMap(direction references.Direction) bool {
 	// chair pushing is different
 	if pushableThingTile.IsChair() {
 		if bFarSideAccessible {
-			// it is in bounds, so
 			smallMap.SwapTiles(pushableThingPosition, farSideOfPushableThingPosition)
-			smallMap.SetTile(MapOverrideLayer, farSideOfPushableThingPosition, g.GameReferences.TileReferences.GetChairByPushDirection(direction).Index)
-			// move avatar to the swapped spot
+			smallMap.SetTile(MapLayer, farSideOfPushableThingPosition, g.GameReferences.TileReferences.GetChairByPushDirection(direction).Index)
 		} else {
-			// turn it around
 			smallMap.SwapTiles(&g.Position, pushableThingPosition)
-			smallMap.SetTile(MapOverrideLayer, &g.Position, g.GameReferences.TileReferences.GetChairByPushDirection(direction.GetOppositeDirection()).Index)
+			smallMap.SetTile(MapLayer, &g.Position, g.GameReferences.TileReferences.GetChairByPushDirection(direction.GetOppositeDirection()).Index)
 
 		}
 		// move avatar to the swapped spot
@@ -33,16 +30,11 @@ func (g *GameState) ActionPushSmallMap(direction references.Direction) bool {
 		return true
 	}
 
-	// if the pushableThingPosition is out of bounds OR blocked
 	if !bFarSideAccessible {
-		// just swap
 		smallMap.SwapTiles(&g.Position, pushableThingPosition)
-		// move avatar to the swapped spot
-		g.Position = *pushableThingPosition
-		return true
+	} else {
+		smallMap.SwapTiles(pushableThingPosition, farSideOfPushableThingPosition)
 	}
-	// it is in bounds, so
-	smallMap.SwapTiles(pushableThingPosition, farSideOfPushableThingPosition)
 	// move avatar to the swapped spot
 	g.Position = *pushableThingPosition
 	return true
