@@ -18,9 +18,10 @@ var boundKeysGame = []ebiten.Key{
 	ebiten.KeyE,
 	ebiten.KeyX,
 	ebiten.KeyO,
-	ebiten.KeyJ,
+	ebiten.KeyJ,g.gameState.Karma
 	ebiten.KeyK,
 	ebiten.KeyP,
+	ebiten.KeyG,
 	ebiten.KeySlash,
 	ebiten.KeyBackquote,
 }

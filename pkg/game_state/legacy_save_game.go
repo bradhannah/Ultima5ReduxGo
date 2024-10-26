@@ -76,7 +76,7 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 	// Various Things
 	const lbKarma = 0x2e2
 	const lsGold = 0x204
-	g.Karma = rawSaveGameBytesFromDisk[lbKarma]
+	g.Karma = Karma(rawSaveGameBytesFromDisk[lbKarma])
 	g.QtyGold = getUint16(&rawSaveGameBytesFromDisk, lsGold)
 
 	// Provisions

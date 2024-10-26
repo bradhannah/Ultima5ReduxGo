@@ -35,7 +35,7 @@ type GameState struct {
 	DateTime UltimaDate
 
 	Provisions Provisions
-	Karma      byte
+	Karma      Karma
 	QtyGold    uint16
 
 	// open door
@@ -92,10 +92,7 @@ func (g *GameState) IsOutOfBounds(position references.Position) bool {
 		return true
 	}
 
-	if position.X > g.GetCurrentSmallLocationReference().GetMaxX() {
-		return true
-	}
-	if position.Y > g.GetCurrentSmallLocationReference().GetMaxY() {
+	if position.X > g.GetCurrentSmallLocationReference().GetMaxX() || position.Y > g.GetCurrentSmallLocationReference().GetMaxY() {
 		return true
 	}
 

@@ -23,6 +23,8 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyK:
 		g.addRowStr("Klimb-")
 		g.secondaryKeyState = KlimbDirectionInput
+	case ebiten.KeyG:
+		g.addRowStr("Get what?")
 	case ebiten.KeyX:
 		g.addRowStr("X-it what?")
 	case ebiten.KeyP:

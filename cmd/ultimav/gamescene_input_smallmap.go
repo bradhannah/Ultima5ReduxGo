@@ -29,6 +29,11 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		g.gameState.Location = references.Britannia_Underworld
 		g.gameState.Floor = 0
 		g.gameState.Position = g.gameState.LastLargeMapPosition
+	case ebiten.KeyG:
+		// get the thing - direction
+		g.addRowStr("Get-")
+		g.secondaryKeyState = GetDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
 	case ebiten.KeyE:
 		g.addRowStr(fmt.Sprintf("Enter what?"))
 	case ebiten.KeyP:
@@ -135,6 +140,17 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 
 		g.smallMapPushSecondary(getCurrentPressedArrowKeyAsDirection())
 		g.secondaryKeyState = PrimaryInput
+	case GetDirectionInput:
+		if !bIsArrowKeyPressed {
+			return
+		}
+		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
+			return
+		}
+		g.appendDirectionToOutput()
+
+		g.smallMapGetSecondary(getCurrentPressedArrowKeyAsDirection())
+		g.secondaryKeyState = PrimaryInput
 	default:
 		panic("unhandled default case")
 	}
@@ -179,9 +195,9 @@ func (g *GameScene) smallMapKlimbSecondary(direction references.Direction) {
 func (g *GameScene) smallMapPushSecondary(direction references.Direction) {
 	pushThingPos := direction.GetNewPositionInDirection(&g.gameState.Position)
 
-	currentTile := g.gameState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, pushThingPos, g.gameState.Floor)
+	pushThingTile := g.gameState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, pushThingPos, g.gameState.Floor)
 
-	if !currentTile.IsPushable {
+	if !pushThingTile.IsPushable {
 		g.output.AddRowStr("Won't budge!")
 		return
 	}
@@ -190,5 +206,23 @@ func (g *GameScene) smallMapPushSecondary(direction references.Direction) {
 		// moved
 	} else {
 		// didn't move
+	}
+}
+
+func (g *GameScene) smallMapGetSecondary(direction references.Direction) {
+	getThingPos := direction.GetNewPositionInDirection(&g.gameState.Position)
+
+	getThingTile := g.gameState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, getThingPos, g.gameState.Floor)
+
+	mapLayers := g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor)
+
+	switch getThingTile.Index {
+	case indexes.WheatInField:
+		mapLayers.SetTileByLayer(game_state.MapLayer, getThingPos, indexes.PlowedField)
+		g.gameState.Karma = g.gameState.Karma.GetDecreasedKarma(1)
+	case indexes.TableFoodBoth, indexes.TableFoodBottom, indexes.TableFoodTop:
+	case indexes.RightSconce, indexes.LeftScone:
+	case indexes.Carpet2_MagicCarpet:
+
 	}
 }
