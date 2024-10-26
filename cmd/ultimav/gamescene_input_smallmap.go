@@ -211,18 +211,56 @@ func (g *GameScene) smallMapPushSecondary(direction references.Direction) {
 
 func (g *GameScene) smallMapGetSecondary(direction references.Direction) {
 	getThingPos := direction.GetNewPositionInDirection(&g.gameState.Position)
-
 	getThingTile := g.gameState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, getThingPos, g.gameState.Floor)
-
 	mapLayers := g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor)
 
 	switch getThingTile.Index {
 	case indexes.WheatInField:
+		g.addRowStr("Crops picked! Those aren't yours Avatar!")
 		mapLayers.SetTileByLayer(game_state.MapLayer, getThingPos, indexes.PlowedField)
 		g.gameState.Karma = g.gameState.Karma.GetDecreasedKarma(1)
-	case indexes.TableFoodBoth, indexes.TableFoodBottom, indexes.TableFoodTop:
 	case indexes.RightSconce, indexes.LeftScone:
+		g.addRowStr("Borrowed!")
+		g.gameState.Provisions.QtyTorches++
+		mapLayers.SetTileByLayer(game_state.MapLayer, getThingPos, indexes.BrickFloor)
+	case indexes.TableFoodBoth, indexes.TableFoodBottom, indexes.TableFoodTop:
+		if g.getFoodFromTable(direction) {
+			g.addRowStr("Mmmmm...! But that food isn't yours!")
+			g.gameState.Provisions.QtyFood++
+			g.gameState.Karma = g.gameState.Karma.GetDecreasedKarma(1)
+		}
 	case indexes.Carpet2_MagicCarpet:
-
 	}
+}
+
+func (g *GameScene) getFoodFromTable(direction references.Direction) bool {
+	getThingPos := direction.GetNewPositionInDirection(&g.gameState.Position)
+	getThingTile := g.gameState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, getThingPos, g.gameState.Floor)
+	mapLayers := g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor)
+
+	var newTileIndex indexes.SpriteIndex
+
+	switch direction {
+	case references.Down:
+		if getThingTile.Index == indexes.TableFoodBoth {
+			newTileIndex = indexes.TableFoodBottom
+		} else if getThingTile.Index == indexes.TableFoodTop {
+			newTileIndex = indexes.TableMiddle
+		} else {
+			return false
+		}
+	case references.Up:
+		if getThingTile.Index == indexes.TableFoodBoth {
+			newTileIndex = indexes.TableFoodTop
+		} else if getThingTile.Index == indexes.TableFoodBottom {
+			newTileIndex = indexes.TableMiddle
+		} else {
+			return false
+		}
+	default:
+		return false
+	}
+
+	mapLayers.SetTileByLayer(game_state.MapLayer, getThingPos, newTileIndex)
+	return true
 }

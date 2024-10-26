@@ -56,15 +56,17 @@ func (g *GameScene) getCorrectAvatarEatingInChairTile(avatarChairTileIndex index
 	case indexes.ChairFacingDown:
 		downPos := pos.GetPositionDown()
 		// THIS SHOULD GET THE ACTUAL TILE - NOT THE TILE FROM THE REFERENCE
-		downPosTileIndex := g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(g.gameState.Floor, &downPos)
-		if downPosTileIndex == indexes.TableFoodBoth || downPosTileIndex == indexes.TableFoodTop {
+		//downPosTile := g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(g.gameState.Floor, &downPos)
+		downPosTile := g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).GetTopTile(&downPos)
+		if downPosTile.Index == indexes.TableFoodBoth || downPosTile.Index == indexes.TableFoodTop {
 			return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.AvatarSittingAndEatingFacingDown)
 		}
 		return indexes.AvatarSittingFacingDown
 	case indexes.ChairFacingUp:
 		upPos := pos.GetPositionUp()
-		upPosTileIndex := g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(g.gameState.Floor, &upPos)
-		if upPosTileIndex == indexes.TableFoodBoth || upPosTileIndex == indexes.TableFoodBottom {
+		//upPosTile := g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(g.gameState.Floor, &upPos)
+		upPosTile := g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).GetTopTile(&upPos)
+		if upPosTile.Index == indexes.TableFoodBoth || upPosTile.Index == indexes.TableFoodBottom {
 			return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.AvatarSittingAndEatingFacingUp)
 		}
 		return indexes.AvatarSittingFacingUp
