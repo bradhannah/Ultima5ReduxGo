@@ -11,6 +11,9 @@ import (
 
 func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 	switch key {
+	case ebiten.KeySpace:
+		g.addRowStr("Pass")
+		g.gameState.DateTime.Advance(game_state.DefaultSmallMapMinutesPerTurn)
 	case ebiten.KeyBackquote:
 		g.bShowDebugConsole = !g.bShowDebugConsole
 	case ebiten.KeyEnter:

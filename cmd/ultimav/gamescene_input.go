@@ -10,6 +10,7 @@ const (
 )
 
 var boundKeysGame = []ebiten.Key{
+	ebiten.KeySpace,
 	ebiten.KeyDown,
 	ebiten.KeyUp,
 	ebiten.KeyEnter,
