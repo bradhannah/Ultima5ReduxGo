@@ -7,7 +7,11 @@ import (
 	"log"
 )
 
-const NPlayers = 6
+const (
+	NPlayers                      = 6
+	DefaultSmallMapMinutesPerTurn = 1
+	DefaultLargeMapMinutesPerTurn = 2
+)
 
 type DebugOptions struct {
 	FreeMove bool
@@ -52,6 +56,8 @@ type Provisions struct {
 }
 
 func (g *GameState) LargeMapProcessEndOfTurn() {
+	g.DateTime.Advance(DefaultLargeMapMinutesPerTurn)
+
 	return
 }
 
@@ -69,6 +75,7 @@ func (g *GameState) SmallMapProcessEndOfTurn() {
 			g.openDoorTurns--
 		}
 	}
+	g.DateTime.Advance(DefaultSmallMapMinutesPerTurn)
 }
 
 func (g *GameState) IsAvatarAtPosition(pos *references.Position) bool {
