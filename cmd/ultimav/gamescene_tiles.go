@@ -5,6 +5,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
+	"image"
 	"log"
 )
 
@@ -32,7 +33,7 @@ func (g *GameScene) getSmallCalculatedTileIndex(ogSpriteIndex indexes.SpriteInde
 	case indexes.Mirror:
 		// is avatar in front of it
 		pos := pos.GetPositionDown()
-		if g.gameState.IsAvatarAtPosition(&pos) {
+		if g.gameState.IsAvatarAtPosition(pos) {
 			return indexes.MirrorAvatar
 		}
 	}
@@ -55,17 +56,14 @@ func (g *GameScene) getCorrectAvatarEatingInChairTile(avatarChairTileIndex index
 	switch avatarChairTileIndex {
 	case indexes.ChairFacingDown:
 		downPos := pos.GetPositionDown()
-		// THIS SHOULD GET THE ACTUAL TILE - NOT THE TILE FROM THE REFERENCE
-		//downPosTile := g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(g.gameState.Floor, &downPos)
-		downPosTile := g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).GetTopTile(&downPos)
+		downPosTile := g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).GetTopTile(downPos)
 		if downPosTile.Index == indexes.TableFoodBoth || downPosTile.Index == indexes.TableFoodTop {
 			return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.AvatarSittingAndEatingFacingDown)
 		}
 		return indexes.AvatarSittingFacingDown
 	case indexes.ChairFacingUp:
 		upPos := pos.GetPositionUp()
-		//upPosTile := g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location).GetTileNumberWithAnimation(g.gameState.Floor, &upPos)
-		upPosTile := g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).GetTopTile(&upPos)
+		upPosTile := g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).GetTopTile(upPos)
 		if upPosTile.Index == indexes.TableFoodBoth || upPosTile.Index == indexes.TableFoodBottom {
 			return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.AvatarSittingAndEatingFacingUp)
 		}
@@ -76,10 +74,14 @@ func (g *GameScene) getCorrectAvatarEatingInChairTile(avatarChairTileIndex index
 }
 
 func (g *GameScene) refreshMapLayerTiles() {
+	layer := g.gameState.GetLayeredMapByCurrentLocation()
+	layer.RecalculateVisibleTiles(g.gameState.Position)
+
 	if g.unscaledMapImage == nil {
 		g.unscaledMapImage = ebiten.NewImage(sprites.TileSize*xTilesInMap, sprites.TileSize*yTilesInMap)
 	}
 
+	g.unscaledMapImage.Fill(image.Black)
 	mapType := g.gameState.Location.GetMapType()
 
 	do := ebiten.DrawImageOptions{}
@@ -122,7 +124,9 @@ func (g *GameScene) refreshMapLayerTiles() {
 				avatarDo = do
 			}
 
-			g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(spriteIndex), &do)
+			if layer.IsPositionVisible(&pos) {
+				g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(spriteIndex), &do)
+			}
 			do.GeoM.Reset()
 		}
 	}

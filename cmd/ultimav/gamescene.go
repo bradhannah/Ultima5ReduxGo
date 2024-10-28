@@ -78,9 +78,12 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	}
 
 	// TODO: add a New function to GameState
-	gameScene.gameState = &game_state.GameState{}
+	gameScene.gameState = &game_state.GameState{
+		XTilesInMap:    xTilesInMap,
+		YTilesInMap:    yTilesInMap,
+		GameReferences: gameScene.gameReferences,
+	}
 	err = gameScene.gameState.LoadLegacySaveGame(path.Join(gameScene.gameConfig.DataFilePath, "SAVED.GAM"), gameScene.gameReferences)
-	gameScene.gameState.GameReferences = gameScene.gameReferences
 
 	if err != nil {
 		log.Fatal(err)

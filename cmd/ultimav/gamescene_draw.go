@@ -3,15 +3,14 @@ package main
 import (
 	"fmt"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"image"
 )
 
 // Draw method for the GameScene
 func (g *GameScene) Draw(screen *ebiten.Image) {
-	const widthRatio = 16
-	const heightRatio = 9
-
 	mapWidth := sprites.TileSize * xTilesInMap
 	mapHeight := sprites.TileSize * yTilesInMap
 
@@ -19,7 +18,13 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 		g.mapImage = ebiten.NewImage(mapWidth, mapHeight)
 	}
 
-	g.refreshMapLayerTiles()
+	g.mapImage.Fill(image.Black)
+	if g.gameState.Location == references.Britannia_Underworld {
+		g.refreshMapLayerTiles()
+	} else {
+		g.refreshMapLayerTiles()
+
+	}
 	g.drawMap(g.mapImage)
 	g.drawMapUnits(g.mapImage)
 

@@ -27,20 +27,20 @@ func move(val, mapSize Coordinate, decrease bool, bWrap bool) Coordinate {
 	return val + 1
 }
 
-func (p *Position) GetPositionToLeft() Position {
-	return Position{p.X - 1, p.Y}
+func (p *Position) GetPositionToLeft() *Position {
+	return &Position{p.X - 1, p.Y}
 }
 
-func (p *Position) GetPositionToRight() Position {
-	return Position{p.X + 1, p.Y}
+func (p *Position) GetPositionToRight() *Position {
+	return &Position{p.X + 1, p.Y}
 }
 
-func (p *Position) GetPositionUp() Position {
-	return Position{p.X, p.Y - 1}
+func (p *Position) GetPositionUp() *Position {
+	return &Position{p.X, p.Y - 1}
 }
 
-func (p *Position) GetPositionDown() Position {
-	return Position{p.X, p.Y + 1}
+func (p *Position) GetPositionDown() *Position {
+	return &Position{p.X, p.Y + 1}
 }
 
 func (p *Position) GoLeft(bLarge bool) {

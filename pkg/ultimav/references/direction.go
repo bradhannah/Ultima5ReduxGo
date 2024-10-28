@@ -11,7 +11,7 @@ const (
 )
 
 func (d Direction) GetNewPositionInDirection(position *Position) *Position {
-	var newPosition Position
+	var newPosition *Position
 	switch d {
 	case Up:
 		newPosition = position.GetPositionUp()
@@ -25,7 +25,7 @@ func (d Direction) GetNewPositionInDirection(position *Position) *Position {
 		return nil
 	}
 
-	return &newPosition
+	return newPosition
 }
 
 func (d Direction) GetDirectionCompassName() string {

@@ -91,7 +91,11 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 	g.Provisions.QtyKeys = rawSaveGameBytesFromDisk[lbKeys]
 	g.Provisions.QtySkullKeys = rawSaveGameBytesFromDisk[lbSkullKeys]
 
-	g.LayeredMaps = *NewLayeredMaps(gameRefs.TileReferences, gameRefs.OverworldLargeMapReference, gameRefs.UnderworldLargeMapReference)
+	g.LayeredMaps = *NewLayeredMaps(gameRefs.TileReferences,
+		gameRefs.OverworldLargeMapReference,
+		gameRefs.UnderworldLargeMapReference,
+		g.XTilesInMap,
+		g.YTilesInMap)
 
 	return nil
 }

@@ -45,6 +45,9 @@ type GameState struct {
 	// open door
 	openDoorPos   *references.Position
 	openDoorTurns int
+
+	XTilesInMap int
+	YTilesInMap int
 }
 
 type Provisions struct {
@@ -84,6 +87,10 @@ func (g *GameState) IsAvatarAtPosition(pos *references.Position) bool {
 
 func (g *GameState) GetCurrentSmallLocationReference() *references.SmallLocationReference {
 	return g.GameReferences.LocationReferences.GetLocationReference(g.Location)
+}
+
+func (g *GameState) GetLayeredMapByCurrentLocation() *LayeredMap {
+	return g.LayeredMaps.GetLayeredMap(g.Location.GetMapType(), g.Floor)
 }
 
 func (g *GameState) IsOutOfBounds(position references.Position) bool {

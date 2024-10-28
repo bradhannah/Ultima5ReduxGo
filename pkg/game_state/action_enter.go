@@ -13,6 +13,6 @@ func (g *GameState) EnterBuilding(slr *references.SmallLocationReference, tileRe
 		}
 		g.Location = slr.Location
 		g.Floor = 0
-		g.LayeredMaps.ResetAndCreateSmallMap(slr, tileRefs)
+		g.LayeredMaps.ResetAndCreateSmallMap(slr, tileRefs, g.XTilesInMap, g.YTilesInMap)
 	}
 }
