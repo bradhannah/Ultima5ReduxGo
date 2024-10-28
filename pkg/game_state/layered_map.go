@@ -49,7 +49,7 @@ func newLayeredMap(xMax references.Coordinate, yMax references.Coordinate, tileR
 		layeredMap.visibleFlags = make(map[references.Coordinate]map[references.Coordinate]bool)
 		layeredMap.testForVisibilityMap = make(map[references.Coordinate]map[references.Coordinate]bool)
 		layeredMap.layers[mapLayer] = make(map[references.Coordinate]map[references.Coordinate]indexes.SpriteIndex)
-		for yRow := -overflowTiles; yRow < yMax+overflowTiles; yRow++ {
+		for yRow := -overflowTiles - 1; yRow < yMax+overflowTiles; yRow++ {
 			layeredMap.visibleFlags[yRow] = make(map[references.Coordinate]bool)
 			layeredMap.testForVisibilityMap[yRow] = make(map[references.Coordinate]bool)
 			layeredMap.layers[mapLayer][yRow] = make(map[references.Coordinate]indexes.SpriteIndex)
@@ -60,16 +60,6 @@ func newLayeredMap(xMax references.Coordinate, yMax references.Coordinate, tileR
 }
 
 func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position) {
-	//l.topLeft = references.Position{
-	//	X: helpers.Min(helpers.Max(avatarPos.X-overflowTiles, -9), l.xMax+overflowTiles-1),
-	//	Y: helpers.Min(helpers.Max(avatarPos.Y-overflowTiles, -9), l.yMax+overflowTiles-1),
-	//}
-	//
-	//l.bottomRight = references.Position{
-	//	X: helpers.Min(helpers.Max(avatarPos.X+overflowTiles, -9), l.xMax+overflowTiles-1),
-	//	Y: helpers.Min(helpers.Max(avatarPos.Y+overflowTiles, -9), l.yMax+overflowTiles-1),
-	//}
-
 	l.topLeft = references.Position{
 		X: avatarPos.X - overflowTiles,
 		Y: avatarPos.Y - overflowTiles,
@@ -78,16 +68,6 @@ func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position) {
 		X: avatarPos.X + overflowTiles,
 		Y: avatarPos.Y + overflowTiles,
 	}
-
-	//l.topLeft = references.Position{
-	//	X: helpers.Min(helpers.Max(avatarPos.X-overflowTiles, -9), l.xMax-1),
-	//	Y: helpers.Min(helpers.Max(avatarPos.Y-overflowTiles, -9), l.yMax-1),
-	//}
-	//
-	//l.bottomRight = references.Position{
-	//	X: helpers.Min(helpers.Max(avatarPos.X+overflowTiles, -9), l.xMax-1),
-	//	Y: helpers.Min(helpers.Max(avatarPos.Y+overflowTiles, -9), l.yMax-1),
-	//}
 
 	// TODO: it's lazy to make both of these calls since it could do in one pass
 	l.testForVisibilityMap.ResetVisibilityCoords(false)
@@ -104,10 +84,6 @@ func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position) {
 	l.floodFillIfInside(avatarPos.GetPositionDown(), true)
 	l.floodFillIfInside(avatarPos.GetPositionUp(), true)
 }
-
-//func (l *LayeredMap) getAdjustedPos(pos *references.Position) *references.Position {
-//	pos.GetWrapped(l.xMax, l.yMax)
-//}
 
 func (l *LayeredMap) floodFillIfInside(pos *references.Position, bForce bool) {
 	if l.bWrappingMap {
@@ -133,11 +109,6 @@ func (l *LayeredMap) floodFillIfInside(pos *references.Position, bForce bool) {
 	l.floodFillIfInside(pos.GetPositionToRight(), false)
 	l.floodFillIfInside(pos.GetPositionDown(), false)
 	l.floodFillIfInside(pos.GetPositionUp(), false)
-
-	//l.floodFillIfInside(pos.GetPositionToLeft().GetPositionDown(), false)
-	//l.floodFillIfInside(pos.GetPositionToRight().GetPositionDown(), false)
-	//l.floodFillIfInside(pos.GetPositionToLeft().GetPositionUp(), false)
-	//l.floodFillIfInside(pos.GetPositionToRight().GetPositionUp(), false)
 }
 
 func (l *LayeredMap) setTilesAroundPositionVisible(pos *references.Position) {
@@ -154,8 +125,11 @@ func (l *LayeredMap) setTilesAroundPositionVisible(pos *references.Position) {
 }
 
 func (l *LayeredMap) SetVisible(bVisible bool, pos *references.Position) {
+	//_, bExists := l.visibleFlags[pos.X][pos.Y]
+	//if bExists {
+	//	l.visibleFlags[pos.X][pos.Y] = bVisible
+	//}
 	l.visibleFlags[pos.X][pos.Y] = bVisible
-	//l.testForVisibilityMap[pos.X][pos.Y] = false
 }
 
 func (l *LayeredMap) IsPositionVisible(pos *references.Position) bool {
