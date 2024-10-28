@@ -159,7 +159,6 @@ func (sb *ReferenceBorder) createBorderBits() *borderBits {
 	return &bits
 }
 
-// CreateSizedAndScaledBorderSprite
 func (sb *ReferenceBorder) CreateSizedAndScaledBorderSprite(idealWidthForScaling int, placement PercentBasedPlacement) (*ebiten.Image, *ebiten.DrawImageOptions) {
 
 	// get the corners and copies before we scale it

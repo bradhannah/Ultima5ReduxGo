@@ -9,8 +9,6 @@ type DoorOpenState int
 
 const (
 	OpenDoorLocked DoorOpenState = iota
-	//Unlocked
-	//
 	OpenDoorLockedMagical
 	OpenDoorNotADoor
 	OpenDoorOpened

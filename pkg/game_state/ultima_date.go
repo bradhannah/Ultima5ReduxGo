@@ -44,7 +44,7 @@ func (d *UltimaDate) Advance(nMinutes int) {
 		nHours := byte(nMinutes / MinutesPerHour)
 		nExtraMinutes := nMinutes % MinutesPerHour
 
-		newHour := byte(d.Hour + nHours + 1)
+		newHour := d.Hour + nHours + 1
 		d.Minute = byte((int(d.Minute) + nExtraMinutes) % MinutesPerHour)
 
 		// Check if advancing hours moves to a new day
