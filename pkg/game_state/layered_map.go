@@ -75,33 +75,13 @@ func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position) {
 
 	l.SetVisible(true, &avatarPos)
 
-	// all cardinal directions are visible from a visible tile like the Avatar
-	l.SetVisible(true, avatarPos.GetPositionToLeft())
-	l.SetVisible(true, avatarPos.GetPositionToRight())
-	l.SetVisible(true, avatarPos.GetPositionDown())
-	l.SetVisible(true, avatarPos.GetPositionUp())
-
-	// do the diagonal on the initial call
-	l.SetVisible(true, avatarPos.GetPositionUp().GetPositionToLeft())
-	l.SetVisible(true, avatarPos.GetPositionUp().GetPositionToRight())
-	l.SetVisible(true, avatarPos.GetPositionDown().GetPositionToLeft())
-	l.SetVisible(true, avatarPos.GetPositionDown().GetPositionToRight())
+	l.setTilesAroundPositionVisible(&avatarPos)
 
 	l.floodFillIfInside(&avatarPos, true)
 	l.floodFillIfInside(avatarPos.GetPositionToLeft(), true)
 	l.floodFillIfInside(avatarPos.GetPositionToRight(), true)
 	l.floodFillIfInside(avatarPos.GetPositionDown(), true)
 	l.floodFillIfInside(avatarPos.GetPositionUp(), true)
-
-	// don't do the whole map - just the visible areas - otherwise it is wasted cycles
-	//for x := avatarPos.X - references.Coordinate(l.xVisibleTiles/2); x < avatarPos.X+references.Coordinate(l.xVisibleTiles/2); x++ {
-	//	for y := avatarPos.Y - references.Coordinate(l.yVisibleTiles/2); y < avatarPos.Y+references.Coordinate(l.yVisibleTiles/2); y++ {
-	//
-	//	}
-	//}
-
-	//for yRow := -overflowTiles; yRow < yMax+10; yRow++ {
-	//}
 }
 
 func (l *LayeredMap) floodFillIfInside(pos *references.Position, bForce bool) {
@@ -113,10 +93,20 @@ func (l *LayeredMap) floodFillIfInside(pos *references.Position, bForce bool) {
 	l.SetVisible(true, pos)
 	l.testForVisibilityMap[pos.X][pos.Y] = false
 
-	if l.GetTileTopMapOnlyTile(pos).BlocksLight {
+	tile := l.GetTileTopMapOnlyTile(pos)
+	if tile.BlocksLight && !tile.IsWindow {
 		return
 	}
 
+	l.setTilesAroundPositionVisible(pos)
+
+	l.floodFillIfInside(pos.GetPositionToLeft(), false)
+	l.floodFillIfInside(pos.GetPositionToRight(), false)
+	l.floodFillIfInside(pos.GetPositionDown(), false)
+	l.floodFillIfInside(pos.GetPositionUp(), false)
+}
+
+func (l *LayeredMap) setTilesAroundPositionVisible(pos *references.Position) {
 	l.SetVisible(true, pos.GetPositionToLeft())
 	l.SetVisible(true, pos.GetPositionToRight())
 	l.SetVisible(true, pos.GetPositionDown())
@@ -127,19 +117,6 @@ func (l *LayeredMap) floodFillIfInside(pos *references.Position, bForce bool) {
 	l.SetVisible(true, pos.GetPositionUp().GetPositionToRight())
 	l.SetVisible(true, pos.GetPositionDown().GetPositionToLeft())
 	l.SetVisible(true, pos.GetPositionDown().GetPositionToRight())
-
-	l.floodFillIfInside(pos.GetPositionToLeft(), false)
-	l.floodFillIfInside(pos.GetPositionToRight(), false)
-	l.floodFillIfInside(pos.GetPositionDown(), false)
-	l.floodFillIfInside(pos.GetPositionUp(), false)
-
-	// do the diagonal on the initial call
-	//if bForce {
-	//	l.floodFillIfInside(pos.GetPositionUp().GetPositionToLeft(), false)
-	//	l.floodFillIfInside(pos.GetPositionUp().GetPositionToRight(), false)
-	//	l.floodFillIfInside(pos.GetPositionDown().GetPositionToLeft(), false)
-	//	l.floodFillIfInside(pos.GetPositionDown().GetPositionToRight(), false)
-	//}
 }
 
 func (l *LayeredMap) SetVisible(bVisible bool, pos *references.Position) {
