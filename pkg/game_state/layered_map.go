@@ -2,7 +2,6 @@ package game_state
 
 import (
 	"fmt"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
@@ -33,14 +32,17 @@ type LayeredMap struct {
 	xVisibleTiles, yVisibleTiles int
 	topLeft, bottomRight         references.Position
 	xMax, yMax                   references.Coordinate
+
+	bWrappingMap bool
 }
 
-func newLayeredMap(xMax references.Coordinate, yMax references.Coordinate, tileRefs *references.Tiles, xVisibleTiles int, yVisibleTiles int) *LayeredMap {
+func newLayeredMap(xMax references.Coordinate, yMax references.Coordinate, tileRefs *references.Tiles, xVisibleTiles int, yVisibleTiles int, bWrappingMap bool) *LayeredMap {
 	layeredMap := LayeredMap{}
 	layeredMap.xVisibleTiles = xVisibleTiles
 	layeredMap.yVisibleTiles = yVisibleTiles
 	layeredMap.xMax = xMax
 	layeredMap.yMax = yMax
+	layeredMap.bWrappingMap = bWrappingMap
 	layeredMap.tileRefs = tileRefs
 
 	for mapLayer, _ := range layeredMap.layers {
@@ -58,19 +60,38 @@ func newLayeredMap(xMax references.Coordinate, yMax references.Coordinate, tileR
 }
 
 func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position) {
+	//l.topLeft = references.Position{
+	//	X: helpers.Min(helpers.Max(avatarPos.X-overflowTiles, -9), l.xMax+overflowTiles-1),
+	//	Y: helpers.Min(helpers.Max(avatarPos.Y-overflowTiles, -9), l.yMax+overflowTiles-1),
+	//}
+	//
+	//l.bottomRight = references.Position{
+	//	X: helpers.Min(helpers.Max(avatarPos.X+overflowTiles, -9), l.xMax+overflowTiles-1),
+	//	Y: helpers.Min(helpers.Max(avatarPos.Y+overflowTiles, -9), l.yMax+overflowTiles-1),
+	//}
+
 	l.topLeft = references.Position{
-		X: helpers.Min(helpers.Max(avatarPos.X-overflowTiles, 0), l.xMax-1),
-		Y: helpers.Min(helpers.Max(avatarPos.Y-overflowTiles, 0), l.yMax-1),
+		X: avatarPos.X - overflowTiles,
+		Y: avatarPos.Y - overflowTiles,
+	}
+	l.bottomRight = references.Position{
+		X: avatarPos.X + overflowTiles,
+		Y: avatarPos.Y + overflowTiles,
 	}
 
-	l.bottomRight = references.Position{
-		X: helpers.Min(helpers.Max(avatarPos.X+overflowTiles, 0), l.xMax-1),
-		Y: helpers.Min(helpers.Max(avatarPos.Y+overflowTiles, 0), l.yMax-1),
-	}
+	//l.topLeft = references.Position{
+	//	X: helpers.Min(helpers.Max(avatarPos.X-overflowTiles, -9), l.xMax-1),
+	//	Y: helpers.Min(helpers.Max(avatarPos.Y-overflowTiles, -9), l.yMax-1),
+	//}
+	//
+	//l.bottomRight = references.Position{
+	//	X: helpers.Min(helpers.Max(avatarPos.X+overflowTiles, -9), l.xMax-1),
+	//	Y: helpers.Min(helpers.Max(avatarPos.Y+overflowTiles, -9), l.yMax-1),
+	//}
 
 	// TODO: it's lazy to make both of these calls since it could do in one pass
 	l.testForVisibilityMap.ResetVisibilityCoords(false)
-	l.testForVisibilityMap.SetVisibilityCoordsRectangle(l.topLeft, l.bottomRight, l.xMax, l.yMax)
+	l.testForVisibilityMap.SetVisibilityCoordsRectangle(l.topLeft, l.bottomRight, l.xMax, l.yMax, l.bWrappingMap)
 	l.visibleFlags.ResetVisibilityCoords(false)
 
 	l.SetVisible(true, &avatarPos)
@@ -84,7 +105,15 @@ func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position) {
 	l.floodFillIfInside(avatarPos.GetPositionUp(), true)
 }
 
+//func (l *LayeredMap) getAdjustedPos(pos *references.Position) *references.Position {
+//	pos.GetWrapped(l.xMax, l.yMax)
+//}
+
 func (l *LayeredMap) floodFillIfInside(pos *references.Position, bForce bool) {
+	if l.bWrappingMap {
+		pos = pos.GetWrapped(l.xMax, l.yMax)
+	}
+
 	if !bForce && !l.testForVisibilityMap[pos.X][pos.Y] {
 		// don't reprocess and existing tile if it has been set
 		return
@@ -94,7 +123,7 @@ func (l *LayeredMap) floodFillIfInside(pos *references.Position, bForce bool) {
 	l.testForVisibilityMap[pos.X][pos.Y] = false
 
 	tile := l.GetTileTopMapOnlyTile(pos)
-	if tile.BlocksLight && !tile.IsWindow {
+	if tile != nil && tile.BlocksLight && !tile.IsWindow {
 		return
 	}
 
@@ -104,6 +133,11 @@ func (l *LayeredMap) floodFillIfInside(pos *references.Position, bForce bool) {
 	l.floodFillIfInside(pos.GetPositionToRight(), false)
 	l.floodFillIfInside(pos.GetPositionDown(), false)
 	l.floodFillIfInside(pos.GetPositionUp(), false)
+
+	//l.floodFillIfInside(pos.GetPositionToLeft().GetPositionDown(), false)
+	//l.floodFillIfInside(pos.GetPositionToRight().GetPositionDown(), false)
+	//l.floodFillIfInside(pos.GetPositionToLeft().GetPositionUp(), false)
+	//l.floodFillIfInside(pos.GetPositionToRight().GetPositionUp(), false)
 }
 
 func (l *LayeredMap) setTilesAroundPositionVisible(pos *references.Position) {

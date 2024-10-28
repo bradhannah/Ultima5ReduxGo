@@ -14,10 +14,15 @@ func (v *VisibilityCoords) ResetVisibilityCoords(bDefault bool) {
 	}
 }
 
-func (v *VisibilityCoords) SetVisibilityCoordsRectangle(topLeft references.Position, bottomRight references.Position, xMax references.Coordinate, yMax references.Coordinate) {
+func (v *VisibilityCoords) SetVisibilityCoordsRectangle(topLeft references.Position, bottomRight references.Position, xMax references.Coordinate, yMax references.Coordinate, bWrap bool) {
 	for x := topLeft.X; x < bottomRight.X; x++ {
 		for y := topLeft.Y; y < bottomRight.Y; y++ {
-			(*v)[x][y] = true
+			if bWrap {
+				xy := (&references.Position{X: x, Y: y}).GetWrapped(xMax, yMax)
+				(*v)[xy.X][xy.Y] = true
+			} else {
+				(*v)[x][y] = true
+			}
 		}
 	}
 }
