@@ -95,7 +95,7 @@ func (g *GameState) GetLayeredMapByCurrentLocation() *LayeredMap {
 
 func (g *GameState) IsOutOfBounds(position references.Position) bool {
 	if g.Location.GetMapType() == references.LargeMapType {
-		if position.X > references.XLargeMapTiles-1 || position.Y > references.YLargeMapTiles {
+		if position.X > references.XLargeMapTiles-1 || position.Y >= references.YLargeMapTiles {
 			//|| position.X < 0 || position.Y < 0 {
 			log.Fatal(fmt.Sprintf("Exceeded large map tiles: X=%d, Y=%d", position.X, position.Y))
 		}
