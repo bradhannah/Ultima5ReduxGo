@@ -80,7 +80,6 @@ func (g *GameScene) drawMapUnits(screen *ebiten.Image) {
 	do := ebiten.DrawImageOptions{}
 
 	do.GeoM.Translate(float64(sprites.TileSize*(xTilesInMap/2)), float64(sprites.TileSize*(yTilesInMap/2)))
-	//screen.DrawImage(g.spriteSheet.GetSprite(indexes.Avatar), &do)
 }
 
 // drawMap

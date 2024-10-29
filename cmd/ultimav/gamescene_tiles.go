@@ -10,11 +10,6 @@ import (
 )
 
 func (g *GameScene) getSmallCalculatedAvatarTileIndex(ogSpriteIndex indexes.SpriteIndex) indexes.SpriteIndex {
-	//pos := g.gameState.Position
-	//if !g.gameState.IsAvatarAtPosition(pos) {
-	//	return ogSpriteIndex
-	//}
-
 	switch ogSpriteIndex {
 	case indexes.LeftBed:
 		return indexes.AvatarSleepingInBed

@@ -263,7 +263,24 @@ func (t *TextInput) tryToAutoComplete() {
 			log.Fatal("Should only be a single match")
 		}
 		if !strings.HasSuffix(outputStr, " ") {
-			t.output.AppendToCurrentRowStr((*matches)[0].GetAutoComplete(outputStr) + " ")
+			autoCompleteMatches := (*matches)[0].GetAutoComplete(outputStr)
+			if len(autoCompleteMatches) == 1 {
+				//t.output.AppendToCurrentRowStr((*matches)[0].GetAutoComplete(outputStr) + " ")
+				t.output.AppendToCurrentRowStr((autoCompleteMatches)[0] + " ")
+				return
+			} else if len(autoCompleteMatches) < 0 {
+				log.Fatal()
+				return
+			}
+			// continue...
+			var commandNames string
+			for i, match := range autoCompleteMatches {
+				if i > 0 {
+					commandNames += ", "
+				}
+				commandNames += match
+			}
+			t.TextInputCallbacks.AmbiguousAutoComplete(fmt.Sprintf("Ambigious - %s", commandNames))
 		}
 	} else if nMatch > 1 {
 		var commandNames string

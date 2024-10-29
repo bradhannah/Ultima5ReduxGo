@@ -1,9 +1,9 @@
 package game_state
 
 import (
-	"fmt"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	"log"
 )
 
 const totalLayers = 5
@@ -125,10 +125,6 @@ func (l *LayeredMap) setTilesAroundPositionVisible(pos *references.Position) {
 }
 
 func (l *LayeredMap) SetVisible(bVisible bool, pos *references.Position) {
-	//_, bExists := l.visibleFlags[pos.X][pos.Y]
-	//if bExists {
-	//	l.visibleFlags[pos.X][pos.Y] = bVisible
-	//}
 	l.visibleFlags[pos.X][pos.Y] = bVisible
 }
 
@@ -138,7 +134,7 @@ func (l *LayeredMap) IsPositionVisible(pos *references.Position) bool {
 
 func (l *LayeredMap) GetTopTile(position *references.Position) *references.Tile {
 	if position == nil {
-		fmt.Sprintf("oof")
+		log.Fatal("entered a nil position so I can't get a tile")
 	}
 	for i := EffectLayer; i >= MapLayer; i-- {
 		tile := l.GetTileByLayer(i, position)
