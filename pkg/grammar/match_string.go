@@ -25,10 +25,6 @@ func (m MatchString) GetPartialMatches(s string) ([]string, error) {
 func (m MatchString) PartiallyMatches(str string) (bool, error) {
 	matches, _ := m.GetPartialMatches(str)
 	return len(matches) > 0, nil
-	//if str == "" {
-	//	return false, nil
-	//}
-	//return strings.HasPrefix(strings.ToUpper(m.Str), strings.ToUpper(str)), nil
 }
 
 func (m MatchString) GetSuffixHint(currentStr string) string {
@@ -44,11 +40,3 @@ func (m MatchString) GetSuffixHint(currentStr string) string {
 	}
 	return strings.TrimPrefix(strings.ToUpper(m.Str), strings.ToUpper(currentStr))
 }
-
-//func (m MatchString) GetAsInt() int {
-//	n, err := strconv.Atoi(m.Str)
-//	if err != nil {
-//		return n
-//	}
-//	return 0
-//}

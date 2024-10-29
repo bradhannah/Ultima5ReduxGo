@@ -32,41 +32,19 @@ func (t *TextCommand) GetIndexAsInt(nIndex int, command string) int {
 	return n
 }
 
-//func (t *TextCommand) GetAutoComplete(command string) string {
-//	splitStr := strings.Split(command, " ")
-//
-//	highIndex := len(splitStr) - 1
-//	bMatches, _ := t.Matches[highIndex].PartiallyMatches(splitStr[highIndex])
-//	if !bMatches {
-//		return command
-//	}
-//
-//	return t.Matches[highIndex].GetSuffixHint(splitStr[highIndex])
-//}
-
 func (t *TextCommand) GetAutoComplete(command string) []string {
 	splitStr := strings.Split(command, " ")
 
 	highIndex := len(splitStr) - 1
-	//bMatches, _ := t.Matches[highIndex].PartiallyMatches(splitStr[highIndex])
 	matches, _ := t.Matches[highIndex].GetPartialMatches(splitStr[highIndex])
 	if len(matches) == 0 {
 		return []string{""}
-		//return []string{command}
 	}
 	if len(matches) == 1 {
 		return []string{t.Matches[highIndex].GetSuffixHint(splitStr[highIndex])}
 	}
-	// matches > 1
 
-	//matches, _ := t.Matches[highIndex].GetPartialMatches(splitStr[highIndex])
-
-	//if len(matches) == 1 {
 	return matches
-	//return t.Matches[highIndex].GetSuffixHint(splitStr[highIndex])
-	//}
-	//return ""
-
 }
 
 func (t *TextCommand) GetTextCommandIfAtLeastPartialMatch(command string) *TextCommand {

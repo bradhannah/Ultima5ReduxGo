@@ -37,11 +37,3 @@ func (m MatchInt) PartiallyMatches(str string) (bool, error) {
 func (m MatchInt) GetSuffixHint(_ string) string {
 	return ""
 }
-
-//func (m MatchInt) GetAsInt() int {
-//	n, err := strconv.Atoi(m.)
-//	if err != nil {
-//		return n
-//	}
-//	return 0
-//}
