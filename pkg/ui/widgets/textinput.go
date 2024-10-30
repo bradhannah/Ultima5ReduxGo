@@ -249,6 +249,12 @@ func (t *TextInput) Update() {
 
 func (t *TextInput) tryToAutoComplete() {
 	outputStr := t.output.GetOutputStr(false)
+
+	if outputStr == "" {
+		t.TextInputCallbacks.AmbiguousAutoComplete(fmt.Sprintf("Available Commands: %s", t.textCommands.GetFriendlyListOfAllCommands()))
+		return
+	}
+
 	nPrimaryCommandMatch := t.textCommands.HowManyCommandsMatch(outputStr)
 	primaryCommandMatches := t.textCommands.GetAllMatchingTextCommands(outputStr)
 

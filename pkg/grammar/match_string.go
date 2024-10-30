@@ -8,6 +8,10 @@ type MatchString struct {
 	CaseSensitive bool
 }
 
+func (m MatchString) GetDescription() string {
+	return m.Description
+}
+
 func (m MatchString) GetString() string {
 	return m.Str
 }

@@ -11,6 +11,10 @@ type MatchInt struct {
 	Description string
 }
 
+func (m MatchInt) GetDescription() string {
+	return m.Description
+}
+
 func (m MatchInt) GetPartialMatches(s string) ([]string, error) {
 	n, err := strconv.Atoi(s)
 	if err != nil {

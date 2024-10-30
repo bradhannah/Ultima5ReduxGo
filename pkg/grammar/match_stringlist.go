@@ -8,6 +8,10 @@ type MatchStringList struct {
 	CaseSensitive bool
 }
 
+func (m MatchStringList) GetDescription() string {
+	return m.Description
+}
+
 func (m MatchStringList) GetPartialMatches(s string) ([]string, error) {
 	var matches []string = make([]string, 0)
 	if !m.CaseSensitive {

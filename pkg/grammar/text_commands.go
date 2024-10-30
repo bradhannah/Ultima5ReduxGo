@@ -1,5 +1,7 @@
 package grammar
 
+import "fmt"
+
 type TextCommands []TextCommand
 
 func (t *TextCommands) GetNumOfCommands() int {
@@ -42,4 +44,16 @@ func (t *TextCommands) GetAllPerfectMatches(command string) *TextCommands {
 	}
 
 	return &allMatches
+}
+
+func (t *TextCommands) GetFriendlyListOfAllCommands() string {
+	var allCommands string
+
+	for i, textCommand := range *t {
+		if i != 0 {
+			allCommands += ", "
+		}
+		allCommands += fmt.Sprintf("%s (%s)", textCommand.Matches[0].GetString(), textCommand.Matches[0].GetDescription())
+	}
+	return allCommands
 }

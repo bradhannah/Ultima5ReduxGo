@@ -5,4 +5,5 @@ type Match interface {
 	GetPartialMatches(string) ([]string, error)
 	GetSuffixHint(currentStr string) string
 	GetString() string
+	GetDescription() string
 }

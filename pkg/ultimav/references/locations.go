@@ -77,12 +77,3 @@ func GetListOfAllSmallMaps() []string {
 	}
 	return names
 }
-
-//func GetSmallLocationByName(name string) Location {
-//	for i, loc := range GetListOfAllSmallMaps() {
-//		if loc == name {
-//			return Location(i + 1)
-//		}
-//	}
-//	return EmptyLocation
-//}
