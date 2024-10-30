@@ -32,6 +32,11 @@ func (t *TextCommand) GetIndexAsInt(nIndex int, command string) int {
 	return n
 }
 
+func (t *TextCommand) GetIndexAsString(nIndex int, command string) string {
+	splitStr := strings.Split(strings.TrimSpace(command), textCommandSeparator)
+	return splitStr[nIndex]
+}
+
 func (t *TextCommand) GetAutoComplete(command string) []string {
 	splitStr := strings.Split(command, " ")
 
