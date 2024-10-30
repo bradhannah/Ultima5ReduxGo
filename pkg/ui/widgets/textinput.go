@@ -262,39 +262,39 @@ func (t *TextInput) tryToAutoComplete() {
 	if nMatch == 1 && len(outputs) > (*matches)[0].GetNumberOfParameters() {
 		return
 	}
+	if nMatch == 0 {
+		return
+	}
 
+	// if the command ends with a space - then we show all available details
 	if outputStr[len(outputStr)-1:] == " " {
 		autoCompleteMatches := (*matches)[0].GetAutoComplete(outputStr)
-		t.TextInputCallbacks.AmbiguousAutoComplete(fmt.Sprintf("Ambigious - %s", strings.Join(autoCompleteMatches, ",")))
+		if len(autoCompleteMatches) > 0 {
+			t.TextInputCallbacks.AmbiguousAutoComplete(fmt.Sprintf("Ambigious - %s", strings.Join(autoCompleteMatches, ",")))
+		}
 		return
 	}
 
 	if nMatch == 1 {
 		// need to feed into autocomplete
-		//if !strings.HasSuffix(outputStr, " ") {
 		autoCompleteMatches := (*matches)[0].GetAutoComplete(outputStr)
 		if len(autoCompleteMatches) == 1 {
 			t.output.AppendToCurrentRowStr(strings.TrimSpace((autoCompleteMatches)[0]) + " ")
 			return
-		} else if len(autoCompleteMatches) < 0 {
-			log.Fatal()
-			return
 		}
+
 		commandNames := strings.Join(autoCompleteMatches, ",")
 		t.TextInputCallbacks.AmbiguousAutoComplete(fmt.Sprintf("Ambigious - %s", commandNames))
-		//}
-	} else if nMatch > 1 {
-		var commandNames string
-		for i, m := range *matches {
-			if i > 0 {
-				commandNames += ", "
-			}
-			commandNames += m.Matches[0].GetString()
-		}
-		t.TextInputCallbacks.AmbiguousAutoComplete(fmt.Sprintf("Ambigious - %s", commandNames))
+		return
 	}
-
-	// do nothing - it must have a match
+	var commandNames string
+	for i, m := range *matches {
+		if i > 0 {
+			commandNames += ", "
+		}
+		commandNames += m.Matches[0].GetString()
+	}
+	t.TextInputCallbacks.AmbiguousAutoComplete(fmt.Sprintf("Ambigious - %s", commandNames))
 }
 
 func (t *TextInput) hasTextCommands() bool {

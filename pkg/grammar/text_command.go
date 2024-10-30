@@ -47,9 +47,13 @@ func (t *TextCommand) GetAutoComplete(command string) []string {
 	highIndex := len(splitStr) - 1
 	matches, _ := t.Matches[highIndex].GetPartialMatches(splitStr[highIndex])
 	if len(matches) == 0 {
-		return []string{""}
+		return []string{}
+		//	return []string{""}
 	}
 	if len(matches) == 1 {
+		//if matches[0] == "" {
+		//	return []string{}
+		//}
 		return []string{t.Matches[highIndex].GetSuffixHint(splitStr[highIndex])}
 	}
 
