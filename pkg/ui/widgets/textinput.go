@@ -265,7 +265,7 @@ func (t *TextInput) tryToAutoComplete() {
 	if outputStr[len(outputStr)-1:] == " " {
 		autoCompleteMatches := (*primaryCommandMatches)[0].GetAutoComplete(outputStr)
 		if len(autoCompleteMatches) > 0 {
-			t.TextInputCallbacks.AmbiguousAutoComplete(fmt.Sprintf("Ambigious - %s", strings.Join(autoCompleteMatches, ",")))
+			t.TextInputCallbacks.AmbiguousAutoComplete(fmt.Sprintf("Ambigious - %s", strings.Join(autoCompleteMatches, ", ")))
 		}
 		return
 	}

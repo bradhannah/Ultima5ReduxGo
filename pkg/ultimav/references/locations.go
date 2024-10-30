@@ -11,7 +11,6 @@ const (
 	DungeonMapType
 )
 
-//go:generate stringer -type=Location
 const (
 	EmptyLocation         Location = 0xFF
 	Britannia_Underworld  Location = 0x00
@@ -69,3 +68,21 @@ func (l Location) GetMapType() GeneralMapType {
 	}
 	return SmallMapType
 }
+
+func GetListOfAllSmallMaps() []string {
+	names := make([]string, 0)
+
+	for loc := Moonglow; loc < Serpents_Hold; loc++ {
+		names = append(names, loc.String())
+	}
+	return names
+}
+
+//func GetSmallLocationByName(name string) Location {
+//	for i, loc := range GetListOfAllSmallMaps() {
+//		if loc == name {
+//			return Location(i + 1)
+//		}
+//	}
+//	return EmptyLocation
+//}

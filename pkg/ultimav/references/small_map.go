@@ -66,8 +66,6 @@ func getMapMasterFromLocation(location Location) SmallMapMasterTypes {
 func NewSmallMapReferences(gameConfig *config.UltimaVConfiguration, dataOvl *DataOvl) (*LocationReferences, error) {
 	smr := newSingleMapReferences(gameConfig, dataOvl)
 
-	smr.maps = make(map[Location]*SmallLocationReference)
-
 	// Keepe.dat
 	nextOffset := smr.addLocation(Lord_Britishs_Castle, true, 5, 0)
 	nextOffset = smr.addLocation(Palace_of_Blackthorn, true, 5, nextOffset)

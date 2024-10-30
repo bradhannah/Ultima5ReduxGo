@@ -5,12 +5,14 @@ import (
 	"log"
 	"os"
 	"path"
+	"strings"
 )
 
 // LocationReferences a collection of SingleSmallMapReferences. Provides an easier way to keep
 // the raw map data organized and accessible
 type LocationReferences struct {
 	maps           map[Location]*SmallLocationReference
+	mapsByStr      map[string]*SmallLocationReference
 	config         *config.UltimaVConfiguration
 	dataOvl        *DataOvl
 	WorldLocations *WorldLocations
@@ -20,11 +22,19 @@ func (s *LocationReferences) GetLocationReference(location Location) *SmallLocat
 	return s.maps[location]
 }
 
+func (s *LocationReferences) GetLocationByName(name string) *SmallLocationReference {
+	return s.mapsByStr[strings.ToLower(name)]
+}
+
 func newSingleMapReferences(config *config.UltimaVConfiguration, dataOvl *DataOvl) *LocationReferences {
 	smr := &LocationReferences{}
 	smr.config = config
 	smr.dataOvl = dataOvl
 	smr.WorldLocations = NewWorldLocations(smr.config)
+
+	smr.maps = make(map[Location]*SmallLocationReference)
+	smr.mapsByStr = make(map[string]*SmallLocationReference)
+
 	return smr
 }
 
@@ -60,5 +70,6 @@ func (s *LocationReferences) addLocation(location Location, bHasBasement bool, n
 
 	// returns the next offset - a handy way of keeping count
 	s.maps[location] = smr
+	s.mapsByStr[strings.ToLower(location.String())] = smr
 	return nFloors*smallMapSizeInBytes + nOffset
 }

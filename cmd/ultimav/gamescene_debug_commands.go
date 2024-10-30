@@ -18,6 +18,7 @@ func (d *DebugConsole) createDebugFunctions(gameScene *GameScene) *grammar.TextC
 	textCommands = append(textCommands, *d.createFloorDownCommand())
 	textCommands = append(textCommands, *d.createFreeMoveCommand())
 	textCommands = append(textCommands, *d.createQuickTime())
+	textCommands = append(textCommands, *d.createGoSmall())
 
 	return &textCommands
 }
@@ -139,5 +140,28 @@ func (d *DebugConsole) createQuickTime() *grammar.TextCommand {
 				d.gameScene.gameState.DateTime.SetTimeOfDay(game_state.Noon)
 			}
 			d.dumpQuickState(fmt.Sprintf("thing: %s", outputStr))
+		})
+}
+func (d *DebugConsole) createGoSmall() *grammar.TextCommand {
+	return grammar.NewTextCommand([]grammar.Match{
+		grammar.MatchString{
+			Str:           "gos",
+			Description:   "Go to small map",
+			CaseSensitive: false,
+		},
+		grammar.MatchStringList{
+			Strings:       references.GetListOfAllSmallMaps(),
+			Description:   "Small map locations",
+			CaseSensitive: false,
+		},
+	},
+		func(s string, command *grammar.TextCommand) {
+			outputStr := strings.ToLower(d.TextInput.GetText())
+			locationStr := command.GetIndexAsString(1, outputStr)
+			oof := d.gameScene.gameReferences.LocationReferences.GetLocationByName(locationStr)
+
+			d.dumpQuickState(oof.FriendlyLocationName)
+			d.gameScene.gameState.EnterBuilding(oof, d.gameScene.gameReferences.TileReferences)
+
 		})
 }
