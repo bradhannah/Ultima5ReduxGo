@@ -50,7 +50,7 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 }
 
 func (d *DebugConsole) update() {
-	if ebiten.IsKeyPressed(ebiten.KeyBackquote) {
+	if ebiten.IsKeyPressed(ebiten.KeyBackquote) || ebiten.IsKeyPressed(ebiten.KeyEscape) {
 		if !d.gameScene.keyboard.TryToRegisterKeyPress(ebiten.KeyBackquote) {
 			return
 		}

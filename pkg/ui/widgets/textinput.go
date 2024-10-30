@@ -257,31 +257,32 @@ func (t *TextInput) tryToAutoComplete() {
 	nMatch := t.textCommands.HowManyCommandsMatch(outputStr)
 	matches := t.textCommands.GetAllMatchingTextCommands(outputStr)
 
+	outputs := strings.Split(outputStr, " ")
+
+	if nMatch == 1 && len(outputs) > (*matches)[0].GetNumberOfParameters() {
+		return
+	}
+
+	if outputStr[len(outputStr)-1:] == " " {
+		autoCompleteMatches := (*matches)[0].GetAutoComplete(outputStr)
+		t.TextInputCallbacks.AmbiguousAutoComplete(fmt.Sprintf("Ambigious - %s", strings.Join(autoCompleteMatches, ",")))
+		return
+	}
+
 	if nMatch == 1 {
 		// need to feed into autocomplete
-		if len(*matches) > 1 {
-			log.Fatal("Should only be a single match")
+		//if !strings.HasSuffix(outputStr, " ") {
+		autoCompleteMatches := (*matches)[0].GetAutoComplete(outputStr)
+		if len(autoCompleteMatches) == 1 {
+			t.output.AppendToCurrentRowStr(strings.TrimSpace((autoCompleteMatches)[0]) + " ")
+			return
+		} else if len(autoCompleteMatches) < 0 {
+			log.Fatal()
+			return
 		}
-		if !strings.HasSuffix(outputStr, " ") {
-			autoCompleteMatches := (*matches)[0].GetAutoComplete(outputStr)
-			if len(autoCompleteMatches) == 1 {
-				//t.output.AppendToCurrentRowStr((*matches)[0].GetAutoComplete(outputStr) + " ")
-				t.output.AppendToCurrentRowStr((autoCompleteMatches)[0] + " ")
-				return
-			} else if len(autoCompleteMatches) < 0 {
-				log.Fatal()
-				return
-			}
-			// continue...
-			var commandNames string
-			for i, match := range autoCompleteMatches {
-				if i > 0 {
-					commandNames += ", "
-				}
-				commandNames += match
-			}
-			t.TextInputCallbacks.AmbiguousAutoComplete(fmt.Sprintf("Ambigious - %s", commandNames))
-		}
+		commandNames := strings.Join(autoCompleteMatches, ",")
+		t.TextInputCallbacks.AmbiguousAutoComplete(fmt.Sprintf("Ambigious - %s", commandNames))
+		//}
 	} else if nMatch > 1 {
 		var commandNames string
 		for i, m := range *matches {

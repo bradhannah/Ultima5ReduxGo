@@ -22,6 +22,10 @@ func NewTextCommand(matches Matches, executeFunc ExecuteFunc) *TextCommand {
 	return &textCommand
 }
 
+func (t *TextCommand) GetNumberOfParameters() int {
+	return len(t.Matches)
+}
+
 func (t *TextCommand) GetIndexAsInt(nIndex int, command string) int {
 	splitStr := strings.Split(command, textCommandSeparator)
 

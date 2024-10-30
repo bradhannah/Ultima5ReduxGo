@@ -2,6 +2,10 @@ package grammar
 
 type TextCommands []TextCommand
 
+func (t *TextCommands) GetNumOfCommands() int {
+	return len(*t)
+}
+
 // OneOrMoreCommandsMatch
 // Indicates if the string provide at least partially match the command
 func (t *TextCommands) OneOrMoreCommandsMatch(command string) bool {
