@@ -36,6 +36,7 @@ const (
 	KlimbDirectionInput
 	PushDirectionInput
 	GetDirectionInput
+	LookDirectionInput
 )
 
 // GameScene is another scene (e.g., the actual game)

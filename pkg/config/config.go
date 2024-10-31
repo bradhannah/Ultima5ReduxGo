@@ -45,3 +45,7 @@ func NewUltimaVConfiguration(dataFilePath string) *UltimaVConfiguration {
 
 	return &uc
 }
+
+func (uc *UltimaVConfiguration) GetLookDataFilePath() string {
+	return path.Join(uc.DataFilePath, legacy.LOOK2_DAT)
+}

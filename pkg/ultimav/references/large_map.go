@@ -40,22 +40,11 @@ func NewLargeMapReference(gameConfig *config.UltimaVConfiguration, world World) 
 }
 
 func (m *LargeMapReference) GetSpriteIndex(x Coordinate, y Coordinate) indexes.SpriteIndex {
-	//if x < 0 {
-	//	x = x + XLargeMapTiles
-	//} else if x >= XLargeMapTiles {
-	//	x = x % XLargeMapTiles
-	//}
-	//if y < 0 {
-	//	y = y + YLargeMapTiles
-	//} else if y >= YLargeMapTiles {
-	//	y = y % YLargeMapTiles
-	//}
 	pos := Position{X: x, Y: y}
 	wrappedPos := pos.GetWrapped(XLargeMapTiles, YLargeMapTiles)
 	return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.SpriteIndex(m.rawData[wrappedPos.X][wrappedPos.Y]))
 }
 
-// func loadLargeMapFromFile(mapFileAndPath string, dataOvlFileAndPath string) (*LargeMapReference, error) {
 func loadLargeMapFromFile(world World, gameConfig *config.UltimaVConfiguration) (*LargeMapReference, error) {
 	mapFileAndPath, dataOvlFileAndPath := path.Join(gameConfig.DataFilePath, legacy.BRIT_DAT), path.Join(gameConfig.DataFilePath, legacy.DATA_OVL)
 	if world == UNDERWORLD {

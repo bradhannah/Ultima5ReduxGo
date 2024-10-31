@@ -9,6 +9,7 @@ type GameReferences struct {
 	LocationReferences *LocationReferences
 	DataOvl            *DataOvl
 	TileReferences     *Tiles
+	LookReferences     *LookReferences
 }
 
 func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences, error) {
@@ -27,6 +28,7 @@ func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences
 	gameRefs.LocationReferences, err = NewSmallMapReferences(gameConfig, gameRefs.DataOvl)
 
 	gameRefs.TileReferences = NewTileReferences()
+	gameRefs.LookReferences = NewLookReferences(gameConfig)
 
 	return gameRefs, nil
 }

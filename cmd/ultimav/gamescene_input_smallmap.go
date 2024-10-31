@@ -107,6 +107,7 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 		g.appendDirectionToOutput()
 
 		switch g.gameState.OpenDoor(getCurrentPressedArrowKeyAsDirection()) {
+
 		case game_state.OpenDoorNotADoor:
 			g.addRowStr("Nothing to open!")
 		case game_state.OpenDoorLocked:

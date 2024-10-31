@@ -33,6 +33,9 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 		g.addRowStr("X-it what?")
 	case ebiten.KeyP:
 		g.addRowStr("Push what?")
+	case ebiten.KeyL:
+		g.addRowStr("Look-")
+		g.secondaryKeyState = LookDirectionInput
 	case ebiten.KeyE:
 		g.debugMessage = "Enter a place"
 		newLocation := g.gameReferences.LocationReferences.WorldLocations.GetLocationByPosition(g.gameState.Position)
@@ -74,6 +77,20 @@ func (g *GameScene) largeMapHandleSecondaryInput() {
 			return
 		}
 		g.appendDirectionToOutput()
+
+		g.secondaryKeyState = PrimaryInput
+	case LookDirectionInput:
+		if !bIsArrowKeyPressed {
+			return
+		}
+		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
+			return
+		}
+		g.appendDirectionToOutput()
+
+		newPosition := getCurrentPressedArrowKeyAsDirection().GetNewPositionInDirection(&g.gameState.Position)
+		topTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(newPosition)
+		g.addRowStr(g.gameReferences.LookReferences.GetTileLookDescription(topTile.Index))
 
 		g.secondaryKeyState = PrimaryInput
 	default:
