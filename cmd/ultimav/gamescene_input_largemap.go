@@ -64,35 +64,18 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 }
 
 func (g *GameScene) largeMapHandleSecondaryInput() {
-
-	arrowKey := getArrowKeyPressed()
-	bIsArrowKeyPressed := arrowKey != nil
-
 	switch g.secondaryKeyState {
 	case KlimbDirectionInput:
-		if !bIsArrowKeyPressed {
-			return
+		if g.isDirectionKeyValidAndOutput() {
+			g.secondaryKeyState = PrimaryInput
 		}
-		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
-			return
-		}
-		g.appendDirectionToOutput()
-
-		g.secondaryKeyState = PrimaryInput
 	case LookDirectionInput:
-		if !bIsArrowKeyPressed {
-			return
+		if g.isDirectionKeyValidAndOutput() {
+			newPosition := getCurrentPressedArrowKeyAsDirection().GetNewPositionInDirection(&g.gameState.Position)
+			topTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(newPosition)
+			g.addRowStr(fmt.Sprintf("Thou dost see %s", g.gameReferences.LookReferences.GetTileLookDescription(topTile.Index)))
+			g.secondaryKeyState = PrimaryInput
 		}
-		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
-			return
-		}
-		g.appendDirectionToOutput()
-
-		newPosition := getCurrentPressedArrowKeyAsDirection().GetNewPositionInDirection(&g.gameState.Position)
-		topTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(newPosition)
-		g.addRowStr(fmt.Sprintf("Thou dost see %s", g.gameReferences.LookReferences.GetTileLookDescription(topTile.Index)))
-
-		g.secondaryKeyState = PrimaryInput
 	default:
 		// better safe than sorry
 		g.secondaryKeyState = PrimaryInput

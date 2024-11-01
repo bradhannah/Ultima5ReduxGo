@@ -77,46 +77,35 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 			return
 		}
 
-		if !g.isDirectionKeyValidAndOutput() {
-			return
+		if g.isDirectionKeyValidAndOutput() {
+			g.smallMapJimmySecondary(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
 		}
-		g.smallMapJimmySecondary(getCurrentPressedArrowKeyAsDirection())
-		g.secondaryKeyState = PrimaryInput
 	case OpenDirectionInput:
-		if !g.isDirectionKeyValidAndOutput() {
-			return
+		if g.isDirectionKeyValidAndOutput() {
+			g.smallMapOpenSecondary(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
 		}
-		g.smallMapOpenSecondary(getCurrentPressedArrowKeyAsDirection())
-		g.secondaryKeyState = PrimaryInput
 	case KlimbDirectionInput:
-		if !g.isDirectionKeyValidAndOutput() {
-			return
+		if g.isDirectionKeyValidAndOutput() {
+			g.smallMapKlimbSecondary(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
 		}
-		g.smallMapKlimbSecondary(getCurrentPressedArrowKeyAsDirection())
-		g.secondaryKeyState = PrimaryInput
 	case PushDirectionInput:
-		if !bIsArrowKeyPressed {
-			return
+		if g.isDirectionKeyValidAndOutput() {
+			g.smallMapPushSecondary(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
 		}
-		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
-			return
-		}
-		g.appendDirectionToOutput()
-
-		g.smallMapPushSecondary(getCurrentPressedArrowKeyAsDirection())
-		g.secondaryKeyState = PrimaryInput
 	case GetDirectionInput:
-		if !g.isDirectionKeyValidAndOutput() {
-			return
+		if g.isDirectionKeyValidAndOutput() {
+			g.smallMapGetSecondary(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
 		}
-		g.smallMapGetSecondary(getCurrentPressedArrowKeyAsDirection())
-		g.secondaryKeyState = PrimaryInput
 	case LookDirectionInput:
-		if !g.isDirectionKeyValidAndOutput() {
-			return
+		if g.isDirectionKeyValidAndOutput() {
+			g.commonMapLookSecondary(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
 		}
-		g.commonMapLookSecondary()
-		g.secondaryKeyState = PrimaryInput
 	default:
 		panic("unhandled default case")
 	}
