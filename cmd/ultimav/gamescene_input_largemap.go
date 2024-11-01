@@ -90,7 +90,7 @@ func (g *GameScene) largeMapHandleSecondaryInput() {
 
 		newPosition := getCurrentPressedArrowKeyAsDirection().GetNewPositionInDirection(&g.gameState.Position)
 		topTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(newPosition)
-		g.addRowStr(g.gameReferences.LookReferences.GetTileLookDescription(topTile.Index))
+		g.addRowStr(fmt.Sprintf("Thou dost see %s", g.gameReferences.LookReferences.GetTileLookDescription(topTile.Index)))
 
 		g.secondaryKeyState = PrimaryInput
 	default:

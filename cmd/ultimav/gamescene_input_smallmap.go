@@ -28,6 +28,9 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		g.handleMovement(references.Right.GetDirectionCompassName(), ebiten.KeyRight)
 	case ebiten.KeyK:
 		g.smallMapKlimb()
+	case ebiten.KeyL:
+		g.addRowStr("Look-")
+		g.secondaryKeyState = LookDirectionInput
 	case ebiten.KeyX:
 		g.gameState.Location = references.Britannia_Underworld
 		g.gameState.Floor = 0
@@ -74,64 +77,22 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 			return
 		}
 
-		if !bIsArrowKeyPressed {
+		if !g.isDirectionKeyValidAndOutput() {
 			return
 		}
-		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
-			return
-		}
-		g.appendDirectionToOutput()
-
-		jimmyResult := g.gameState.JimmyDoor(getCurrentPressedArrowKeyAsDirection(), &g.gameState.Characters[0])
-
-		switch jimmyResult {
-		case game_state.JimmyUnlocked:
-			g.addRowStr("Unlocked!")
-		case game_state.JimmyNotADoor:
-			g.addRowStr("Not lock!")
-		case game_state.JimmyBrokenPick, game_state.JimmyLockedMagical:
-			g.addRowStr("Key broke!")
-		default:
-			panic("unhandled default case")
-		}
-
+		g.smallMapJimmySecondary(getCurrentPressedArrowKeyAsDirection())
 		g.secondaryKeyState = PrimaryInput
-
 	case OpenDirectionInput:
-		if !bIsArrowKeyPressed {
+		if !g.isDirectionKeyValidAndOutput() {
 			return
 		}
-		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
-			return
-		}
-		g.appendDirectionToOutput()
-
-		switch g.gameState.OpenDoor(getCurrentPressedArrowKeyAsDirection()) {
-
-		case game_state.OpenDoorNotADoor:
-			g.addRowStr("Nothing to open!")
-		case game_state.OpenDoorLocked:
-			g.addRowStr("Locked!")
-		case game_state.OpenDoorLockedMagical:
-			g.addRowStr("Magically Locked!")
-		case game_state.OpenDoorOpened:
-			g.addRowStr("Opened!")
-		default:
-			log.Fatal("Unrecognized door open state")
-		}
-
+		g.smallMapOpenSecondary(getCurrentPressedArrowKeyAsDirection())
 		g.secondaryKeyState = PrimaryInput
 	case KlimbDirectionInput:
-		if !bIsArrowKeyPressed {
+		if !g.isDirectionKeyValidAndOutput() {
 			return
 		}
-		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
-			return
-		}
-		g.appendDirectionToOutput()
-
 		g.smallMapKlimbSecondary(getCurrentPressedArrowKeyAsDirection())
-
 		g.secondaryKeyState = PrimaryInput
 	case PushDirectionInput:
 		if !bIsArrowKeyPressed {
@@ -145,15 +106,16 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 		g.smallMapPushSecondary(getCurrentPressedArrowKeyAsDirection())
 		g.secondaryKeyState = PrimaryInput
 	case GetDirectionInput:
-		if !bIsArrowKeyPressed {
+		if !g.isDirectionKeyValidAndOutput() {
 			return
 		}
-		if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
-			return
-		}
-		g.appendDirectionToOutput()
-
 		g.smallMapGetSecondary(getCurrentPressedArrowKeyAsDirection())
+		g.secondaryKeyState = PrimaryInput
+	case LookDirectionInput:
+		if !g.isDirectionKeyValidAndOutput() {
+			return
+		}
+		g.commonMapLookSecondary()
 		g.secondaryKeyState = PrimaryInput
 	default:
 		panic("unhandled default case")
@@ -211,6 +173,38 @@ func (g *GameScene) smallMapPushSecondary(direction references.Direction) {
 	} else {
 		// didn't move
 	}
+}
+
+func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
+	switch g.gameState.OpenDoor(direction) {
+
+	case game_state.OpenDoorNotADoor:
+		g.addRowStr("Nothing to open!")
+	case game_state.OpenDoorLocked:
+		g.addRowStr("Locked!")
+	case game_state.OpenDoorLockedMagical:
+		g.addRowStr("Magically Locked!")
+	case game_state.OpenDoorOpened:
+		g.addRowStr("Opened!")
+	default:
+		log.Fatal("Unrecognized door open state")
+	}
+}
+
+func (g *GameScene) smallMapJimmySecondary(direction references.Direction) {
+	jimmyResult := g.gameState.JimmyDoor(direction, &g.gameState.Characters[0])
+
+	switch jimmyResult {
+	case game_state.JimmyUnlocked:
+		g.addRowStr("Unlocked!")
+	case game_state.JimmyNotADoor:
+		g.addRowStr("Not lock!")
+	case game_state.JimmyBrokenPick, game_state.JimmyLockedMagical:
+		g.addRowStr("Key broke!")
+	default:
+		panic("unhandled default case")
+	}
+
 }
 
 func (g *GameScene) smallMapGetSecondary(direction references.Direction) {

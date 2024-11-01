@@ -44,15 +44,11 @@ func (l *LookReferences) getLookFileAsBytes() ([]byte, error) {
 }
 
 func (l *LookReferences) GetTileLookDescription(tileIndex indexes.SpriteIndex) string {
-	//var lookStr string
 	var lookBytes = make([]byte, 0)
 
-	//count := 0
 	for i := l.lookOffsets[tileIndex]; i < len(l.lookData)-1; i++ {
 		if l.lookData[i] != 0 {
 			lookBytes = append(lookBytes, l.lookData[i])
-			//count++
-			//lookStr += l.lookData[i]
 			continue
 		}
 		break
