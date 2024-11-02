@@ -4,9 +4,11 @@ import (
 	mainscreen2 "github.com/bradhannah/Ultima5ReduxGo/internal/ui/mainscreen"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/ui/widgets"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image"
@@ -58,6 +60,9 @@ type GameScene struct {
 
 	debugConsole      *DebugConsole
 	bShowDebugConsole bool
+
+	inputBox      *widgets.InputBox
+	bShowInputBox bool
 
 	debugMessage string
 
@@ -121,4 +126,9 @@ func (g *GameScene) addRowStr(str string) {
 
 func (g *GameScene) GetCurrentLocationReference() *references.SmallLocationReference {
 	return g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location)
+}
+
+func (g *GameScene) DoModalInputBox(question string, textCommand *grammar.TextCommand) {
+	g.inputBox = widgets.NewInputBox(question, textCommand)
+	g.bShowInputBox = true
 }

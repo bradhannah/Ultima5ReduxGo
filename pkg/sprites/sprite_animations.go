@@ -8,10 +8,7 @@ import (
 const msPerFrame = 125
 
 func GetSpriteIndexWithAnimationBySpriteIndex(spriteIndex indexes.SpriteIndex, posHash int32) indexes.SpriteIndex {
-	//mainTile := int(s.rawData[nFloor][position.X][position.Y])
-	//tileOffset := indexes.SpriteIndex(0)
 	if spriteIndex >= indexes.Waterfall_KeyIndex && spriteIndex <= indexes.Waterfall_KeyIndex+3 {
-		//tileOffset = spriteIndex - indexes.Waterfall_KeyIndex
 		spriteIndex = indexes.Waterfall_KeyIndex
 	}
 

@@ -61,6 +61,9 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 	if g.bShowDebugConsole {
 		g.debugConsole.drawDebugConsole(screen)
 	}
+	if g.bShowInputBox {
+		g.inputBox.Draw(screen)
+	}
 
 	// Render the game scene
 	ebitenutil.DebugPrint(screen, g.debugMessage)

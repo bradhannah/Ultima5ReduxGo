@@ -37,6 +37,10 @@ func (g *GameScene) Update(_ *Game) error {
 		g.debugConsole.update()
 		return nil
 	}
+	if g.bShowInputBox {
+		g.inputBox.Update()
+		return nil
+	}
 
 	if g.secondaryKeyState != PrimaryInput {
 		switch mapType {
