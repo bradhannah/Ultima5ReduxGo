@@ -15,6 +15,7 @@ const (
 	WheatInField                         = 45
 	Cactus                               = 47
 	BrickFloor                           = 68
+	HexMetalGridFloor                    = 69
 	LargeRockWall                        = 77
 	StoneBrickWallSecret                 = 78
 	StoneBrickWall                       = 79
@@ -49,6 +50,10 @@ const (
 	LeftScone                            = 177
 	Brazier                              = 178
 	CampFire                             = 179
+	CannonFacingUp                       = 180
+	CannonFacingRight                    = 181
+	CannonFacingDown                     = 182
+	CannonFacingLeft                     = 183
 	RegularDoor                          = 184
 	LockedDoor                           = 185
 	RegularDoorView                      = 186
@@ -137,4 +142,8 @@ func (s SpriteIndex) IsDoor() bool {
 
 func (s SpriteIndex) IsWindowedDoor() bool {
 	return s == RegularDoorView || s == LockedDoorView || s == MagicLockDoorWithView
+}
+
+func (s SpriteIndex) IsPushableFloor() bool {
+	return s == BrickFloor || s == HexMetalGridFloor
 }

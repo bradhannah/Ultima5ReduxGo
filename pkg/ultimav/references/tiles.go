@@ -70,3 +70,18 @@ func (t *Tiles) GetChairByPushDirection(direction Direction) *Tile {
 		return t.GetTile(indexes.ChairFacingDown)
 	}
 }
+
+func (t *Tiles) GetCannonByPushDirection(direction Direction) *Tile {
+	switch direction {
+	case Down:
+		return t.GetTile(indexes.CannonFacingDown)
+	case Up:
+		return t.GetTile(indexes.CannonFacingUp)
+	case Left:
+		return t.GetTile(indexes.CannonFacingLeft)
+	case Right:
+		return t.GetTile(indexes.CannonFacingRight)
+	default:
+		return t.GetTile(indexes.CannonFacingLeft)
+	}
+}

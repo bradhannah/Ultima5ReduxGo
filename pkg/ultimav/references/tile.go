@@ -59,3 +59,7 @@ func (t *Tile) IsPassable(vehicle PartyVehicle) bool {
 func (t *Tile) IsChair() bool {
 	return t.Index == indexes.ChairFacingDown || t.Index == indexes.ChairFacingUp || t.Index == indexes.ChairFacingRight || t.Index == indexes.ChairFacingLeft
 }
+
+func (t *Tile) IsCannon() bool {
+	return t.Index == indexes.CannonFacingLeft || t.Index == indexes.CannonFacingRight || t.Index == indexes.CannonFacingUp || t.Index == indexes.CannonFacingDown
+}
