@@ -309,3 +309,12 @@ func (t *TextInput) CalculateTextWidth(s string) int {
 	}
 	return width.Ceil() // Convert from fixed.Int26_6 to int
 }
+
+func (t *TextInput) CalculateTextHeight(s string) int {
+	if s == "" {
+		return 0
+	}
+	rect, _, _ := t.face.GlyphBounds(rune(s[0]))
+
+	return rect.Min.Y.Ceil()
+}

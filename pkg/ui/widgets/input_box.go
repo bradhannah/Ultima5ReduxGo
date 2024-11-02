@@ -5,24 +5,94 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 	"github.com/hajimehoshi/ebiten/v2"
+	"strings"
 )
 
-const inputBoxPercentOffEdge = 0.2
-const inputBoxBorderWidthScaling = 601
-const inputPercentIntoBorder = 0.02
+const (
+	inputBoxPercentOffEdge     = 0.2
+	inputBoxBorderWidthScaling = 601
+	inputPercentIntoBorder     = 0.02
+	inputBoxFontPoint          = 20
+	inputBoxDefaultLineSpacing = 20
+	inputBoxMaxCharsPerLine    = 32
+	inputBoxMaxLinesForOutput  = 10
+)
 
 type InputBox struct {
-	textInput *TextInput
-	Question  string
+	textInput    *TextInput
+	textQuestion *text.Output
+	Question     string
 
 	border *Border
 
 	font *text.UltimaFont
+
+	inputBoxPercents  sprites.PercentBasedPlacement
+	borderBoxPercents sprites.PercentBasedPlacement
+}
+
+func NewInputBox(question string, textCommand *grammar.TextCommand) *InputBox {
+	inputBox := &InputBox{}
+	inputBox.font = text.NewUltimaFont(inputBoxFontPoint)
+
+	inputBox.Question = question
+
+	textCommands := &grammar.TextCommands{
+		*textCommand,
+	}
+
+	inputBox.textQuestion = text.NewOutput(inputBox.font,
+		inputBoxDefaultLineSpacing,
+		inputBoxMaxLinesForOutput,
+		inputBoxMaxCharsPerLine)
+
+	inputBox.inputBoxPercents = sprites.PercentBasedPlacement{
+		StartPercentX: 0 + inputPercentIntoBorder + inputBoxPercentOffEdge,
+		EndPercentX:   .75 + .01 - inputPercentIntoBorder,
+		StartPercentY: .85,
+		EndPercentY:   .9,
+	}
+
+	inputBox.textQuestion.AddRowStr(inputBox.Question)
+	questionStr := inputBox.textQuestion.GetOutputStr(false)
+	nQuestionRows := strings.Count(questionStr, "\n") + 1
+
+	inputBox.textInput = NewTextInput(
+		inputBox.inputBoxPercents,
+		inputBoxFontPoint, 20,
+		textCommands,
+		TextInputCallbacks{
+			AmbiguousAutoComplete: func(message string) {
+			},
+		})
+
+	heightOfText := -float64(inputBoxDefaultLineSpacing*(nQuestionRows)) + (inputBoxDefaultLineSpacing * 0.5)
+	_, height := ebiten.WindowSize()
+	percentTextHeight := heightOfText / float64(height)
+
+	inputBox.borderBoxPercents = sprites.PercentBasedPlacement{
+		StartPercentX: 0 + inputBoxPercentOffEdge,
+		EndPercentX:   .75 + .01 - inputBoxPercentOffEdge,
+		StartPercentY: .80 + percentTextHeight,
+		EndPercentY:   .9,
+	}
+
+	inputBox.border = NewBorder(
+		inputBox.borderBoxPercents,
+		inputBoxBorderWidthScaling,
+	)
+
+	return inputBox
 }
 
 func (i *InputBox) Draw(screen *ebiten.Image) {
+
 	i.border.Draw(screen)
 	i.textInput.Draw(screen)
+	i.textQuestion.DrawText(
+		screen,
+		i.textQuestion.GetOutputStr(false),
+		i.getTextQuestionDrawOptions())
 }
 
 func (i *InputBox) Update() {
@@ -33,36 +103,13 @@ func (i *InputBox) GetText() string {
 	return i.textInput.GetText()
 }
 
-func NewInputBox(question string, textCommand *grammar.TextCommand) *InputBox {
-	inputBox := &InputBox{}
-	inputBox.Question = question
+func (i *InputBox) getTextQuestionDrawOptions() *ebiten.DrawImageOptions {
+	dop := &ebiten.DrawImageOptions{}
 
-	textCommands := &grammar.TextCommands{
-		*textCommand,
-	}
+	leftTextX, leftTextY := sprites.GetTranslateXYByPercent(
+		i.borderBoxPercents.StartPercentX+inputPercentIntoBorder,
+		i.borderBoxPercents.StartPercentY+inputPercentIntoBorder+0.01)
+	dop.GeoM.Translate(leftTextX, leftTextY)
 
-	inputBox.textInput = NewTextInput(
-		sprites.PercentBasedPlacement{
-			StartPercentX: 0 + inputPercentIntoBorder,
-			EndPercentX:   .75 + .01 - inputPercentIntoBorder,
-			StartPercentY: .955,
-			EndPercentY:   1,
-		},
-		20, 20,
-		textCommands,
-		TextInputCallbacks{
-			AmbiguousAutoComplete: func(message string) {
-			},
-		})
-
-	inputBox.border = NewBorder(
-		sprites.PercentBasedPlacement{
-			StartPercentX: 0 + inputBoxPercentOffEdge,
-			EndPercentX:   .75 + .01 - inputBoxPercentOffEdge,
-			StartPercentY: .65,
-			EndPercentY:   .9,
-		},
-		inputBoxBorderWidthScaling,
-	)
-	return inputBox
+	return dop
 }
