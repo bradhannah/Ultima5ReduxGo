@@ -191,8 +191,6 @@ func ScalePoint(point *image.Point, scaleX, scaleY float64) image.Point {
 	return image.Point{
 		X: int(math.Round(float64(point.X) * scaleX)),
 		Y: int(math.Round(float64(point.Y) * scaleY)),
-		//X: int(float64(point.X) * scaleX),
-		//Y: int(float64(point.Y) * scaleY),
 	}
 }
 
@@ -239,8 +237,6 @@ func (r *referenceBorderDimensions) createScaledDimensions(scaleX, scaleY float6
 // NOTE: you must do this on the reference because you will muck up the aspect ratio if you do it AFTER a scale
 func getCornersOfReferenceBorder(width, height int) *referenceBorderDimensions {
 	referenceBorderDimensions := referenceBorderDimensions{}
-	//xMiddle := int(float64(width) / 2)
-	//yMiddle := int(float64(height) / 2)
 	xMiddle := int(math.Round(float64(width) / 2))
 	yMiddle := int(math.Round(float64(height) / 2))
 

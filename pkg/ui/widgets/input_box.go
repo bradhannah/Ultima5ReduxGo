@@ -9,6 +9,7 @@ import (
 
 const inputBoxPercentOffEdge = 0.2
 const inputBoxBorderWidthScaling = 601
+const inputPercentIntoBorder = 0.02
 
 type InputBox struct {
 	textInput *TextInput
@@ -40,7 +41,14 @@ func NewInputBox(question string, textCommand *grammar.TextCommand) *InputBox {
 		*textCommand,
 	}
 
-	inputBox.textInput = NewTextInput(20, 20,
+	inputBox.textInput = NewTextInput(
+		sprites.PercentBasedPlacement{
+			StartPercentX: 0 + inputPercentIntoBorder,
+			EndPercentX:   .75 + .01 - inputPercentIntoBorder,
+			StartPercentY: .955,
+			EndPercentY:   1,
+		},
+		20, 20,
 		textCommands,
 		TextInputCallbacks{
 			AmbiguousAutoComplete: func(message string) {

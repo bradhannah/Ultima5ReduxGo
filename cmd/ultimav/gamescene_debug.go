@@ -8,11 +8,15 @@ import (
 	"image"
 )
 
-const percentOffEdge = 0.0
-const debugFontPoint = 13
-const debugFontLineSpacing = 17
-const maxDebugLines = 14
-const maxCharsForInput = 90
+const (
+	debugPercentOffEdge    = 0.0
+	debugPercentIntoBorder = 0.02
+
+	debugFontPoint       = 13
+	debugFontLineSpacing = 17
+	debugMaxLines        = 14
+	debugMaxCharsInput   = 90
+)
 
 type DebugConsole struct {
 	border *widgets.Border
@@ -28,18 +32,25 @@ type DebugConsole struct {
 func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 	debugConsole := DebugConsole{}
 	debugConsole.gameScene = gameScene
-	debugConsole.border = widgets.NewBorder(sprites.PercentBasedPlacement{
-		StartPercentX: 0 + percentOffEdge,
-		EndPercentX:   .75 + .01 - percentOffEdge,
-		StartPercentY: .7,
-		EndPercentY:   1,
-	},
+	debugConsole.border = widgets.NewBorder(
+		sprites.PercentBasedPlacement{
+			StartPercentX: 0 + debugPercentOffEdge,
+			EndPercentX:   .75 + .01 - debugPercentOffEdge,
+			StartPercentY: .7,
+			EndPercentY:   1,
+		},
 		borderWidthScaling)
 	debugConsole.font = text.NewUltimaFont(debugFontPoint)
-	debugConsole.Output = text.NewOutput(debugConsole.font, debugFontLineSpacing, maxDebugLines, maxCharsForInput)
+	debugConsole.Output = text.NewOutput(debugConsole.font, debugFontLineSpacing, debugMaxLines, debugMaxCharsInput)
 	debugConsole.TextInput = widgets.NewTextInput(
+		sprites.PercentBasedPlacement{
+			StartPercentX: 0 + debugPercentIntoBorder,
+			EndPercentX:   .75 + .01 - debugPercentIntoBorder,
+			StartPercentY: .955,
+			EndPercentY:   1,
+		},
 		debugFontPoint,
-		maxCharsForInput,
+		debugMaxCharsInput,
 		debugConsole.createDebugFunctions(gameScene),
 		widgets.TextInputCallbacks{
 			AmbiguousAutoComplete: func(message string) {

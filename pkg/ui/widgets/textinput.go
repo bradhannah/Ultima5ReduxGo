@@ -33,6 +33,7 @@ const (
 	cursorWidth              = 10
 	cursorBlinkRateInMs      = 1000
 	pauseBlinkKeyPressedInMs = 750
+	percentIntoBorder        = 0.02
 )
 
 var (
@@ -63,18 +64,11 @@ type TextInput struct {
 
 	textCommands *grammar.TextCommands
 
+	mainTextPlacement sprites.PercentBasedPlacement
+
 	keyboard *input.Keyboard
 
 	TextInputCallbacks TextInputCallbacks
-}
-
-const percentIntoBorder = 0.02
-
-var mainTextPlacement = sprites.PercentBasedPlacement{
-	StartPercentX: 0 + percentIntoBorder,
-	EndPercentX:   .75 + .01 - percentIntoBorder,
-	StartPercentY: .955,
-	EndPercentY:   1,
 }
 
 var nonAlphaNumericBoundKeys = []ebiten.Key{ebiten.KeyDown,
@@ -87,13 +81,14 @@ var nonAlphaNumericBoundKeys = []ebiten.Key{ebiten.KeyDown,
 	ebiten.KeyMinus,
 }
 
-func NewTextInput(fontPointSize float64, maxCharsPerLine int, textCommands *grammar.TextCommands, callbacks TextInputCallbacks) *TextInput {
+func NewTextInput(mainTextPlacement sprites.PercentBasedPlacement, fontPointSize float64, maxCharsPerLine int, textCommands *grammar.TextCommands, callbacks TextInputCallbacks) *TextInput {
 	textInput := &TextInput{}
 	textInput.ultimaFont = text.NewUltimaFont(fontPointSize)
 	textInput.maxCharsPerLine = maxCharsPerLine
 	textInput.keyboard = input.NewKeyboard(keyPressDelay)
 	textInput.textCommands = textCommands
 	textInput.TextInputCallbacks = callbacks
+	textInput.mainTextPlacement = mainTextPlacement
 
 	// NOTE: single line input only (for now?)
 	textInput.output = text.NewOutput(textInput.ultimaFont, 0, 1, maxCharsPerLine)
@@ -128,13 +123,23 @@ func (t *TextInput) getAndSetTtf(fontPointSize float64) {
 }
 
 func (t *TextInput) Draw(screen *ebiten.Image) {
-	textRect := sprites.GetRectangleFromPercents(mainTextPlacement)
+	textRect := sprites.GetRectangleFromPercents(t.mainTextPlacement)
 	t.output.SetColor(t.getTextColor())
 	t.output.DrawContinuousOutputTexOnXy(screen, image.Point{
 		X: textRect.Min.X,
 		Y: textRect.Min.Y,
 	}, false)
 	t.drawCursor(screen)
+}
+
+func (t *TextInput) createCursorPlacement() sprites.PercentBasedPlacement {
+	var cursorPlacement = sprites.PercentBasedPlacement{
+		StartPercentX: t.mainTextPlacement.StartPercentX,         // 0 + debugPercentOffEdge
+		EndPercentX:   t.mainTextPlacement.EndPercentY,           //.75 + .01 - percentIntoBorder,
+		StartPercentY: t.mainTextPlacement.StartPercentY - 0.003, //.955 - .952,
+		EndPercentY:   t.mainTextPlacement.EndPercentY - 0.032,   //.968,
+	}
+	return cursorPlacement
 }
 
 func (t *TextInput) drawCursor(screen *ebiten.Image) {
@@ -145,12 +150,7 @@ func (t *TextInput) drawCursor(screen *ebiten.Image) {
 		}
 	}
 
-	var cursorPlacement = sprites.PercentBasedPlacement{
-		StartPercentX: 0 + percentIntoBorder,
-		EndPercentX:   .75 + .01 - percentIntoBorder,
-		StartPercentY: .952,
-		EndPercentY:   .968,
-	}
+	var cursorPlacement = t.createCursorPlacement()
 	textRect := sprites.GetRectangleFromPercents(cursorPlacement)
 	width := t.CalculateTextWidth(t.output.GetOutputStr(false))
 	vector.DrawFilledRect(screen,
