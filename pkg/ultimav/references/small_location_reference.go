@@ -2,7 +2,6 @@ package references
 
 import (
 	"fmt"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/util"
 	"log"
@@ -51,16 +50,16 @@ func (s *SmallLocationReference) HasBasement() bool {
 	return ok
 }
 
-func (s *SmallLocationReference) GetTileNumberWithAnimation(nFloor FloorNumber, position *Position) indexes.SpriteIndex {
-
-	mainTile := s.GetTileNumber(nFloor, position.X, position.Y)
-	//indexes.SpriteIndex(s.rawData[int(nFloor)][position.X][position.Y])
-
-	if (mainTile >= indexes.Waterfall_KeyIndex && mainTile <= indexes.Waterfall_KeyIndex+3) || mainTile == indexes.Fountain_KeyIndex || mainTile >= indexes.AvatarSittingAndEatingFacingDown {
-		return sprites.GetSpriteIndexWithAnimationBySpriteIndex(mainTile)
-	}
-	return mainTile
-}
+//func (s *SmallLocationReference) GetTileNumberWithAnimation(nFloor FloorNumber, position *Position) indexes.SpriteIndex {
+//
+//	mainTile := s.GetTileNumber(nFloor, position.X, position.Y)
+//	//indexes.SpriteIndex(s.rawData[int(nFloor)][position.X][position.Y])
+//
+//	if (mainTile >= indexes.Waterfall_KeyIndex && mainTile <= indexes.Waterfall_KeyIndex+3) || mainTile == indexes.Fountain_KeyIndex || mainTile >= indexes.AvatarSittingAndEatingFacingDown {
+//		return sprites.GetSpriteIndexWithAnimationBySpriteIndex(mainTile)
+//	}
+//	return mainTile
+//}
 
 func (s *SmallLocationReference) GetTileNumber(nFloor FloorNumber, x Coordinate, y Coordinate) indexes.SpriteIndex {
 	return indexes.SpriteIndex(s.rawData[int(nFloor)][x][y])

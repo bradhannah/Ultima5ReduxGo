@@ -91,3 +91,10 @@ func (p *Position) GetWrapped(maxX Coordinate, maxY Coordinate) *Position {
 	}
 	return p
 }
+
+func (p *Position) GetHash() int32 {
+	const prime1, prime2 = 73856093, 19349663 // Use prime numbers for better distribution
+	x := int32(p.X) * prime1
+	y := int32(p.Y) * prime2
+	return (x ^ y) & 0x7FFFFFFF // Ensures the result is within 32-bit signed int range
+}

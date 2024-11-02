@@ -1,6 +1,8 @@
 package game_state
 
-import "github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+import (
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+)
 
 type LayeredMaps struct {
 	layeredMaps map[references.GeneralMapType]map[references.FloorNumber]*LayeredMap
@@ -60,9 +62,15 @@ func (l *LayeredMaps) ResetAndCreateSmallMap(slr *references.SmallLocationRefere
 func (l *LayeredMaps) GetTileRefByPosition(mapType references.GeneralMapType, mapLayer LayerType, pos *references.Position, nFloor references.FloorNumber) *references.Tile {
 	index := l.layeredMaps[mapType][nFloor].layers[mapLayer][pos.X][pos.Y]
 
+	//tile := l.layeredMaps[mapType][nFloor].tileRefs.GetTile(index)
+	//return l.layeredMaps[mapType][nFloor].tileRefs.GetTile(sprites.GetSpriteIndexWithAnimationBySpriteIndex(tile.Index))
+	//
 	return l.layeredMaps[mapType][nFloor].tileRefs.GetTile(index)
 }
 
 func (l *LayeredMaps) GetTileTopMapOnlyTileByPosition(mapType references.GeneralMapType, pos *references.Position, nFloor references.FloorNumber) *references.Tile {
 	return l.GetLayeredMap(mapType, nFloor).GetTileTopMapOnlyTile(pos)
+
+	//tile := l.layeredMaps[mapType][nFloor].tileRefs.GetTile(index.Index)
+	//return l.layeredMaps[mapType][nFloor].tileRefs.GetTile(sprites.GetSpriteIndexWithAnimationBySpriteIndex(tile.Index))
 }

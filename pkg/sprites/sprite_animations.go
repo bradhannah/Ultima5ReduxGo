@@ -7,13 +7,19 @@ import (
 
 const msPerFrame = 125
 
-func GetSpriteIndexWithAnimationBySpriteIndex(spriteIndex indexes.SpriteIndex) indexes.SpriteIndex {
+func GetSpriteIndexWithAnimationBySpriteIndex(spriteIndex indexes.SpriteIndex, posHash int32) indexes.SpriteIndex {
 	//mainTile := int(s.rawData[nFloor][position.X][position.Y])
+	//tileOffset := indexes.SpriteIndex(0)
+	if spriteIndex >= indexes.Waterfall_KeyIndex && spriteIndex <= indexes.Waterfall_KeyIndex+3 {
+		//tileOffset = spriteIndex - indexes.Waterfall_KeyIndex
+		spriteIndex = indexes.Waterfall_KeyIndex
+	}
+
 	if (spriteIndex >= indexes.Waterfall_KeyIndex && spriteIndex <= indexes.Waterfall_KeyIndex+3) || spriteIndex == indexes.Fountain_KeyIndex || spriteIndex >= 308 {
 		// animation
 		// msPerFrame
 		interval := time.Now().UnixMilli() / msPerFrame
-		currentRotation := int(interval) % 4
+		currentRotation := int(interval+int64(posHash)) % 4
 		return indexes.SpriteIndex(int(spriteIndex) + currentRotation)
 	}
 	return spriteIndex

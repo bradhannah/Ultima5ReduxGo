@@ -74,6 +74,9 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 	direction := game_state.GetKeyAsDirection(key)
 	newPosition := direction.GetNewPositionInDirection(&g.gameState.Position)
 
+	if g.gameState.Location.GetMapType() == references.LargeMapType {
+		g.gameState.Position = *g.gameState.Position.GetWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
+	}
 	if g.gameState.IsOutOfBounds(*newPosition) {
 		g.addRowStr("OUT OF BOUNDS")
 		return
