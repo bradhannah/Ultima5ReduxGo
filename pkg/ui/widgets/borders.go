@@ -18,7 +18,15 @@ type Border struct {
 }
 
 func (b *Border) Draw(screen *ebiten.Image) {
+	b.DrawBackground(screen)
+	b.DrawBorder(screen)
+}
+
+func (b *Border) DrawBackground(screen *ebiten.Image) {
 	screen.DrawImage(b.background, b.backgroundDrawOptions)
+}
+
+func (b *Border) DrawBorder(screen *ebiten.Image) {
 	screen.DrawImage(b.border, b.borderDrawOptions)
 }
 

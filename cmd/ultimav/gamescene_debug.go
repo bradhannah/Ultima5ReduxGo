@@ -1,12 +1,10 @@
 package main
 
 import (
-	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ui/widgets"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/vector"
 	"image"
 )
 
@@ -17,11 +15,7 @@ const maxDebugLines = 14
 const maxCharsForInput = 90
 
 type DebugConsole struct {
-	border            *ebiten.Image
-	borderDrawOptions *ebiten.DrawImageOptions
-
-	background            *ebiten.Image
-	backgroundDrawOptions *ebiten.DrawImageOptions
+	border *widgets.Border
 
 	font   *text.UltimaFont
 	Output *text.Output
@@ -34,7 +28,13 @@ type DebugConsole struct {
 func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 	debugConsole := DebugConsole{}
 	debugConsole.gameScene = gameScene
-	debugConsole.initializeDebugBorders()
+	debugConsole.border = widgets.NewBorder(sprites.PercentBasedPlacement{
+		StartPercentX: 0 + percentOffEdge,
+		EndPercentX:   .75 + .01 - percentOffEdge,
+		StartPercentY: .7,
+		EndPercentY:   1,
+	},
+		borderWidthScaling)
 	debugConsole.font = text.NewUltimaFont(debugFontPoint)
 	debugConsole.Output = text.NewOutput(debugConsole.font, debugFontLineSpacing, maxDebugLines, maxCharsForInput)
 	debugConsole.TextInput = widgets.NewTextInput(
@@ -63,7 +63,8 @@ func (d *DebugConsole) update() {
 }
 
 func (d *DebugConsole) drawDebugConsole(screen *ebiten.Image) {
-	screen.DrawImage(d.background, d.backgroundDrawOptions)
+	d.border.DrawBackground(screen)
+
 	const percentIntoBorder = 0.02
 	textRect := sprites.GetRectangleFromPercents(sprites.PercentBasedPlacement{
 		StartPercentX: 0 + percentIntoBorder,
@@ -75,38 +76,7 @@ func (d *DebugConsole) drawDebugConsole(screen *ebiten.Image) {
 		X: textRect.Min.X,
 		Y: textRect.Min.Y,
 	}, false)
-	screen.DrawImage(d.border, d.borderDrawOptions)
+	d.border.DrawBorder(screen)
 
 	d.TextInput.Draw(screen)
-}
-
-func (d *DebugConsole) initializeDebugBorders() {
-	mainBorder := sprites.NewBorderSprites()
-	percentBased := sprites.PercentBasedPlacement{
-		StartPercentX: 0 + percentOffEdge,
-		EndPercentX:   .75 + .01 - percentOffEdge,
-		StartPercentY: .7,
-		EndPercentY:   1,
-	}
-	d.border, d.borderDrawOptions = mainBorder.VeryPixelatedRoundedBlueWhite.CreateSizedAndScaledBorderSprite(borderWidthScaling, percentBased)
-
-	d.backgroundDrawOptions = &ebiten.DrawImageOptions{}
-	*d.backgroundDrawOptions = *d.borderDrawOptions
-
-	backgroundPercents := percentBased
-
-	rect := sprites.GetRectangleFromPercents(backgroundPercents)
-
-	d.background = ebiten.NewImageWithOptions(*rect, &ebiten.NewImageOptions{})
-	xDiff := float32(rect.Dx()) * 0.01
-	yDiff := float32(rect.Dy()) * 0.01
-	vector.DrawFilledRect(d.background,
-		float32(rect.Min.X)+xDiff,
-		float32(rect.Min.Y)+yDiff,
-		float32(rect.Dx())-xDiff*2,
-		float32(rect.Dy())-yDiff*2,
-		u_color.Black,
-		false)
-
-	d.backgroundDrawOptions.ColorScale.ScaleAlpha(.85)
 }

@@ -88,5 +88,5 @@ func (c *CharacterSummary) Draw(gameState *game_state2.GameState, screen *ebiten
 //	characterPortrait := c.spriteSheet.GetSprite(indexes.Avatar)
 //	dop := ebiten.DrawImageOptions{}
 //
-//	summaryImage.DrawImage(characterPortrait, &dop)
+//	summaryImage.DrawBorder(characterPortrait, &dop)
 //}
