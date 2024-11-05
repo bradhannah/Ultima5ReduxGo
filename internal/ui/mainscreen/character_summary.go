@@ -26,8 +26,12 @@ func NewCharacterSummary(spriteSheet *sprites.SpriteSheet) *CharacterSummary {
 	characterSummary := &CharacterSummary{}
 
 	characterSummary.spriteSheet = spriteSheet
-	characterSummary.ultimaFont = text.NewUltimaFont(fontPoint)
-	characterSummary.output = text.NewOutput(characterSummary.ultimaFont, lineSpacing, 10, maxCharsPerLine)
+	characterSummary.ultimaFont = text.NewUltimaFont(text.GetScaledNumberToResolution(fontPoint))
+	characterSummary.output = text.NewOutput(
+		characterSummary.ultimaFont,
+		text.GetScaledNumberToResolution(lineSpacing),
+		10,
+		maxCharsPerLine)
 
 	for i := 0; i < len(characterSummary.characterSummaryImage); i++ {
 		characterSummary.characterSummaryImage[i] = ebiten.NewImage(perCharacterSummaryWidth, perCharacterSummaryHeight)

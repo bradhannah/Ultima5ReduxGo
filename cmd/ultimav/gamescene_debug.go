@@ -40,8 +40,11 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 			EndPercentY:   1,
 		},
 		borderWidthScaling)
-	debugConsole.font = text.NewUltimaFont(debugFontPoint)
-	debugConsole.Output = text.NewOutput(debugConsole.font, debugFontLineSpacing, debugMaxLines, debugMaxCharsInput)
+	debugConsole.font = text.NewUltimaFont(text.GetScaledNumberToResolution(debugFontPoint))
+	debugConsole.Output = text.NewOutput(debugConsole.font,
+		text.GetScaledNumberToResolution(debugFontLineSpacing),
+		debugMaxLines,
+		debugMaxCharsInput)
 	debugConsole.TextInput = widgets.NewTextInput(
 		sprites.PercentBasedPlacement{
 			StartPercentX: 0 + debugPercentIntoBorder,
@@ -49,7 +52,7 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 			StartPercentY: .955,
 			EndPercentY:   1,
 		},
-		debugFontPoint,
+		text.GetScaledNumberToResolution(debugFontPoint),
 		debugMaxCharsInput,
 		debugConsole.createDebugFunctions(gameScene),
 		widgets.TextInputCallbacks{
