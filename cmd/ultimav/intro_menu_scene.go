@@ -16,8 +16,26 @@ type IntroMenuScene struct {
 	borderSprites *sprites.BorderSprites
 	ultimaFont    *text.UltimaFont
 	keyboard      *input.Keyboard
+	config        *config.UltimaVConfiguration
 
 	nCurrentSelection int
+}
+
+func CreateIntroMenuScene() *IntroMenuScene {
+	intro := &IntroMenuScene{
+		introSprites:      sprites.NewIntroSprites(),
+		borderSprites:     sprites.NewBorderSprites(),
+		ultimaFont:        text.NewUltimaFont(24),
+		keyboard:          input.NewKeyboard(250),
+		nCurrentSelection: 0,
+	}
+	// todo: get rid of hardcode - obviously
+	intro.config = config.NewUltimaVConfiguration("/Users/bradhannah/games/Ultima_5/Gold")
+	return intro
+}
+
+func (m *IntroMenuScene) GetUltimaConfiguration() *config.UltimaVConfiguration {
+	return m.config
 }
 
 type screenDimensions struct {
@@ -27,7 +45,7 @@ type screenDimensions struct {
 
 //var ScreenDimension = screenDimensions{x: 800, y: 600}
 
-var ScreenDimension = screenDimensions{x: config.WindowWidth, y: config.WindowHeight}
+//var ScreenDimension = screenDimensions{x: config.WindowWidth, y: config.WindowHeight}
 
 var boundKeysIntro = []ebiten.Key{ebiten.KeyDown, ebiten.KeyUp, ebiten.KeyEnter}
 
@@ -109,14 +127,4 @@ func (m *IntroMenuScene) Draw(screen *ebiten.Image) {
 
 	// Render the main menu
 	ebitenutil.DebugPrint(screen, "Main Menu: Press Enter to Start")
-}
-
-func CreateIntroMenuScene() *IntroMenuScene {
-	return &IntroMenuScene{
-		introSprites:      sprites.NewIntroSprites(),
-		borderSprites:     sprites.NewBorderSprites(),
-		ultimaFont:        text.NewUltimaFont(24),
-		keyboard:          input.NewKeyboard(250),
-		nCurrentSelection: 0,
-	}
 }

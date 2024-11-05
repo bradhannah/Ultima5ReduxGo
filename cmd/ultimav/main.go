@@ -1,20 +1,23 @@
 package main
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/hajimehoshi/ebiten/v2"
 	"log"
 )
 
 // Layout sets the game's screen size.
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
-	// Set the width and height of the game window
-	return ScreenDimension.x, ScreenDimension.y
+	aspectRatio := 16.0 / 9.0
+	if float64(outsideWidth)/float64(outsideHeight) > aspectRatio {
+		return int(float64(outsideHeight) * aspectRatio), outsideHeight
+	} else {
+		return outsideWidth, int(float64(outsideWidth) / aspectRatio)
+	}
 }
 
 func main() {
 	// Set the window title and size
-	ebiten.SetWindowSize(config.WindowWidth, config.WindowHeight)
+	ebiten.SetWindowSize(100, 100)
 	ebiten.SetWindowTitle("Ultima V Redux")
 
 	game := &Game{

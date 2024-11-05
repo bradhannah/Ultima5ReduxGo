@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/legacy"
 	"log"
 	"os"
@@ -16,8 +17,8 @@ import (
 //2560 x 1440 (QHD or 1440p)
 //3840 x 2160 (4K UHD)
 
-var WindowWidth = 1280
-var WindowHeight = 720
+//var WindowWidth = 1280
+//var WindowHeight = 720
 
 //var WindowWidth = 1920
 //var WindowHeight = 1080
@@ -27,9 +28,16 @@ var WindowHeight = 720
 //var WindowWidth = 2560
 //var WindowHeight = 1440
 
+type ScreenResolution struct {
+	X int
+	Y int
+}
+
 type UltimaVConfiguration struct {
-	DataFilePath string
-	RawDataOvl   []byte
+	DataFilePath        string
+	RawDataOvl          []byte
+	allWindowConfigs    []ScreenResolution
+	currentWindowConfig int
 }
 
 func NewUltimaVConfiguration(dataFilePath string) *UltimaVConfiguration {
@@ -43,9 +51,28 @@ func NewUltimaVConfiguration(dataFilePath string) *UltimaVConfiguration {
 		log.Fatal("Ooof, couldn't read DATA.OVL")
 	}
 
+	uc.allWindowConfigs = make([]ScreenResolution, 0)
+	uc.allWindowConfigs = append(uc.allWindowConfigs, ScreenResolution{X: 1280, Y: 720})
+	uc.allWindowConfigs = append(uc.allWindowConfigs, ScreenResolution{X: 1366, Y: 768})
+	uc.allWindowConfigs = append(uc.allWindowConfigs, ScreenResolution{X: 1920, Y: 1080})
+	uc.allWindowConfigs = append(uc.allWindowConfigs, ScreenResolution{X: 2560, Y: 1440})
+	uc.allWindowConfigs = append(uc.allWindowConfigs, ScreenResolution{X: 3840, Y: 2160})
+
 	return &uc
 }
 
 func (uc *UltimaVConfiguration) GetLookDataFilePath() string {
 	return path.Join(uc.DataFilePath, legacy.LOOK2_DAT)
+}
+
+func (uc *UltimaVConfiguration) GetCurrentWindowResolution() ScreenResolution {
+	return uc.allWindowConfigs[uc.currentWindowConfig]
+}
+
+func (uc *UltimaVConfiguration) IncrementHigherResolution() {
+	uc.currentWindowConfig = helpers.Min(len(uc.allWindowConfigs)-1, uc.currentWindowConfig+1)
+}
+
+func (uc *UltimaVConfiguration) DecrementLowerResolution() {
+	uc.currentWindowConfig = helpers.Max(uc.currentWindowConfig-1, 0)
 }

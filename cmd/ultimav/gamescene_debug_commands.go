@@ -19,6 +19,8 @@ func (d *DebugConsole) createDebugFunctions(gameScene *GameScene) *grammar.TextC
 	textCommands = append(textCommands, *d.createFreeMoveCommand())
 	textCommands = append(textCommands, *d.createQuickTime())
 	textCommands = append(textCommands, *d.createGoSmall())
+	textCommands = append(textCommands, *d.createResolutionUp())
+	textCommands = append(textCommands, *d.createResolutionDown())
 
 	return &textCommands
 }
@@ -163,5 +165,30 @@ func (d *DebugConsole) createGoSmall() *grammar.TextCommand {
 			d.dumpQuickState(oof.FriendlyLocationName)
 			d.gameScene.gameState.EnterBuilding(oof, d.gameScene.gameReferences.TileReferences)
 
+		})
+}
+
+// Helper function for the flor up command
+func (d *DebugConsole) createResolutionUp() *grammar.TextCommand {
+	return grammar.NewTextCommand([]grammar.Match{
+		grammar.MatchString{
+			Str:           "ru",
+			Description:   "Increase the resolution",
+			CaseSensitive: false,
+		}},
+		func(s string, command *grammar.TextCommand) {
+			d.gameScene.gameConfig.IncrementHigherResolution()
+		})
+}
+
+func (d *DebugConsole) createResolutionDown() *grammar.TextCommand {
+	return grammar.NewTextCommand([]grammar.Match{
+		grammar.MatchString{
+			Str:           "rd",
+			Description:   "Shrink the resolution",
+			CaseSensitive: false,
+		}},
+		func(s string, command *grammar.TextCommand) {
+			d.gameScene.gameConfig.DecrementLowerResolution()
 		})
 }

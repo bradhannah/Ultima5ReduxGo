@@ -1,11 +1,17 @@
 package main
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
+	"github.com/hajimehoshi/ebiten/v2"
+)
+
+var lastResolution config.ScreenResolution
 
 // Scene interface that requires Update and Draw methods
 type Scene interface {
 	Update(game *Game) error
 	Draw(screen *ebiten.Image)
+	GetUltimaConfiguration() *config.UltimaVConfiguration
 }
 
 // Game struct that holds the current scene
@@ -15,6 +21,11 @@ type Game struct {
 
 // Update calls the current scene's Update method
 func (g *Game) Update() error {
+	if lastResolution.X == 0 || lastResolution.Y == 0 || lastResolution != g.currentScene.GetUltimaConfiguration().GetCurrentWindowResolution() {
+		lastResolution = g.currentScene.GetUltimaConfiguration().GetCurrentWindowResolution()
+		ebiten.SetWindowSize(lastResolution.X, lastResolution.Y)
+	}
+
 	if g.currentScene != nil {
 		return g.currentScene.Update(g)
 	}

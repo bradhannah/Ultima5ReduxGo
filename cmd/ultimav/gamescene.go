@@ -73,6 +73,10 @@ type GameScene struct {
 	borders gameBorders
 }
 
+func (g *GameScene) GetUltimaConfiguration() *config.UltimaVConfiguration {
+	return g.gameConfig
+}
+
 func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	gameScene := GameScene{gameConfig: gameConfig}
 
