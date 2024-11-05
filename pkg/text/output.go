@@ -2,6 +2,7 @@ package text
 
 import (
 	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"image"
@@ -138,19 +139,11 @@ func trimLeadingSpaces(s string) string {
 // DrawRightSideOutput
 // Draws to the correct x and y image position for the right side output panel
 func (o *Output) DrawRightSideOutput(screen *ebiten.Image) {
-	const lineSpacing = 20
-
 	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(25, float64(screen.Bounds().Dy())*.52)
+	op.GeoM.Translate(sprites.GetTranslateXYByPercent(
+		.77, .5175))
 
-	dop := text.DrawOptions{
-		DrawImageOptions: *op,
-		LayoutOptions: text.LayoutOptions{
-			LineSpacing: lineSpacing,
-		},
-	}
-
-	text.Draw(screen, o.GetOutputStr(true), o.Font.TextFace, &dop)
+	o.DrawText(screen, o.GetOutputStr(true), op)
 }
 
 func (o *Output) DrawContinuousOutputTexOnXy(screen *ebiten.Image, point image.Point, bShowEmptyNewLines bool) {

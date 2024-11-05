@@ -38,23 +38,8 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 	screen.DrawImage(g.mapImage, op)
 	g.drawBorders(screen)
 
-	rightSideWidth := mapWidth / 4
-	rightSideHeight := mapHeight
-	if g.rightSideImage == nil {
-		g.rightSideImage = ebiten.NewImage(rightSideWidth*5, int(float64(rightSideHeight)*3.7))
-	} else {
-		g.rightSideImage.Clear()
-	}
-	op = sprites.GetDrawOptionsFromPercentsForWholeScreen(g.rightSideImage, sprites.PercentBasedPlacement{
-		StartPercentX: .751,
-		EndPercentX:   1.0,
-		StartPercentY: 0.02,
-		EndPercentY:   0.98,
-	})
+	g.output.DrawRightSideOutput(screen)
 
-	g.output.DrawRightSideOutput(g.rightSideImage)
-
-	screen.DrawImage(g.rightSideImage, op)
 	g.characterSummary.Draw(g.gameState, screen)
 	g.provisionSummary.Draw(g.gameState, screen)
 

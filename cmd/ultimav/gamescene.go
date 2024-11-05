@@ -23,10 +23,10 @@ const (
 )
 
 const (
-	defaultOutputFontPoint = 20
-	defaultLineSpacing     = 20
+	defaultOutputFontPoint = 23
+	defaultLineSpacing     = 25
 	maxCharsPerLine        = 16
-	maxLinesForOutput      = 10
+	maxLinesForOutput      = 11
 )
 
 type InputState int
@@ -98,8 +98,12 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	gameScene.initializeBorders()
 
 	gameScene.spriteSheet = sprites.NewSpriteSheet()
-	gameScene.ultimaFont = text.NewUltimaFont(defaultOutputFontPoint)
-	gameScene.output = text.NewOutput(gameScene.ultimaFont, defaultLineSpacing, maxLinesForOutput, maxCharsPerLine)
+	gameScene.ultimaFont = text.NewUltimaFont(text.GetScaledNumberToResolution(defaultOutputFontPoint))
+	gameScene.output = text.NewOutput(
+		gameScene.ultimaFont,
+		text.GetScaledNumberToResolution(defaultLineSpacing),
+		maxLinesForOutput,
+		maxCharsPerLine)
 
 	gameScene.keyboard = input.NewKeyboard(keyPressDelay)
 
