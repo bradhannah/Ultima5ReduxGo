@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -11,6 +12,10 @@ import (
 
 // Draw method for the GameScene
 func (g *GameScene) Draw(screen *ebiten.Image) {
+	if g.lastCheckedResolution != config.GetWindowResolutionFromEbiten() {
+		g.initializeResizeableVisualElements()
+	}
+
 	mapWidth := sprites.TileSize * xTilesInMap
 	mapHeight := sprites.TileSize * yTilesInMap
 

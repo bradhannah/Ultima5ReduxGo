@@ -83,7 +83,6 @@ var nonAlphaNumericBoundKeys = []ebiten.Key{ebiten.KeyDown,
 
 func NewTextInput(mainTextPlacement sprites.PercentBasedPlacement, fontPointSize float64, maxCharsPerLine int, textCommands *grammar.TextCommands, callbacks TextInputCallbacks) *TextInput {
 	textInput := &TextInput{}
-	textInput.ultimaFont = text.NewUltimaFont(fontPointSize)
 	textInput.maxCharsPerLine = maxCharsPerLine
 	textInput.keyboard = input.NewKeyboard(keyPressDelay)
 	textInput.textCommands = textCommands
@@ -92,6 +91,8 @@ func NewTextInput(mainTextPlacement sprites.PercentBasedPlacement, fontPointSize
 
 	// NOTE: single line input only (for now?)
 	textInput.output = text.NewOutput(textInput.ultimaFont, 0, 1, maxCharsPerLine)
+	textInput.SetFontPoint(fontPointSize)
+
 	textInput.output.AddRowStr("")
 
 	textInput.inputColors = TextInputColors{
@@ -101,9 +102,13 @@ func NewTextInput(mainTextPlacement sprites.PercentBasedPlacement, fontPointSize
 		MoreThanOneMatchColor: u_color.Yellow,
 	}
 
-	textInput.getAndSetTtf(fontPointSize)
-
 	return textInput
+}
+
+func (t *TextInput) SetFontPoint(fontPointSize float64) {
+	t.ultimaFont = text.NewUltimaFont(fontPointSize)
+	t.getAndSetTtf(fontPointSize)
+	t.output.SetFont(t.ultimaFont, fontPointSize)
 }
 
 func (t *TextInput) getAndSetTtf(fontPointSize float64) {

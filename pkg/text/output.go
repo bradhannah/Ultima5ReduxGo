@@ -33,6 +33,11 @@ func NewOutput(font *UltimaFont, lineSpacing float64, maxLines int, maxCharsPerL
 	return output
 }
 
+func (o *Output) SetFont(font *UltimaFont, lineSpacing float64) {
+	o.Font = font
+	o.lineSpacing = lineSpacing
+}
+
 func (o *Output) SetColor(color color.Color) {
 	o.color = color
 }

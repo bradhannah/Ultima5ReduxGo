@@ -32,7 +32,17 @@ type DebugConsole struct {
 func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 	debugConsole := DebugConsole{}
 	debugConsole.gameScene = gameScene
-	debugConsole.border = widgets.NewBorder(
+	debugConsole.initializeResizeableVisualElements()
+
+	return &debugConsole
+}
+
+func (d *DebugConsole) Refresh() {
+	d.initializeResizeableVisualElements()
+}
+
+func (d *DebugConsole) initializeResizeableVisualElements() {
+	d.border = widgets.NewBorder(
 		sprites.PercentBasedPlacement{
 			StartPercentX: 0 + debugPercentOffEdge,
 			EndPercentX:   .75 + .01 - debugPercentOffEdge,
@@ -40,27 +50,39 @@ func NewDebugConsole(gameScene *GameScene) *DebugConsole {
 			EndPercentY:   1,
 		},
 		borderWidthScaling)
-	debugConsole.font = text.NewUltimaFont(text.GetScaledNumberToResolution(debugFontPoint))
-	debugConsole.Output = text.NewOutput(debugConsole.font,
-		text.GetScaledNumberToResolution(debugFontLineSpacing),
-		debugMaxLines,
-		debugMaxCharsInput)
-	debugConsole.TextInput = widgets.NewTextInput(
-		sprites.PercentBasedPlacement{
-			StartPercentX: 0 + debugPercentIntoBorder,
-			EndPercentX:   .75 + .01 - debugPercentIntoBorder,
-			StartPercentY: .955,
-			EndPercentY:   1,
-		},
-		text.GetScaledNumberToResolution(debugFontPoint),
-		debugMaxCharsInput,
-		debugConsole.createDebugFunctions(gameScene),
-		widgets.TextInputCallbacks{
-			AmbiguousAutoComplete: func(message string) {
-				debugConsole.Output.AddRowStr(message)
+
+	d.font = text.NewUltimaFont(text.GetScaledNumberToResolution(debugFontPoint))
+
+	if d.Output == nil {
+		d.Output = text.NewOutput(d.font,
+			text.GetScaledNumberToResolution(debugFontLineSpacing),
+			debugMaxLines,
+			debugMaxCharsInput)
+	} else {
+		d.Output.SetFont(
+			d.font,
+			text.GetScaledNumberToResolution(debugFontLineSpacing),
+		)
+	}
+	if d.TextInput == nil {
+		d.TextInput = widgets.NewTextInput(
+			sprites.PercentBasedPlacement{
+				StartPercentX: 0 + debugPercentIntoBorder,
+				EndPercentX:   .75 + .01 - debugPercentIntoBorder,
+				StartPercentY: .955,
+				EndPercentY:   1,
 			},
-		})
-	return &debugConsole
+			text.GetScaledNumberToResolution(debugFontPoint),
+			debugMaxCharsInput,
+			d.createDebugFunctions(d.gameScene),
+			widgets.TextInputCallbacks{
+				AmbiguousAutoComplete: func(message string) {
+					d.Output.AddRowStr(message)
+				},
+			})
+	} else {
+		d.TextInput.SetFontPoint(text.GetScaledNumberToResolution(debugFontPoint))
+	}
 }
 
 func (d *DebugConsole) update() {

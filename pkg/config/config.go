@@ -28,11 +28,6 @@ import (
 //var WindowWidth = 2560
 //var WindowHeight = 1440
 
-type ScreenResolution struct {
-	X int
-	Y int
-}
-
 type UltimaVConfiguration struct {
 	DataFilePath        string
 	RawDataOvl          []byte
@@ -65,7 +60,7 @@ func (uc *UltimaVConfiguration) GetLookDataFilePath() string {
 	return path.Join(uc.DataFilePath, legacy.LOOK2_DAT)
 }
 
-func (uc *UltimaVConfiguration) GetCurrentWindowResolution() ScreenResolution {
+func (uc *UltimaVConfiguration) GetCurrentTrackedWindowResolution() ScreenResolution {
 	return uc.allWindowConfigs[uc.currentWindowConfig]
 }
 

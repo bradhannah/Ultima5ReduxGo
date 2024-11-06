@@ -71,6 +71,8 @@ type GameScene struct {
 	secondaryKeyState InputState
 
 	borders gameBorders
+
+	lastCheckedResolution config.ScreenResolution
 }
 
 func (g *GameScene) GetUltimaConfiguration() *config.UltimaVConfiguration {
@@ -99,27 +101,42 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 		log.Fatal(err)
 	}
 
-	gameScene.initializeBorders()
-
 	gameScene.spriteSheet = sprites.NewSpriteSheet()
-	gameScene.ultimaFont = text.NewUltimaFont(text.GetScaledNumberToResolution(defaultOutputFontPoint))
-	gameScene.output = text.NewOutput(
-		gameScene.ultimaFont,
-		text.GetScaledNumberToResolution(defaultLineSpacing),
-		maxLinesForOutput,
-		maxCharsPerLine)
-
 	gameScene.keyboard = input.NewKeyboard(keyPressDelay)
+	gameScene.initializeResizeableVisualElements()
 
 	//ebiten.SetTPS(120)
 	ebiten.SetTPS(60)
 
-	gameScene.characterSummary = mainscreen2.NewCharacterSummary(gameScene.spriteSheet)
-	gameScene.provisionSummary = mainscreen2.NewProvisionSummary(gameScene.spriteSheet)
-
-	gameScene.debugConsole = NewDebugConsole(&gameScene)
-
 	return &gameScene
+}
+
+func (g *GameScene) initializeResizeableVisualElements() {
+	g.lastCheckedResolution = config.GetWindowResolutionFromEbiten()
+
+	g.initializeBorders()
+	g.ultimaFont = text.NewUltimaFont(text.GetScaledNumberToResolution(defaultOutputFontPoint))
+	if g.output == nil {
+		g.output = text.NewOutput(
+			g.ultimaFont,
+			text.GetScaledNumberToResolution(defaultLineSpacing),
+			maxLinesForOutput,
+			maxCharsPerLine)
+	} else {
+		g.output.SetFont(
+			g.ultimaFont,
+			text.GetScaledNumberToResolution(defaultLineSpacing),
+		)
+	}
+
+	if g.debugConsole == nil {
+		g.debugConsole = NewDebugConsole(g)
+	} else {
+		g.debugConsole.Refresh()
+	}
+
+	g.characterSummary = mainscreen2.NewCharacterSummary(g.spriteSheet)
+	g.provisionSummary = mainscreen2.NewProvisionSummary(g.spriteSheet)
 }
 
 func (g *GameScene) appendToCurrentRowStr(str string) {
