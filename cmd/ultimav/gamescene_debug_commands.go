@@ -207,6 +207,6 @@ func (d *DebugConsole) createFullScreenToggle() *grammar.TextCommand {
 			CaseSensitive: false,
 		}},
 		func(s string, command *grammar.TextCommand) {
-			ebiten.SetFullscreen(!ebiten.IsFullscreen())
+			d.gameScene.gameConfig.SetFullScreen(!ebiten.IsFullscreen())
 		})
 }

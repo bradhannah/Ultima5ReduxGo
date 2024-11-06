@@ -75,6 +75,10 @@ type GameScene struct {
 	lastCheckedResolution config.ScreenResolution
 }
 
+func (g *GameScene) InvalidateResolution() {
+	g.initializeResizeableVisualElements()
+}
+
 func (g *GameScene) GetUltimaConfiguration() *config.UltimaVConfiguration {
 	return g.gameConfig
 }

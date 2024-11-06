@@ -23,8 +23,8 @@ func main() {
 		currentScene: CreateIntroMenuScene(), // Start with the main menu scene
 	}
 
-	// Run the game loop
-	ebiten.SetFullscreen(false)
+	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeDisabled)
+
 	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
 	}

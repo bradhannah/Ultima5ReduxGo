@@ -21,6 +21,10 @@ type IntroMenuScene struct {
 	nCurrentSelection int
 }
 
+func (m *IntroMenuScene) InvalidateResolution() {
+
+}
+
 func CreateIntroMenuScene() *IntroMenuScene {
 	intro := &IntroMenuScene{
 		introSprites:      sprites.NewIntroSprites(),

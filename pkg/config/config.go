@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/legacy"
+	"github.com/hajimehoshi/ebiten/v2"
 	"log"
 	"os"
 	"path"
@@ -61,6 +62,9 @@ func (uc *UltimaVConfiguration) GetLookDataFilePath() string {
 }
 
 func (uc *UltimaVConfiguration) GetCurrentTrackedWindowResolution() ScreenResolution {
+	if ebiten.IsFullscreen() {
+		return GetWindowResolutionFromEbiten()
+	}
 	return uc.allWindowConfigs[uc.currentWindowConfig]
 }
 
@@ -70,4 +74,9 @@ func (uc *UltimaVConfiguration) IncrementHigherResolution() {
 
 func (uc *UltimaVConfiguration) DecrementLowerResolution() {
 	uc.currentWindowConfig = helpers.Max(uc.currentWindowConfig-1, 0)
+}
+
+func (uc *UltimaVConfiguration) SetFullScreen(bFullScreen bool) {
+	ebiten.SetFullscreen(bFullScreen)
+
 }
