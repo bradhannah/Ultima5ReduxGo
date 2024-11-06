@@ -5,6 +5,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	"github.com/hajimehoshi/ebiten/v2"
 	"strings"
 )
 
@@ -21,6 +22,7 @@ func (d *DebugConsole) createDebugFunctions(gameScene *GameScene) *grammar.TextC
 	textCommands = append(textCommands, *d.createGoSmall())
 	textCommands = append(textCommands, *d.createResolutionUp())
 	textCommands = append(textCommands, *d.createResolutionDown())
+	textCommands = append(textCommands, *d.createFullScreenToggle())
 
 	return &textCommands
 }
@@ -178,6 +180,8 @@ func (d *DebugConsole) createResolutionUp() *grammar.TextCommand {
 		}},
 		func(s string, command *grammar.TextCommand) {
 			d.gameScene.gameConfig.IncrementHigherResolution()
+			res := d.gameScene.gameConfig.GetCurrentTrackedWindowResolution()
+			d.dumpQuickState(fmt.Sprintf("New Resolution: %dx%d", res.X, res.Y))
 		})
 }
 
@@ -190,5 +194,19 @@ func (d *DebugConsole) createResolutionDown() *grammar.TextCommand {
 		}},
 		func(s string, command *grammar.TextCommand) {
 			d.gameScene.gameConfig.DecrementLowerResolution()
+			res := d.gameScene.gameConfig.GetCurrentTrackedWindowResolution()
+			d.dumpQuickState(fmt.Sprintf("New Resolution: %dx%d", res.X, res.Y))
+		})
+}
+
+func (d *DebugConsole) createFullScreenToggle() *grammar.TextCommand {
+	return grammar.NewTextCommand([]grammar.Match{
+		grammar.MatchString{
+			Str:           "fs",
+			Description:   "Fullscreen Toggle",
+			CaseSensitive: false,
+		}},
+		func(s string, command *grammar.TextCommand) {
+			ebiten.SetFullscreen(!ebiten.IsFullscreen())
 		})
 }

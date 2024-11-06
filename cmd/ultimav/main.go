@@ -17,13 +17,14 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 func main() {
 	// Set the window title and size
-	ebiten.SetWindowSize(100, 100)
 	ebiten.SetWindowTitle("Ultima V Redux")
 
 	game := &Game{
 		currentScene: CreateIntroMenuScene(), // Start with the main menu scene
 	}
+
 	// Run the game loop
+	ebiten.SetFullscreen(false)
 	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
 	}

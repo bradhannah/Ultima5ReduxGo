@@ -23,7 +23,7 @@ type Game struct {
 func (g *Game) Update() error {
 	if lastResolution.X == 0 || lastResolution.Y == 0 || lastResolution != g.currentScene.GetUltimaConfiguration().GetCurrentTrackedWindowResolution() {
 		lastResolution = g.currentScene.GetUltimaConfiguration().GetCurrentTrackedWindowResolution()
-		ebiten.SetWindowSize(lastResolution.X, lastResolution.Y)
+		config.SetWindowSize(config.ScreenResolution{X: lastResolution.X, Y: lastResolution.Y})
 	}
 
 	if g.currentScene != nil {

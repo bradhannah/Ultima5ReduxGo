@@ -2,6 +2,7 @@ package sprites
 
 import (
 	_ "embed"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/hajimehoshi/ebiten/v2"
 	"image"
 	"math"
@@ -47,8 +48,8 @@ func NewBorderSprites() *BorderSprites {
 }
 
 func (sb *ReferenceBorder) createBorderImage(idealWidthForScaling, width, height int) *ebiten.Image {
-	windowWidth, _ := ebiten.WindowSize()
-	idealScaleX := float64(windowWidth) / float64(idealWidthForScaling)
+	screenRes := config.GetWindowResolutionFromEbiten()
+	idealScaleX := float64(screenRes.X) / float64(idealWidthForScaling)
 	scaledDimensions := sb.referenceBorderDimensions.createScaledDimensions(idealScaleX, idealScaleX)
 
 	img := ebiten.NewImage(width, height)
@@ -168,13 +169,13 @@ func (sb *ReferenceBorder) CreateSizedAndScaledBorderSprite(idealWidthForScaling
 
 	// THIS STUFF IS FOR PLACEMENT AFTER WE HAVE THE IMAGE
 	// get screen sizes
-	screenWidth, screenHeight := ebiten.WindowSize()
+	screenRes := config.GetWindowResolutionFromEbiten()
 
 	// get the x start and end values based on the percent
-	var xLeft = float64(screenWidth) * placement.StartPercentX
-	var xRight = float64(screenWidth) * placement.EndPercentX
-	var yTop = float64(screenHeight) * placement.StartPercentY
-	var yBottom = float64(screenHeight) * placement.EndPercentY
+	var xLeft = float64(screenRes.X) * placement.StartPercentX
+	var xRight = float64(screenRes.X) * placement.EndPercentX
+	var yTop = float64(screenRes.Y) * placement.StartPercentY
+	var yBottom = float64(screenRes.Y) * placement.EndPercentY
 
 	targetWidth := xRight - xLeft
 	targetHeight := yBottom - yTop

@@ -1,6 +1,7 @@
 package widgets
 
 import (
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
@@ -67,8 +68,8 @@ func NewInputBox(question string, textCommand *grammar.TextCommand) *InputBox {
 		})
 
 	heightOfText := -float64(inputBoxDefaultLineSpacing*(nQuestionRows)) + (inputBoxDefaultLineSpacing * 0.5)
-	_, height := ebiten.WindowSize()
-	percentTextHeight := heightOfText / float64(height)
+	screenResolution := config.GetWindowResolutionFromEbiten()
+	percentTextHeight := heightOfText / float64(screenResolution.Y)
 
 	inputBox.borderBoxPercents = sprites.PercentBasedPlacement{
 		StartPercentX: 0 + inputBoxPercentOffEdge,
