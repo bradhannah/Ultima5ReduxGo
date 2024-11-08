@@ -35,6 +35,7 @@ type GameState struct {
 	PartyVehicle references.PartyVehicle
 
 	LastLargeMapPosition references.Position
+	LastLargeMapFloor    references.FloorNumber
 
 	DateTime UltimaDate
 

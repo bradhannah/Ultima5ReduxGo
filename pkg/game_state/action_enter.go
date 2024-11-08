@@ -7,6 +7,7 @@ import (
 func (g *GameState) EnterBuilding(slr *references.SmallLocationReference, tileRefs *references.Tiles) {
 	if slr.Location != references.EmptyLocation {
 		g.LastLargeMapPosition = g.Position
+		g.LastLargeMapFloor = g.Floor
 		g.Position = references.Position{
 			X: 15,
 			Y: 30,

@@ -32,9 +32,7 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		g.addRowStr("Look-")
 		g.secondaryKeyState = LookDirectionInput
 	case ebiten.KeyX:
-		g.gameState.Location = references.Britannia_Underworld
-		g.gameState.Floor = 0
-		g.gameState.Position = g.gameState.LastLargeMapPosition
+		g.gameState.ExitSmallMap()
 	case ebiten.KeyG:
 		// get the thing - direction
 		g.addRowStr("Get-")
