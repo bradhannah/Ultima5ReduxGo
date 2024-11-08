@@ -8,6 +8,10 @@ type MatchString struct {
 	CaseSensitive bool
 }
 
+func (m MatchString) ShouldAutofillWithFirstCharacter() bool {
+	return false
+}
+
 func (m MatchString) GetDescription() string {
 	return m.Description
 }

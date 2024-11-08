@@ -11,6 +11,10 @@ type MatchInt struct {
 	Description string
 }
 
+func (m MatchInt) ShouldAutofillWithFirstCharacter() bool {
+	return false
+}
+
 func (m MatchInt) GetDescription() string {
 	return m.Description
 }

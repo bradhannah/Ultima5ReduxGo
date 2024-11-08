@@ -6,4 +6,5 @@ type Match interface {
 	GetSuffixHint(currentStr string) string
 	GetString() string
 	GetDescription() string
+	ShouldAutofillWithFirstCharacter() bool
 }

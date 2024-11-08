@@ -1,16 +1,18 @@
 package text
 
 import (
-	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"image"
 	"image/color"
 	"strings"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
+
+	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 )
 
-//const maxCharsPerLine = 16
+// const maxCharsPerLine = 16
 
 type Output struct {
 	Font            *UltimaFont

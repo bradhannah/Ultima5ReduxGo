@@ -3,9 +3,14 @@ package grammar
 import "strings"
 
 type MatchStringList struct {
-	Strings       []string
-	Description   string
-	CaseSensitive bool
+	Strings              []string
+	Description          string
+	CaseSensitive        bool
+	SingleCharacterInput bool
+}
+
+func (m MatchStringList) ShouldAutofillWithFirstCharacter() bool {
+	return m.SingleCharacterInput
 }
 
 func (m MatchStringList) GetDescription() string {
@@ -13,15 +18,13 @@ func (m MatchStringList) GetDescription() string {
 }
 
 func (m MatchStringList) GetPartialMatches(s string) ([]string, error) {
-	var matches []string = make([]string, 0)
+	var matches = make([]string, 0)
 	if !m.CaseSensitive {
 		s = strings.ToUpper(s)
 	}
 	for _, str := range m.Strings {
 		if strings.HasPrefix(strings.ToUpper(str), s) {
 			matches = append(matches, str)
-			//matches = append(matches, m.GetSuffixHint(str))
-			//return true, nil
 		}
 	}
 	return matches, nil

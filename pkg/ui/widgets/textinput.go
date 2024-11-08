@@ -3,23 +3,24 @@ package widgets
 import (
 	_ "embed"
 	"fmt"
-	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/vector"
-	"golang.org/x/image/font/opentype"
-	"golang.org/x/image/math/fixed"
 	"image"
 	"image/color"
 	"log"
 	"strings"
 	"time"
-)
 
-import "golang.org/x/image/font"
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/vector"
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/opentype"
+	"golang.org/x/image/math/fixed"
+
+	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
+)
 
 // todo: different background for text?
 // todo: accelerate text after a period of time
@@ -81,7 +82,13 @@ var nonAlphaNumericBoundKeys = []ebiten.Key{ebiten.KeyDown,
 	ebiten.KeyMinus,
 }
 
-func NewTextInput(mainTextPlacement sprites.PercentBasedPlacement, fontPointSize float64, maxCharsPerLine int, textCommands *grammar.TextCommands, callbacks TextInputCallbacks) *TextInput {
+func NewTextInput(
+	mainTextPlacement sprites.PercentBasedPlacement,
+	fontPointSize float64,
+	maxCharsPerLine int,
+	textCommands *grammar.TextCommands,
+	callbacks TextInputCallbacks) *TextInput {
+
 	textInput := &TextInput{}
 	textInput.maxCharsPerLine = maxCharsPerLine
 	textInput.keyboard = input.NewKeyboard(keyPressDelay)
@@ -140,9 +147,9 @@ func (t *TextInput) Draw(screen *ebiten.Image) {
 func (t *TextInput) createCursorPlacement() sprites.PercentBasedPlacement {
 	var cursorPlacement = sprites.PercentBasedPlacement{
 		StartPercentX: t.mainTextPlacement.StartPercentX,         // 0 + debugPercentOffEdge
-		EndPercentX:   t.mainTextPlacement.EndPercentY,           //.75 + .01 - percentIntoBorder,
-		StartPercentY: t.mainTextPlacement.StartPercentY - 0.003, //.955 - .952,
-		EndPercentY:   t.mainTextPlacement.EndPercentY - 0.032,   //.968,
+		EndPercentX:   t.mainTextPlacement.EndPercentY,           // .75 + .01 - percentIntoBorder,
+		StartPercentY: t.mainTextPlacement.StartPercentY - 0.003, // .955 - .952,
+		EndPercentY:   t.mainTextPlacement.EndPercentY - 0.032,   // .968,
 	}
 	return cursorPlacement
 }
@@ -195,6 +202,16 @@ func (t *TextInput) removeRightCharacter(keyStr string) {
 
 }
 
+func (t *TextInput) isPerfectMatchWithAutoFillFirstCharacter() bool {
+	perfectMatches := *t.textCommands.GetAllPerfectMatches(t.output.GetOutputStr(false))
+	if len(perfectMatches) == 1 {
+		if perfectMatches[0].Matches[0].ShouldAutofillWithFirstCharacter() {
+			return true
+		}
+	}
+	return false
+}
+
 func (t *TextInput) Update() {
 	if ebiten.IsKeyPressed(ebiten.KeyControl) {
 		if ebiten.IsKeyPressed(ebiten.KeyU) {
@@ -211,7 +228,18 @@ func (t *TextInput) Update() {
 		if !t.keyboard.TryToRegisterKeyPress(*key) {
 			return
 		}
+
+		if t.isPerfectMatchWithAutoFillFirstCharacter() {
+			// don't add letters if the match is perfect already
+			return
+		}
+
 		t.addCharacter(keyStr)
+
+		// special block for single character inputs that expand to a full string
+		if t.isPerfectMatchWithAutoFillFirstCharacter() {
+			t.tryToAutoComplete(false)
+		}
 		return
 	} else {
 		// the idea here is if the user pushes, then lets go and repushes the same button it should
@@ -244,14 +272,18 @@ func (t *TextInput) Update() {
 		// if it does then run execute
 		return
 	case ebiten.KeySpace, ebiten.KeyTab:
-		t.tryToAutoComplete()
+		t.tryToAutoComplete(true)
 	case ebiten.KeyBackspace:
-		t.output.RemoveRightSideCharacter()
+		if t.isPerfectMatchWithAutoFillFirstCharacter() {
+			t.output.Clear()
+		} else {
+			t.output.RemoveRightSideCharacter()
+		}
 	}
 	return
 }
 
-func (t *TextInput) tryToAutoComplete() {
+func (t *TextInput) tryToAutoComplete(bAddSpaceAtEndIfPerfectMatch bool) {
 	outputStr := t.output.GetOutputStr(false)
 
 	if outputStr == "" {
@@ -283,7 +315,10 @@ func (t *TextInput) tryToAutoComplete() {
 	if nPrimaryCommandMatch == 1 {
 		autoCompleteMatches := (*primaryCommandMatches)[0].GetAutoComplete(outputStr)
 		if len(autoCompleteMatches) == 1 {
-			t.output.AppendToCurrentRowStr(strings.TrimSpace((autoCompleteMatches)[0]) + " ")
+			t.output.AppendToCurrentRowStr(strings.TrimSpace((autoCompleteMatches)[0]))
+			if bAddSpaceAtEndIfPerfectMatch {
+				t.output.AppendToCurrentRowStr(" ")
+			}
 			return
 		}
 
