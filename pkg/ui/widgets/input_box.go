@@ -1,12 +1,14 @@
 package widgets
 
 import (
+	"strings"
+
+	"github.com/hajimehoshi/ebiten/v2"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
-	"github.com/hajimehoshi/ebiten/v2"
-	"strings"
 )
 
 const (
@@ -17,6 +19,8 @@ const (
 	inputBoxDefaultLineSpacing = 20
 	inputBoxMaxCharsPerLine    = 32
 	inputBoxMaxLinesForOutput  = 10
+
+	inputBoxStartPercentY = .70
 )
 
 type InputBox struct {
@@ -50,8 +54,8 @@ func NewInputBox(question string, textCommand *grammar.TextCommand) *InputBox {
 	inputBox.inputBoxPercents = sprites.PercentBasedPlacement{
 		StartPercentX: 0 + inputPercentIntoBorder + inputBoxPercentOffEdge,
 		EndPercentX:   .75 + .01 - inputPercentIntoBorder,
-		StartPercentY: .85,
-		EndPercentY:   .9,
+		StartPercentY: inputBoxStartPercentY + .05,
+		EndPercentY:   inputBoxStartPercentY + .05 + 0.05,
 	}
 
 	inputBox.textQuestion.AddRowStr(inputBox.Question)
@@ -74,8 +78,8 @@ func NewInputBox(question string, textCommand *grammar.TextCommand) *InputBox {
 	inputBox.borderBoxPercents = sprites.PercentBasedPlacement{
 		StartPercentX: 0 + inputBoxPercentOffEdge,
 		EndPercentX:   .75 + .01 - inputBoxPercentOffEdge,
-		StartPercentY: .80 + percentTextHeight,
-		EndPercentY:   .9,
+		StartPercentY: inputBoxStartPercentY + percentTextHeight,
+		EndPercentY:   inputBoxStartPercentY + .1,
 	}
 
 	inputBox.border = NewBorder(

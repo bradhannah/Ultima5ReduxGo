@@ -25,6 +25,10 @@ func (g *GameScene) createTextCommandExitBuilding() *grammar.TextCommand {
 				g.gameState.ExitSmallMap()
 				g.bShowInputBox = false
 				g.inputBox = nil
+			} else if outputStr == "no" {
+				// we just go back to what we were doing
+				g.bShowInputBox = false
+				g.inputBox = nil
 			}
 		})
 }

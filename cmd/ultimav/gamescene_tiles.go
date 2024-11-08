@@ -1,12 +1,14 @@
 package main
 
 import (
+	"image"
+	"log"
+
+	"github.com/hajimehoshi/ebiten/v2"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
-	"github.com/hajimehoshi/ebiten/v2"
-	"image"
-	"log"
 )
 
 func (g *GameScene) getSmallCalculatedAvatarTileIndex(ogSpriteIndex indexes.SpriteIndex) indexes.SpriteIndex {
@@ -103,7 +105,7 @@ func (g *GameScene) refreshMapLayerTiles() {
 			var spriteIndex indexes.SpriteIndex
 			if tile == nil {
 				if g.gameState.IsOutOfBounds(pos) {
-					spriteIndex = 5
+					spriteIndex = g.gameState.GetCurrentSmallLocationReference().GetOuterTile()
 				} else {
 					log.Fatal("bad index")
 				}
