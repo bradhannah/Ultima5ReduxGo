@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
-	"github.com/hajimehoshi/ebiten/v2"
-	"strings"
 )
 
 func (d *DebugConsole) createDebugFunctions(gameScene *GameScene) *grammar.TextCommands {
@@ -207,6 +207,6 @@ func (d *DebugConsole) createFullScreenToggle() *grammar.TextCommand {
 			CaseSensitive: false,
 		}},
 		func(s string, command *grammar.TextCommand) {
-			d.gameScene.gameConfig.SetFullScreen(!ebiten.IsFullscreen())
+			d.gameScene.gameConfig.SetFullScreen(!d.gameScene.gameConfig.SavedConfigData.FullScreen)
 		})
 }

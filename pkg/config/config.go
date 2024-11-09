@@ -116,6 +116,7 @@ func (uc *UltimaVConfiguration) DecrementLowerResolution() {
 
 func (uc *UltimaVConfiguration) SetFullScreen(bFullScreen bool) {
 	ebiten.SetFullscreen(bFullScreen)
+	uc.SavedConfigData.FullScreen = bFullScreen
 	uc.UpdateSaveFile()
 }
 

@@ -37,6 +37,9 @@ func CreateIntroMenuScene() *IntroMenuScene {
 	}
 	// todo: get rid of hardcode - obviously
 	intro.config = config.NewUltimaVConfiguration()
+	if intro.config.SavedConfigData.FullScreen {
+		ebiten.SetFullscreen(true)
+	}
 	return intro
 }
 

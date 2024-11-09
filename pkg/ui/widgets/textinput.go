@@ -268,6 +268,7 @@ func (t *TextInput) Update() {
 				return
 			}
 			firstMatch.ExecuteCommand(command, &firstMatch)
+			t.keyboard.SetLastKeyPressedNowPlusMs(200)
 		}
 		// if it does then run execute
 		return
