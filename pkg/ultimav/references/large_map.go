@@ -3,12 +3,13 @@ package references
 import (
 	"encoding/binary"
 	"fmt"
+	"os"
+	"path"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/legacy"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
-	"os"
-	"path"
 )
 
 const (
@@ -46,9 +47,9 @@ func (m *LargeMapReference) GetSpriteIndex(x Coordinate, y Coordinate) indexes.S
 }
 
 func loadLargeMapFromFile(world World, gameConfig *config.UltimaVConfiguration) (*LargeMapReference, error) {
-	mapFileAndPath, dataOvlFileAndPath := path.Join(gameConfig.DataFilePath, legacy.BRIT_DAT), path.Join(gameConfig.DataFilePath, legacy.DATA_OVL)
+	mapFileAndPath, dataOvlFileAndPath := path.Join(gameConfig.SavedConfigData.DataFilePath, legacy.BRIT_DAT), path.Join(gameConfig.SavedConfigData.DataFilePath, legacy.DATA_OVL)
 	if world == UNDERWORLD {
-		mapFileAndPath = path.Join(gameConfig.DataFilePath, legacy.UNDER_DAT)
+		mapFileAndPath = path.Join(gameConfig.SavedConfigData.DataFilePath, legacy.UNDER_DAT)
 		dataOvlFileAndPath = ""
 	}
 
@@ -58,7 +59,7 @@ func loadLargeMapFromFile(world World, gameConfig *config.UltimaVConfiguration) 
 	if err != nil {
 		return nil, err
 	}
-	//defer file.Close() // Ensure the file is closed when done
+	// defer file.Close() // Ensure the file is closed when done
 
 	// Create a buffer for data overlay chunks
 	dataOvlChunks := make([]byte, TotalChunks)
@@ -66,7 +67,7 @@ func loadLargeMapFromFile(world World, gameConfig *config.UltimaVConfiguration) 
 	var dataOvl *os.File
 	if !ignoreOverlay {
 		// Open the overlay file for reading (case-insensitive path)
-		//filePath := GetFirstFileAndPathCaseInsensitive(overlayFilename)
+		// filePath := GetFirstFileAndPathCaseInsensitive(overlayFilename)
 		var err error
 		dataOvl, err = os.Open(dataOvlFileAndPath)
 		if err != nil {

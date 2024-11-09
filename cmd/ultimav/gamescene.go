@@ -1,6 +1,12 @@
 package main
 
 import (
+	"image"
+	"log"
+	"path"
+
+	"github.com/hajimehoshi/ebiten/v2"
+
 	mainscreen2 "github.com/bradhannah/Ultima5ReduxGo/internal/ui/mainscreen"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
@@ -10,10 +16,6 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ui/widgets"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
-	"github.com/hajimehoshi/ebiten/v2"
-	"image"
-	"log"
-	"path"
 )
 
 const (
@@ -99,7 +101,7 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 		YTilesInMap:    yTilesInMap,
 		GameReferences: gameScene.gameReferences,
 	}
-	err = gameScene.gameState.LoadLegacySaveGame(path.Join(gameScene.gameConfig.DataFilePath, "SAVED.GAM"), gameScene.gameReferences)
+	err = gameScene.gameState.LoadLegacySaveGame(path.Join(gameScene.gameConfig.SavedConfigData.DataFilePath, "SAVED.GAM"), gameScene.gameReferences)
 
 	if err != nil {
 		log.Fatal(err)
@@ -109,7 +111,7 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	gameScene.keyboard = input.NewKeyboard(keyPressDelay)
 	gameScene.initializeResizeableVisualElements()
 
-	//ebiten.SetTPS(120)
+	// ebiten.SetTPS(120)
 	ebiten.SetTPS(60)
 
 	return &gameScene

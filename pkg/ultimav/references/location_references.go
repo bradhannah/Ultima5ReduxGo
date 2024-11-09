@@ -1,11 +1,12 @@
 package references
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"log"
 	"os"
 	"path"
 	"strings"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 )
 
 // LocationReferences a collection of SingleSmallMapReferences. Provides an easier way to keep
@@ -41,7 +42,7 @@ func newSingleMapReferences(config *config.UltimaVConfiguration, dataOvl *DataOv
 func (s *LocationReferences) addLocation(location Location, bHasBasement bool, nFloors int, nOffset int) int {
 	maps := make(map[int]*SmallLocationReference)
 	// get the file
-	mapFileAndPath := path.Join(s.config.DataFilePath, getSmallMapFile(getMapMasterFromLocation(location)))
+	mapFileAndPath := path.Join(s.config.SavedConfigData.DataFilePath, getSmallMapFile(getMapMasterFromLocation(location)))
 
 	// a bit wasteful since it's open a few times, but... fast computers...
 	theChunksSerial, err := os.ReadFile(mapFileAndPath)
@@ -54,7 +55,7 @@ func (s *LocationReferences) addLocation(location Location, bHasBasement bool, n
 		floorModifier = -1
 	}
 
-	smr := NewSingleSmallMapReference(location, s.dataOvl) //SmallLocationReference{}
+	smr := NewSingleSmallMapReference(location, s.dataOvl) // SmallLocationReference{}
 	for i := 0; i < nFloors; i++ {
 		actualFloor := i + floorModifier
 		smr.addBlankFloor(actualFloor)

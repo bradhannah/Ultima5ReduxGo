@@ -2,9 +2,10 @@ package references
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/util"
-	"log"
 )
 
 type SmallLocationReference struct {
@@ -14,7 +15,7 @@ type SmallLocationReference struct {
 	EnteringText         string
 	SmallMapType         SmallMapMasterTypes
 	ListOfFloors         []FloorNumber
-	//config   *config.UltimaVConfiguration
+	// config   *config.UltimaVConfiguration
 }
 
 func NewSingleSmallMapReference(location Location, dataOvl *DataOvl) *SmallLocationReference {
@@ -50,7 +51,7 @@ func (s *SmallLocationReference) HasBasement() bool {
 	return ok
 }
 
-//func (s *SmallLocationReference) GetTileNumberWithAnimation(nFloor FloorNumber, position *Position) indexes.SpriteIndex {
+// func (s *SmallLocationReference) GetTileNumberWithAnimation(nFloor FloorNumber, position *Position) indexes.SpriteIndex {
 //
 //	mainTile := s.GetTileNumber(nFloor, position.X, position.Y)
 //	//indexes.SpriteIndex(s.rawData[int(nFloor)][position.X][position.Y])
@@ -59,7 +60,7 @@ func (s *SmallLocationReference) HasBasement() bool {
 //		return sprites.GetSpriteIndexWithAnimationBySpriteIndex(mainTile)
 //	}
 //	return mainTile
-//}
+// }
 
 func (s *SmallLocationReference) GetTileNumber(nFloor FloorNumber, x Coordinate, y Coordinate) indexes.SpriteIndex {
 	return indexes.SpriteIndex(s.rawData[int(nFloor)][x][y])
@@ -101,7 +102,6 @@ func (s *SmallLocationReference) GetOuterTile() indexes.SpriteIndex {
 		return indexes.Swamp
 	default:
 		return indexes.Grass
-
 	}
 }
 

@@ -2,13 +2,15 @@ package main
 
 import (
 	"fmt"
+	"math"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"math"
 )
 
 type IntroMenuScene struct {
@@ -34,7 +36,7 @@ func CreateIntroMenuScene() *IntroMenuScene {
 		nCurrentSelection: 0,
 	}
 	// todo: get rid of hardcode - obviously
-	intro.config = config.NewUltimaVConfiguration("/Users/bradhannah/games/Ultima_5/Gold")
+	intro.config = config.NewUltimaVConfiguration()
 	return intro
 }
 
@@ -47,9 +49,9 @@ type screenDimensions struct {
 	y int
 }
 
-//var ScreenDimension = screenDimensions{x: 800, y: 600}
+// var ScreenDimension = screenDimensions{x: 800, y: 600}
 
-//var ScreenDimension = screenDimensions{x: config.WindowWidth, y: config.WindowHeight}
+// var ScreenDimension = screenDimensions{x: config.WindowWidth, y: config.WindowHeight}
 
 var boundKeysIntro = []ebiten.Key{ebiten.KeyDown, ebiten.KeyUp, ebiten.KeyEnter}
 
@@ -68,7 +70,7 @@ func (m *IntroMenuScene) Update(game *Game) error {
 		// Replace this with code to switch to the game scene
 		fmt.Println("Switching to Game Scene")
 
-		game.currentScene = NewGameScene(config.NewUltimaVConfiguration("/Users/bradhannah/games/Ultima_5/Gold"))
+		game.currentScene = NewGameScene(config.NewUltimaVConfiguration())
 	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
 		m.nCurrentSelection = int(math.Max(float64(m.nCurrentSelection)-1, 0))
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {

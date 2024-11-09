@@ -1,48 +1,84 @@
 package config
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/legacy"
-	"github.com/hajimehoshi/ebiten/v2"
+	"errors"
 	"log"
 	"os"
 	"path"
+
+	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/legacy"
+
+	"github.com/spf13/viper"
 )
 
 // always use 16x9 resolutions
 
 // 1280 x 720 (HD)
-//1366 x 768 (HD)
-//1600 x 900
-//1920 x 1080 (Full HD or 1080p)
-//2560 x 1440 (QHD or 1440p)
-//3840 x 2160 (4K UHD)
+// 1366 x 768 (HD)
+// 1600 x 900
+// 1920 x 1080 (Full HD or 1080p)
+// 2560 x 1440 (QHD or 1440p)
+// 3840 x 2160 (4K UHD)
 
-//var WindowWidth = 1280
-//var WindowHeight = 720
+// var WindowWidth = 1280
+// var WindowHeight = 720
 
-//var WindowWidth = 1920
-//var WindowHeight = 1080
+// var WindowWidth = 1920
+// var WindowHeight = 1080
 
 // var WindowWidth = 3840
 // var WindowHeight = 2160
-//var WindowWidth = 2560
-//var WindowHeight = 1440
+// var WindowWidth = 2560
+// var WindowHeight = 1440
 
-type UltimaVConfiguration struct {
-	DataFilePath        string
-	RawDataOvl          []byte
-	allWindowConfigs    []ScreenResolution
-	currentWindowConfig int
+type UltimaVConfigurationFlags struct {
+	Resolution   int
+	FullScreen   bool
+	DataFilePath string
 }
 
-func NewUltimaVConfiguration(dataFilePath string) *UltimaVConfiguration {
-	uc := UltimaVConfiguration{
-		DataFilePath: dataFilePath,
+type UltimaVConfiguration struct {
+	// DataFilePath     string
+	RawDataOvl       []byte
+	allWindowConfigs []ScreenResolution
+
+	SavedConfigData *UltimaVConfigurationFlags
+}
+
+func NewUltimaVConfiguration() *UltimaVConfiguration {
+	uc := UltimaVConfiguration{}
+
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("$HOME/.ultima_v_redux")
+
+	if err := viper.ReadInConfig(); err != nil {
+		var configFileNotFoundError viper.ConfigFileNotFoundError
+		if errors.As(err, &configFileNotFoundError) {
+			err = viper.SafeWriteConfig()
+			if err != nil {
+				log.Fatalf("Error writing config file, %s", err)
+			}
+		} else {
+			log.Fatalf("Error reading config file, %s", err)
+		}
 	}
 
+	uc.SavedConfigData = &UltimaVConfigurationFlags{}
+	_ = viper.Unmarshal(&uc.SavedConfigData)
+	dfp := viper.GetString("DataFilePath")
+	if dfp == "" {
+		viper.Set("DataFilePath", "/Users/bradhannah/games/Ultima_5/Gold")
+		uc.SavedConfigData.DataFilePath = dfp
+	}
+
+	uc.UpdateSaveFile()
+
 	var err error
-	uc.RawDataOvl, err = os.ReadFile(path.Join(dataFilePath, legacy.DATA_OVL))
+	uc.RawDataOvl, err = os.ReadFile(path.Join(uc.SavedConfigData.DataFilePath, legacy.DATA_OVL))
 	if err != nil {
 		log.Fatal("Ooof, couldn't read DATA.OVL")
 	}
@@ -58,25 +94,33 @@ func NewUltimaVConfiguration(dataFilePath string) *UltimaVConfiguration {
 }
 
 func (uc *UltimaVConfiguration) GetLookDataFilePath() string {
-	return path.Join(uc.DataFilePath, legacy.LOOK2_DAT)
+	return path.Join(uc.SavedConfigData.DataFilePath, legacy.LOOK2_DAT)
 }
 
 func (uc *UltimaVConfiguration) GetCurrentTrackedWindowResolution() ScreenResolution {
 	if ebiten.IsFullscreen() {
 		return GetWindowResolutionFromEbiten()
 	}
-	return uc.allWindowConfigs[uc.currentWindowConfig]
+	return uc.allWindowConfigs[uc.SavedConfigData.Resolution]
 }
 
 func (uc *UltimaVConfiguration) IncrementHigherResolution() {
-	uc.currentWindowConfig = helpers.Min(len(uc.allWindowConfigs)-1, uc.currentWindowConfig+1)
+	uc.SavedConfigData.Resolution = helpers.Min(len(uc.allWindowConfigs)-1, uc.SavedConfigData.Resolution+1)
+	uc.UpdateSaveFile()
 }
 
 func (uc *UltimaVConfiguration) DecrementLowerResolution() {
-	uc.currentWindowConfig = helpers.Max(uc.currentWindowConfig-1, 0)
+	uc.SavedConfigData.Resolution = helpers.Max(uc.SavedConfigData.Resolution-1, 0)
+	uc.UpdateSaveFile()
 }
 
 func (uc *UltimaVConfiguration) SetFullScreen(bFullScreen bool) {
 	ebiten.SetFullscreen(bFullScreen)
+	uc.UpdateSaveFile()
+}
 
+func (uc *UltimaVConfiguration) UpdateSaveFile() {
+	viper.Set("Resolution", uc.SavedConfigData.Resolution)
+	viper.Set("FullScreen", uc.SavedConfigData.FullScreen)
+	_ = viper.WriteConfig()
 }
