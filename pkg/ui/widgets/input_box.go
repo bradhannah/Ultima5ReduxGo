@@ -11,6 +11,8 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 )
 
+var _ Widget = &InputBox{}
+
 const (
 	inputBoxPercentOffEdge     = 0.2
 	inputBoxBorderWidthScaling = 601

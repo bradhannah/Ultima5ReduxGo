@@ -1,6 +1,10 @@
 package helpers
 
-import "golang.org/x/exp/constraints"
+import (
+	"reflect"
+
+	"golang.org/x/exp/constraints"
+)
 
 // Generic Max function
 func Max[T constraints.Ordered](a, b T) T {
@@ -16,4 +20,11 @@ func Min[T constraints.Ordered](a, b T) T {
 		return a
 	}
 	return b
+}
+
+func IsOfTypeInterface(inst interface{}, iface interface{}) bool {
+	instType := reflect.TypeOf(inst)
+	ifaceType := reflect.TypeOf(&iface).Elem() // .Elem() to get the interface type
+
+	return instType.Implements(ifaceType)
 }

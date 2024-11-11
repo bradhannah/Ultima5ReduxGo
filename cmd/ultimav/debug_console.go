@@ -1,12 +1,16 @@
 package main
 
 import (
+	"image"
+
+	"github.com/hajimehoshi/ebiten/v2"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ui/widgets"
-	"github.com/hajimehoshi/ebiten/v2"
-	"image"
 )
+
+var _ widgets.Widget = &DebugConsole{}
 
 const (
 	debugPercentOffEdge    = 0.0
@@ -85,12 +89,13 @@ func (d *DebugConsole) initializeResizeableVisualElements() {
 	}
 }
 
-func (d *DebugConsole) update() {
+func (d *DebugConsole) Update() {
 	if ebiten.IsKeyPressed(ebiten.KeyBackquote) || ebiten.IsKeyPressed(ebiten.KeyEscape) {
 		if !d.gameScene.keyboard.TryToRegisterKeyPress(ebiten.KeyBackquote) {
 			return
 		}
-		d.gameScene.bShowDebugConsole = false
+		// d.gameScene.bShowDebugConsole = false
+		d.gameScene.dialogStack.PopModalDialog()
 	} else {
 		d.TextInput.Update()
 	}
@@ -98,7 +103,7 @@ func (d *DebugConsole) update() {
 	return
 }
 
-func (d *DebugConsole) drawDebugConsole(screen *ebiten.Image) {
+func (d *DebugConsole) Draw(screen *ebiten.Image) {
 	d.border.DrawBackground(screen)
 
 	const percentIntoBorder = 0.02

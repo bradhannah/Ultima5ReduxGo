@@ -19,16 +19,17 @@ func (g *GameScene) createTextCommandExitBuilding() *grammar.TextCommand {
 			},
 		},
 		func(s string, command *grammar.TextCommand) {
-			outputStr := strings.ToLower(g.inputBox.GetText())
+			ib := g.dialogStack.GetOrAssertTopInputBox()
+			outputStr := strings.ToLower(ib.GetText())
 
 			if outputStr == "yes" {
 				g.gameState.ExitSmallMap()
-				g.bShowInputBox = false
-				g.inputBox = nil
+				g.dialogStack.PopModalDialog()
+
 			} else if outputStr == "no" {
 				// we just go back to what we were doing
-				g.bShowInputBox = false
-				g.inputBox = nil
+				g.dialogStack.PopModalDialog()
 			}
+
 		})
 }

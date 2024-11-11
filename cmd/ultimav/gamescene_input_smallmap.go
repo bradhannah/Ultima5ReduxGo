@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+	"log"
+
+	"github.com/hajimehoshi/ebiten/v2"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
-	"github.com/hajimehoshi/ebiten/v2"
-	"log"
 )
 
 func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
@@ -15,7 +17,8 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		g.addRowStr("Pass")
 		g.gameState.DateTime.Advance(game_state.DefaultSmallMapMinutesPerTurn)
 	case ebiten.KeyBackquote:
-		g.bShowDebugConsole = !g.bShowDebugConsole
+		// g.bShowDebugConsole = !g.bShowDebugConsole
+		g.ToggleDebug()
 	case ebiten.KeyEnter:
 		g.addRowStr("Enter")
 	case ebiten.KeyUp:

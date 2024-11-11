@@ -34,13 +34,8 @@ var boundKeysGame = []ebiten.Key{
 func (g *GameScene) Update(_ *Game) error {
 	mapType := g.gameState.Location.GetMapType()
 
-	if g.bShowDebugConsole {
-		// if debug console is showing, then we eat all the input
-		g.debugConsole.update()
-		return nil
-	}
-	if g.bShowInputBox {
-		g.inputBox.Update()
+	if g.updateDialogs() {
+		// only run a single update routine at a time
 		return nil
 	}
 
@@ -78,4 +73,12 @@ func (g *GameScene) Update(_ *Game) error {
 	}
 
 	return nil
+}
+
+func (g *GameScene) updateDialogs() bool {
+	if !g.dialogStack.HasOpenDialog() {
+		return false
+	}
+	(*g.dialogStack.PeekTopModalDialog()).Update()
+	return true
 }

@@ -2,12 +2,14 @@ package main
 
 import (
 	"fmt"
+	"image"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"image"
 )
 
 // Draw method for the GameScene
@@ -48,15 +50,24 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 	g.characterSummary.Draw(g.gameState, screen)
 	g.provisionSummary.Draw(g.gameState, screen)
 
-	if g.bShowDebugConsole {
-		g.debugConsole.drawDebugConsole(screen)
-	}
-	if g.bShowInputBox {
-		g.inputBox.Draw(screen)
-	}
+	// draw the dialogs - but stacked on top of each other
+	g.drawDialogs(screen)
+
+	// if g.bShowDebugConsole {
+	// 	g.debugConsole.Draw(screen)
+	// }
+	// if g.bShowInputBox {
+	// 	g.inputBox.Draw(screen)
+	// }
 
 	// Render the game scene
 	ebitenutil.DebugPrint(screen, g.debugMessage)
+}
+
+func (g *GameScene) drawDialogs(screen *ebiten.Image) {
+	for _, val := range g.dialogStack.Dialogs {
+		(*val).Draw(screen)
+	}
 }
 
 // drawBorders

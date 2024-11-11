@@ -17,7 +17,8 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 		g.addRowStr("Pass")
 		g.gameState.DateTime.Advance(game_state.DefaultLargeMapMinutesPerTurn)
 	case ebiten.KeyBackquote:
-		g.bShowDebugConsole = !g.bShowDebugConsole
+		// g.bShowDebugConsole = !g.bShowDebugConsole
+		g.ToggleDebug()
 	case ebiten.KeyEnter:
 		g.addRowStr("Enter")
 	case ebiten.KeyUp:

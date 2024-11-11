@@ -10,7 +10,6 @@ import (
 	mainscreen2 "github.com/bradhannah/Ultima5ReduxGo/internal/ui/mainscreen"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
@@ -60,11 +59,13 @@ type GameScene struct {
 	characterSummary    *mainscreen2.CharacterSummary
 	provisionSummary    *mainscreen2.ProvisionSummary
 
-	debugConsole      *DebugConsole
-	bShowDebugConsole bool
+	dialogStack widgets.DialogStack
 
-	inputBox      *widgets.InputBox
-	bShowInputBox bool
+	debugConsole *DebugConsole
+	// bShowDebugConsole bool
+	//
+	// inputBox      *widgets.InputBox
+	// bShowInputBox bool
 
 	debugMessage string
 
@@ -159,7 +160,20 @@ func (g *GameScene) GetCurrentLocationReference() *references.SmallLocationRefer
 	return g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location)
 }
 
-func (g *GameScene) DoModalInputBox(question string, textCommand *grammar.TextCommand) {
-	g.inputBox = widgets.NewInputBox(question, textCommand)
-	g.bShowInputBox = true
+func (g *GameScene) IsDebugDialogOpen() bool {
+	return g.dialogStack.GetIndexOfDialogType((*DebugConsole)(nil)) != -1
+}
+
+func (g *GameScene) ToggleDebug() {
+	if !g.IsDebugDialogOpen() {
+		g.dialogStack.PushModalDialog(g.debugConsole)
+		return
+	}
+	nIndex := g.dialogStack.GetIndexOfDialogType((*DebugConsole)(nil))
+	if nIndex == -1 {
+		log.Fatal("Unexpected - should find debug dialog index")
+	}
+	// g.dialogs = append(g.dialogs[:nIndex], g.dialogs[nIndex+1:]...)
+	dc := (*DebugConsole)(nil)
+	g.dialogStack.RemoveWidget(dc)
 }
