@@ -116,8 +116,8 @@ func (i *InputBox) getTextQuestionDrawOptions() *ebiten.DrawImageOptions {
 	dop := &ebiten.DrawImageOptions{}
 
 	leftTextX, leftTextY := sprites.GetTranslateXYByPercent(
-		i.borderBoxPercents.StartPercentX+inputPercentIntoBorder,
-		i.borderBoxPercents.StartPercentY+inputPercentIntoBorder+0.01)
+		sprites.PercentBasedCenterPoint{X: i.borderBoxPercents.StartPercentX + inputPercentIntoBorder,
+			Y: i.borderBoxPercents.StartPercentY + inputPercentIntoBorder + 0.01})
 	dop.GeoM.Translate(leftTextX, leftTextY)
 
 	return dop

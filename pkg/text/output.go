@@ -148,7 +148,7 @@ func trimLeadingSpaces(s string) string {
 func (o *Output) DrawRightSideOutput(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(sprites.GetTranslateXYByPercent(
-		.77, .5175))
+		sprites.PercentBasedCenterPoint{X: .77, Y: .5175}))
 
 	o.DrawText(screen, o.GetOutputStr(true), op)
 }

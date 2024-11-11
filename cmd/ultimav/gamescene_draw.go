@@ -12,6 +12,13 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
+var gameScreenPercents = sprites.PercentBasedPlacement{
+	StartPercentX: .015,
+	EndPercentX:   0.75,
+	StartPercentY: 0.02,
+	EndPercentY:   0.98,
+}
+
 // Draw method for the GameScene
 func (g *GameScene) Draw(screen *ebiten.Image) {
 	if g.lastCheckedResolution != config.GetWindowResolutionFromEbiten() {
@@ -35,12 +42,8 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 	g.drawMap(g.mapImage)
 	g.drawMapUnits(g.mapImage)
 
-	op := sprites.GetDrawOptionsFromPercentsForWholeScreen(g.mapImage, sprites.PercentBasedPlacement{
-		StartPercentX: .015,
-		EndPercentX:   0.75,
-		StartPercentY: 0.02,
-		EndPercentY:   0.98,
-	})
+	op := sprites.GetDrawOptionsFromPercentsForWholeScreen(g.mapImage,
+		gameScreenPercents)
 
 	screen.DrawImage(g.mapImage, op)
 	g.drawBorders(screen)
@@ -52,13 +55,6 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 
 	// draw the dialogs - but stacked on top of each other
 	g.drawDialogs(screen)
-
-	// if g.bShowDebugConsole {
-	// 	g.debugConsole.Draw(screen)
-	// }
-	// if g.bShowInputBox {
-	// 	g.inputBox.Draw(screen)
-	// }
 
 	// Render the game scene
 	ebitenutil.DebugPrint(screen, g.debugMessage)

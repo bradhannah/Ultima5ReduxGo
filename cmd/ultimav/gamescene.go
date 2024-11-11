@@ -62,10 +62,6 @@ type GameScene struct {
 	dialogStack widgets.DialogStack
 
 	debugConsole *DebugConsole
-	// bShowDebugConsole bool
-	//
-	// inputBox      *widgets.InputBox
-	// bShowInputBox bool
 
 	debugMessage string
 

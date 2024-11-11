@@ -2,11 +2,13 @@ package mainscreen
 
 import (
 	"fmt"
+
+	"github.com/hajimehoshi/ebiten/v2"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
-	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type ProvisionSummary struct {
@@ -24,13 +26,13 @@ func NewProvisionSummary(spriteSheet *sprites.SpriteSheet) *ProvisionSummary {
 	provisionSummary.ultimaFont = text.NewUltimaFont(text.GetScaledNumberToResolution(fontPoint))
 	provisionSummary.output = text.NewOutput(provisionSummary.ultimaFont, lineSpacing, 1, maxCharsPerLine)
 
-	//provisionSummary.FullSummaryImage = ebiten.NewImage(perCharacterSummaryWidth, perCharacterSummaryHeight*game_state.MAX_CHARACTERS_IN_PARTY)
+	// provisionSummary.FullSummaryImage = ebiten.NewImage(perCharacterSummaryWidth, perCharacterSummaryHeight*game_state.MAX_CHARACTERS_IN_PARTY)
 
 	return &provisionSummary
 }
 
 func (p *ProvisionSummary) Draw(gameState *game_state.GameState, screen *ebiten.Image) {
-	//textTopYPercent := .845
+	// textTopYPercent := .845
 
 	p.drawRow(0.81, screen,
 		[3]*ebiten.Image{
@@ -80,7 +82,7 @@ func (p *ProvisionSummary) drawRow(startY float64, screen *ebiten.Image, rowSpri
 		screen.DrawImage(sprite, dop)
 
 		textDop := ebiten.DrawImageOptions{}
-		textDop.GeoM.Translate(sprites.GetTranslateXYByPercent(leftImageStartX+percentIncreaseByX*(float64(i)+1), startY+percentBetweenImageAndText+0.005))
+		textDop.GeoM.Translate(sprites.GetTranslateXYByPercent(sprites.PercentBasedCenterPoint{X: leftImageStartX + percentIncreaseByX*(float64(i)+1), Y: startY + percentBetweenImageAndText + 0.005}))
 		p.output.DrawTextCenter(screen, values[i], &textDop)
 	}
 }
@@ -90,12 +92,12 @@ func (p *ProvisionSummary) drawBottomRow(startY float64, screen *ebiten.Image, s
 
 	textDop := ebiten.DrawImageOptions{}
 	textDop.GeoM.Translate(sprites.GetTranslateXYByPercent(
-		leftImageStartX+percentIncreaseByX, startY))
-	//p.output.DrawTextCenter(screen, "4-6-139", &textDop)
+		sprites.PercentBasedCenterPoint{X: leftImageStartX + percentIncreaseByX, Y: startY}))
+	// p.output.DrawTextCenter(screen, "4-6-139", &textDop)
 	p.output.DrawTextCenter(screen, state.DateTime.GetDateAsString(), &textDop)
 
 	textDop.GeoM.Reset()
 	textDop.GeoM.Translate(sprites.GetTranslateXYByPercent(
-		leftImageStartX+percentIncreaseByX*3, startY))
+		sprites.PercentBasedCenterPoint{X: leftImageStartX + percentIncreaseByX*3, Y: startY}))
 	p.output.DrawTextCenter(screen, state.DateTime.GetTimeAsString(), &textDop)
 }

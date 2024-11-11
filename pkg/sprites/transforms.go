@@ -1,9 +1,11 @@
 package sprites
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
-	"github.com/hajimehoshi/ebiten/v2"
 	"image"
+
+	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 )
 
 // PercentXBasedPlacement
@@ -30,11 +32,15 @@ type PercentBasedPlacement struct {
 	EndPercentY   float64
 }
 
-func (p *PercentBasedPlacement) ShrinkByPercent(percent float64) {
-	p.StartPercentX *= percent
-	p.EndPercentX *= percent
-	p.StartPercentY *= percent
-	p.EndPercentY *= percent
+func (p *PercentBasedPlacement) GetCenterPoint() *PercentBasedCenterPoint {
+	return &PercentBasedCenterPoint{
+		X: ((p.EndPercentX - p.StartPercentX) / 2) + p.StartPercentX,
+		Y: ((p.EndPercentY - p.StartPercentY) / 2) + p.StartPercentY,
+	}
+}
+
+type PercentBasedCenterPoint struct {
+	X, Y float64
 }
 
 func GetRectangleFromPercents(placement PercentBasedPlacement) *image.Rectangle {
@@ -136,11 +142,11 @@ func GetYSpriteWithPercents(rect image.Rectangle, placement PercentYBasedPlaceme
 // GetTranslateXYByPercent
 // Use to get an X, Y transform based on the percentage of the screen. This is not for scale.
 // Used often for top left of fonts which should be scaled via point, not GeoM.Scale
-func GetTranslateXYByPercent(xPercent float64, yPercent float64) (float64, float64) {
+func GetTranslateXYByPercent(pbcp PercentBasedCenterPoint) (float64, float64) {
 	screenResolution := config.GetWindowResolutionFromEbiten()
 
 	// get the x start and end values based on the percent
-	var xLeft = float64(screenResolution.X) * xPercent
-	var yTop = float64(screenResolution.Y) * yPercent
+	var xLeft = float64(screenResolution.X) * pbcp.X
+	var yTop = float64(screenResolution.Y) * pbcp.Y
 	return xLeft, yTop
 }
