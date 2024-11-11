@@ -6,7 +6,7 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-// Generic Max function
+// Max Generic Max function
 func Max[T constraints.Ordered](a, b T) T {
 	if a > b {
 		return a
@@ -14,7 +14,7 @@ func Max[T constraints.Ordered](a, b T) T {
 	return b
 }
 
-// Generic Min function
+// Min Generic Min function
 func Min[T constraints.Ordered](a, b T) T {
 	if a < b {
 		return a

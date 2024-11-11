@@ -207,6 +207,11 @@ func (d *DebugConsole) createFullScreenToggle() *grammar.TextCommand {
 			CaseSensitive: false,
 		}},
 		func(s string, command *grammar.TextCommand) {
+			// d.gameScene.dialogStack.DoModalInputBox(
+			// 	"Dost thou wish to leave?",
+			// 	d.gameScene.createTextCommandExitBuilding(),
+			// 	d.gameScene.keyboard)
+
 			d.gameScene.gameConfig.SetFullScreen(!d.gameScene.gameConfig.SavedConfigData.FullScreen)
 		})
 }

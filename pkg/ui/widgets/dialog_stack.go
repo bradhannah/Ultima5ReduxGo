@@ -5,14 +5,15 @@ import (
 
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 )
 
 type DialogStack struct {
 	Dialogs []*Widget
 }
 
-func (d *DialogStack) DoModalInputBox(question string, textCommand *grammar.TextCommand) {
-	inputBox := NewInputBox(question, textCommand)
+func (d *DialogStack) DoModalInputBox(question string, textCommand *grammar.TextCommand, keyboard *input.Keyboard) {
+	inputBox := NewInputBox(question, textCommand, keyboard)
 	d.PushModalDialog(inputBox)
 }
 

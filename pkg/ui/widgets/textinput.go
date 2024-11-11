@@ -87,11 +87,13 @@ func NewTextInput(
 	fontPointSize float64,
 	maxCharsPerLine int,
 	textCommands *grammar.TextCommands,
-	callbacks TextInputCallbacks) *TextInput {
+	callbacks TextInputCallbacks,
+	keyboard *input.Keyboard) *TextInput {
 
 	textInput := &TextInput{}
 	textInput.maxCharsPerLine = maxCharsPerLine
-	textInput.keyboard = input.NewKeyboard(keyPressDelay)
+	// textInput.keyboard = input.NewKeyboard(keyPressDelay)
+	textInput.keyboard = keyboard
 	textInput.textCommands = textCommands
 	textInput.TextInputCallbacks = callbacks
 	textInput.mainTextPlacement = mainTextPlacement

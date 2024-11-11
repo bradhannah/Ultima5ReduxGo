@@ -80,7 +80,10 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 		g.gameState.Position = *g.gameState.Position.GetWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
 	}
 	if g.gameState.IsOutOfBounds(*newPosition) {
-		g.dialogStack.DoModalInputBox("Dost thou wish to leave?", g.createTextCommandExitBuilding())
+		g.dialogStack.DoModalInputBox(
+			"Dost thou wish to leave?",
+			g.createTextCommandExitBuilding(),
+			g.keyboard)
 
 		g.addRowStr("OUT OF BOUNDS")
 		return

@@ -30,6 +30,6 @@ func (g *GameScene) createTextCommandExitBuilding() *grammar.TextCommand {
 				// we just go back to what we were doing
 				g.dialogStack.PopModalDialog()
 			}
-
+			g.keyboard.SetForceWaitAnyKey(500)
 		})
 }

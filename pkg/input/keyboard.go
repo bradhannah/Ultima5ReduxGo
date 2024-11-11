@@ -2,13 +2,15 @@ package input
 
 import (
 	"fmt"
-	"github.com/hajimehoshi/ebiten/v2"
 	"time"
+
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type Keyboard struct {
 	millisecondDelayBetweenKeyPresses int
 	timeOfLastKeyPress                int64
+	timeToAllowNextKeypress           int64
 	lastKeyPressed                    ebiten.Key
 	forceRegisterNextKeyPressed       bool
 }
@@ -25,6 +27,10 @@ func NewKeyboard(millisecondDelayBetweenKeyPresses int) *Keyboard {
 // the previous key press
 func (k *Keyboard) TryToRegisterKeyPress(key ebiten.Key) bool {
 	nowMilli := time.Now().UnixMilli()
+	if nowMilli < k.timeToAllowNextKeypress {
+		return false
+	}
+
 	if key != k.lastKeyPressed || nowMilli-k.timeOfLastKeyPress > int64(k.millisecondDelayBetweenKeyPresses) || k.forceRegisterNextKeyPressed {
 		k.lastKeyPressed = key
 		k.timeOfLastKeyPress = nowMilli
@@ -64,8 +70,12 @@ func (k *Keyboard) SetLastKeyPressedNowPlusMs(ms int) {
 	k.timeOfLastKeyPress = time.Now().UnixMilli() + int64(ms)
 }
 
+func (k *Keyboard) SetForceWaitAnyKey(ms int) {
+	k.timeToAllowNextKeypress = time.Now().UnixMilli() + int64(ms)
+}
+
 func (k *Keyboard) SetAllowKeyPressImmediately() {
-	//k.timeOfLastKeyPress = 0
+	// k.timeOfLastKeyPress = 0
 	k.forceRegisterNextKeyPressed = true
 }
 

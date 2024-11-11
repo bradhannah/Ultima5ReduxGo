@@ -7,6 +7,7 @@ import (
 
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 )
@@ -38,7 +39,7 @@ type InputBox struct {
 	borderBoxPercents sprites.PercentBasedPlacement
 }
 
-func NewInputBox(question string, textCommand *grammar.TextCommand) *InputBox {
+func NewInputBox(question string, textCommand *grammar.TextCommand, keyboard *input.Keyboard) *InputBox {
 	inputBox := &InputBox{}
 	inputBox.font = text.NewUltimaFont(text.GetScaledNumberToResolution(inputBoxFontPoint))
 
@@ -71,7 +72,8 @@ func NewInputBox(question string, textCommand *grammar.TextCommand) *InputBox {
 		TextInputCallbacks{
 			AmbiguousAutoComplete: func(message string) {
 			},
-		})
+		},
+		keyboard)
 
 	heightOfText := -float64(inputBoxDefaultLineSpacing*(nQuestionRows)) + (inputBoxDefaultLineSpacing * 0.5)
 	screenResolution := config.GetWindowResolutionFromEbiten()

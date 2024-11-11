@@ -83,7 +83,8 @@ func (d *DebugConsole) initializeResizeableVisualElements() {
 				AmbiguousAutoComplete: func(message string) {
 					d.Output.AddRowStr(message)
 				},
-			})
+			},
+			d.gameScene.keyboard)
 	} else {
 		d.TextInput.SetFontPoint(text.GetScaledNumberToResolution(debugFontPoint))
 	}
@@ -94,7 +95,6 @@ func (d *DebugConsole) Update() {
 		if !d.gameScene.keyboard.TryToRegisterKeyPress(ebiten.KeyBackquote) {
 			return
 		}
-		// d.gameScene.bShowDebugConsole = false
 		d.gameScene.dialogStack.PopModalDialog()
 	} else {
 		d.TextInput.Update()
