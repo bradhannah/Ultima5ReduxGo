@@ -92,7 +92,6 @@ func NewTextInput(
 
 	textInput := &TextInput{}
 	textInput.maxCharsPerLine = maxCharsPerLine
-	// textInput.keyboard = input.NewKeyboard(keyPressDelay)
 	textInput.keyboard = keyboard
 	textInput.textCommands = textCommands
 	textInput.TextInputCallbacks = callbacks

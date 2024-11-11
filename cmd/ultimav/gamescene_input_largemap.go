@@ -12,7 +12,7 @@ import (
 func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 	switch key {
 	case ebiten.KeyEscape:
-
+		g.DoEscapeMenu()
 	case ebiten.KeySpace:
 		g.addRowStr("Pass")
 		g.gameState.DateTime.Advance(game_state.DefaultLargeMapMinutesPerTurn)
