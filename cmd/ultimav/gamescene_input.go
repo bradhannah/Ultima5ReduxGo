@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 const (
@@ -26,6 +27,7 @@ var boundKeysGame = []ebiten.Key{
 	ebiten.KeyL,
 	ebiten.KeySlash,
 	ebiten.KeyBackquote,
+	ebiten.KeyEscape,
 }
 
 // Update method for the GameScene

@@ -2,13 +2,17 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/hajimehoshi/ebiten/v2"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
-	"github.com/hajimehoshi/ebiten/v2"
 )
 
 func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 	switch key {
+	case ebiten.KeyEscape:
+
 	case ebiten.KeySpace:
 		g.addRowStr("Pass")
 		g.gameState.DateTime.Advance(game_state.DefaultLargeMapMinutesPerTurn)
