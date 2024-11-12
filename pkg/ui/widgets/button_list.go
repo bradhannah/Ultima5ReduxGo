@@ -8,7 +8,9 @@ import (
 )
 
 const buttonListModalStartYPercent = 0.35
-const buttonHeight = 0.05
+const buttonSize = MediumButton
+
+// const buttonHeight = 0.05
 
 // ButtonListModal GUI modal dialog that shows a number of buttons and lets you select
 type ButtonListModal struct {
@@ -68,9 +70,10 @@ func (b *ButtonListModal) AddButton(buttonText string, onClickCallback func()) {
 }
 
 func (b *ButtonListModal) getCenterPoint(nButton int) sprites.PercentBasedCenterPoint {
+
 	return sprites.PercentBasedCenterPoint{
 		X: b.gameScreenPercents.GetCenterPoint().X,
-		Y: buttonListModalStartYPercent + (float64(nButton) * buttonHeight * 1.25),
+		Y: buttonListModalStartYPercent + (float64(nButton) * GetButtonHeightPercent(buttonSize) * 1.25),
 	}
 }
 
@@ -79,7 +82,7 @@ func (b *ButtonListModal) initializeBorder() {
 		StartPercentX: b.gameScreenCenter.X - .15,
 		EndPercentX:   b.gameScreenCenter.X + .15,
 		StartPercentY: buttonListModalStartYPercent - 0.1,
-		EndPercentY:   buttonListModalStartYPercent + (float64(len(b.buttons)) * buttonHeight * 1.25),
+		EndPercentY:   buttonListModalStartYPercent + (float64(len(b.buttons)) * GetButtonHeightPercent(buttonSize) * 1.25),
 	}
 
 	b.border = NewBorder(p, 601)

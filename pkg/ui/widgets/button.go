@@ -16,9 +16,6 @@ const (
 	LargeButton
 )
 
-var mediumButtonPercentWidth = 0.1
-var mediumButtonPercentHeight = 0.05
-
 type Button struct {
 	text        string
 	callback    func()
@@ -49,10 +46,10 @@ func (b *Button) setPosition(centerPoint sprites.PercentBasedCenterPoint) {
 	switch b.size {
 	case MediumButton:
 		b.pbp = sprites.PercentBasedPlacement{
-			StartPercentX: centerPoint.X - mediumButtonPercentWidth/2,
-			EndPercentX:   centerPoint.X + mediumButtonPercentWidth/2,
-			StartPercentY: centerPoint.Y - mediumButtonPercentHeight/2,
-			EndPercentY:   centerPoint.Y + mediumButtonPercentHeight/2,
+			StartPercentX: centerPoint.X - b.GetWidthPercent()/2,
+			EndPercentX:   centerPoint.X + b.GetWidthPercent()/2,
+			StartPercentY: centerPoint.Y - b.GetHeightPercent()/2,
+			EndPercentY:   centerPoint.Y + b.GetHeightPercent()/2,
 		}
 	default:
 		panic("unhandled default case")
@@ -71,4 +68,39 @@ func (b *Button) Draw(screen *ebiten.Image) {
 }
 
 func (b *Button) Update() {
+}
+
+func (b *Button) GetHeightPercent() float64 {
+	return GetButtonHeightPercent(b.size)
+}
+
+func (b *Button) GetWidthPercent() float64 {
+	return GetButtonWidthPercent(b.size)
+}
+
+func GetButtonWidthPercent(size ButtonSize) float64 {
+	var mediumButtonPercentWidth = 0.2
+
+	switch size {
+	case SmallButton:
+		return 0
+	case MediumButton:
+		return mediumButtonPercentWidth
+	case LargeButton:
+		return 0
+	}
+	return -1
+}
+
+func GetButtonHeightPercent(size ButtonSize) float64 {
+	var mediumButtonPercentHeight = 0.06
+	switch size {
+	case SmallButton:
+		return 0
+	case MediumButton:
+		return mediumButtonPercentHeight
+	case LargeButton:
+		return 0
+	}
+	return -1
 }
