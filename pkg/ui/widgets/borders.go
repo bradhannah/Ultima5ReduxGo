@@ -53,9 +53,9 @@ func NewBorder(percentBasedPlacement sprites.PercentBasedPlacement, bordersWithS
 	return b
 }
 
-func (b *Border) SetInteriorColor(color color.Color) {
-
-}
+// func (b *Border) SetInteriorColor(color color.Color) {
+// 	b.interiorColor = color
+// }
 
 func (b *Border) initializeBorders(percentBasedPlacement sprites.PercentBasedPlacement) {
 	// todo: generalize this function for multiple uses - it's the same as the debug console

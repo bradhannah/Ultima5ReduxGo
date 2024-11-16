@@ -66,6 +66,7 @@ func (b *ButtonListModal) Update() {
 func (b *ButtonListModal) AddButton(buttonText string, onClickCallback func()) {
 	nButton := len(b.buttons)
 	button := NewButton(buttonText, onClickCallback, b.getCenterPoint(nButton), MediumButton)
+	button.SetButtonStatus(Selected)
 	b.buttons = append(b.buttons, button)
 	b.initializeBorder()
 }
@@ -86,5 +87,5 @@ func (b *ButtonListModal) initializeBorder() {
 		EndPercentY:   buttonListModalStartYPercent + (float64(len(b.buttons)) * GetButtonHeightPercent(buttonSize) * 1.25),
 	}
 
-	b.border = NewBorder(p, 601, u_color.LighterBlueSemi)
+	b.border = NewBorder(p, 601, u_color.Black)
 }

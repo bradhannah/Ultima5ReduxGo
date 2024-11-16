@@ -1,6 +1,8 @@
 package widgets
 
 import (
+	"image/color"
+
 	"github.com/hajimehoshi/ebiten/v2"
 
 	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
@@ -33,6 +35,8 @@ type Button struct {
 	centerPoint  sprites.PercentBasedCenterPoint
 	pbp          sprites.PercentBasedPlacement
 	buttonStatus ButtonStatus
+
+	interiorColor color.Color
 }
 
 func NewButton(
@@ -45,8 +49,9 @@ func NewButton(
 	button.text = text
 	button.callback = callback
 	button.size = size
+	button.interiorColor = color.Black
 	button.setPosition(centerPoint)
-	button.initializeBorder()
+	button.initializeBorder(button.interiorColor)
 
 	return button
 }
@@ -64,14 +69,15 @@ func (b *Button) setPosition(centerPoint sprites.PercentBasedCenterPoint) {
 	default:
 		panic("unhandled default case")
 	}
-	b.initializeBorder()
+	b.initializeBorder(b.interiorColor)
 }
 
-func (b *Button) initializeBorder() {
+func (b *Button) initializeBorder(color color.Color) {
 	b.border = NewBorder(
 		b.pbp,
 		borderWidthScaling,
-		u_color.Black)
+		color,
+	)
 }
 
 func (b *Button) Draw(screen *ebiten.Image) {
@@ -85,9 +91,10 @@ func (b *Button) SetButtonStatus(buttonStatus ButtonStatus) {
 	b.buttonStatus = buttonStatus
 	switch buttonStatus {
 	case Selected:
-		b.border.SetInteriorColor(u_color.LighterBlueSemi)
+		b.interiorColor = u_color.UltimaBlue
+		// b.border.SetInteriorColor(u_color.UltimaBlue)
 	}
-	b.initializeBorder()
+	b.initializeBorder(b.interiorColor)
 }
 
 func (b *Button) GetHeightPercent() float64 {
