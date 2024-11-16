@@ -72,7 +72,7 @@ type TextInput struct {
 	TextInputCallbacks TextInputCallbacks
 }
 
-var nonAlphaNumericBoundKeys = []ebiten.Key{ebiten.KeyDown,
+var nonAlphaNumericBoundKeys = []ebiten.Key{
 	ebiten.KeyEnter,
 	ebiten.KeySpace,
 	ebiten.KeyBackspace,
@@ -80,6 +80,10 @@ var nonAlphaNumericBoundKeys = []ebiten.Key{ebiten.KeyDown,
 	ebiten.KeyEscape,
 	ebiten.KeyTab,
 	ebiten.KeyMinus,
+	ebiten.KeyDown,
+	ebiten.KeyLeft,
+	ebiten.KeyRight,
+	ebiten.KeyUp,
 }
 
 func NewTextInput(

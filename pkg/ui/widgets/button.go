@@ -92,7 +92,8 @@ func (b *Button) SetButtonStatus(buttonStatus ButtonStatus) {
 	switch buttonStatus {
 	case Selected:
 		b.interiorColor = u_color.UltimaBlue
-		// b.border.SetInteriorColor(u_color.UltimaBlue)
+	case NotSelected:
+		b.interiorColor = u_color.LighterBlackSemi
 	}
 	b.initializeBorder(b.interiorColor)
 }

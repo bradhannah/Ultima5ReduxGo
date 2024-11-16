@@ -4,6 +4,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 
 	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 )
@@ -21,6 +22,8 @@ type ButtonListModal struct {
 	closeNoActionCallback func()
 	gameScreenPercents    *sprites.PercentBasedPlacement
 	gameScreenCenter      *sprites.PercentBasedCenterPoint
+
+	currentSelectionIndex int
 }
 
 func NewButtonListModal(closeNoActionCallback func(),
@@ -31,6 +34,8 @@ func NewButtonListModal(closeNoActionCallback func(),
 	buttonListModal.closeNoActionCallback = closeNoActionCallback
 	buttonListModal.gameScreenPercents = gameScreenPercents
 	buttonListModal.gameScreenCenter = gameScreenPercents.GetCenterPoint()
+
+	buttonListModal.currentSelectionIndex = -1
 
 	return buttonListModal
 }
@@ -57,10 +62,26 @@ func (b *ButtonListModal) Update() {
 
 	switch *boundKey {
 	case ebiten.KeyEscape:
-
-		// t.output.AppendToCurrentRowStr("-")
 		b.closeNoActionCallback()
+	case ebiten.KeyDown, ebiten.KeyRight:
+		b.GoDown()
+	case ebiten.KeyUp, ebiten.KeyLeft:
+		b.GoUp()
 	}
+}
+
+func (b *ButtonListModal) GoDown() {
+	b.currentSelectionIndex = (b.currentSelectionIndex + 1) % len(b.buttons)
+	b.updateButtons()
+}
+
+func (b *ButtonListModal) GoUp() {
+	if b.currentSelectionIndex == 0 {
+		b.currentSelectionIndex = len(b.buttons) - 1
+	} else {
+		b.currentSelectionIndex = helpers.Max(b.currentSelectionIndex-1, 0)
+	}
+	b.updateButtons()
 }
 
 func (b *ButtonListModal) AddButton(buttonText string, onClickCallback func()) {
@@ -69,6 +90,21 @@ func (b *ButtonListModal) AddButton(buttonText string, onClickCallback func()) {
 	button.SetButtonStatus(Selected)
 	b.buttons = append(b.buttons, button)
 	b.initializeBorder()
+
+	if b.currentSelectionIndex == -1 {
+		b.currentSelectionIndex = nButton
+	}
+	b.updateButtons()
+}
+
+func (b *ButtonListModal) updateButtons() {
+	for i, button := range b.buttons {
+		if i == b.currentSelectionIndex {
+			button.SetButtonStatus(Selected)
+		} else {
+			button.SetButtonStatus(NotSelected)
+		}
+	}
 }
 
 func (b *ButtonListModal) getCenterPoint(nButton int) sprites.PercentBasedCenterPoint {
