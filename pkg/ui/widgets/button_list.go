@@ -3,6 +3,7 @@ package widgets
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 
+	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 )
@@ -85,5 +86,5 @@ func (b *ButtonListModal) initializeBorder() {
 		EndPercentY:   buttonListModalStartYPercent + (float64(len(b.buttons)) * GetButtonHeightPercent(buttonSize) * 1.25),
 	}
 
-	b.border = NewBorder(p, 601)
+	b.border = NewBorder(p, 601, u_color.LighterBlueSemi)
 }

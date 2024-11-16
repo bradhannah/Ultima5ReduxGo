@@ -5,6 +5,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 
+	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ui/widgets"
@@ -53,7 +54,8 @@ func (d *DebugConsole) initializeResizeableVisualElements() {
 			StartPercentY: .7,
 			EndPercentY:   1,
 		},
-		borderWidthScaling)
+		borderWidthScaling,
+		u_color.Black)
 
 	d.font = text.NewUltimaFont(text.GetScaledNumberToResolution(debugFontPoint))
 
