@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	e_text "github.com/hajimehoshi/ebiten/v2/text/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/opentype"
@@ -145,7 +146,7 @@ func (t *TextInput) Draw(screen *ebiten.Image) {
 	t.output.DrawContinuousOutputTexOnXy(screen, image.Point{
 		X: textRect.Min.X,
 		Y: textRect.Min.Y,
-	}, false)
+	}, false, e_text.AlignStart, e_text.AlignStart)
 	t.drawCursor(screen)
 }
 

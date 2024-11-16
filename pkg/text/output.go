@@ -153,15 +153,17 @@ func (o *Output) DrawRightSideOutput(screen *ebiten.Image) {
 	o.DrawText(screen, o.GetOutputStr(true), op)
 }
 
-func (o *Output) DrawContinuousOutputTexOnXy(screen *ebiten.Image, point image.Point, bShowEmptyNewLines bool) {
+func (o *Output) DrawContinuousOutputTexOnXy(screen *ebiten.Image, point image.Point, bShowEmptyNewLines bool, horizAlign text.Align, vertAlign text.Align) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(float64(point.X), float64(point.Y))
 
 	dop := text.DrawOptions{
 		DrawImageOptions: *op,
 		LayoutOptions: text.LayoutOptions{
-			LineSpacing:  o.lineSpacing,
-			PrimaryAlign: text.AlignStart,
+			LineSpacing:    o.lineSpacing,
+			PrimaryAlign:   horizAlign,
+			SecondaryAlign: vertAlign,
+			// PrimaryAlign: text.AlignStart,
 		},
 	}
 

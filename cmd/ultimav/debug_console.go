@@ -4,6 +4,7 @@ import (
 	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	e_text "github.com/hajimehoshi/ebiten/v2/text/v2"
 
 	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
@@ -118,7 +119,7 @@ func (d *DebugConsole) Draw(screen *ebiten.Image) {
 	d.Output.DrawContinuousOutputTexOnXy(screen, image.Point{
 		X: textRect.Min.X,
 		Y: textRect.Min.Y,
-	}, false)
+	}, false, e_text.AlignStart, e_text.AlignStart)
 	d.border.DrawBorder(screen)
 
 	d.TextInput.Draw(screen)
