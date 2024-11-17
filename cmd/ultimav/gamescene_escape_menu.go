@@ -3,14 +3,14 @@ package main
 import (
 	"os"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ui/widgets"
 )
 
-const startEscapeMenuPercentY = 0.35
+// const startEscapeMenuPercentY = 0.35
 
 func (g *GameScene) DoEscapeMenu() {
 	bl := widgets.NewButtonListModal(
+		"Ultima V Redux",
 		func() {
 			g.dialogStack.PopModalDialog()
 			g.keyboard.SetForceWaitAnyKey(250)
@@ -32,11 +32,11 @@ func (g *GameScene) DoEscapeMenu() {
 	})
 }
 
-func (g *GameScene) getPercentBasedPlacementForEscapeMenu(nIndex int) sprites.PercentBasedPlacement {
-	return sprites.PercentBasedPlacement{
-		StartPercentX: .45,
-		EndPercentX:   .55,
-		StartPercentY: startEscapeMenuPercentY * (.05 * float64(nIndex)),
-		EndPercentY:   startEscapeMenuPercentY + .05,
-	}
-}
+// func (g *GameScene) getPercentBasedPlacementForEscapeMenu(nIndex int) sprites.PercentBasedPlacement {
+// 	return sprites.PercentBasedPlacement{
+// 		StartPercentX: .45,
+// 		EndPercentX:   .55,
+// 		StartPercentY: startEscapeMenuPercentY * (.05 * float64(nIndex)),
+// 		EndPercentY:   startEscapeMenuPercentY + .05,
+// 	}
+// }

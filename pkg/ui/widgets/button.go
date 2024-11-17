@@ -29,6 +29,9 @@ const (
 	LargeButtonFontPoint  = 30
 )
 
+var mediumButtonPercentHeight = 0.065
+var mediumButtonPercentWidth = 0.2
+
 const (
 	SmallButtonLineSpacing  = SmallButtonFontPoint
 	MediumButtonLineSpacing = MediumButtonFontPoint
@@ -110,22 +113,14 @@ func (b *Button) initializeBorder(color color.Color) {
 func (b *Button) Draw(screen *ebiten.Image) {
 	b.border.Draw(screen)
 
-	const percentIntoBorder = 0.02
+	// const percentIntoBorder = 0.02
 	textRect := sprites.GetRectangleFromPercents(
-		// sprites.PercentBasedPlacement{
 		b.pbp,
-		// StartPercentX: 0 + percentIntoBorder,
-		// EndPercentX:   .75 + .01 - percentIntoBorder,
-		// StartPercentY: .7 + 0.03,
-		// EndPercentY:   1,
-		// }
 	)
 
 	b.Output.DrawContinuousOutputTexOnXy(screen, image.Point{
 		X: textRect.Min.X + (textRect.Dx() / 2),
 		Y: textRect.Min.Y + (textRect.Dy() / 2),
-		// X: textRect.Min.X,
-		// Y: textRect.Min.Y,
 	}, false, e_text.AlignCenter, e_text.AlignCenter)
 }
 
@@ -152,7 +147,6 @@ func (b *Button) GetWidthPercent() float64 {
 }
 
 func GetButtonWidthPercent(size ButtonSize) float64 {
-	var mediumButtonPercentWidth = 0.2
 
 	switch size {
 	case SmallButton:
@@ -166,7 +160,6 @@ func GetButtonWidthPercent(size ButtonSize) float64 {
 }
 
 func GetButtonHeightPercent(size ButtonSize) float64 {
-	var mediumButtonPercentHeight = 0.06
 	switch size {
 	case SmallButton:
 		return 0
