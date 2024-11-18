@@ -10,6 +10,7 @@ type GameReferences struct {
 	DataOvl            *DataOvl
 	TileReferences     *Tiles
 	LookReferences     *LookReferences
+	NPCReferences      *NPCReferences
 }
 
 func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences, error) {
@@ -29,6 +30,8 @@ func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences
 
 	gameRefs.TileReferences = NewTileReferences()
 	gameRefs.LookReferences = NewLookReferences(gameConfig)
+
+	gameRefs.NPCReferences = NewNPCReferences(gameConfig)
 
 	return gameRefs, nil
 }

@@ -125,3 +125,12 @@ func (uc *UltimaVConfiguration) UpdateSaveFile() {
 	viper.Set("FullScreen", uc.SavedConfigData.FullScreen)
 	_ = viper.WriteConfig()
 }
+
+func (uc *UltimaVConfiguration) GetAllNpcFilePaths() []string {
+	return []string{
+		path.Join(uc.SavedConfigData.DataFilePath, legacy.CASTLE_NPC),
+		path.Join(uc.SavedConfigData.DataFilePath, legacy.TOWNE_NPC),
+		path.Join(uc.SavedConfigData.DataFilePath, legacy.KEEP_NPC),
+		path.Join(uc.SavedConfigData.DataFilePath, legacy.DWELLING_NPC),
+	}
+}
