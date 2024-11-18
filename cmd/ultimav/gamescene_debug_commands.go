@@ -165,8 +165,10 @@ func (d *DebugConsole) createGoSmall() *grammar.TextCommand {
 			oof := d.gameScene.gameReferences.LocationReferences.GetLocationByName(locationStr)
 
 			d.dumpQuickState(oof.FriendlyLocationName)
-			d.gameScene.gameState.EnterBuilding(oof, d.gameScene.gameReferences.TileReferences)
-
+			d.gameScene.gameState.EnterBuilding(
+				oof,
+				d.gameScene.gameReferences.TileReferences,
+				d.gameScene.gameReferences.NPCReferences)
 		})
 }
 

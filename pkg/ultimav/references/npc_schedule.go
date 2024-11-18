@@ -21,14 +21,14 @@ type NPCSchedule struct {
 
 func CreateNPCSchedule(rawData []byte) NPCSchedule {
 	if len(rawData) < sizeOfNPCSchedule {
-		log.Fatal("Not enough data to create NPC schedule")
+		log.Fatal("Not enough data to create NPCReference schedule")
 	}
 	npcSchedule := (*NPCSchedule)(unsafe.Pointer(&rawData[0]))
 	return *npcSchedule
 }
 
 // struct NPC_File {
-//  NPC_Info info[8]; // each NPC file has information for 8 maps
+//  NPC_Info info[8]; // each NPCReference file has information for 8 maps
 // };
 //
 // For each city, we have an information entry for the Npcs of the map:

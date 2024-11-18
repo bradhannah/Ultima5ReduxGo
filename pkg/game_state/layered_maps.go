@@ -40,12 +40,17 @@ func (l *LayeredMaps) GetLayeredMap(generalMapType references.GeneralMapType, fl
 func (l *LayeredMaps) SetInitialLargeMap(nFloor references.FloorNumber, lrg *references.LargeMapReference) {
 	for x := references.Coordinate(0); x < references.XLargeMapTiles; x++ {
 		for y := references.Coordinate(0); y < references.YLargeMapTiles; y++ {
-			l.layeredMaps[references.LargeMapType][nFloor].SetTileByLayer(MapLayer, &references.Position{X: x, Y: y}, lrg.GetSpriteIndex(x, y)) //slr.GetTileNumber(floor, x, y))
+			l.layeredMaps[references.LargeMapType][nFloor].SetTileByLayer(MapLayer, &references.Position{X: x, Y: y}, lrg.GetSpriteIndex(x, y)) // slr.GetTileNumber(floor, x, y))
 		}
 	}
 }
 
-func (l *LayeredMaps) ResetAndCreateSmallMap(slr *references.SmallLocationReference, tileRefs *references.Tiles, xTilesInMap int, yTilesInMap int) {
+func (l *LayeredMaps) ResetAndCreateSmallMap(
+	slr *references.SmallLocationReference,
+	tileRefs *references.Tiles,
+	xTilesInMap int,
+	yTilesInMap int,
+) {
 	l.layeredMaps[references.SmallMapType] = make(map[references.FloorNumber]*LayeredMap)
 	for _, floor := range slr.ListOfFloors {
 		l.layeredMaps[references.SmallMapType][floor] = newLayeredMap(references.XSmallMapTiles, references.YSmallMapTiles, tileRefs, xTilesInMap, yTilesInMap, false)
@@ -61,16 +66,9 @@ func (l *LayeredMaps) ResetAndCreateSmallMap(slr *references.SmallLocationRefere
 
 func (l *LayeredMaps) GetTileRefByPosition(mapType references.GeneralMapType, mapLayer LayerType, pos *references.Position, nFloor references.FloorNumber) *references.Tile {
 	index := l.layeredMaps[mapType][nFloor].layers[mapLayer][pos.X][pos.Y]
-
-	//tile := l.layeredMaps[mapType][nFloor].tileRefs.GetTile(index)
-	//return l.layeredMaps[mapType][nFloor].tileRefs.GetTile(sprites.GetSpriteIndexWithAnimationBySpriteIndex(tile.Index))
-	//
 	return l.layeredMaps[mapType][nFloor].tileRefs.GetTile(index)
 }
 
 func (l *LayeredMaps) GetTileTopMapOnlyTileByPosition(mapType references.GeneralMapType, pos *references.Position, nFloor references.FloorNumber) *references.Tile {
 	return l.GetLayeredMap(mapType, nFloor).GetTileTopMapOnlyTile(pos)
-
-	//tile := l.layeredMaps[mapType][nFloor].tileRefs.GetTile(index.Index)
-	//return l.layeredMaps[mapType][nFloor].tileRefs.GetTile(sprites.GetSpriteIndexWithAnimationBySpriteIndex(tile.Index))
 }

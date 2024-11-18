@@ -47,7 +47,11 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 
 		if newLocation != references.EmptyLocation {
 			maps := g.gameReferences.LocationReferences.GetLocationReference(newLocation)
-			g.gameState.EnterBuilding(maps, g.gameReferences.TileReferences)
+			g.gameState.EnterBuilding(
+				maps,
+				g.gameReferences.TileReferences,
+				g.gameReferences.NPCReferences,
+			)
 			g.addRowStr(fmt.Sprintf("%s",
 				g.gameReferences.LocationReferences.GetLocationReference(newLocation).EnteringText))
 		} else {

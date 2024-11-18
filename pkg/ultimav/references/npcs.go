@@ -14,7 +14,7 @@ const (
 	startingNpcTypeOffset         = sizeOfNPCSchedule * npcsPerTown
 	startingNpcDialogNumberOffset = startingNpcTypeOffset + npcsPerTown
 
-	singleTownSize = (sizeOfNPCSchedule) + startingNpcTypeOffset + 1
+	singleTownSize = (sizeOfNPCSchedule * npcsPerTown) + (npcsPerTown * 2)
 )
 
 type NPCType byte
@@ -35,10 +35,10 @@ const (
 )
 
 type NPCReferences struct {
-	npcs []NPC
+	npcs []NPCReference
 }
 
-type NPC struct {
+type NPCReference struct {
 	Position     Position
 	Location     Location
 	DialogNumber byte
@@ -63,24 +63,35 @@ func NewNPCReferences(config *config.UltimaVConfiguration) *NPCReferences {
 	return allNpcs
 }
 
-func getNPCsFromFile(path string, locationOffset int) ([]NPC, error) {
+func getNPCsFromFile(path string, locationOffset int) ([]NPCReference, error) {
 	npcRaw, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
 
-	npcs := make([]NPC, npcsPerTown)
+	npcs := make([]NPCReference, 0) // npcsPerTown*townsPerNPCFile)
 	for townIndex := 0; townIndex < townsPerNPCFile; townIndex++ {
 		townOffset := singleTownSize * townIndex
 		townRawData := npcRaw[townOffset : townOffset+singleTownSize]
 		for npcIndex := 0; npcIndex < npcsPerTown; npcIndex++ {
-			npc := NPC{}
-			npc.Location = Location(locationOffset + townIndex)
+			npc := NPCReference{}
+			npc.Location = Location(locationOffset + townIndex + 1)
 
 			npc.Schedule = CreateNPCSchedule(townRawData[npcIndex*sizeOfNPCSchedule : (npcIndex*sizeOfNPCSchedule)+sizeOfNPCSchedule])
-			npc.DialogNumber = npcRaw[startingNpcDialogNumberOffset+npcIndex]
-			npc.Type = NPCType(npcRaw[startingNpcTypeOffset+npcIndex])
+			npc.DialogNumber = townRawData[startingNpcDialogNumberOffset+npcIndex]
+			npc.Type = NPCType(townRawData[startingNpcTypeOffset+npcIndex])
+			npcs = append(npcs, npc)
 		}
 	}
 	return npcs, nil
+}
+
+func (n *NPCReferences) getNPCIndexesByLocation(location Location) (startIndex, endIndex int) {
+	adjLocationIndex := int(location) - 1
+	return adjLocationIndex * npcsPerTown, adjLocationIndex*npcsPerTown + npcsPerTown
+}
+
+func (n *NPCReferences) GetNPCReferencesByLocation(location Location) []NPCReference {
+	startIndex, endIndex := n.getNPCIndexesByLocation(location)
+	return n.npcs[startIndex:endIndex]
 }
