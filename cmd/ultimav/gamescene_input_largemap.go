@@ -46,11 +46,10 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 		newLocation := g.gameReferences.LocationReferences.WorldLocations.GetLocationByPosition(g.gameState.Position)
 
 		if newLocation != references.EmptyLocation {
-			maps := g.gameReferences.LocationReferences.GetLocationReference(newLocation)
+			slr := g.gameReferences.LocationReferences.GetLocationReference(newLocation)
 			g.gameState.EnterBuilding(
-				maps,
+				slr,
 				g.gameReferences.TileReferences,
-				g.gameReferences.NPCReferences,
 			)
 			g.addRowStr(fmt.Sprintf("%s",
 				g.gameReferences.LocationReferences.GetLocationReference(newLocation).EnteringText))

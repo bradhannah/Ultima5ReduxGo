@@ -162,13 +162,13 @@ func (d *DebugConsole) createGoSmall() *grammar.TextCommand {
 		func(s string, command *grammar.TextCommand) {
 			outputStr := strings.ToLower(d.TextInput.GetText())
 			locationStr := command.GetIndexAsString(1, outputStr)
-			oof := d.gameScene.gameReferences.LocationReferences.GetLocationByName(locationStr)
+			slr := d.gameScene.gameReferences.LocationReferences.GetSmallLocationReference(locationStr)
 
-			d.dumpQuickState(oof.FriendlyLocationName)
+			d.dumpQuickState(slr.FriendlyLocationName)
 			d.gameScene.gameState.EnterBuilding(
-				oof,
+				slr,
 				d.gameScene.gameReferences.TileReferences,
-				d.gameScene.gameReferences.NPCReferences)
+			)
 		})
 }
 

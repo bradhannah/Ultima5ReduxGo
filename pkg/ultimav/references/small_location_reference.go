@@ -15,17 +15,27 @@ type SmallLocationReference struct {
 	EnteringText         string
 	SmallMapType         SmallMapMasterTypes
 	ListOfFloors         []FloorNumber
+
+	npcRefs *[]NPCReference
+
 	// config   *config.UltimaVConfiguration
 }
 
-func NewSingleSmallMapReference(location Location, dataOvl *DataOvl) *SmallLocationReference {
+func NewSingleSmallMapReference(
+	location Location,
+	npcRefs *[]NPCReference,
+	dataOvl *DataOvl) *SmallLocationReference {
+
 	smr := &SmallLocationReference{}
 	smr.Location = location
 	smr.rawData = make(map[int]*[XSmallMapTiles][YSmallMapTiles]byte)
+
 	// NOTE: this needs to be moved to a higher level
 	smr.FriendlyLocationName = dataOvl.LocationNames[location]
 	smr.SmallMapType = getMapMasterFromLocation(location)
 	smr.EnteringText = smr.getEnteringText()
+
+	smr.npcRefs = npcRefs
 	return smr
 }
 

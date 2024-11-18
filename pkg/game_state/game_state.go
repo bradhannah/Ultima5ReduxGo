@@ -2,9 +2,10 @@ package game_state
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
-	"log"
 )
 
 const (
@@ -31,8 +32,9 @@ type GameState struct {
 	Floor          references.FloorNumber
 	avatarPosition references.Position
 
-	LayeredMaps  LayeredMaps
-	PartyVehicle references.PartyVehicle
+	LayeredMaps     LayeredMaps
+	NPCAIController NPCAIController
+	PartyVehicle    references.PartyVehicle
 
 	LastLargeMapPosition references.Position
 	LastLargeMapFloor    references.FloorNumber

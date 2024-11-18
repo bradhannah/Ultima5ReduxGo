@@ -91,7 +91,8 @@ func (n *NPCReferences) getNPCIndexesByLocation(location Location) (startIndex, 
 	return adjLocationIndex * npcsPerTown, adjLocationIndex*npcsPerTown + npcsPerTown
 }
 
-func (n *NPCReferences) GetNPCReferencesByLocation(location Location) []NPCReference {
+func (n *NPCReferences) GetNPCReferencesByLocation(location Location) *[]NPCReference {
 	startIndex, endIndex := n.getNPCIndexesByLocation(location)
-	return n.npcs[startIndex:endIndex]
+	npcs := n.npcs[startIndex:endIndex]
+	return &npcs
 }

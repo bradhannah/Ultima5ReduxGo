@@ -1,15 +1,13 @@
 package game_state
 
 import (
-	"fmt"
-
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 func (g *GameState) EnterBuilding(
 	slr *references.SmallLocationReference,
 	tileRefs *references.Tiles,
-	npcRefs *references.NPCReferences,
+	// npcRefs *references.NPCReferences,
 ) {
 	if slr.Location != references.EmptyLocation {
 		g.LastLargeMapPosition = g.Position
@@ -20,15 +18,23 @@ func (g *GameState) EnterBuilding(
 		}
 		g.Location = slr.Location
 		g.Floor = 0
-		g.LayeredMaps.ResetAndCreateSmallMap(slr, tileRefs, g.XTilesInMap, g.YTilesInMap)
-		g.initializeNPCs(npcRefs, tileRefs)
+		g.LayeredMaps.ResetAndCreateSmallMap(
+			slr,
+			tileRefs,
+			// npcRefs,
+			g.XTilesInMap,
+			g.YTilesInMap)
+		g.NPCAIController = *NewNPCAIController(slr, tileRefs)
+		// g.initializeNPCs(npcRefs, tileRefs)
 	}
 }
 
-func (g *GameState) initializeNPCs(
-	npcReferences *references.NPCReferences,
-	tileRefs *references.Tiles,
-) {
-	npcs := g.GameReferences.NPCReferences.GetNPCReferencesByLocation(g.Location)
-	fmt.Sprintf("%d", npcs)
-}
+// func (g *GameState) initializeNPCs(
+// 	npcReferences *references.NPCReferences,
+// 	tileRefs *references.Tiles,
+// ) {
+// 	npcs := g.GameReferences.NPCReferences.GetNPCReferencesByLocation(g.Location)
+//
+// 	g.LayeredMaps.ResetAndCreateSmallMap()
+// 	fmt.Sprintf("%d", npcs)
+// }

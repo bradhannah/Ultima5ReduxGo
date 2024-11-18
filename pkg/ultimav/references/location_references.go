@@ -17,13 +17,15 @@ type LocationReferences struct {
 	config         *config.UltimaVConfiguration
 	dataOvl        *DataOvl
 	WorldLocations *WorldLocations
+
+	npcRefs *NPCReferences
 }
 
 func (s *LocationReferences) GetLocationReference(location Location) *SmallLocationReference {
 	return s.maps[location]
 }
 
-func (s *LocationReferences) GetLocationByName(name string) *SmallLocationReference {
+func (s *LocationReferences) GetSmallLocationReference(name string) *SmallLocationReference {
 	return s.mapsByStr[strings.ToLower(name)]
 }
 
@@ -35,6 +37,8 @@ func newSingleMapReferences(config *config.UltimaVConfiguration, dataOvl *DataOv
 
 	smr.maps = make(map[Location]*SmallLocationReference)
 	smr.mapsByStr = make(map[string]*SmallLocationReference)
+
+	smr.npcRefs = NewNPCReferences(smr.config)
 
 	return smr
 }
@@ -55,7 +59,7 @@ func (s *LocationReferences) addLocation(location Location, bHasBasement bool, n
 		floorModifier = -1
 	}
 
-	smr := NewSingleSmallMapReference(location, s.dataOvl) // SmallLocationReference{}
+	smr := NewSingleSmallMapReference(location, s.npcRefs.GetNPCReferencesByLocation(location), s.dataOvl) // SmallLocationReference{}
 	for i := 0; i < nFloors; i++ {
 		actualFloor := i + floorModifier
 		smr.addBlankFloor(actualFloor)
