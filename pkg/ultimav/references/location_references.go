@@ -59,7 +59,10 @@ func (s *LocationReferences) addLocation(location Location, bHasBasement bool, n
 		floorModifier = -1
 	}
 
-	smr := NewSingleSmallMapReference(location, s.npcRefs.GetNPCReferencesByLocation(location), s.dataOvl) // SmallLocationReference{}
+	smr := NewSingleSmallMapReference(
+		location,
+		s.npcRefs.GetNPCReferencesByLocation(location),
+		s.dataOvl)
 	for i := 0; i < nFloors; i++ {
 		actualFloor := i + floorModifier
 		smr.addBlankFloor(actualFloor)

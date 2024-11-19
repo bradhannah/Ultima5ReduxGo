@@ -3,6 +3,8 @@ package references
 import (
 	"log"
 	"unsafe"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
 )
 
 const (
@@ -19,6 +21,12 @@ type NPCSchedule struct {
 	Time  [totalScheduleItemsPerNpc + 1]byte
 }
 
+type IndividualNPCBehaviour struct {
+	Ai       byte
+	Position Position
+	Floor    FloorNumber
+}
+
 func CreateNPCSchedule(rawData []byte) NPCSchedule {
 	if len(rawData) < sizeOfNPCSchedule {
 		log.Fatal("Not enough data to create NPCReference schedule")
@@ -27,25 +35,102 @@ func CreateNPCSchedule(rawData []byte) NPCSchedule {
 	return *npcSchedule
 }
 
-// struct NPC_File {
-//  NPC_Info info[8]; // each NPCReference file has information for 8 maps
-// };
-//
-// For each city, we have an information entry for the Npcs of the map:
-//
-// struct NPC_Info {
-//  NPC_Schedule schedule[32];
-//  uint8 type[32]; // merchant, guard, etc.
-//  uint8 dialog_number[32];
-// };
-// The dialog number gives the entry index to the *.TLK file.
-//
-// Finally, the schedule says how the Npc moves around in the city and especially when:
-//
-// struct NPC_Schedule {
-//  uint8 AI_types[3];
-//  uint8 x_coordinates[3];
-//  uint8 y_coordinates[3];
-//  sint8 z_coordinates[3];
-//  uint8 times[4];
-// };
+func (n *NPCSchedule) GetIndividualNPCBehaviourByUltimaDate(ud datetime.UltimaDate) IndividualNPCBehaviour {
+	index := n.getScheduleIndex(ud)
+	return IndividualNPCBehaviour{
+		Ai:       n.Ai[index],
+		Position: Position{X: Coordinate(n.X[index]), Y: Coordinate(n.Y[index])},
+		Floor:    FloorNumber(n.Floor[index]),
+	}
+}
+
+func (n *NPCSchedule) getScheduleIndex(date datetime.UltimaDate) int {
+	const totalSchedules = totalScheduleItemsPerNpc // Alias for readability
+	nHour := int(date.Hour)                         // Extract the hour from UltimaDate
+
+	// Inline function to handle specific index logic
+	getIndex := func(nOrigIndex int) int {
+		if nOrigIndex == totalSchedules {
+			return 1
+		}
+		return nOrigIndex
+	}
+
+	// If all times are zero, return 0
+	if n.Time[0] == 0 && n.Time[1] == 0 && n.Time[2] == 0 && n.Time[3] == 0 {
+		return 0
+	}
+
+	// Check if the hour matches any of the times
+	for i := 0; i < totalSchedules; i++ {
+		if n.Time[i] == byte(nHour) {
+			return getIndex(i)
+		}
+	}
+
+	// Check ranges
+	if nHour > int(n.Time[3]) && nHour < int(n.Time[0]) {
+		return 1
+	}
+	if nHour > int(n.Time[0]) && nHour < int(n.Time[1]) {
+		return 0
+	}
+	if nHour > int(n.Time[1]) && nHour < int(n.Time[2]) {
+		return 1
+	}
+	if nHour > int(n.Time[2]) && nHour < int(n.Time[3]) {
+		return 2
+	}
+
+	// Find the index of the earliest and latest times
+	nEarliestTimeIndex := n.getEarliestTimeIndex()
+	nIndexPreviousToEarliest := 0
+	if nEarliestTimeIndex == 0 {
+		nIndexPreviousToEarliest = 1
+	} else {
+		nIndexPreviousToEarliest = nEarliestTimeIndex - 1
+	}
+	nLatestTimeIndex := n.getLatestTimeIndex()
+
+	// Handle times outside the range
+	if nHour < int(n.Time[nEarliestTimeIndex]) {
+		return nIndexPreviousToEarliest
+	}
+	if nHour > int(n.Time[nLatestTimeIndex]) {
+		return getIndex(nLatestTimeIndex)
+	}
+
+	// Fallback case
+	panic("getScheduleIndex fell all the way through, which doesn't make sense.")
+}
+
+func (n *NPCSchedule) getEarliestTimeIndex() int {
+	nEarliest := n.Time[0]
+	nEarliestIndex := 0
+	for i := 1; i < len(n.Time); i++ {
+		if n.Time[i] >= nEarliest {
+			continue
+		}
+
+		nEarliestIndex = i
+		nEarliest = n.Time[i]
+	}
+
+	return nEarliestIndex
+}
+
+func (n *NPCSchedule) getLatestTimeIndex() int {
+	nLargest := n.Time[0]
+	nLargestIndex := 0
+
+	for i := 1; i < len(n.Time); i++ {
+		if n.Time[i] <= nLargest {
+			continue
+		}
+
+		nLargestIndex = i
+		nLargest = n.Time[i]
+	}
+
+	return nLargestIndex
+}

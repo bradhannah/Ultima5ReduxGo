@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
@@ -39,7 +40,7 @@ type GameState struct {
 	LastLargeMapPosition references.Position
 	LastLargeMapFloor    references.FloorNumber
 
-	DateTime UltimaDate
+	DateTime datetime.UltimaDate
 
 	Provisions Provisions
 	Karma      Karma

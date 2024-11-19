@@ -168,3 +168,7 @@ func (s *SmallLocationReference) CanGoDownOneFloor(currentFloor FloorNumber) boo
 	}
 	return true
 }
+
+func (s *SmallLocationReference) GetNPCs() *[]NPCReference {
+	return s.npcRefs
+}

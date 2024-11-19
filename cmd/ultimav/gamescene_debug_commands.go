@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
@@ -135,13 +135,13 @@ func (d *DebugConsole) createQuickTime() *grammar.TextCommand {
 			timeOfDay := command.GetIndexAsString(1, outputStr)
 			switch timeOfDay {
 			case "morning":
-				d.gameScene.gameState.DateTime.SetTimeOfDay(game_state.Morning)
+				d.gameScene.gameState.DateTime.SetTimeOfDay(datetime.Morning)
 			case "evening":
-				d.gameScene.gameState.DateTime.SetTimeOfDay(game_state.Evening)
+				d.gameScene.gameState.DateTime.SetTimeOfDay(datetime.Evening)
 			case "midnight":
-				d.gameScene.gameState.DateTime.SetTimeOfDay(game_state.Midnight)
+				d.gameScene.gameState.DateTime.SetTimeOfDay(datetime.Midnight)
 			case "noon":
-				d.gameScene.gameState.DateTime.SetTimeOfDay(game_state.Noon)
+				d.gameScene.gameState.DateTime.SetTimeOfDay(datetime.Noon)
 			}
 			d.dumpQuickState(fmt.Sprintf("thing: %s", outputStr))
 		})
