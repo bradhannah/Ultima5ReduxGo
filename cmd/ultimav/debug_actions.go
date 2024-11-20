@@ -24,6 +24,8 @@ func (g *GameScene) DebugFloorUp() bool {
 		return false
 	}
 	g.gameState.Floor++
+	g.gameState.UpdateSmallMap(g.gameReferences.TileReferences, g.gameReferences.LocationReferences)
+
 	return true
 }
 
@@ -42,6 +44,7 @@ func (g *GameScene) DebugFloorDown() bool {
 		return false
 	}
 	g.gameState.Floor--
+	g.gameState.UpdateSmallMap(g.gameReferences.TileReferences, g.gameReferences.LocationReferences)
 	return true
 }
 

@@ -125,6 +125,7 @@ func (g *GameScene) smallMapKlimb() {
 	case indexes.AvatarOnLadderDown, indexes.LadderDown, indexes.Grate:
 		if g.GetCurrentLocationReference().CanGoDownOneFloor(g.gameState.Floor) {
 			g.gameState.Floor--
+			g.gameState.UpdateSmallMap(g.gameReferences.TileReferences, g.gameReferences.LocationReferences)
 			g.output.AddRowStr("Klimb-Down!")
 			return
 		} else {
@@ -134,6 +135,7 @@ func (g *GameScene) smallMapKlimb() {
 	case indexes.AvatarOnLadderUp, indexes.LadderUp:
 		if g.GetCurrentLocationReference().CanGoUpOneFloor(g.gameState.Floor) {
 			g.gameState.Floor++
+			g.gameState.UpdateSmallMap(g.gameReferences.TileReferences, g.gameReferences.LocationReferences)
 			g.output.AddRowStr("Klimb-Up!")
 			return
 		} else {

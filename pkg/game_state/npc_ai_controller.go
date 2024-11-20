@@ -50,7 +50,9 @@ func (n *NPCAIController) PopulateMapFirstLoad(
 		}
 		indiv := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(ud)
 
-		lm.SetTileByLayer(MapUnitLayer, &indiv.Position, npc.NPCReference.GetTileIndex())
+		if n.gameState.Floor == indiv.Floor {
+			lm.SetTileByLayer(MapUnitLayer, &indiv.Position, npc.NPCReference.GetTileIndex())
+		}
 	}
 	// indiv := npcRef.Schedule.GetIndividualNPCBehaviourByUltimaDate(ud)
 

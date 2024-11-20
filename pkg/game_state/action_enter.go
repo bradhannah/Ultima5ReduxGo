@@ -18,17 +18,18 @@ func (g *GameState) EnterBuilding(
 		}
 		g.Location = slr.Location
 		g.Floor = 0
-		g.LayeredMaps.ResetAndCreateSmallMap(
-			slr,
-			tileRefs,
-			// npcRefs,
-			g.XTilesInMap,
-			g.YTilesInMap)
-		g.NPCAIController = *NewNPCAIController(slr, tileRefs, g)
-		g.NPCAIController.PopulateMapFirstLoad(
-			g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor),
-			g.DateTime,
-		)
+		g.UpdateSmallMap(g.GameReferences.TileReferences, g.GameReferences.LocationReferences)
+		// g.LayeredMaps.ResetAndCreateSmallMap(
+		// 	slr,
+		// 	tileRefs,
+		// 	// npcRefs,
+		// 	g.XTilesInMap,
+		// 	g.YTilesInMap)
+		// g.NPCAIController = *NewNPCAIController(slr, tileRefs, g)
+		// g.NPCAIController.PopulateMapFirstLoad(
+		// 	g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor),
+		// 	g.DateTime,
+		// )
 	}
 }
 

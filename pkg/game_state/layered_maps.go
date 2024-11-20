@@ -64,11 +64,11 @@ func (l *LayeredMaps) ResetAndCreateSmallMap(
 	}
 }
 
-func (l *LayeredMaps) InitializeNPCs(
-	location references.Location,
-	npcReferences *references.NPCReferences) {
-	npcReferences.GetNPCReferencesByLocation(location)
-}
+// func (l *LayeredMaps) InitializeNPCs(
+// 	location references.Location,
+// 	npcReferences *references.NPCReferences) {
+// 	npcReferences.GetNPCReferencesByLocation(location)
+// }
 
 func (l *LayeredMaps) GetTileRefByPosition(mapType references.GeneralMapType, mapLayer LayerType, pos *references.Position, nFloor references.FloorNumber) *references.Tile {
 	index := l.layeredMaps[mapType][nFloor].layers[mapLayer][pos.X][pos.Y]
