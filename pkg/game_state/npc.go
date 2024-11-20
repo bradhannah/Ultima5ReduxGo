@@ -14,3 +14,7 @@ func NewNPC(npcReference references.NPCReference) NPC {
 	npc.NPCReference = npcReference
 	return npc
 }
+
+func (npc *NPC) IsEmptyNPC() bool {
+	return npc.NPCReference.Type == 0
+}

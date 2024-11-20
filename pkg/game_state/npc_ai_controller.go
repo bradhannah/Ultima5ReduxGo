@@ -45,7 +45,7 @@ func (n *NPCAIController) PopulateMapFirstLoad(
 	n.generateNPCs()
 
 	for _, npc := range *n.npcs {
-		if npc.NPCReference.Type == 0 {
+		if npc.IsEmptyNPC() {
 			continue
 		}
 		indiv := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(ud)
@@ -54,10 +54,19 @@ func (n *NPCAIController) PopulateMapFirstLoad(
 			lm.SetTileByLayer(MapUnitLayer, &indiv.Position, npc.NPCReference.GetTileIndex())
 		}
 	}
-	// indiv := npcRef.Schedule.GetIndividualNPCBehaviourByUltimaDate(ud)
+}
 
-	// place all characters within that schedule
+func (n *NPCAIController) clearMapUnitsFromMap() {
+	n.gameState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
+	// .GetTileByLayer(MapUnitLayer, &n.gameState.Position)
 
-	// lm.SetTileByLayer(MapUnitLayer,
-	// 	)
+}
+
+func (n *NPCAIController) CalculateNextNPCPositions() {
+	// n.clearMapUnitsFromMap()
+	for _, npc := range *n.npcs {
+		if npc.IsEmptyNPC() {
+			continue
+		}
+	}
 }

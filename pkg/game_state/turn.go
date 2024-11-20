@@ -21,6 +21,17 @@ func (g *GameState) largeMapProcessEndOfTurn() {
 }
 
 func (g *GameState) smallMapProcessEndOfTurn() {
+	g.smallMapProcessTurnDoors()
+	g.DateTime.Advance(DefaultSmallMapMinutesPerTurn)
+
+	g.smallMapProcessNPCs()
+}
+
+func (g *GameState) smallMapProcessNPCs() {
+	g.NPCAIController.CalculateNextNPCPositions()
+}
+
+func (g *GameState) smallMapProcessTurnDoors() {
 	if g.openDoorPos != nil {
 		if g.openDoorTurns == 0 {
 			tile := g.LayeredMaps.GetTileRefByPosition(references.SmallMapType, MapLayer, g.openDoorPos, g.Floor)
@@ -34,5 +45,4 @@ func (g *GameState) smallMapProcessEndOfTurn() {
 			g.openDoorTurns--
 		}
 	}
-	g.DateTime.Advance(DefaultSmallMapMinutesPerTurn)
 }

@@ -1,9 +1,10 @@
 package game_state
 
 import (
+	"log"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
-	"log"
 )
 
 const totalLayers = 5
@@ -174,4 +175,12 @@ func (l *LayeredMap) SwapTiles(pos1 *references.Position, pos2 *references.Posit
 	tile2 := l.GetTileTopMapOnlyTile(pos2)
 	l.SetTileByLayer(MapLayer, pos1, tile2.Index)
 	l.SetTileByLayer(MapLayer, pos2, tile1.Index)
+}
+func (l *LayeredMap) ClearMapUnitTiles() {
+	for _, innerMap := range l.layers[MapUnitLayer] {
+		for innerKey := range innerMap {
+			innerMap[innerKey] = 0
+		}
+	}
+	// for l.layers[MapUnitLayer]
 }
