@@ -6,6 +6,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
@@ -127,6 +128,29 @@ func (g *GameScene) refreshMapLayerTiles() {
 			do.GeoM.Reset()
 		}
 	}
+
+	// begin mapunits
+	for x = 0; x < xTilesInMap; x++ {
+		for y = 0; y < yTilesInMap; y++ {
+			pos := references.Position{X: x + g.gameState.Position.X - xCenter, Y: y + g.gameState.Position.Y - yCenter}
+			if mapType == references.LargeMapType {
+				pos = *pos.GetWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
+			}
+			do.GeoM.Translate(float64(x*sprites.TileSize), float64(y*sprites.TileSize))
+
+			tile := theMap.GetTileByLayer(game_state.MapUnitLayer, &pos)
+			if tile == nil || tile.Index == 0 {
+				do.GeoM.Reset()
+				continue
+			}
+			// var spriteIndex indexes.SpriteIndex
+			if layer.IsPositionVisible(&pos) {
+				g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tile.Index), &do)
+			}
+			do.GeoM.Reset()
+		}
+	}
+	// end mapunits
 
 	avatarSpriteIndex := theMap.GetTileTopMapOnlyTile(&avatarPos).Index
 	avatarSpriteIndex = g.getSmallCalculatedAvatarTileIndex(avatarSpriteIndex)

@@ -128,9 +128,9 @@ func (uc *UltimaVConfiguration) UpdateSaveFile() {
 
 func (uc *UltimaVConfiguration) GetAllNpcFilePaths() []string {
 	return []string{
-		path.Join(uc.SavedConfigData.DataFilePath, legacy.CASTLE_NPC),
 		path.Join(uc.SavedConfigData.DataFilePath, legacy.TOWNE_NPC),
-		path.Join(uc.SavedConfigData.DataFilePath, legacy.KEEP_NPC),
 		path.Join(uc.SavedConfigData.DataFilePath, legacy.DWELLING_NPC),
+		path.Join(uc.SavedConfigData.DataFilePath, legacy.CASTLE_NPC),
+		path.Join(uc.SavedConfigData.DataFilePath, legacy.KEEP_NPC),
 	}
 }

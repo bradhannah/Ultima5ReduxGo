@@ -17,34 +17,8 @@ const (
 	singleTownSize = (sizeOfNPCSchedule * npcsPerTown) + (npcsPerTown * 2)
 )
 
-type NPCType byte
-
-const (
-	Blacksmith  NPCType = 0x81
-	Barkeeper           = 0x82
-	HorseSeller         = 0x83
-	Shipwright          = 0x84
-	Healer              = 0x87
-	InnKeeper           = 0x88
-	MagicSeller         = 0x85
-	GuildMaster         = 0x86
-	NoStatedNpc         = 0xFF
-	Guard               = 0xFE
-	WishingWell         = 0xFD
-	// unknowns may be crown and sandlewood box
-)
-
 type NPCReferences struct {
 	npcs []NPCReference
-}
-
-type NPCReference struct {
-	Position     Position
-	Location     Location
-	DialogNumber byte
-	Schedule     NPCSchedule
-	Type         NPCType
-	// script TalkScript
 }
 
 func NewNPCReferences(config *config.UltimaVConfiguration) *NPCReferences {
@@ -53,7 +27,7 @@ func NewNPCReferences(config *config.UltimaVConfiguration) *NPCReferences {
 	npcFiles := config.GetAllNpcFilePaths()
 
 	for i, filePath := range npcFiles {
-		npcs, err := getNPCsFromFile(filePath, i/townsPerNPCFile)
+		npcs, err := getNPCsFromFile(filePath, i*townsPerNPCFile)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -78,8 +52,8 @@ func getNPCsFromFile(path string, locationOffset int) ([]NPCReference, error) {
 			npc.Location = Location(locationOffset + townIndex + 1)
 
 			npc.Schedule = CreateNPCSchedule(townRawData[npcIndex*sizeOfNPCSchedule : (npcIndex*sizeOfNPCSchedule)+sizeOfNPCSchedule])
-			npc.DialogNumber = townRawData[startingNpcDialogNumberOffset+npcIndex]
 			npc.Type = NPCType(townRawData[startingNpcTypeOffset+npcIndex])
+			npc.DialogNumber = townRawData[startingNpcDialogNumberOffset+npcIndex]
 			npcs = append(npcs, npc)
 		}
 	}

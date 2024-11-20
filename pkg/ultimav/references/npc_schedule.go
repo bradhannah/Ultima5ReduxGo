@@ -62,7 +62,7 @@ func (n *NPCSchedule) getScheduleIndex(date datetime.UltimaDate) int {
 	}
 
 	// Check if the hour matches any of the times
-	for i := 0; i < totalSchedules; i++ {
+	for i := 0; i < totalSchedules+1; i++ {
 		if n.Time[i] == byte(nHour) {
 			return getIndex(i)
 		}

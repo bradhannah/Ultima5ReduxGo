@@ -9,6 +9,8 @@ type NPCAIController struct {
 	tileRefs  *references.Tiles
 	slr       *references.SmallLocationReference
 	gameState *GameState
+
+	npcs *[]NPC
 }
 
 func NewNPCAIController(
@@ -25,14 +27,32 @@ func NewNPCAIController(
 	return npcsAiCont
 }
 
+func (n *NPCAIController) generateNPCs() {
+	npcs := make([]NPC, 0)
+	// get the correct schedule
+	npcsRefs := n.slr.GetNPCReferences()
+	for _, npcRef := range *npcsRefs {
+		npc := NewNPC(npcRef)
+		npcs = append(npcs, npc)
+	}
+	n.npcs = &npcs
+}
+
 func (n *NPCAIController) PopulateMapFirstLoad(
 	lm *LayeredMap,
 	ud datetime.UltimaDate) {
 
-	// get the correct schedule
-	for _, npc := range *n.slr.GetNPCs() {
-		npc.Schedule.GetIndividualNPCBehaviourByUltimaDate(ud)
+	n.generateNPCs()
+
+	for _, npc := range *n.npcs {
+		if npc.NPCReference.Type == 0 {
+			continue
+		}
+		indiv := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(ud)
+
+		lm.SetTileByLayer(MapUnitLayer, &indiv.Position, npc.NPCReference.GetTileIndex())
 	}
+	// indiv := npcRef.Schedule.GetIndividualNPCBehaviourByUltimaDate(ud)
 
 	// place all characters within that schedule
 
