@@ -22,7 +22,7 @@ type NPCSchedule struct {
 }
 
 type IndividualNPCBehaviour struct {
-	Ai       byte
+	Ai       AiType
 	Position Position
 	Floor    FloorNumber
 }
@@ -38,7 +38,7 @@ func CreateNPCSchedule(rawData []byte) NPCSchedule {
 func (n *NPCSchedule) GetIndividualNPCBehaviourByUltimaDate(ud datetime.UltimaDate) IndividualNPCBehaviour {
 	index := n.getScheduleIndex(ud)
 	return IndividualNPCBehaviour{
-		Ai:       n.Ai[index],
+		Ai:       AiType(n.Ai[index]),
 		Position: Position{X: Coordinate(n.X[index]), Y: Coordinate(n.Y[index])},
 		Floor:    FloorNumber(n.Floor[index]),
 	}

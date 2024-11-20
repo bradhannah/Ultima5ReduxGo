@@ -1,7 +1,7 @@
 package game_state
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
+	// _ "github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -10,7 +10,7 @@ type NPCAIController struct {
 	slr       *references.SmallLocationReference
 	gameState *GameState
 
-	npcs *[]NPC
+	npcs []*NPC
 }
 
 func NewNPCAIController(
@@ -28,45 +28,79 @@ func NewNPCAIController(
 }
 
 func (n *NPCAIController) generateNPCs() {
-	npcs := make([]NPC, 0)
+	npcs := make([]*NPC, 0)
 	// get the correct schedule
 	npcsRefs := n.slr.GetNPCReferences()
 	for _, npcRef := range *npcsRefs {
 		npc := NewNPC(npcRef)
-		npcs = append(npcs, npc)
+		npcs = append(npcs, &npc)
 	}
-	n.npcs = &npcs
+	n.npcs = npcs
 }
 
-func (n *NPCAIController) PopulateMapFirstLoad(
-	lm *LayeredMap,
-	ud datetime.UltimaDate) {
+func (n *NPCAIController) PopulateMapFirstLoad() {
+	// lm *LayeredMap,
+	// ud datetime.UltimaDate) {
 
 	n.generateNPCs()
 
-	for _, npc := range *n.npcs {
+	for i, npc := range n.npcs {
+		_ = i
 		if npc.IsEmptyNPC() {
 			continue
 		}
-		indiv := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(ud)
+		indiv := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
 
-		if n.gameState.Floor == indiv.Floor {
-			lm.SetTileByLayer(MapUnitLayer, &indiv.Position, npc.NPCReference.GetTileIndex())
+		npc.Position = indiv.Position
+		npc.Floor = indiv.Floor
+		npc.AiType = indiv.Ai
+	}
+	n.setAllNPCTiles()
+}
+
+func (n *NPCAIController) updateAllNPCAiTypes() {
+	for i, npc := range n.npcs {
+		_ = i
+		if npc.IsEmptyNPC() {
+			continue
+		}
+
+		indiv := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+
+		npc.AiType = indiv.Ai
+	}
+}
+
+func (n *NPCAIController) setAllNPCTiles() {
+	lm := n.gameState.GetLayeredMapByCurrentLocation()
+
+	for _, npc := range n.npcs {
+		if npc.IsEmptyNPC() {
+			continue
+		}
+		if n.gameState.Floor == npc.Floor {
+			lm.SetTileByLayer(MapUnitLayer, &npc.Position, npc.NPCReference.GetTileIndex())
 		}
 	}
 }
 
 func (n *NPCAIController) clearMapUnitsFromMap() {
 	n.gameState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
-	// .GetTileByLayer(MapUnitLayer, &n.gameState.Position)
-
 }
 
 func (n *NPCAIController) CalculateNextNPCPositions() {
-	// n.clearMapUnitsFromMap()
-	for _, npc := range *n.npcs {
+	n.clearMapUnitsFromMap()
+	n.updateAllNPCAiTypes()
+
+	for _, npc := range n.npcs {
 		if npc.IsEmptyNPC() {
 			continue
 		}
+		n.calculateNextNPCPosition(npc)
 	}
+	n.setAllNPCTiles()
+}
+
+func (n *NPCAIController) calculateNextNPCPosition(npc *NPC) {
+	// npc.Position = *npc.Position.GetPositionUp()
 }

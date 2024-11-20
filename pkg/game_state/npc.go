@@ -7,6 +7,7 @@ type NPC struct {
 
 	Position references.Position
 	Floor    references.FloorNumber
+	AiType   references.AiType
 }
 
 func NewNPC(npcReference references.NPCReference) NPC {
