@@ -93,7 +93,7 @@ func (g *GameScene) refreshMapLayerTiles() {
 	theMap := g.gameState.LayeredMaps.GetLayeredMap(mapType, g.gameState.Floor)
 
 	var x, y references.Coordinate
-	// get and set tiles
+	// STATIC MAP
 	for x = 0; x < xTilesInMap; x++ {
 		for y = 0; y < yTilesInMap; y++ {
 			pos := references.Position{X: x + g.gameState.Position.X - xCenter, Y: y + g.gameState.Position.Y - yCenter}
@@ -128,8 +128,9 @@ func (g *GameScene) refreshMapLayerTiles() {
 			do.GeoM.Reset()
 		}
 	}
+	// END STATIC MAP
 
-	// begin mapunits
+	// BEGIN MAPUNITS
 	for x = 0; x < xTilesInMap; x++ {
 		for y = 0; y < yTilesInMap; y++ {
 			pos := references.Position{X: x + g.gameState.Position.X - xCenter, Y: y + g.gameState.Position.Y - yCenter}
@@ -145,12 +146,13 @@ func (g *GameScene) refreshMapLayerTiles() {
 			}
 			// var spriteIndex indexes.SpriteIndex
 			if layer.IsPositionVisible(&pos) {
-				g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tile.Index), &do)
+				tileIndex := g.getSmallCalculatedTileIndex(tile.Index, &pos)
+				g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), &do)
 			}
 			do.GeoM.Reset()
 		}
 	}
-	// end mapunits
+	// END MAPUNITS
 
 	avatarSpriteIndex := theMap.GetTileTopMapOnlyTile(&avatarPos).Index
 	avatarSpriteIndex = g.getSmallCalculatedAvatarTileIndex(avatarSpriteIndex)

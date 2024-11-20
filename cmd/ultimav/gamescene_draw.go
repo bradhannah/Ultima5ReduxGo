@@ -9,7 +9,6 @@ import (
 
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 var gameScreenPercents = sprites.PercentBasedPlacement{
@@ -33,13 +32,10 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 	}
 
 	g.mapImage.Fill(image.Black)
-	if g.gameState.Location == references.Britannia_Underworld {
-		g.refreshMapLayerTiles()
-	} else {
-		g.refreshMapLayerTiles()
-	}
+	g.refreshMapLayerTiles()
+
 	g.drawMap(g.mapImage)
-	g.drawMapUnits(g.mapImage)
+	// g.drawMapUnits(g.mapImage)
 
 	op := sprites.GetDrawOptionsFromPercentsForWholeScreen(g.mapImage,
 		gameScreenPercents)
@@ -75,13 +71,13 @@ func (g *GameScene) drawBorders(screen *ebiten.Image) {
 }
 
 // drawMapUnits
-func (g *GameScene) drawMapUnits(screen *ebiten.Image) {
-	// do := ebiten.DrawImageOptions{}
-	//
-	// do.GeoM.Translate(float64(sprites.TileSize*(xTilesInMap/2)), float64(sprites.TileSize*(yTilesInMap/2)))
-	screen.DrawImage(g.unscaledMapImage, &ebiten.DrawImageOptions{})
-	g.debugMessage = fmt.Sprintf("%d, %d", g.gameState.Position.X, g.gameState.Position.Y)
-}
+// func (g *GameScene) drawMapUnits(screen *ebiten.Image) {
+// 	// do := ebiten.DrawImageOptions{}
+// 	//
+// 	// do.GeoM.Translate(float64(sprites.TileSize*(xTilesInMap/2)), float64(sprites.TileSize*(yTilesInMap/2)))
+// 	screen.DrawImage(g.unscaledMapImage, &ebiten.DrawImageOptions{})
+// 	g.debugMessage = fmt.Sprintf("%d, %d", g.gameState.Position.X, g.gameState.Position.Y)
+// }
 
 // drawMap
 func (g *GameScene) drawMap(screen *ebiten.Image) {
