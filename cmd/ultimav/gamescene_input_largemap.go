@@ -5,7 +5,6 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -15,7 +14,7 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 		g.DoEscapeMenu()
 	case ebiten.KeySpace:
 		g.addRowStr("Pass")
-		g.gameState.DateTime.Advance(game_state.DefaultLargeMapMinutesPerTurn)
+		g.gameState.FinishTurn()
 	case ebiten.KeyBackquote:
 		// g.bShowDebugConsole = !g.bShowDebugConsole
 		g.ToggleDebug()
@@ -67,7 +66,7 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 
 	// only process end of turn if the turn is actually done.
 	if g.secondaryKeyState == PrimaryInput {
-		g.gameState.LargeMapProcessEndOfTurn()
+		g.gameState.FinishTurn()
 	}
 }
 

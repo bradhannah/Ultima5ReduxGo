@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -60,29 +59,6 @@ type Provisions struct {
 	QtyTorches   byte
 	QtyKeys      byte
 	QtySkullKeys byte
-}
-
-func (g *GameState) LargeMapProcessEndOfTurn() {
-	g.DateTime.Advance(DefaultLargeMapMinutesPerTurn)
-
-	return
-}
-
-func (g *GameState) SmallMapProcessEndOfTurn() {
-	if g.openDoorPos != nil {
-		if g.openDoorTurns == 0 {
-			tile := g.LayeredMaps.GetTileRefByPosition(references.SmallMapType, MapLayer, g.openDoorPos, g.Floor)
-			if tile.Index.IsWindowedDoor() {
-				g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).SetTileByLayer(MapOverrideLayer, g.openDoorPos, indexes.RegularDoorView)
-			} else {
-				g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).SetTileByLayer(MapOverrideLayer, g.openDoorPos, indexes.RegularDoor)
-			}
-			g.openDoorPos = nil
-		} else {
-			g.openDoorTurns--
-		}
-	}
-	g.DateTime.Advance(DefaultSmallMapMinutesPerTurn)
 }
 
 func (g *GameState) IsAvatarAtPosition(pos *references.Position) bool {

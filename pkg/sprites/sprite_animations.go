@@ -14,11 +14,11 @@ const (
 )
 
 func GetSpriteIndexWithAnimationBySpriteIndex(spriteIndex indexes.SpriteIndex, posHash int32) indexes.SpriteIndex {
-	if spriteIndex >= indexes.Waterfall_KeyIndex && spriteIndex <= indexes.Waterfall_KeyIndex+3 {
+	if spriteIndex >= indexes.Waterfall_KeyIndex && spriteIndex < indexes.Waterfall_KeyIndex+4 {
 		spriteIndex = indexes.Waterfall_KeyIndex
 	}
 
-	if (spriteIndex >= indexes.Waterfall_KeyIndex && spriteIndex <= indexes.Waterfall_KeyIndex+3) || spriteIndex == indexes.Fountain_KeyIndex {
+	if spriteIndex == indexes.Waterfall_KeyIndex || spriteIndex == indexes.Fountain_KeyIndex {
 		interval := time.Now().UnixMilli() / msPerFrameForObjects
 		currentRotation := int(interval+int64(posHash)) % standardNumberOfAnimationFrames
 		return indexes.SpriteIndex(int(spriteIndex) + currentRotation)
