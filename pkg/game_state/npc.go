@@ -17,5 +17,6 @@ func NewNPC(npcReference references.NPCReference) NPC {
 }
 
 func (npc *NPC) IsEmptyNPC() bool {
-	return npc.NPCReference.Type == 0
+
+	return npc.NPCReference.Type == 0 || (npc.NPCReference.Schedule.X[0] == 0 && npc.NPCReference.Schedule.Y[0] == 0)
 }
