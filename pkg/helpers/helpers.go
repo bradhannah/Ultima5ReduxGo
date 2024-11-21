@@ -22,6 +22,15 @@ func Min[T constraints.Ordered](a, b T) T {
 	return b
 }
 
+// func Abs[T constraints.Integer | constraints.Float](a, b T) T {}
+
+func AbsInt(a int) int {
+	if a < 0 {
+		return a * -1
+	}
+	return a
+}
+
 func IsOfTypeInterface(inst interface{}, iface interface{}) bool {
 	instType := reflect.TypeOf(inst)
 	ifaceType := reflect.TypeOf(&iface).Elem() // .Elem() to get the interface type

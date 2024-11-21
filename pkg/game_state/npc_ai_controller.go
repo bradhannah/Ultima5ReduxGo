@@ -136,7 +136,9 @@ func (n *NPCAIController) calculateNextNPCPosition(npc *NPC) {
 			return
 		}
 	} else {
-
+		if n.performAiMovementNotOnAssignedPosition(npc) {
+			return
+		}
 	}
 }
 
@@ -218,4 +220,8 @@ func (n *NPCAIController) performAiMovementNotOnAssignedPosition(npc *NPC) bool 
 		log.Fatal("Unknown AiType")
 	}
 	return false
+}
+
+func (n *NPCAIController) wanderWithN(npc *NPC, targetPosition *references.Position, wanderRadius int) {
+	npc.Position
 }

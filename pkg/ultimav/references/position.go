@@ -1,5 +1,7 @@
 package references
 
+import "github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
+
 type Coordinate int16
 
 type Position struct {
@@ -97,4 +99,8 @@ func (p *Position) GetHash() int32 {
 	x := int32(p.X) * prime1
 	y := int32(p.Y) * prime2
 	return (x ^ y) & 0x7FFFFFFF // Ensures the result is within 32-bit signed int range
+}
+
+func (p *Position) IsWithinN(targetPosition *Position, n int) bool {
+	return helpers.AbsInt(int(targetPosition.X-p.X)) <= n && helpers.AbsInt(int(targetPosition.Y-p.Y)) <= n
 }
