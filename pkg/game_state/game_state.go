@@ -91,3 +91,12 @@ func (g *GameState) IsOutOfBounds(position references.Position) bool {
 
 	return false
 }
+
+func (g *GameState) IsPassable(pos *references.Position) bool {
+	theMap := g.LayeredMaps.GetLayeredMap(g.Location.GetMapType(), g.Floor)
+	topTile := theMap.GetTopTile(pos)
+	if topTile == nil {
+		return false
+	}
+	return topTile.IsPassable(g.PartyVehicle)
+}

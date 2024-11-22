@@ -4,7 +4,11 @@ import (
 	// _ "github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
 
 	"log"
+	"time"
 
+	"golang.org/x/exp/rand"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -143,13 +147,17 @@ func (n *NPCAIController) calculateNextNPCPosition(npc *NPC) {
 }
 
 func (n *NPCAIController) performAiMovementOnAssignedPosition(npc *NPC) bool {
+	npcSched := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+
 	switch npc.AiType {
 	case references.BlackthornGuardFixed, references.Fixed:
 	case references.MerchantBuyingSellingCustom, references.MerchantBuyingSellingWander, references.Wander:
 		// wander 2
+		n.WanderOneTileWithinN(npc, npcSched.Position, 2)
 		return true
 	case references.BigWander, references.BlackthornGuardWander:
 		// wander 5
+		n.WanderOneTileWithinN(npc, npcSched.Position, 5)
 		return true
 	case references.ChildRunAway:
 		return true
@@ -184,6 +192,8 @@ func (n *NPCAIController) performAiMovementOnAssignedPosition(npc *NPC) bool {
 }
 
 func (n *NPCAIController) performAiMovementNotOnAssignedPosition(npc *NPC) bool {
+	npcSched := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+
 	switch npc.AiType {
 	case references.HorseWander:
 		// if not in 4 spaces, then go to within 4 spaces
@@ -191,11 +201,13 @@ func (n *NPCAIController) performAiMovementNotOnAssignedPosition(npc *NPC) bool 
 		// wander 4
 	case references.BlackthornGuardFixed, references.Fixed, references.CustomAi, references.MerchantBuyingSelling:
 		// build a path to the intended position
+		n.WanderOneTileWithinN(npc, npcSched.Position, 5)
 		return true
 	case references.BigWander, references.BlackthornGuardWander, references.MerchantBuyingSellingCustom, references.MerchantBuyingSellingWander, references.Wander:
 		// build a path to position if further than 2 or 4 or 5 spots away
 		// else
 		// wander
+		n.WanderOneTileWithinN(npc, npcSched.Position, 2)
 		return true
 	case references.ChildRunAway:
 		// run away
@@ -222,6 +234,43 @@ func (n *NPCAIController) performAiMovementNotOnAssignedPosition(npc *NPC) bool 
 	return false
 }
 
-func (n *NPCAIController) wanderWithN(npc *NPC, targetPosition *references.Position, wanderRadius int) {
-	npc.Position
+// func (n *NPCAIController) wanderWithN(npc *NPC, targetPosition *references.Position, wanderRadius int) {
+//
+// 	npc.Position
+// }
+
+func (n *NPCAIController) WanderOneTileWithinN(npc *NPC, anchorPos references.Position, withinN int) {
+	rand.Seed(uint64(time.Now().UnixNano())) // Seed the random number generator
+
+	// Define possible moves: up, down, left, right
+	directions := []references.Position{
+		{X: 0, Y: -1}, // Up
+		{X: 0, Y: 1},  // Down
+		{X: -1, Y: 0}, // Left
+		{X: 1, Y: 0},  // Right
+	}
+
+	// Shuffle the directions for randomness
+	rand.Shuffle(len(directions), func(i, j int) {
+		directions[i], directions[j] = directions[j], directions[i]
+	})
+
+	// npcSched := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+
+	// Try each direction to find a valid move
+	for _, move := range directions {
+		newPos := references.Position{
+			X: npc.Position.X + move.X,
+			Y: npc.Position.Y + move.Y,
+		}
+
+		// Check if the new position is within N tiles of the anchorPos
+		if helpers.AbsInt(int(newPos.X-anchorPos.X)) <= withinN && helpers.AbsInt(int(newPos.Y-anchorPos.Y)) <= withinN && n.gameState.IsPassable(&newPos) {
+
+			npc.Position.X = newPos.X
+			npc.Position.Y = newPos.Y
+			return
+		}
+	}
+	// If no valid moves are found, stay in the same position
 }

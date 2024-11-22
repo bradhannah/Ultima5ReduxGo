@@ -64,15 +64,6 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 	g.debugMessage = directionStr
 	g.addRowStr(fmt.Sprintf("> %s", directionStr))
 
-	isPassable := func(pos *references.Position) bool {
-		theMap := g.gameState.LayeredMaps.GetLayeredMap(g.gameState.Location.GetMapType(), g.gameState.Floor)
-		topTile := theMap.GetTopTile(pos)
-		if topTile == nil {
-			return false
-		}
-		return topTile.IsPassable(g.gameState.PartyVehicle)
-	}
-
 	direction := game_state.GetKeyAsDirection(key)
 	newPosition := direction.GetNewPositionInDirection(&g.gameState.Position)
 
@@ -89,7 +80,7 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 		return
 	}
 
-	if isPassable(newPosition) || g.gameState.DebugOptions.FreeMove {
+	if g.gameState.IsPassable(newPosition) || g.gameState.DebugOptions.FreeMove {
 		g.moveToNewPositionByDirection(direction)
 	} else {
 		g.addRowStr("Blocked!")
