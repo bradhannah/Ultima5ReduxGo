@@ -264,9 +264,13 @@ func (n *NPCAIController) WanderOneTileWithinN(npc *NPC, anchorPos references.Po
 			Y: npc.Position.Y + move.Y,
 		}
 
+		// can't occupy same space as Avatar
+		if n.gameState.Position.Equals(newPos) {
+			continue
+		}
+
 		// Check if the new position is within N tiles of the anchorPos
 		if helpers.AbsInt(int(newPos.X-anchorPos.X)) <= withinN && helpers.AbsInt(int(newPos.Y-anchorPos.Y)) <= withinN && n.gameState.IsPassable(&newPos) {
-
 			npc.Position.X = newPos.X
 			npc.Position.Y = newPos.Y
 			return

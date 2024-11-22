@@ -17,7 +17,7 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		g.DoEscapeMenu()
 	case ebiten.KeySpace:
 		g.addRowStr("Pass")
-		g.gameState.FinishTurn()
+		// g.gameState.FinishTurn()
 	case ebiten.KeyBackquote:
 		g.ToggleDebug()
 	case ebiten.KeyEnter:
