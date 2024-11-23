@@ -1,6 +1,8 @@
 package game_state
 
 import (
+	"log"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -21,6 +23,7 @@ func NewNPC(npcReference references.NPCReference) NPC {
 	npc.NPCReference = npcReference
 
 	npc.AStarMap = NewAStarMap()
+	npc.CurrentPath = nil
 	return npc
 }
 
@@ -29,7 +32,14 @@ func (npc *NPC) IsEmptyNPC() bool {
 }
 
 func (npc *NPC) DequeueNextPosition() references.Position {
+	if !npc.HasAPathAlreadyCalculated() {
+		log.Fatal("NPC has no path calculated")
+	}
 	pos := (*npc.CurrentPath)[0]
 	*npc.CurrentPath = (*npc.CurrentPath)[1:]
 	return pos
+}
+
+func (npc *NPC) HasAPathAlreadyCalculated() bool {
+	return npc.CurrentPath != nil && len(*npc.CurrentPath) > 0
 }

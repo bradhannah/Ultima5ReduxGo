@@ -147,6 +147,10 @@ func (s SpriteIndex) IsDoor() bool {
 	return s == RegularDoor || s == LockedDoor || s == RegularDoorView || s == LockedDoorView || s == MagicLockDoorWithView || s == MagicLockDoor
 }
 
+func (s SpriteIndex) IsUnlockedDoor() bool {
+	return s == RegularDoor || s == RegularDoorView
+}
+
 func (s SpriteIndex) IsWindowedDoor() bool {
 	return s == RegularDoorView || s == LockedDoorView || s == MagicLockDoorWithView
 }

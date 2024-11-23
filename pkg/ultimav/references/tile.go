@@ -69,6 +69,9 @@ func (t *Tile) IsPath() bool {
 }
 
 func (t *Tile) GetWalkableWeight() int {
+	if t.Index.IsUnlockedDoor() {
+		return 1
+	}
 	if !t.IsWalkingPassable {
 		return -1
 	}

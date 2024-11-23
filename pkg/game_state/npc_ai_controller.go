@@ -1,9 +1,6 @@
 package game_state
 
 import (
-	// _ "github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
-
-	"fmt"
 	"log"
 	"time"
 
@@ -192,46 +189,42 @@ func (n *NPCAIController) performAiMovementOnAssignedPosition(npc *NPC) bool {
 	return false
 }
 
+func (n *NPCAIController) getWanderDistanceByAiType(aiType references.AiType) int {
+	switch aiType {
+	case references.HorseWander:
+		return 4
+	case references.Wander:
+		return 2
+	case references.BigWander, references.BlackthornGuardWander, references.MerchantBuyingSellingCustom, references.MerchantBuyingSellingWander:
+		return 4
+	}
+	return 0
+}
+
 func (n *NPCAIController) performAiMovementNotOnAssignedPosition(npc *NPC) bool {
 	npcSched := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+	nWanderDistance := n.getWanderDistanceByAiType(npc.AiType)
+
+	if n.MoveNPCOnCalculatedPath(npc) {
+		return true
+	}
 
 	switch npc.AiType {
-	case references.HorseWander:
-		// if not in 4 spaces, then go to within 4 spaces
-		// else
-		// wander 4
 	case references.BlackthornGuardFixed, references.Fixed, references.CustomAi, references.MerchantBuyingSelling:
-		// build a path to the intended position
-		n.WanderOneTileWithinN(npc, npcSched.Position, 5)
-		return true
-	case references.BigWander, references.BlackthornGuardWander, references.MerchantBuyingSellingCustom, references.MerchantBuyingSellingWander, references.Wander:
-		// build a path to position if further than 2 or 4 or 5 spots away
-		// else
-		// wander
-		if npc.CurrentPath != nil && len(*npc.CurrentPath) > 0 {
-			newPos := npc.DequeueNextPosition()
-			if n.gameState.GetLayeredMapByCurrentLocation().GetTopTile(&newPos).IsWalkingPassable && n.gameState.Position != newPos {
-				npc.Position = newPos
+		if n.CreateFreshPathToScheduledLocation(npc) {
+			npc.Position = npc.DequeueNextPosition()
+			return true
+		}
+		return false
+	case references.BigWander, references.BlackthornGuardWander, references.MerchantBuyingSellingCustom, references.MerchantBuyingSellingWander, references.Wander, references.HorseWander:
+		if !npcSched.Position.IsWithinN(&npc.Position, nWanderDistance) {
+			if n.CreateFreshPathToScheduledLocation(npc) {
+				npc.Position = npc.DequeueNextPosition()
 				return true
 			}
+			return false
 		}
-		npc.AStarMap.InitializeByLayeredMap(
-			n.gameState.GetLayeredMapByCurrentLocation(),
-			[]references.Position{n.gameState.Position},
-		)
-		path := npc.AStarMap.AStar(npc.Position, references.Position{X: 15, Y: 30})
-		npc.CurrentPath = &path
-		if path != nil {
-			fmt.Print()
-			if len(path) > 1 {
-				npc.DequeueNextPosition()
-			} else {
-				// wander?
-			}
-		}
-
-		// n.WanderOneTileWithinN(npc, npcSched.Position, 2)
-		return true
+		return n.WanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
 	case references.ChildRunAway:
 		// run away
 		return true
@@ -244,20 +237,63 @@ func (n *NPCAIController) performAiMovementNotOnAssignedPosition(npc *NPC) bool 
 	case references.FixedExceptAttackWhenIsWantedByThePoPo:
 		// if avatar is a wanted man/woman - then follow and get close
 		return true
-	// case references.StoneGargoyleTrigger:
-	// 	// if they are within 4 then change their AI to Drudgeworth (follow)
-	// 	return true
-	case references.Begging, references.GenericExtortingGuard, references.HalfYourGoldExtortingGuard, references.SmallWanderWantsToChat, references.FollowAroundAndBeAnnoyingThenNeverSeeAgain:
-		// let's have them try to hang out with the avatar most of the time, but not everytime
-		// for a little randomness
+	case references.StoneGargoyleTrigger:
 		return true
+	case references.FollowAroundAndBeAnnoyingThenNeverSeeAgain:
+		return true
+	case references.Begging,
+		references.GenericExtortingGuard,
+		references.HalfYourGoldExtortingGuard,
+		references.SmallWanderWantsToChat:
+		if !npcSched.Position.IsWithinN(&npc.Position, nWanderDistance) {
+			if n.CreateFreshPathToScheduledLocation(npc) {
+				npc.Position = npc.DequeueNextPosition()
+				return true
+			}
+			return false
+		}
+		if helpers.OneInXOdds(3) {
+			return n.WanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
+		}
+		return false
 	default:
 		log.Fatal("Unknown AiType")
 	}
 	return false
 }
 
-func (n *NPCAIController) WanderOneTileWithinN(npc *NPC, anchorPos references.Position, withinN int) {
+func (n *NPCAIController) MoveNPCOnCalculatedPath(npc *NPC) bool {
+	if !npc.HasAPathAlreadyCalculated() {
+		return false
+	}
+
+	newPos := npc.DequeueNextPosition()
+	if n.gameState.GetLayeredMapByCurrentLocation().GetTopTile(&newPos).IsWalkingPassable && n.gameState.Position != newPos {
+		npc.Position = newPos
+		return true
+	}
+	return false
+}
+
+func (n *NPCAIController) CreateFreshPathToScheduledLocation(npc *NPC) bool {
+	// set up all the walkable and non walkable tiles plus the weights
+	npc.AStarMap.InitializeByLayeredMap(
+		n.gameState.GetLayeredMapByCurrentLocation(),
+		[]references.Position{n.gameState.Position},
+	)
+
+	path := npc.AStarMap.AStar(npc.Position, references.Position{X: 15, Y: 30})
+
+	npc.CurrentPath = &path
+	if len(path) == 0 {
+		return false
+	}
+	// always pop the first because it is the current tile
+	npc.DequeueNextPosition()
+	return npc.HasAPathAlreadyCalculated()
+}
+
+func (n *NPCAIController) WanderOneTileWithinN(npc *NPC, anchorPos references.Position, withinN int) bool {
 	rand.Seed(uint64(time.Now().UnixNano())) // Seed the random number generator
 
 	// Define possible moves: up, down, left, right
@@ -286,11 +322,12 @@ func (n *NPCAIController) WanderOneTileWithinN(npc *NPC, anchorPos references.Po
 		}
 
 		// Check if the new position is within N tiles of the anchorPos
-		if helpers.AbsInt(int(newPos.X-anchorPos.X)) <= withinN && helpers.AbsInt(int(newPos.Y-anchorPos.Y)) <= withinN && n.gameState.IsPassable(&newPos) {
+		if helpers.AbsInt(int(newPos.X-anchorPos.X)) <= withinN && helpers.AbsInt(int(newPos.Y-anchorPos.Y)) <= withinN && n.gameState.IsNPCPassable(&newPos) {
 			npc.Position.X = newPos.X
 			npc.Position.Y = newPos.Y
-			return
+			return true
 		}
 	}
 	// If no valid moves are found, stay in the same position
+	return false
 }

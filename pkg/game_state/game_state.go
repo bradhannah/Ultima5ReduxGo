@@ -100,3 +100,12 @@ func (g *GameState) IsPassable(pos *references.Position) bool {
 	}
 	return topTile.IsPassable(g.PartyVehicle)
 }
+
+func (g *GameState) IsNPCPassable(pos *references.Position) bool {
+	theMap := g.LayeredMaps.GetLayeredMap(g.Location.GetMapType(), g.Floor)
+	topTile := theMap.GetTopTile(pos)
+	if topTile == nil {
+		return false
+	}
+	return topTile.IsPassable(references.NoPartyVehicle) || topTile.Index.IsUnlockedDoor()
+}

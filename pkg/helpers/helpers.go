@@ -2,8 +2,10 @@ package helpers
 
 import (
 	"reflect"
+	"time"
 
 	"golang.org/x/exp/constraints"
+	"golang.org/x/exp/rand"
 )
 
 // Max Generic Max function
@@ -36,4 +38,10 @@ func IsOfTypeInterface(inst interface{}, iface interface{}) bool {
 	ifaceType := reflect.TypeOf(&iface).Elem() // .Elem() to get the interface type
 
 	return instType.Implements(ifaceType)
+}
+
+func OneInXOdds(odds int) bool {
+	rand.Seed(uint64(time.Now().UnixNano()))
+
+	return rand.Intn(odds) == 0
 }
