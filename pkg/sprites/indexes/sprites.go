@@ -11,6 +11,13 @@ const (
 	SmallMountains                       = 12
 	LeftDesert2                          = 30
 	RightDesert2                         = 31
+	PathUpDown                           = 32
+	PathLeftRight                        = 33
+	PathUpRight                          = 34
+	PathDownRight                        = 35
+	PathLeftDown                         = 36
+	PathUpLeft                           = 37
+	PathAllWays                          = 38
 	PlowedField                          = 44
 	WheatInField                         = 45
 	Cactus                               = 47

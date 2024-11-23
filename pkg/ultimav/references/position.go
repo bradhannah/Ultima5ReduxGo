@@ -104,3 +104,12 @@ func (p *Position) GetHash() int32 {
 func (p *Position) IsWithinN(targetPosition *Position, n int) bool {
 	return helpers.AbsInt(int(targetPosition.X-p.X)) <= n && helpers.AbsInt(int(targetPosition.Y-p.Y)) <= n
 }
+
+func (p *Position) Neighbors() []Position {
+	return []Position{
+		{X: p.X - 1, Y: p.Y}, // Left
+		{X: p.X + 1, Y: p.Y}, // Right
+		{X: p.X, Y: p.Y - 1}, // Up
+		{X: p.X, Y: p.Y + 1}, // Down
+	}
+}

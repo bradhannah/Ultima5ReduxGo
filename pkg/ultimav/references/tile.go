@@ -63,3 +63,20 @@ func (t *Tile) IsChair() bool {
 func (t *Tile) IsCannon() bool {
 	return t.Index == indexes.CannonFacingLeft || t.Index == indexes.CannonFacingRight || t.Index == indexes.CannonFacingUp || t.Index == indexes.CannonFacingDown
 }
+
+func (t *Tile) IsPath() bool {
+	return t.Index >= indexes.PathUpDown && t.Index <= indexes.PathAllWays
+}
+
+func (t *Tile) GetWalkableWeight() int {
+	if !t.IsWalkingPassable {
+		return -1
+	}
+	if t.Index == indexes.BrickFloor {
+		return 1
+	}
+	if t.IsPath() {
+		return 2
+	}
+	return 10
+}

@@ -3,6 +3,7 @@ package game_state
 import (
 	// _ "github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
 
+	"fmt"
 	"log"
 	"time"
 
@@ -207,6 +208,16 @@ func (n *NPCAIController) performAiMovementNotOnAssignedPosition(npc *NPC) bool 
 		// build a path to position if further than 2 or 4 or 5 spots away
 		// else
 		// wander
+		npc.AStarMap.InitializeByLayeredMap(n.gameState.GetLayeredMapByCurrentLocation())
+		path := npc.AStarMap.AStar(npc.Position,
+			references.Position{
+				X: 15,
+				Y: 23,
+			})
+		if path != nil {
+			fmt.Print()
+		}
+
 		n.WanderOneTileWithinN(npc, npcSched.Position, 2)
 		return true
 	case references.ChildRunAway:
@@ -234,11 +245,6 @@ func (n *NPCAIController) performAiMovementNotOnAssignedPosition(npc *NPC) bool 
 	return false
 }
 
-// func (n *NPCAIController) wanderWithN(npc *NPC, targetPosition *references.Position, wanderRadius int) {
-//
-// 	npc.Position
-// }
-
 func (n *NPCAIController) WanderOneTileWithinN(npc *NPC, anchorPos references.Position, withinN int) {
 	rand.Seed(uint64(time.Now().UnixNano())) // Seed the random number generator
 
@@ -254,8 +260,6 @@ func (n *NPCAIController) WanderOneTileWithinN(npc *NPC, anchorPos references.Po
 	rand.Shuffle(len(directions), func(i, j int) {
 		directions[i], directions[j] = directions[j], directions[i]
 	})
-
-	// npcSched := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
 
 	// Try each direction to find a valid move
 	for _, move := range directions {
