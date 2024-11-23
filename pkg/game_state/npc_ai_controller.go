@@ -208,19 +208,25 @@ func (n *NPCAIController) performAiMovementNotOnAssignedPosition(npc *NPC) bool 
 		// build a path to position if further than 2 or 4 or 5 spots away
 		// else
 		// wander
+		if npc.CurrentPath != nil && len(*npc.CurrentPath) > 0 {
+			newPos := npc.DequeueNextPosition()
+			if n.gameState.GetLayeredMapByCurrentLocation().GetTopTile(&newPos).IsWalkingPassable && n.gameState.Position != newPos {
+				npc.Position = newPos
+				return true
+			}
+		}
 		npc.AStarMap.InitializeByLayeredMap(
 			n.gameState.GetLayeredMapByCurrentLocation(),
 			[]references.Position{n.gameState.Position},
 		)
-		path := npc.AStarMap.AStar(npc.Position,
-			references.Position{
-				X: 15,
-				Y: 30,
-			})
+		path := npc.AStarMap.AStar(npc.Position, references.Position{X: 15, Y: 30})
+		npc.CurrentPath = &path
 		if path != nil {
 			fmt.Print()
 			if len(path) > 1 {
-				npc.Position = path[1]
+				npc.DequeueNextPosition()
+			} else {
+				// wander?
 			}
 		}
 

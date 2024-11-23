@@ -26,7 +26,7 @@ func NewAStarMap() *AStarMap {
 }
 
 func (m *AStarMap) AStar(start, goal references.Position) []references.Position {
-	openSet := &PriorityQueue{}
+	openSet := &aStarPriorityQueue{}
 	heap.Init(openSet)
 
 	startNode := &AStarNode{
@@ -115,23 +115,23 @@ func Heuristic(a, b references.Position) int {
 	return helpers.AbsInt(int(a.X-b.X)) + helpers.AbsInt(int(a.Y-b.Y))
 }
 
-type PriorityQueue []*AStarNode
+type aStarPriorityQueue []*AStarNode
 
-func (pq PriorityQueue) Len() int { return len(pq) }
+func (pq aStarPriorityQueue) Len() int { return len(pq) }
 
-func (pq PriorityQueue) Less(i, j int) bool {
+func (pq aStarPriorityQueue) Less(i, j int) bool {
 	return pq[i].FScore < pq[j].FScore // Lower FScore has higher priority
 }
 
-func (pq PriorityQueue) Swap(i, j int) {
+func (pq aStarPriorityQueue) Swap(i, j int) {
 	pq[i], pq[j] = pq[j], pq[i]
 }
 
-func (pq *PriorityQueue) Push(x interface{}) {
+func (pq *aStarPriorityQueue) Push(x interface{}) {
 	*pq = append(*pq, x.(*AStarNode))
 }
 
-func (pq *PriorityQueue) Pop() interface{} {
+func (pq *aStarPriorityQueue) Pop() interface{} {
 	old := *pq
 	n := len(old)
 	item := old[n-1]
