@@ -17,8 +17,6 @@ type SmallLocationReference struct {
 	ListOfFloors         []FloorNumber
 
 	npcRefs *[]NPCReference
-
-	// config   *config.UltimaVConfiguration
 }
 
 func NewSingleSmallMapReference(
@@ -61,9 +59,13 @@ func (s *SmallLocationReference) HasBasement() bool {
 	return ok
 }
 
-func (s *SmallLocationReference) GetTileNumber(nFloor FloorNumber, x Coordinate, y Coordinate) indexes.SpriteIndex {
-	return indexes.SpriteIndex(s.rawData[int(nFloor)][x][y])
+func (s *SmallLocationReference) GetTileNumber(xy Position, nFloor FloorNumber) indexes.SpriteIndex {
+	return indexes.SpriteIndex(s.rawData[int(nFloor)][xy.X][xy.Y])
 }
+
+// func (s *SmallLocationReference) GetTileNumber(nFloor FloorNumber, x Coordinate, y Coordinate) indexes.SpriteIndex {
+// 	return indexes.SpriteIndex(s.rawData[int(nFloor)][x][y])
+// }
 
 func (s *SmallLocationReference) GetEnteringText() string {
 	return s.Location.String()
@@ -160,4 +162,29 @@ func (s *SmallLocationReference) CanGoDownOneFloor(currentFloor FloorNumber) boo
 
 func (s *SmallLocationReference) GetNPCReferences() *[]NPCReference {
 	return s.npcRefs
+}
+
+func (s *SmallLocationReference) GetClosestLadder(nCurrentFloor FloorNumber, nTargetFloor FloorNumber) Position {
+	ladderOrStairType := indexes.LadderOrStairDown
+	if nCurrentFloor < nTargetFloor {
+		ladderOrStairType = indexes.LadderOrStairUp
+	}
+	ls := s.getListOfAllLaddersAndStairs(nCurrentFloor, ladderOrStairType)
+	_ = ls
+	return Position{}
+}
+
+func (s *SmallLocationReference) getListOfAllLaddersAndStairs(nFloor FloorNumber, ladderOrStairType indexes.LadderOrStairType) []Position {
+	positions := make([]Position, 0)
+
+	for x := Coordinate(0); x < s.GetMaxX(); x++ {
+		for y := Coordinate(0); y < s.GetMaxY(); y++ {
+			pos := Position{X: x, Y: y}
+			if s.GetTileNumber(pos, nFloor).IsLadderOrStairs(ladderOrStairType) {
+				positions = append(positions, pos)
+			}
+		}
+	}
+
+	return positions
 }

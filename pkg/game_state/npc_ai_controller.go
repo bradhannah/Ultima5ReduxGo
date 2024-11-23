@@ -45,7 +45,6 @@ func (n *NPCAIController) createFreshXyOccupiedMap() *XyOccupiedMap {
 		if npc.IsEmptyNPC() {
 			continue
 		}
-		// indiv := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
 		_, exists := xy[int(npc.Position.X)]
 		if !exists {
 			xy[int(npc.Position.X)] = make(map[int]bool)
@@ -67,9 +66,6 @@ func (n *NPCAIController) generateNPCs() {
 }
 
 func (n *NPCAIController) PopulateMapFirstLoad() {
-	// lm *LayeredMap,
-	// ud datetime.UltimaDate) {
-
 	n.generateNPCs()
 
 	for i, npc := range n.npcs {
@@ -146,16 +142,17 @@ func (n *NPCAIController) calculateNextNPCPosition(npc *NPC) {
 
 func (n *NPCAIController) performAiMovementOnAssignedPosition(npc *NPC) bool {
 	npcSched := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+	nWanderDistance := n.getWanderDistanceByAiType(npc.AiType)
 
 	switch npc.AiType {
 	case references.BlackthornGuardFixed, references.Fixed:
 	case references.MerchantBuyingSellingCustom, references.MerchantBuyingSellingWander, references.Wander:
 		// wander 2
-		n.WanderOneTileWithinN(npc, npcSched.Position, 2)
+		n.wanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
 		return true
 	case references.BigWander, references.BlackthornGuardWander:
 		// wander 5
-		n.WanderOneTileWithinN(npc, npcSched.Position, 5)
+		n.wanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
 		return true
 	case references.ChildRunAway:
 		return true
@@ -169,7 +166,7 @@ func (n *NPCAIController) performAiMovementOnAssignedPosition(npc *NPC) bool {
 		// set location of Avatar as way point, but only set the first movement from the list if within N of Avatar
 		return true
 	case references.HorseWander:
-		// wander 4
+		n.wanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
 	case references.StoneGargoyleTrigger:
 		// if they are within 4 then change their AI to Drudgeworth (follow)
 	case references.FixedExceptAttackWhenIsWantedByThePoPo:
@@ -189,42 +186,30 @@ func (n *NPCAIController) performAiMovementOnAssignedPosition(npc *NPC) bool {
 	return false
 }
 
-func (n *NPCAIController) getWanderDistanceByAiType(aiType references.AiType) int {
-	switch aiType {
-	case references.HorseWander:
-		return 4
-	case references.Wander:
-		return 2
-	case references.BigWander, references.BlackthornGuardWander, references.MerchantBuyingSellingCustom, references.MerchantBuyingSellingWander:
-		return 4
-	}
-	return 0
-}
-
 func (n *NPCAIController) performAiMovementNotOnAssignedPosition(npc *NPC) bool {
 	npcSched := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
 	nWanderDistance := n.getWanderDistanceByAiType(npc.AiType)
 
-	if n.MoveNPCOnCalculatedPath(npc) {
+	if n.moveNPCOnCalculatedPath(npc) {
 		return true
 	}
 
 	switch npc.AiType {
 	case references.BlackthornGuardFixed, references.Fixed, references.CustomAi, references.MerchantBuyingSelling:
-		if n.CreateFreshPathToScheduledLocation(npc) {
+		if n.createFreshPathToScheduledLocation(npc) {
 			npc.Position = npc.DequeueNextPosition()
 			return true
 		}
 		return false
 	case references.BigWander, references.BlackthornGuardWander, references.MerchantBuyingSellingCustom, references.MerchantBuyingSellingWander, references.Wander, references.HorseWander:
 		if !npcSched.Position.IsWithinN(&npc.Position, nWanderDistance) {
-			if n.CreateFreshPathToScheduledLocation(npc) {
+			if n.createFreshPathToScheduledLocation(npc) {
 				npc.Position = npc.DequeueNextPosition()
 				return true
 			}
 			return false
 		}
-		return n.WanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
+		return n.wanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
 	case references.ChildRunAway:
 		// run away
 		return true
@@ -246,14 +231,14 @@ func (n *NPCAIController) performAiMovementNotOnAssignedPosition(npc *NPC) bool 
 		references.HalfYourGoldExtortingGuard,
 		references.SmallWanderWantsToChat:
 		if !npcSched.Position.IsWithinN(&npc.Position, nWanderDistance) {
-			if n.CreateFreshPathToScheduledLocation(npc) {
+			if n.createFreshPathToScheduledLocation(npc) {
 				npc.Position = npc.DequeueNextPosition()
 				return true
 			}
 			return false
 		}
 		if helpers.OneInXOdds(3) {
-			return n.WanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
+			return n.wanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
 		}
 		return false
 	default:
@@ -262,7 +247,7 @@ func (n *NPCAIController) performAiMovementNotOnAssignedPosition(npc *NPC) bool 
 	return false
 }
 
-func (n *NPCAIController) MoveNPCOnCalculatedPath(npc *NPC) bool {
+func (n *NPCAIController) moveNPCOnCalculatedPath(npc *NPC) bool {
 	if !npc.HasAPathAlreadyCalculated() {
 		return false
 	}
@@ -275,7 +260,7 @@ func (n *NPCAIController) MoveNPCOnCalculatedPath(npc *NPC) bool {
 	return false
 }
 
-func (n *NPCAIController) CreateFreshPathToScheduledLocation(npc *NPC) bool {
+func (n *NPCAIController) createFreshPathToScheduledLocation(npc *NPC) bool {
 	// set up all the walkable and non walkable tiles plus the weights
 	npc.AStarMap.InitializeByLayeredMap(
 		n.gameState.GetLayeredMapByCurrentLocation(),
@@ -293,7 +278,7 @@ func (n *NPCAIController) CreateFreshPathToScheduledLocation(npc *NPC) bool {
 	return npc.HasAPathAlreadyCalculated()
 }
 
-func (n *NPCAIController) WanderOneTileWithinN(npc *NPC, anchorPos references.Position, withinN int) bool {
+func (n *NPCAIController) wanderOneTileWithinN(npc *NPC, anchorPos references.Position, withinN int) bool {
 	rand.Seed(uint64(time.Now().UnixNano())) // Seed the random number generator
 
 	// Define possible moves: up, down, left, right
@@ -330,4 +315,16 @@ func (n *NPCAIController) WanderOneTileWithinN(npc *NPC, anchorPos references.Po
 	}
 	// If no valid moves are found, stay in the same position
 	return false
+}
+
+func (n *NPCAIController) getWanderDistanceByAiType(aiType references.AiType) int {
+	switch aiType {
+	case references.HorseWander:
+		return 4
+	case references.Wander:
+		return 2
+	case references.BigWander, references.BlackthornGuardWander, references.MerchantBuyingSellingCustom, references.MerchantBuyingSellingWander:
+		return 4
+	}
+	return 0
 }
