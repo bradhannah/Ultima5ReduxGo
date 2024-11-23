@@ -2,8 +2,8 @@ package game_state
 
 import (
 	"container/heap"
-	"math"
 
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -94,7 +94,7 @@ func reconstructPath(node *AStarNode) []references.Position {
 	return path
 }
 
-func (m *AStarMap) InitializeByLayeredMap(lMap *LayeredMap) {
+func (m *AStarMap) InitializeByLayeredMap(lMap *LayeredMap, extraBlockTiles []references.Position) {
 	m.walkableMap = make(map[references.Position]int)
 	for x := references.Coordinate(0); x < lMap.xMax; x++ {
 		for y := references.Coordinate(0); y < lMap.yMax; y++ {
@@ -106,24 +106,13 @@ func (m *AStarMap) InitializeByLayeredMap(lMap *LayeredMap) {
 			m.walkableMap[pos] = topTile.GetWalkableWeight()
 		}
 	}
+	for i := 0; i < len(extraBlockTiles); i++ {
+		m.walkableMap[extraBlockTiles[i]] = -1
+	}
 }
 
 func Heuristic(a, b references.Position) int {
-	return int(math.Abs(float64(a.X-b.X)) + math.Abs(float64(a.Y-b.Y)))
-}
-
-func getLowestFScore(openSet map[references.Position]struct{}, fScore map[references.Position]int) references.Position {
-	var lowest references.Position
-	minScore := int(^uint(0) >> 1) // Max int value
-
-	for node := range openSet {
-		if score, ok := fScore[node]; ok && score < minScore {
-			lowest = node
-			minScore = score
-		}
-	}
-
-	return lowest
+	return helpers.AbsInt(int(a.X-b.X)) + helpers.AbsInt(int(a.Y-b.Y))
 }
 
 type PriorityQueue []*AStarNode
