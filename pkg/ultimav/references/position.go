@@ -113,3 +113,11 @@ func (p *Position) Neighbors() []Position {
 		{X: p.X, Y: p.Y + 1}, // Down
 	}
 }
+
+func (p *Position) HeuristicTileDistance(b Position) int {
+	return helpers.AbsInt(int(p.X-b.X)) + helpers.AbsInt(int(p.Y-b.Y))
+}
+
+func (p *Position) IsZeros() bool {
+	return p.X == 0 && p.Y == 0
+}

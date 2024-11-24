@@ -164,23 +164,39 @@ func (s *SmallLocationReference) GetNPCReferences() *[]NPCReference {
 	return s.npcRefs
 }
 
-func (s *SmallLocationReference) GetClosestLadder(nCurrentFloor FloorNumber, nTargetFloor FloorNumber) Position {
-	ladderOrStairType := indexes.LadderOrStairDown
+func (s *SmallLocationReference) GetClosestLadder(currentPosition Position, nCurrentFloor FloorNumber, nTargetFloor FloorNumber) Position {
+	ladderOrStairType := LadderOrStairDown
 	if nCurrentFloor < nTargetFloor {
-		ladderOrStairType = indexes.LadderOrStairUp
+		ladderOrStairType = LadderOrStairUp
 	}
 	ls := s.getListOfAllLaddersAndStairs(nCurrentFloor, ladderOrStairType)
-	_ = ls
-	return Position{}
+
+	bestPosition := Position{}
+	for _, pos := range ls {
+		if bestPosition.IsZeros() {
+			bestPosition = pos
+			continue
+		}
+		if currentPosition.HeuristicTileDistance(pos) < pos.HeuristicTileDistance(bestPosition) {
+			bestPosition = pos
+		}
+	}
+
+	if bestPosition.IsZeros() {
+		log.Fatal("Unexpected: every NPC should have a ladder or stair close to them")
+	}
+
+	return bestPosition
 }
 
-func (s *SmallLocationReference) getListOfAllLaddersAndStairs(nFloor FloorNumber, ladderOrStairType indexes.LadderOrStairType) []Position {
+func (s *SmallLocationReference) getListOfAllLaddersAndStairs(nFloor FloorNumber, ladderOrStairType LadderOrStairType) []Position {
 	positions := make([]Position, 0)
 
 	for x := Coordinate(0); x < s.GetMaxX(); x++ {
 		for y := Coordinate(0); y < s.GetMaxY(); y++ {
 			pos := Position{X: x, Y: y}
-			if s.GetTileNumber(pos, nFloor).IsLadderOrStairs(ladderOrStairType) {
+			isLadderOrStair := IsSpecificLadderOrStairs(s.GetTileNumber(pos, nFloor), ladderOrStairType)
+			if isLadderOrStair {
 				positions = append(positions, pos)
 			}
 		}

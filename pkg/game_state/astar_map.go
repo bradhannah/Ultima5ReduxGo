@@ -3,7 +3,6 @@ package game_state
 import (
 	"container/heap"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -32,7 +31,7 @@ func (m *AStarMap) AStar(start, goal references.Position) []references.Position 
 	startNode := &AStarNode{
 		Position: start,
 		GScore:   0,
-		FScore:   Heuristic(start, goal),
+		FScore:   start.HeuristicTileDistance(goal),
 	}
 	heap.Push(openSet, startNode)
 
@@ -74,7 +73,7 @@ func (m *AStarMap) AStar(start, goal references.Position) []references.Position 
 				heap.Push(openSet, &AStarNode{
 					Position: neighbor,
 					GScore:   tentativeGScore,
-					FScore:   tentativeGScore + Heuristic(neighbor, goal),
+					FScore:   tentativeGScore + neighbor.HeuristicTileDistance(goal),
 					Parent:   current,
 				})
 			}
@@ -109,10 +108,6 @@ func (m *AStarMap) InitializeByLayeredMap(lMap *LayeredMap, extraBlockTiles []re
 	for i := 0; i < len(extraBlockTiles); i++ {
 		m.walkableMap[extraBlockTiles[i]] = -1
 	}
-}
-
-func Heuristic(a, b references.Position) int {
-	return helpers.AbsInt(int(a.X-b.X)) + helpers.AbsInt(int(a.Y-b.Y))
 }
 
 type aStarPriorityQueue []*AStarNode

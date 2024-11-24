@@ -1,12 +1,5 @@
 package indexes
 
-type LadderOrStairType int
-
-const (
-	LadderOrStairUp LadderOrStairType = iota
-	LadderOrStairDown
-)
-
 type SpriteIndex int
 
 const (
@@ -168,14 +161,4 @@ func (s SpriteIndex) IsWindowedDoor() bool {
 
 func (s SpriteIndex) IsPushableFloor() bool {
 	return s == BrickFloor || s == HexMetalGridFloor
-}
-
-func (s SpriteIndex) IsLadderOrStairs(ladderOrStairType LadderOrStairType) bool {
-	switch ladderOrStairType {
-	case LadderOrStairUp:
-		return s == LadderUp || s == StairsUp1 || s == StairsUp2
-	case LadderOrStairDown:
-		return s == LadderDown || s == StairsDown1 || s == StairsDown2
-	}
-	return false
 }

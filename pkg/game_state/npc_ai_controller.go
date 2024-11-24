@@ -129,15 +129,64 @@ func (n *NPCAIController) CalculateNextNPCPositions() {
 func (n *NPCAIController) calculateNextNPCPosition(npc *NPC) {
 	refBehaviour := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
 
-	if npc.Position.Equals(refBehaviour.Position) {
+	if npc.Position.Equals(refBehaviour.Position) && npc.Floor == refBehaviour.Floor {
 		if n.performAiMovementOnAssignedPosition(npc) {
 			return
 		}
+		// } else if npc.Position.Equals(refBehaviour.Position) {
+	} else if npc.Floor != refBehaviour.Floor {
+		// different floor
+		n.performAiMovementOnDifferentFloor(npc)
 	} else {
 		if n.performAiMovementNotOnAssignedPosition(npc) {
 			return
 		}
 	}
+}
+
+func (n *NPCAIController) performAiMovementOnDifferentFloor(npc *NPC) bool {
+	refBehaviour := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+
+	// current floor matters - if they are coming to your floor - then teleport them
+	if npc.Floor != refBehaviour.Floor && refBehaviour.Floor == n.gameState.Floor {
+		npc.Floor = n.gameState.Floor
+		// TODO: get the previous scheduled position floor as the "current" - +1 is just a hack for now
+		n.slr.GetClosestLadder(refBehaviour.Position, refBehaviour.Floor+1, n.gameState.Floor)
+		npc.Position = refBehaviour.Position
+		return true
+	}
+	if npc.Floor != n.gameState.Floor && refBehaviour.Floor != n.gameState.Floor {
+		// skip
+		return false
+	}
+
+	if n.moveNPCOnCalculatedPath(npc) {
+		if npc.HasAPathAlreadyCalculated() {
+			// they still have more moves, so we are sure they aren't ascending or descending
+			return true
+			// if they are on a ladder or stairs that goes up then change their floor
+		}
+		// the path is done - let's confirm they hit a ladder or stair
+		topTile := n.gameState.GetLayeredMapByCurrentLocation().GetTopTile(&npc.Position)
+		isLadderOrStairs := references.IsSpecificLadderOrStairs(topTile.Index, references.GetLadderOfStairsType(npc.Floor, refBehaviour.Floor))
+
+		if !isLadderOrStairs {
+			log.Fatal("Unexpected: when changing floors, I expect an NPC to stop on stairs or ladder")
+		}
+
+		// switch their floor out for the correct one
+		npc.Floor = refBehaviour.Floor
+		npc.Position = refBehaviour.Position
+		return true
+	}
+
+	// they haven't begun moving - let's find the best possible ladders or stairs
+	if n.createFreshPathToScheduledLocation(npc) {
+		npc.Position = npc.DequeueNextPosition()
+		return true
+	}
+
+	return false
 }
 
 func (n *NPCAIController) performAiMovementOnAssignedPosition(npc *NPC) bool {
@@ -267,7 +316,16 @@ func (n *NPCAIController) createFreshPathToScheduledLocation(npc *NPC) bool {
 		[]references.Position{n.gameState.Position},
 	)
 
-	path := npc.AStarMap.AStar(npc.Position, references.Position{X: 15, Y: 30})
+	npcBehaviour := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+
+	var path []references.Position
+	if npcBehaviour.Floor != npc.Floor {
+		// we prefer to find the best ladder or stairs
+		closestFloorChangePosition := n.slr.GetClosestLadder(npc.Position, npc.Floor, npcBehaviour.Floor)
+		path = npc.AStarMap.AStar(npc.Position, closestFloorChangePosition)
+	} else {
+		path = npc.AStarMap.AStar(npc.Position, npcBehaviour.Position)
+	}
 
 	npc.CurrentPath = &path
 	if len(path) == 0 {
