@@ -68,6 +68,10 @@ func (t *Tile) IsPath() bool {
 	return t.Index >= indexes.PathUpDown && t.Index <= indexes.PathAllWays
 }
 
+func (t *Tile) isNPCNoPenaltyWalkable() bool {
+	return t.Index == indexes.BrickFloor || t.Index == indexes.HexMetalGridFloor || t.Index == indexes.WoodenPlankVert1Floor || t.Index == indexes.WoodenPlankVert2Floor || t.Index == indexes.WoodenPlankHorizFloor
+}
+
 func (t *Tile) GetWalkableWeight() int {
 	if t.Index.IsUnlockedDoor() {
 		return 1
@@ -75,11 +79,14 @@ func (t *Tile) GetWalkableWeight() int {
 	if !t.IsWalkingPassable {
 		return -1
 	}
-	if t.Index == indexes.BrickFloor {
+	if t.isNPCNoPenaltyWalkable() {
 		return 1
 	}
 	if t.IsPath() {
 		return 2
+	}
+	if t.Index == indexes.Grass {
+		return 3
 	}
 	return 10
 }

@@ -21,8 +21,11 @@ const (
 	PlowedField                          = 44
 	WheatInField                         = 45
 	Cactus                               = 47
+	WoodenPlankHorizFloor                = 64
 	BrickFloor                           = 68
 	HexMetalGridFloor                    = 69
+	WoodenPlankVert1Floor                = 72
+	WoodenPlankVert2Floor                = 73
 	LargeRockWall                        = 77
 	StoneBrickWallSecret                 = 78
 	StoneBrickWall                       = 79
