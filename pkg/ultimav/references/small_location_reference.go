@@ -164,7 +164,7 @@ func (s *SmallLocationReference) GetNPCReferences() *[]NPCReference {
 	return s.npcRefs
 }
 
-func (s *SmallLocationReference) GetClosestLadder(currentPosition Position, nCurrentFloor FloorNumber, nTargetFloor FloorNumber) Position {
+func (s *SmallLocationReference) GetClosestLadder(npcCurrentPosition Position, nCurrentFloor FloorNumber, nTargetFloor FloorNumber) Position {
 	ladderOrStairType := LadderOrStairDown
 	if nCurrentFloor < nTargetFloor {
 		ladderOrStairType = LadderOrStairUp
@@ -177,7 +177,7 @@ func (s *SmallLocationReference) GetClosestLadder(currentPosition Position, nCur
 			bestPosition = pos
 			continue
 		}
-		if currentPosition.HeuristicTileDistance(pos) < pos.HeuristicTileDistance(bestPosition) {
+		if npcCurrentPosition.HeuristicTileDistance(pos) < npcCurrentPosition.HeuristicTileDistance(bestPosition) {
 			bestPosition = pos
 		}
 	}
