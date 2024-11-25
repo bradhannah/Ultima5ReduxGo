@@ -90,3 +90,7 @@ func (t *Tile) GetWalkableWeight() int {
 	}
 	return 10
 }
+
+func (t *Tile) IsWalkableDuringWander() bool {
+	return t.IsWalkingPassable && !t.Index.IsBed() && !t.Index.IsDoor()
+}

@@ -56,6 +56,7 @@ const (
 	Well                                 = 161
 	HitchingPost                         = 162
 	LeftBed                              = 171
+	RightBed                             = 172
 	RightSconce                          = 176
 	LeftScone                            = 177
 	Brazier                              = 178
@@ -164,4 +165,8 @@ func (s SpriteIndex) IsWindowedDoor() bool {
 
 func (s SpriteIndex) IsPushableFloor() bool {
 	return s == BrickFloor || s == HexMetalGridFloor
+}
+
+func (s SpriteIndex) IsBed() bool {
+	return s == LeftBed || s == AvatarSleepingInBed || s == RightBed
 }

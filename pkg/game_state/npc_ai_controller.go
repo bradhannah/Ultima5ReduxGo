@@ -364,6 +364,10 @@ func (n *NPCAIController) wanderOneTileWithinN(npc *NPC, anchorPos references.Po
 			continue
 		}
 
+		if !n.gameState.GetLayeredMapByCurrentLocation().GetTopTile(&newPos).IsWalkableDuringWander() {
+			continue
+		}
+
 		// Check if the new position is within N tiles of the anchorPos
 		if helpers.AbsInt(int(newPos.X-anchorPos.X)) <= withinN && helpers.AbsInt(int(newPos.Y-anchorPos.Y)) <= withinN && n.gameState.IsNPCPassable(&newPos) {
 			npc.Position.X = newPos.X
