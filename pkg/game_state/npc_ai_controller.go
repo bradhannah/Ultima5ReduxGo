@@ -121,6 +121,10 @@ func (n *NPCAIController) CalculateNextNPCPositions() {
 		if npc.IsEmptyNPC() {
 			continue
 		}
+		// very lazy approach - but making sure every NPC is in correct spot on map
+		// for every iteration makes sure next NPC doesn't assign the same tile space
+		n.clearMapUnitsFromMap()
+		n.setAllNPCTiles()
 		n.calculateNextNPCPosition(npc)
 	}
 	n.setAllNPCTiles()
@@ -133,7 +137,6 @@ func (n *NPCAIController) calculateNextNPCPosition(npc *NPC) {
 		if n.performAiMovementOnAssignedPosition(npc) {
 			return
 		}
-		// } else if npc.Position.Equals(refBehaviour.Position) {
 	} else if npc.Floor != refBehaviour.Floor {
 		// different floor
 		n.performAiMovementOnDifferentFloor(npc)

@@ -35,7 +35,6 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 	g.refreshMapLayerTiles()
 
 	g.drawMap(g.mapImage)
-	// g.drawMapUnits(g.mapImage)
 
 	op := sprites.GetDrawOptionsFromPercentsForWholeScreen(g.mapImage,
 		gameScreenPercents)
@@ -69,15 +68,6 @@ func (g *GameScene) drawBorders(screen *ebiten.Image) {
 	screen.DrawImage(g.borders.bottomRightProvisionsBorder, g.borders.bottomRightProvisionsBorderOp)
 	screen.DrawImage(g.borders.topRightCharacterBorder, g.borders.topRightCharacterBorderOp)
 }
-
-// drawMapUnits
-// func (g *GameScene) drawMapUnits(screen *ebiten.Image) {
-// 	// do := ebiten.DrawImageOptions{}
-// 	//
-// 	// do.GeoM.Translate(float64(sprites.TileSize*(xTilesInMap/2)), float64(sprites.TileSize*(yTilesInMap/2)))
-// 	screen.DrawImage(g.unscaledMapImage, &ebiten.DrawImageOptions{})
-// 	g.debugMessage = fmt.Sprintf("%d, %d", g.gameState.Position.X, g.gameState.Position.Y)
-// }
 
 // drawMap
 func (g *GameScene) drawMap(screen *ebiten.Image) {

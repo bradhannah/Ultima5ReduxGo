@@ -13,6 +13,21 @@ import (
 )
 
 func (g *GameScene) getSmallCalculatedAvatarTileIndex(ogSpriteIndex indexes.SpriteIndex) indexes.SpriteIndex {
+	return g.getSmallCalculatedNPCTileIndex(ogSpriteIndex, indexes.Avatar_KeyIndex)
+	// switch ogSpriteIndex {
+	// case indexes.LeftBed:
+	// 	return indexes.AvatarSleepingInBed
+	// case indexes.ChairFacingRight, indexes.ChairFacingLeft, indexes.ChairFacingUp, indexes.ChairFacingDown:
+	// 	return g.getCorrectAvatarOnChairTile(ogSpriteIndex, &g.gameState.Position)
+	// case indexes.LadderUp:
+	// 	return indexes.AvatarOnLadderUp
+	// case indexes.LadderDown:
+	// 	return indexes.AvatarOnLadderDown
+	// }
+	// return indexes.Avatar_KeyIndex
+}
+
+func (g *GameScene) getSmallCalculatedNPCTileIndex(ogSpriteIndex indexes.SpriteIndex, npcIndex indexes.SpriteIndex) indexes.SpriteIndex {
 	switch ogSpriteIndex {
 	case indexes.LeftBed:
 		return indexes.AvatarSleepingInBed
@@ -23,7 +38,7 @@ func (g *GameScene) getSmallCalculatedAvatarTileIndex(ogSpriteIndex indexes.Spri
 	case indexes.LadderDown:
 		return indexes.AvatarOnLadderDown
 	}
-	return indexes.Avatar_KeyIndex
+	return npcIndex
 }
 
 func (g *GameScene) getSmallCalculatedTileIndex(ogSpriteIndex indexes.SpriteIndex, pos *references.Position) indexes.SpriteIndex {
@@ -139,14 +154,21 @@ func (g *GameScene) refreshMapLayerTiles() {
 			}
 			do.GeoM.Translate(float64(x*sprites.TileSize), float64(y*sprites.TileSize))
 
-			tile := theMap.GetTileByLayer(game_state.MapUnitLayer, &pos)
-			if tile == nil || tile.Index == 0 {
+			mapUnitTile := theMap.GetTileByLayer(game_state.MapUnitLayer, &pos)
+			underTile := theMap.GetTileTopMapOnlyTile(&pos)
+			if mapUnitTile == nil || mapUnitTile.Index == 0 {
 				do.GeoM.Reset()
 				continue
 			}
 			// var spriteIndex indexes.SpriteIndex
 			if layer.IsPositionVisible(&pos) {
-				tileIndex := g.getSmallCalculatedTileIndex(tile.Index, &pos)
+				replacementTile := g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index)
+				var tileIndex indexes.SpriteIndex
+				if replacementTile != mapUnitTile.Index {
+					tileIndex = replacementTile
+				} else {
+					tileIndex = g.getSmallCalculatedTileIndex(mapUnitTile.Index, &pos)
+				}
 				g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), &do)
 			}
 			do.GeoM.Reset()

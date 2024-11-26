@@ -10,6 +10,14 @@ const (
 	HorseVehicle
 )
 
+const (
+	WeightImpassable = -1
+	WeightIdealPath  = 1
+	WeightPath       = 2
+	WeightGrass      = 3
+	WeightDefault    = 10
+)
+
 type Tile struct {
 	Index                     indexes.SpriteIndex
 	Name                      string `json:"Name"`
@@ -74,21 +82,21 @@ func (t *Tile) isNPCNoPenaltyWalkable() bool {
 
 func (t *Tile) GetWalkableWeight() int {
 	if t.Index.IsUnlockedDoor() {
-		return 1
+		return WeightIdealPath
 	}
 	if !t.IsWalkingPassable {
-		return -1
+		return WeightImpassable
 	}
 	if t.isNPCNoPenaltyWalkable() {
-		return 1
+		return WeightIdealPath
 	}
 	if t.IsPath() {
-		return 2
+		return WeightPath
 	}
 	if t.Index == indexes.Grass {
-		return 3
+		return WeightGrass
 	}
-	return 10
+	return WeightDefault
 }
 
 func (t *Tile) IsWalkableDuringWander() bool {
