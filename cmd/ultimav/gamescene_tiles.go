@@ -14,17 +14,7 @@ import (
 
 func (g *GameScene) getSmallCalculatedAvatarTileIndex(ogSpriteIndex indexes.SpriteIndex) indexes.SpriteIndex {
 	return g.getSmallCalculatedNPCTileIndex(ogSpriteIndex, indexes.Avatar_KeyIndex)
-	// switch ogSpriteIndex {
-	// case indexes.LeftBed:
-	// 	return indexes.AvatarSleepingInBed
-	// case indexes.ChairFacingRight, indexes.ChairFacingLeft, indexes.ChairFacingUp, indexes.ChairFacingDown:
-	// 	return g.getCorrectAvatarOnChairTile(ogSpriteIndex, &g.gameState.Position)
-	// case indexes.LadderUp:
-	// 	return indexes.AvatarOnLadderUp
-	// case indexes.LadderDown:
-	// 	return indexes.AvatarOnLadderDown
-	// }
-	// return indexes.Avatar_KeyIndex
+
 }
 
 func (g *GameScene) getSmallCalculatedNPCTileIndex(ogSpriteIndex indexes.SpriteIndex, npcIndex indexes.SpriteIndex) indexes.SpriteIndex {
@@ -162,13 +152,9 @@ func (g *GameScene) refreshMapLayerTiles() {
 			}
 			// var spriteIndex indexes.SpriteIndex
 			if layer.IsPositionVisible(&pos) {
-				replacementTile := g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index)
-				var tileIndex indexes.SpriteIndex
-				if replacementTile != mapUnitTile.Index {
-					tileIndex = replacementTile
-				} else {
-					tileIndex = g.getSmallCalculatedTileIndex(mapUnitTile.Index, &pos)
-				}
+				tileIndex := g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index)
+				tileIndex = g.getSmallCalculatedTileIndex(tileIndex, &pos)
+				// }
 				g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), &do)
 			}
 			do.GeoM.Reset()

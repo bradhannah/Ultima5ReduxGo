@@ -35,6 +35,20 @@ func CreateNPCSchedule(rawData []byte) NPCSchedule {
 	return *npcSchedule
 }
 
+func (n *NPCSchedule) GetPreviousIndividualNPCBehaviourByUltimaDate(ud datetime.UltimaDate) IndividualNPCBehaviour {
+	index := n.getScheduleIndex(ud)
+	if index == 0 {
+		index = len(n.Ai) - 1
+	} else {
+		index--
+	}
+	return IndividualNPCBehaviour{
+		Ai:       AiType(n.Ai[index]),
+		Position: Position{X: Coordinate(n.X[index]), Y: Coordinate(n.Y[index])},
+		Floor:    FloorNumber(n.Floor[index]),
+	}
+}
+
 func (n *NPCSchedule) GetIndividualNPCBehaviourByUltimaDate(ud datetime.UltimaDate) IndividualNPCBehaviour {
 	index := n.getScheduleIndex(ud)
 	return IndividualNPCBehaviour{
