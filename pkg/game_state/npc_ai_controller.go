@@ -137,11 +137,6 @@ func (n *NPCAIController) calculateNextNPCPosition(npc *NPC) {
 	if n.moveNPCOnCalculatedPath(npc) {
 		return
 	}
-	// 	if n.createFreshPathToScheduledLocation(npc) {
-	// 		npc.Position = npc.DequeueNextPosition()
-	// 		return
-	// 	}
-	// }
 
 	if npc.Position.Equals(refBehaviour.Position) && npc.Floor == refBehaviour.Floor {
 		if n.performAiMovementOnAssignedPosition(npc) {
@@ -165,14 +160,9 @@ func (n *NPCAIController) calculateNextNPCPosition(npc *NPC) {
 func (n *NPCAIController) performAiMovementFromDifferentFloorToOurFloor(npc *NPC) bool {
 	// called if the NPC is currently on a different floor then the current floor
 	refBehaviour := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
-	prevBehaviour := npc.NPCReference.Schedule.GetPreviousIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
-
-	if npc.Floor != refBehaviour.Floor && refBehaviour.Floor == n.gameState.Floor {
-		log.Fatal("Called performAiMovementFromDifferentFloorToOurFloor but floor config is incorrect")
-	}
 
 	// current floor matters - if they are coming to your floor - then teleport them
-	closestLadderPos := n.slr.GetClosestLadder(refBehaviour.Position, prevBehaviour.Floor, n.gameState.Floor)
+	closestLadderPos := n.slr.GetClosestLadder(refBehaviour.Position, npc.Floor, n.gameState.Floor)
 
 	// check if something or someone else is on the ladder, if so then we skip it for this turn
 	// and try again next turn
@@ -190,6 +180,18 @@ func (n *NPCAIController) performAiMovementFromDifferentFloorToOurFloor(npc *NPC
 func (n *NPCAIController) performAiMovementFromCurrentFloorToDifferentFloor(npc *NPC) bool {
 	// called if the NPC is currently on a different floor then the current floor
 	refBehaviour := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+
+	currentNpcMapTile := n.gameState.GetLayeredMapByCurrentLocation().GetTileTopMapOnlyTile(&npc.Position)
+	if references.IsSpecificLadderOrStairs(currentNpcMapTile.Index,
+		references.GetLadderOfStairsType(npc.Floor, refBehaviour.Floor)) {
+		npc.Floor = refBehaviour.Floor
+		return true
+	}
+
+	if npc.Position.Equals(refBehaviour.Position) && npc.Floor != refBehaviour.Floor {
+		npc.Floor = refBehaviour.Floor
+		return true
+	}
 
 	// // current floor matters - if they are coming to your floor - then teleport them
 	closestLadderPos := n.slr.GetClosestLadder(refBehaviour.Position, npc.Floor, refBehaviour.Floor) // n.gameState.Floor)
@@ -319,7 +321,9 @@ func (n *NPCAIController) moveNPCOnCalculatedPath(npc *NPC) bool {
 	}
 
 	newPos := npc.DequeueNextPosition()
-	if n.gameState.GetLayeredMapByCurrentLocation().GetTopTile(&newPos).IsWalkingPassable && n.gameState.Position != newPos {
+	newPosTile := n.gameState.GetLayeredMapByCurrentLocation().GetTopTile(&newPos)
+	passable := newPosTile.IsWalkingPassable || newPosTile.Index.IsUnlockedDoor()
+	if passable && n.gameState.Position != newPos {
 		npc.Position = newPos
 		return true
 	}
