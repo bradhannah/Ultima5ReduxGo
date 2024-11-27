@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"log"
 
@@ -9,20 +10,21 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 func (g *GameScene) getSmallCalculatedAvatarTileIndex(ogSpriteIndex indexes.SpriteIndex) indexes.SpriteIndex {
-	return g.getSmallCalculatedNPCTileIndex(ogSpriteIndex, indexes.Avatar_KeyIndex)
+	return g.getSmallCalculatedNPCTileIndex(ogSpriteIndex, indexes.Avatar_KeyIndex, g.gameState.Position)
 
 }
 
-func (g *GameScene) getSmallCalculatedNPCTileIndex(ogSpriteIndex indexes.SpriteIndex, npcIndex indexes.SpriteIndex) indexes.SpriteIndex {
+func (g *GameScene) getSmallCalculatedNPCTileIndex(ogSpriteIndex indexes.SpriteIndex, npcIndex indexes.SpriteIndex, spritePosition references.Position) indexes.SpriteIndex {
 	switch ogSpriteIndex {
 	case indexes.LeftBed:
 		return indexes.AvatarSleepingInBed
 	case indexes.ChairFacingRight, indexes.ChairFacingLeft, indexes.ChairFacingUp, indexes.ChairFacingDown:
-		return g.getCorrectAvatarOnChairTile(ogSpriteIndex, &g.gameState.Position)
+		return g.getCorrectAvatarOnChairTile(ogSpriteIndex, &spritePosition)
 	case indexes.LadderUp:
 		return indexes.AvatarOnLadderUp
 	case indexes.LadderDown:
@@ -134,6 +136,7 @@ func (g *GameScene) refreshMapLayerTiles() {
 		}
 	}
 	// END STATIC MAP
+	uf := text.NewUltimaFont(10)
 
 	// BEGIN MAPUNITS
 	for x = 0; x < xTilesInMap; x++ {
@@ -152,10 +155,15 @@ func (g *GameScene) refreshMapLayerTiles() {
 			}
 			// var spriteIndex indexes.SpriteIndex
 			if layer.IsPositionVisible(&pos) {
-				tileIndex := g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index)
-				tileIndex = g.getSmallCalculatedTileIndex(tileIndex, &pos)
+				tileIndex := g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, pos)
+				// tileIndex = g.getSmallCalculatedTileIndex(tileIndex, &pos)
 				// }
+				o := text.NewOutput(uf, 20, 1, 10)
+				// o.AddRowStr("A")
+
 				g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), &do)
+
+				o.DrawText(g.unscaledMapImage, fmt.Sprintf("x=%d y=%d", pos.X, pos.Y), &do)
 			}
 			do.GeoM.Reset()
 		}

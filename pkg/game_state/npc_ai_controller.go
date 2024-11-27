@@ -58,8 +58,8 @@ func (n *NPCAIController) generateNPCs() {
 	npcs := make([]*NPC, 0)
 	// get the correct schedule
 	npcsRefs := n.slr.GetNPCReferences()
-	for _, npcRef := range *npcsRefs {
-		npc := NewNPC(npcRef)
+	for nNpc, npcRef := range *npcsRefs {
+		npc := NewNPC(npcRef, nNpc)
 		npcs = append(npcs, &npc)
 	}
 	n.npcs = npcs
@@ -127,6 +127,7 @@ func (n *NPCAIController) CalculateNextNPCPositions() {
 		n.setAllNPCTiles()
 		n.calculateNextNPCPosition(npc)
 	}
+	n.clearMapUnitsFromMap()
 	n.setAllNPCTiles()
 }
 
@@ -213,11 +214,9 @@ func (n *NPCAIController) performAiMovementOnAssignedPosition(npc *NPC) bool {
 	switch npc.AiType {
 	case references.BlackthornGuardFixed, references.Fixed:
 	case references.MerchantBuyingSellingCustom, references.MerchantBuyingSellingWander, references.Wander:
-		// wander 2
 		n.wanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
 		return true
 	case references.BigWander, references.BlackthornGuardWander:
-		// wander 5
 		n.wanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
 		return true
 	case references.ChildRunAway:

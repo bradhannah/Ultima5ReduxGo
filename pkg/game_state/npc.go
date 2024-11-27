@@ -13,14 +13,17 @@ type NPC struct {
 	Floor    references.FloorNumber
 	AiType   references.AiType
 
+	NPCNum int
+
 	AStarMap *AStarMap
 
 	CurrentPath *[]references.Position
 }
 
-func NewNPC(npcReference references.NPCReference) NPC {
+func NewNPC(npcReference references.NPCReference, npcNum int) NPC {
 	npc := NPC{}
 	npc.NPCReference = npcReference
+	npc.NPCNum = npcNum
 
 	npc.AStarMap = NewAStarMap()
 	npc.CurrentPath = nil

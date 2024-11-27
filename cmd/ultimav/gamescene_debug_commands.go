@@ -18,6 +18,7 @@ func (d *DebugConsole) createDebugFunctions(gameScene *GameScene) *grammar.TextC
 	textCommands = append(textCommands, *d.createFloorUpCommand())
 	textCommands = append(textCommands, *d.createFloorDownCommand())
 	textCommands = append(textCommands, *d.createFreeMoveCommand())
+	textCommands = append(textCommands, *d.createTimeSet())
 	textCommands = append(textCommands, *d.createQuickTime())
 	textCommands = append(textCommands, *d.createGoSmall())
 	textCommands = append(textCommands, *d.createResolutionUp())
@@ -114,6 +115,24 @@ func (d *DebugConsole) createFreeMoveCommand() *grammar.TextCommand {
 		func(s string, command *grammar.TextCommand) {
 			d.gameScene.gameState.DebugOptions.FreeMove = !d.gameScene.gameState.DebugOptions.FreeMove
 			d.dumpQuickState(fmt.Sprintf("FreeMove = %t", d.gameScene.gameState.DebugOptions.FreeMove))
+		})
+}
+
+func (d *DebugConsole) createTimeSet() *grammar.TextCommand {
+	return grammar.NewTextCommand([]grammar.Match{
+		grammar.MatchString{
+			Str:           "tsh",
+			Description:   "Set time to hour",
+			CaseSensitive: false,
+		},
+		grammar.MatchInt{IntMin: 0, IntMax: 23, Description: "Hour"},
+	},
+		func(s string, command *grammar.TextCommand) {
+			outputStr := d.TextInput.GetText()
+
+			timeHour := byte(command.GetIndexAsInt(1, outputStr))
+			d.gameScene.gameState.DateTime.Hour = timeHour
+			d.dumpQuickState(fmt.Sprintf("Time Hour set=%b", timeHour))
 		})
 }
 
