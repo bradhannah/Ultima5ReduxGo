@@ -73,10 +73,10 @@ const (
 	LampPost                             = 189
 	CandleOnTable                        = 190
 	CookStove                            = 191
-	StairsUp1                            = 196
-	StairsUp2                            = 197
-	StairsDown1                          = 198
-	StairsDown2                          = 199
+	Stairs1                              = 196
+	Stairs2                              = 197
+	Stair3                               = 198
+	Stairs4                              = 199
 	LadderUp                             = 200
 	LadderDown                           = 201
 	FenceHoriz                           = 202
@@ -169,4 +169,8 @@ func (s SpriteIndex) IsPushableFloor() bool {
 
 func (s SpriteIndex) IsBed() bool {
 	return s == LeftBed || s == AvatarSleepingInBed || s == RightBed
+}
+
+func (s SpriteIndex) IsStairs() bool {
+	return s == Stair3 || s == Stairs4 || s == Stairs1 || s == Stairs2
 }

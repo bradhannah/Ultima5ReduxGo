@@ -237,7 +237,6 @@ func (n *NPCAIController) performAiMovementOnAssignedPosition(npc *NPC) bool {
 		// if they are within 4 then change their AI to Drudgeworth (follow)
 	case references.FixedExceptAttackWhenIsWantedByThePoPo:
 		// if avatar is a wanted man/woman - then follow and get close
-
 	case references.Begging, references.GenericExtortingGuard, references.HalfYourGoldExtortingGuard, references.SmallWanderWantsToChat:
 		// let's have them try to hang out with the avatar most of the time, but not everytime
 		// for a little randomness

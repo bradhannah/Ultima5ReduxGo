@@ -182,5 +182,4 @@ func (l *LayeredMap) ClearMapUnitTiles() {
 			innerMap[innerKey] = 0
 		}
 	}
-	// for l.layers[MapUnitLayer]
 }

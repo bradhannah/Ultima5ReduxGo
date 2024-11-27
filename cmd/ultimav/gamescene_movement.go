@@ -60,6 +60,18 @@ func (g *GameScene) moveToNewPositionByDirection(direction references.Direction)
 	}
 }
 
+func (g *GameScene) checkAndAutoKlimbStairs(position *references.Position) bool {
+	floorKlimbOffset := g.gameState.LayeredMaps.GetSmallMapFloorKlimbOffset(*position, g.gameState.Floor)
+	if floorKlimbOffset != 0 {
+		// are we on stairs? we need to change floors
+		// g.moveToNewPositionByDirection(direction)
+		g.gameState.Floor += references.FloorNumber(floorKlimbOffset) // references.FloorNumber(newTile.GetSmallMapFloorKlimbOffset())
+		g.gameState.UpdateSmallMap(g.gameReferences.TileReferences, g.gameReferences.LocationReferences)
+		return true
+	}
+	return false
+}
+
 func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 	g.debugMessage = directionStr
 	g.addRowStr(fmt.Sprintf("> %s", directionStr))
@@ -86,4 +98,9 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 	} else {
 		g.addRowStr("Blocked!")
 	}
+
+	if g.gameState.Location.GetMapType() == references.SmallMapType {
+		g.checkAndAutoKlimbStairs(newPosition)
+	}
+
 }

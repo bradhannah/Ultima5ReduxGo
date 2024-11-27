@@ -73,3 +73,26 @@ func (l *LayeredMaps) GetTileRefByPosition(mapType references.GeneralMapType, ma
 func (l *LayeredMaps) GetTileTopMapOnlyTileByPosition(mapType references.GeneralMapType, pos *references.Position, nFloor references.FloorNumber) *references.Tile {
 	return l.GetLayeredMap(mapType, nFloor).GetTileTopMapOnlyTile(pos)
 }
+
+func (l *LayeredMaps) GetSmallMapFloorKlimbOffset(position references.Position, nFloor references.FloorNumber) int {
+	tile := l.GetTileTopMapOnlyTileByPosition(references.SmallMapType, &position, nFloor)
+	if !tile.Index.IsStairs() {
+		return 0
+	}
+
+	if l.HasLowerFloor(nFloor) {
+		lowerTile := l.GetTileTopMapOnlyTileByPosition(references.SmallMapType, &position, nFloor-1)
+		if lowerTile.Index.IsStairs() {
+			return -1
+		}
+	}
+	return 1
+}
+
+func (l *LayeredMaps) HasLowerFloor(currentFloor references.FloorNumber) bool {
+	_, exists := l.layeredMaps[references.SmallMapType][currentFloor-1]
+	if !exists {
+		return false
+	}
+	return true
+}

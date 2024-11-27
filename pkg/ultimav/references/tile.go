@@ -1,6 +1,8 @@
 package references
 
-import "github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+import (
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+)
 
 type PartyVehicle int
 
@@ -74,6 +76,17 @@ func (t *Tile) IsCannon() bool {
 
 func (t *Tile) IsPath() bool {
 	return t.Index >= indexes.PathUpDown && t.Index <= indexes.PathAllWays
+}
+
+func (t *Tile) GetStairsFloorDirection() LadderOrStairType {
+	switch t.Index {
+	case indexes.Stairs1, indexes.Stairs2:
+		return LadderOrStairUp
+	case indexes.Stair3, indexes.Stairs4:
+		return LadderOrStairDown
+	default:
+		return NotLadderOrStair
+	}
 }
 
 func (t *Tile) isNPCNoPenaltyWalkable() bool {
