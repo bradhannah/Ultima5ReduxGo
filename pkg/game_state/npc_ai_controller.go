@@ -184,12 +184,10 @@ func (n *NPCAIController) performAiMovementFromCurrentFloorToDifferentFloor(npc 
 	currentNpcMapTile := n.gameState.GetLayeredMapByCurrentLocation().GetTileTopMapOnlyTile(&npc.Position)
 	if references.IsSpecificLadderOrStairs(currentNpcMapTile.Index,
 		references.GetLadderOfStairsType(npc.Floor, refBehaviour.Floor)) {
+		// we have arrived at the ladder, so we will change their position as well
+		// to make sure they "come down from" the correct spot as well
 		npc.Floor = refBehaviour.Floor
-		return true
-	}
-
-	if npc.Position.Equals(refBehaviour.Position) && npc.Floor != refBehaviour.Floor {
-		npc.Floor = refBehaviour.Floor
+		npc.Position = refBehaviour.Position
 		return true
 	}
 
