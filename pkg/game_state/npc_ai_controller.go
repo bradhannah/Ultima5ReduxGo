@@ -371,9 +371,14 @@ func (n *NPCAIController) wanderOneTileWithinN(npc *NPC, anchorPos references.Po
 
 	// Try each direction to find a valid move
 	for _, move := range directions {
+
 		newPos := references.Position{
 			X: npc.Position.X + move.X,
 			Y: npc.Position.Y + move.Y,
+		}
+		if newPos.X < 0 || newPos.Y < 0 || newPos.X >= references.XSmallMapTiles || newPos.Y >= references.YSmallMapTiles {
+			// we don't look outside of boundaries
+			continue
 		}
 
 		// can't occupy same space as Avatar
