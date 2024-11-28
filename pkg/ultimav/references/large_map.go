@@ -108,7 +108,7 @@ func loadLargeMapFromFile(world World, gameConfig *config.UltimaVConfiguration) 
 			for curCol := col * TilesPerChunkX; curCol < (col*TilesPerChunkX)+TilesPerChunkX; curCol++ {
 				// Check if it's a water tile (0xFF in overlay means water)
 				if dataOvlChunks[chunkCount] == 0xFF {
-					mapRef.rawData[curCol][curRow] = 0x01 // Water tile
+					mapRef.rawData[curCol][curRow] = 0x01 // Water1 tile
 				} else {
 					// Land tile, read from brit.dat
 					mapRef.rawData[curCol][curRow] = theChunksSerial[britDatChunkCount]

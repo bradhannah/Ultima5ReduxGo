@@ -4,7 +4,9 @@ type SpriteIndex int
 
 const (
 	Nothing                  SpriteIndex = 0
-	Water                                = 1
+	Water1                               = 1
+	Water2                               = 2
+	WaterShallow                         = 3
 	Swamp                                = 4
 	Grass                                = 5
 	Desert                               = 7

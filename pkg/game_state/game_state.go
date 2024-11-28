@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -12,6 +13,11 @@ const (
 	NPlayers                      = 6
 	DefaultSmallMapMinutesPerTurn = 1
 	DefaultLargeMapMinutesPerTurn = 2
+)
+
+const (
+	nightTowneCloseTime = 8 + 12
+	nightTowneOpenTime  = 5
 )
 
 type DebugOptions struct {
@@ -108,4 +114,18 @@ func (g *GameState) IsNPCPassable(pos *references.Position) bool {
 		return false
 	}
 	return topTile.IsPassable(references.NoPartyVehicle) || topTile.Index.IsUnlockedDoor()
+}
+
+func (g *GameState) GetArchwayPortcullisSpriteByTime() indexes.SpriteIndex {
+	if g.DateTime.Hour >= nightTowneCloseTime || g.DateTime.Hour < nightTowneOpenTime {
+		return indexes.Portcullis
+	}
+	return indexes.BrickWallArchway
+}
+
+func (g *GameState) GetDrawBridgeWaterByTime(origIndex indexes.SpriteIndex) indexes.SpriteIndex {
+	if g.DateTime.Hour >= nightTowneCloseTime || g.DateTime.Hour < nightTowneOpenTime {
+		return indexes.WaterShallow
+	}
+	return origIndex
 }

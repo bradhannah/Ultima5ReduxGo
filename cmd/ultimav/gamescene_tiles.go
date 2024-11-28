@@ -100,6 +100,28 @@ func (g *GameScene) refreshMapLayerTiles() {
 	theMap := g.gameState.LayeredMaps.GetLayeredMap(mapType, g.gameState.Floor)
 
 	var x, y references.Coordinate
+
+	// START SPECIAL EXCEPTIONS
+	for x = 0; x < xTilesInMap; x++ {
+		for y = 0; y < yTilesInMap; y++ {
+			pos := references.Position{X: x + g.gameState.Position.X - xCenter, Y: y + g.gameState.Position.Y - yCenter}
+			tile := theMap.GetTileTopMapOnlyTile(&pos)
+			if tile == nil {
+				continue
+			}
+			switch tile.Index {
+			case indexes.Portcullis, indexes.BrickWallArchway:
+				theMap.SetTileByLayer(game_state.MapOverrideLayer, &pos, g.gameState.GetArchwayPortcullisSpriteByTime())
+			case indexes.WoodenPlankVert1Floor, indexes.WoodenPlankVert2Floor:
+				// 14, 28-29 && 16, 28-29
+				if (pos.X >= 14 && pos.X <= 16) && (pos.Y >= 28 && pos.Y <= 29) {
+					theMap.SetTileByLayer(game_state.MapOverrideLayer, &pos, g.gameState.GetDrawBridgeWaterByTime(tile.Index))
+				}
+			}
+		}
+	}
+	// END SPECIAL EXCEPTIONS
+
 	// STATIC MAP
 	for x = 0; x < xTilesInMap; x++ {
 		for y = 0; y < yTilesInMap; y++ {
