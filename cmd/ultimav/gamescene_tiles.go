@@ -57,6 +57,21 @@ func (g *GameScene) getCorrectAvatarOnChairTile(spriteIndex indexes.SpriteIndex,
 	return spriteIndex
 }
 
+func (g *GameScene) setDrawBridge(theMap *game_state.LayeredMap, pos *references.Position, spriteIndex indexes.SpriteIndex) bool {
+	const (
+		leftXDrawBridge   = 14
+		rightXDrawBridge  = 16
+		topYDrawBridge    = 28
+		bottomYDrawBridge = 29
+	)
+
+	if (pos.X >= leftXDrawBridge && pos.X <= rightXDrawBridge) && (pos.Y >= topYDrawBridge && pos.Y <= bottomYDrawBridge) {
+		theMap.SetTileByLayer(game_state.MapOverrideLayer, pos, g.gameState.GetDrawBridgeWaterByTime(spriteIndex))
+		return true
+	}
+	return false
+}
+
 func (g *GameScene) getCorrectAvatarEatingInChairTile(avatarChairTileIndex indexes.SpriteIndex, pos *references.Position) indexes.SpriteIndex {
 	switch avatarChairTileIndex {
 	case indexes.ChairFacingDown:
@@ -113,10 +128,7 @@ func (g *GameScene) refreshMapLayerTiles() {
 			case indexes.Portcullis, indexes.BrickWallArchway:
 				theMap.SetTileByLayer(game_state.MapOverrideLayer, &pos, g.gameState.GetArchwayPortcullisSpriteByTime())
 			case indexes.WoodenPlankVert1Floor, indexes.WoodenPlankVert2Floor:
-				// 14, 28-29 && 16, 28-29
-				if (pos.X >= 14 && pos.X <= 16) && (pos.Y >= 28 && pos.Y <= 29) {
-					theMap.SetTileByLayer(game_state.MapOverrideLayer, &pos, g.gameState.GetDrawBridgeWaterByTime(tile.Index))
-				}
+				g.setDrawBridge(theMap, &pos, tile.Index)
 			}
 		}
 	}

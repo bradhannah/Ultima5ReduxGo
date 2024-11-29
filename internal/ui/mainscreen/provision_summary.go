@@ -26,8 +26,6 @@ func NewProvisionSummary(spriteSheet *sprites.SpriteSheet) *ProvisionSummary {
 	provisionSummary.ultimaFont = text.NewUltimaFont(text.GetScaledNumberToResolution(fontPoint))
 	provisionSummary.output = text.NewOutput(provisionSummary.ultimaFont, lineSpacing, 1, maxCharsPerLine)
 
-	// provisionSummary.FullSummaryImage = ebiten.NewImage(perCharacterSummaryWidth, perCharacterSummaryHeight*game_state.MAX_CHARACTERS_IN_PARTY)
-
 	return &provisionSummary
 }
 
@@ -93,7 +91,6 @@ func (p *ProvisionSummary) drawBottomRow(startY float64, screen *ebiten.Image, s
 	textDop := ebiten.DrawImageOptions{}
 	textDop.GeoM.Translate(sprites.GetTranslateXYByPercent(
 		sprites.PercentBasedCenterPoint{X: leftImageStartX + percentIncreaseByX, Y: startY}))
-	// p.output.DrawTextCenter(screen, "4-6-139", &textDop)
 	p.output.DrawTextCenter(screen, state.DateTime.GetDateAsString(), &textDop)
 
 	textDop.GeoM.Reset()

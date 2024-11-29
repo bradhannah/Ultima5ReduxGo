@@ -45,3 +45,11 @@ func OneInXOdds(odds int) bool {
 
 	return rand.Intn(odds) == 0
 }
+
+func RandomIntInRange(min, max int) int {
+	if min > max {
+		panic("min cannot be greater than max")
+	}
+	rand.Seed(uint64(time.Now().UnixNano())) // Seed the random number generator
+	return rand.Intn(max-min+1) + min
+}
