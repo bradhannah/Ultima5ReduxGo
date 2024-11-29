@@ -176,6 +176,7 @@ func (l *LayeredMap) SwapTiles(pos1 *references.Position, pos2 *references.Posit
 	l.SetTileByLayer(MapLayer, pos1, tile2.Index)
 	l.SetTileByLayer(MapLayer, pos2, tile1.Index)
 }
+
 func (l *LayeredMap) ClearMapUnitTiles() {
 	for _, innerMap := range l.layers[MapUnitLayer] {
 		for innerKey := range innerMap {

@@ -173,6 +173,7 @@ func (g *GameScene) refreshMapLayerTiles() {
 	uf := text.NewUltimaFont(10)
 
 	// BEGIN MAPUNITS
+	g.gameState.Chests = make(map[references.Position]references.Chest)
 	for x = 0; x < xTilesInMap; x++ {
 		for y = 0; y < yTilesInMap; y++ {
 			pos := references.Position{X: x + g.gameState.Position.X - xCenter, Y: y + g.gameState.Position.Y - yCenter}
@@ -187,13 +188,10 @@ func (g *GameScene) refreshMapLayerTiles() {
 				do.GeoM.Reset()
 				continue
 			}
-			// var spriteIndex indexes.SpriteIndex
 			if layer.IsPositionVisible(&pos) {
 				tileIndex := g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, pos)
-				// tileIndex = g.getSmallCalculatedTileIndex(tileIndex, &pos)
-				// }
+				tileIndex = g.getSmallCalculatedTileIndex(tileIndex, &pos)
 				o := text.NewOutput(uf, 20, 1, 10)
-				// o.AddRowStr("A")
 
 				g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), &do)
 

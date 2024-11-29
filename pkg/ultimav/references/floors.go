@@ -4,6 +4,11 @@ import "github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 
 type FloorNumber int8
 
+const (
+	Basement  FloorNumber = -1
+	MainFloor             = 0
+)
+
 type LadderOrStairType int
 
 const (

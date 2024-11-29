@@ -23,6 +23,11 @@ func GetSpriteIndexWithAnimationBySpriteIndex(spriteIndex indexes.SpriteIndex, p
 		currentRotation := int(interval+int64(posHash)) % standardNumberOfAnimationFrames
 		return indexes.SpriteIndex(int(spriteIndex) + currentRotation)
 	} else if spriteIndex >= smallestNPCAnimationIndex {
+		// if it is already animated, then we don't try to re-animate it because it can cause
+		// visual glitches
+		if spriteIndex%4 != 0 {
+			return spriteIndex
+		}
 		interval := time.Now().UnixMilli() / msPerFrameForNPCs
 		currentRotation := int(interval+int64(posHash)) % standardNumberOfAnimationFrames
 		return indexes.SpriteIndex(int(spriteIndex) + currentRotation)

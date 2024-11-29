@@ -169,19 +169,34 @@ func (g *GameScene) smallMapPushSecondary(direction references.Direction) {
 }
 
 func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
-	switch g.gameState.OpenDoor(direction) {
+	openThingPos := direction.GetNewPositionInDirection(&g.gameState.Position)
+	// openThingTile := g.gameState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, openThingPos, g.gameState.Floor)
+	openThingTile := g.gameState.GetLayeredMapByCurrentLocation().GetTileTopMapOnlyTile(openThingPos)
 
-	case game_state.OpenDoorNotADoor:
-		g.addRowStr("Nothing to open!")
-	case game_state.OpenDoorLocked:
-		g.addRowStr("Locked!")
-	case game_state.OpenDoorLockedMagical:
-		g.addRowStr("Magically Locked!")
-	case game_state.OpenDoorOpened:
-		g.addRowStr("Opened!")
-	default:
-		log.Fatal("Unrecognized door open state")
+	if openThingTile.Index.IsDoor() {
+		switch g.gameState.OpenDoor(direction) {
+		case game_state.OpenDoorNotADoor:
+			g.addRowStr("Nothing to open!")
+		case game_state.OpenDoorLocked:
+			g.addRowStr("Locked!")
+		case game_state.OpenDoorLockedMagical:
+			g.addRowStr("Magically Locked!")
+		case game_state.OpenDoorOpened:
+			g.addRowStr("Opened!")
+		default:
+			log.Fatal("Unrecognized door open state")
+		}
+		return
 	}
+
+	openThingTopTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(openThingPos)
+	if openThingTopTile.Index == indexes.Chest {
+		if g.gameState.Location == references.Lord_Britishs_Castle && g.gameState.Floor == references.Basement {
+			g.gameState.Chests[*openThingPos] = references.CreateNewChest(references.LordBritishTreasure)
+			g.addRowStr("Found!")
+		}
+	}
+
 }
 
 func (g *GameScene) smallMapJimmySecondary(direction references.Direction) {
