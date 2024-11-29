@@ -8,7 +8,7 @@ const TotalLocations = 40
 
 type WorldLocations struct {
 	largeMapLocationPositions map[Location]WorldLocation
-	//shrinePositions
+	// shrinePositions
 }
 
 type WorldLocation struct {
@@ -37,7 +37,7 @@ func NewWorldLocations(gameConfig *config.UltimaVConfiguration) *WorldLocations 
 
 func (wl *WorldLocations) GetLocationByPosition(position Position) Location {
 	for _, worldLocation := range wl.largeMapLocationPositions {
-		if worldLocation.Position.Equals(position) {
+		if worldLocation.Position.Equals(&position) {
 			return worldLocation.Location
 		}
 	}

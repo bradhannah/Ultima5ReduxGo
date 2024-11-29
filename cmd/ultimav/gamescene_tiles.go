@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image"
 	"log"
 
@@ -10,8 +9,12 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+)
+
+const (
+	xCenter = references.Coordinate(xTilesInMap / 2)
+	yCenter = references.Coordinate(yTilesInMap / 2)
 )
 
 func (g *GameScene) getSmallCalculatedAvatarTileIndex(ogSpriteIndex indexes.SpriteIndex) indexes.SpriteIndex {
@@ -93,7 +96,77 @@ func (g *GameScene) getCorrectAvatarEatingInChairTile(avatarChairTileIndex index
 	return avatarChairTileIndex
 }
 
-func (g *GameScene) refreshMapLayerTiles() {
+func (g *GameScene) refreshSpecialTileOverrideExceptions(pos *references.Position, theMap *game_state.LayeredMap) {
+	tile := theMap.GetTileTopMapOnlyTile(pos)
+	if tile == nil {
+		return
+	}
+	switch tile.Index {
+	case indexes.Portcullis, indexes.BrickWallArchway:
+		theMap.SetTileByLayer(game_state.MapOverrideLayer, pos, g.gameState.GetArchwayPortcullisSpriteByTime())
+	case indexes.WoodenPlankVert1Floor, indexes.WoodenPlankVert2Floor:
+		g.setDrawBridge(theMap, pos, tile.Index)
+	}
+}
+
+func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *game_state.LayeredMap, do *ebiten.DrawImageOptions) {
+	mapUnitTile := layer.GetTileByLayer(game_state.MapUnitLayer, pos)
+	underTile := layer.GetTileTopMapOnlyTile(pos)
+	if mapUnitTile == nil || mapUnitTile.Index == 0 {
+		return
+	}
+	if layer.IsPositionVisible(pos) {
+		tileIndex := g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, *pos)
+		tileIndex = g.getSmallCalculatedTileIndex(tileIndex, pos)
+		// o := text.NewOutput(uf, 20, 1, 10)
+
+		g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), do)
+
+		// o.DrawText(g.unscaledMapImage, fmt.Sprintf("x=%d y=%d", pos.X, pos.Y), &do)
+	}
+}
+
+func (g *GameScene) refreshProvisionsAndEquipmentMapTiles(pos references.Position, layer *game_state.LayeredMap, do *ebiten.DrawImageOptions) {
+	mapUnitTile := layer.GetTileByLayer(game_state.MapUnitLayer, &pos)
+	underTile := layer.GetTileTopMapOnlyTile(&pos)
+	if mapUnitTile == nil || mapUnitTile.Index == 0 {
+		return
+	}
+	if layer.IsPositionVisible(&pos) {
+		tileIndex := g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, pos)
+		tileIndex = g.getSmallCalculatedTileIndex(tileIndex, &pos)
+		// o := text.NewOutput(uf, 20, 1, 10)
+
+		g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), do)
+
+		// o.DrawText(g.unscaledMapImage, fmt.Sprintf("x=%d y=%d", pos.X, pos.Y), &do)
+	}
+}
+
+func (g *GameScene) refreshStaticMapTiles(pos *references.Position, mapLayer *game_state.LayeredMap, do *ebiten.DrawImageOptions) {
+	if !mapLayer.IsPositionVisible(pos) {
+		return
+	}
+
+	tile := mapLayer.GetTileTopMapOnlyTile(pos)
+	var spriteIndex indexes.SpriteIndex
+	if tile == nil {
+		if g.gameState.IsOutOfBounds(*pos) {
+			spriteIndex = g.gameState.GetCurrentSmallLocationReference().GetOuterTile()
+		} else {
+			log.Fatal("bad index")
+		}
+	} else {
+		spriteIndex = tile.Index
+	}
+
+	// get from the reference
+	spriteIndex = g.getSmallCalculatedTileIndex(spriteIndex, pos)
+
+	g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(spriteIndex), do)
+}
+
+func (g *GameScene) refreshAllMapLayerTiles() {
 	layer := g.gameState.GetLayeredMapByCurrentLocation()
 	layer.RecalculateVisibleTiles(g.gameState.Position)
 
@@ -106,103 +179,44 @@ func (g *GameScene) refreshMapLayerTiles() {
 
 	do := ebiten.DrawImageOptions{}
 
-	xCenter := references.Coordinate(xTilesInMap / 2)
-	yCenter := references.Coordinate(yTilesInMap / 2)
-
 	var avatarPos references.Position
 	var avatarDo ebiten.DrawImageOptions
 
-	theMap := g.gameState.LayeredMaps.GetLayeredMap(mapType, g.gameState.Floor)
-
 	var x, y references.Coordinate
+	var pos = &references.Position{}
 
-	// START SPECIAL EXCEPTIONS
 	for x = 0; x < xTilesInMap; x++ {
 		for y = 0; y < yTilesInMap; y++ {
-			pos := references.Position{X: x + g.gameState.Position.X - xCenter, Y: y + g.gameState.Position.Y - yCenter}
-			tile := theMap.GetTileTopMapOnlyTile(&pos)
-			if tile == nil {
-				continue
-			}
-			switch tile.Index {
-			case indexes.Portcullis, indexes.BrickWallArchway:
-				theMap.SetTileByLayer(game_state.MapOverrideLayer, &pos, g.gameState.GetArchwayPortcullisSpriteByTime())
-			case indexes.WoodenPlankVert1Floor, indexes.WoodenPlankVert2Floor:
-				g.setDrawBridge(theMap, &pos, tile.Index)
-			}
-		}
-	}
-	// END SPECIAL EXCEPTIONS
-
-	// STATIC MAP
-	for x = 0; x < xTilesInMap; x++ {
-		for y = 0; y < yTilesInMap; y++ {
-			pos := references.Position{X: x + g.gameState.Position.X - xCenter, Y: y + g.gameState.Position.Y - yCenter}
+			pos.X = x + g.gameState.Position.X - xCenter
+			pos.Y = y + g.gameState.Position.Y - yCenter
 			if mapType == references.LargeMapType {
-				pos = *pos.GetWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
+				pos = pos.GetWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
 			}
+
 			do.GeoM.Translate(float64(x*sprites.TileSize), float64(y*sprites.TileSize))
-
-			tile := theMap.GetTileTopMapOnlyTile(&pos)
-			var spriteIndex indexes.SpriteIndex
-			if tile == nil {
-				if g.gameState.IsOutOfBounds(pos) {
-					spriteIndex = g.gameState.GetCurrentSmallLocationReference().GetOuterTile()
-				} else {
-					log.Fatal("bad index")
-				}
-			} else {
-				spriteIndex = tile.Index
-			}
-
-			// get from the reference
-			spriteIndex = g.getSmallCalculatedTileIndex(spriteIndex, &pos)
-
+			g.refreshSpecialTileOverrideExceptions(pos, layer)
+			g.refreshStaticMapTiles(pos, layer, &do)
 			if g.gameState.Position.Equals(pos) {
-				avatarPos = pos
-				avatarDo = do
-			}
+				avatarPos = *pos
 
-			if layer.IsPositionVisible(&pos) {
-				g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(spriteIndex), &do)
+				avatarDo = ebiten.DrawImageOptions{}
+				avatarDo.GeoM.Translate(float64(x*sprites.TileSize), float64(y*sprites.TileSize))
 			}
+			g.refreshMapUnitMapTiles(pos, layer, &do)
 			do.GeoM.Reset()
 		}
 	}
-	// END STATIC MAP
-	uf := text.NewUltimaFont(10)
 
-	// BEGIN MAPUNITS
-	g.gameState.Chests = make(map[references.Position]references.Chest)
-	for x = 0; x < xTilesInMap; x++ {
-		for y = 0; y < yTilesInMap; y++ {
-			pos := references.Position{X: x + g.gameState.Position.X - xCenter, Y: y + g.gameState.Position.Y - yCenter}
-			if mapType == references.LargeMapType {
-				pos = *pos.GetWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
-			}
-			do.GeoM.Translate(float64(x*sprites.TileSize), float64(y*sprites.TileSize))
+	// START EQUIPMENT && PROVISIONS
+	// g.gameState.Chests = make(map[references.Position]references.Chest)
+	// for x = 0; x < xTilesInMap; x++ {
+	// 	for y = 0; y < yTilesInMap; y++ {
+	//
+	// 	}
+	// }
+	// END EQUIPMENT && PROVISIONS
 
-			mapUnitTile := theMap.GetTileByLayer(game_state.MapUnitLayer, &pos)
-			underTile := theMap.GetTileTopMapOnlyTile(&pos)
-			if mapUnitTile == nil || mapUnitTile.Index == 0 {
-				do.GeoM.Reset()
-				continue
-			}
-			if layer.IsPositionVisible(&pos) {
-				tileIndex := g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, pos)
-				tileIndex = g.getSmallCalculatedTileIndex(tileIndex, &pos)
-				o := text.NewOutput(uf, 20, 1, 10)
-
-				g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), &do)
-
-				o.DrawText(g.unscaledMapImage, fmt.Sprintf("x=%d y=%d", pos.X, pos.Y), &do)
-			}
-			do.GeoM.Reset()
-		}
-	}
-	// END MAPUNITS
-
-	avatarSpriteIndex := theMap.GetTileTopMapOnlyTile(&avatarPos).Index
+	avatarSpriteIndex := layer.GetTileTopMapOnlyTile(&avatarPos).Index
 	avatarSpriteIndex = g.getSmallCalculatedAvatarTileIndex(avatarSpriteIndex)
 
 	g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(avatarSpriteIndex), &avatarDo)

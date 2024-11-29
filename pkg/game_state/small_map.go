@@ -11,4 +11,5 @@ func (g *GameState) UpdateSmallMap(tileRefs *references.Tiles, locs *references.
 		g.YTilesInMap)
 	g.NPCAIController = *NewNPCAIController(slr, tileRefs, g)
 	g.NPCAIController.PopulateMapFirstLoad()
+
 }

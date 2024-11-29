@@ -70,7 +70,7 @@ type Provisions struct {
 }
 
 func (g *GameState) IsAvatarAtPosition(pos *references.Position) bool {
-	return g.Position.Equals(*pos)
+	return g.Position.Equals(pos)
 }
 
 func (g *GameState) GetCurrentSmallLocationReference() *references.SmallLocationReference {

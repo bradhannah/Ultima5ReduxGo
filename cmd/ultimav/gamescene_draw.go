@@ -32,7 +32,7 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 	}
 
 	g.mapImage.Fill(image.Black)
-	g.refreshMapLayerTiles()
+	g.refreshAllMapLayerTiles()
 
 	g.drawMap(g.mapImage)
 

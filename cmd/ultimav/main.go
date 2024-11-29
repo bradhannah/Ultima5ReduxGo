@@ -1,8 +1,12 @@
 package main
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
 	"log"
+	"net/http"
+
+	_ "net/http/pprof"
+
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 // Layout sets the game's screen size.
@@ -16,6 +20,11 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func main() {
+
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil)) // Exposes pprof at /debug/pprof
+	}()
+
 	// Set the window title and size
 	ebiten.SetWindowTitle("Ultima V Redux")
 

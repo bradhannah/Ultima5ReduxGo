@@ -152,7 +152,7 @@ func (n *NPCAIController) calculateNextNPCPosition(npc *NPC) {
 		return
 	}
 
-	if npc.Position.Equals(refBehaviour.Position) && npc.Floor == refBehaviour.Floor {
+	if npc.Position.Equals(&refBehaviour.Position) && npc.Floor == refBehaviour.Floor {
 		if n.performAiMovementOnAssignedPosition(npc) {
 			return
 		}
@@ -395,7 +395,7 @@ func (n *NPCAIController) wanderOneTileWithinN(npc *NPC, anchorPos references.Po
 		}
 
 		// can't occupy same space as Avatar
-		if n.gameState.Position.Equals(newPos) {
+		if n.gameState.Position.Equals(&newPos) {
 			continue
 		}
 

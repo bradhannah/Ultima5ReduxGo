@@ -14,14 +14,14 @@ var (
 	tileDataRaw []byte
 )
 
-type Tiles map[indexes.SpriteIndex]Tile
+type Tiles map[indexes.SpriteIndex]*Tile
 
 func (t *Tiles) GetTile(tileNum indexes.SpriteIndex) *Tile {
 	tile, exists := (*t)[tileNum]
 	if !exists {
 		return nil // Return nil if the tileNum doesn't exist
 	}
-	return &tile
+	return tile
 }
 
 func (t *Tiles) UnmarshalJSON(data []byte) error {
@@ -39,7 +39,7 @@ func (t *Tiles) UnmarshalJSON(data []byte) error {
 			return err
 		}
 		value.Index = indexes.SpriteIndex(intKey)
-		tilesMap[indexes.SpriteIndex(intKey)] = value
+		tilesMap[indexes.SpriteIndex(intKey)] = &value
 	}
 
 	// Set the result to the original Tiles map

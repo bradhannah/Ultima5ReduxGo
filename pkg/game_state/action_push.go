@@ -9,11 +9,9 @@ func (g *GameState) ActionPushSmallMap(direction references.Direction) bool {
 
 	pushableThingPosition := direction.GetNewPositionInDirection(&g.Position)
 	pushableThingTile := smallMap.GetTopTile(pushableThingPosition)
-	// pushableThingTile := smallMap.GetTileTopMapOnlyTile(pushableThingPosition)
 
 	farSideOfPushableThingPosition := direction.GetNewPositionInDirection(pushableThingPosition)
 
-	// farSideTile := smallMap.GetTileTopMapOnlyTile(farSideOfPushableThingPosition)
 	farSideTile := smallMap.GetTopTile(farSideOfPushableThingPosition)
 	bFarSideAccessible := !g.IsOutOfBounds(*farSideOfPushableThingPosition) && farSideTile.Index.IsPushableFloor()
 

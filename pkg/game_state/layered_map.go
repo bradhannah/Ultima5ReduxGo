@@ -7,7 +7,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
-const totalLayers = 5
+const totalLayers = 6
 const overflowTiles = references.Coordinate(10)
 
 const (
@@ -15,6 +15,7 @@ const (
 	MapOverrideLayer
 	AvatarAndPartyLayer
 	MapUnitLayer
+	EquipmentAndProvisionsLayer
 	EffectLayer
 )
 
@@ -72,7 +73,7 @@ func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position) {
 
 	// TODO: it's lazy to make both of these calls since it could do in one pass
 	l.testForVisibilityMap.ResetVisibilityCoords(false)
-	l.testForVisibilityMap.SetVisibilityCoordsRectangle(l.topLeft, l.bottomRight, l.xMax, l.yMax, l.bWrappingMap)
+	l.testForVisibilityMap.SetVisibilityCoordsRectangle(&l.topLeft, &l.bottomRight, l.xMax, l.yMax, l.bWrappingMap)
 	l.visibleFlags.ResetVisibilityCoords(false)
 
 	l.SetVisible(true, &avatarPos)
