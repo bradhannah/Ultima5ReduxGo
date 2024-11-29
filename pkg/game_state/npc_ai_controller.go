@@ -42,7 +42,7 @@ func NewNPCAIController(
 func (n *NPCAIController) createFreshXyOccupiedMap() *XyOccupiedMap {
 	xy := make(XyOccupiedMap)
 	for _, npc := range n.npcs {
-		if npc.IsEmptyNPC() {
+		if npc.IsEmptyNPC() || !npc.Visible {
 			continue
 		}
 		_, exists := xy[int(npc.Position.X)]
@@ -65,12 +65,22 @@ func (n *NPCAIController) generateNPCs() {
 	n.npcs = npcs
 }
 
+func (n *NPCAIController) RemoveNPCAtPosition(position references.Position) bool {
+	for _, npc := range n.npcs {
+		if npc.Position == position {
+			npc.Visible = false
+			return true
+		}
+	}
+	return false
+}
+
 func (n *NPCAIController) PopulateMapFirstLoad() {
 	n.generateNPCs()
 
 	for i, npc := range n.npcs {
 		_ = i
-		if npc.IsEmptyNPC() {
+		if npc.IsEmptyNPC() || !npc.Visible {
 			continue
 		}
 		indiv := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
@@ -99,7 +109,7 @@ func (n *NPCAIController) setAllNPCTiles() {
 	lm := n.gameState.GetLayeredMapByCurrentLocation()
 
 	for _, npc := range n.npcs {
-		if npc.IsEmptyNPC() {
+		if npc.IsEmptyNPC() || !npc.Visible {
 			continue
 		}
 		if n.gameState.Floor == npc.Floor {
@@ -123,10 +133,13 @@ func (n *NPCAIController) CalculateNextNPCPositions() {
 		}
 		// very lazy approach - but making sure every NPC is in correct spot on map
 		// for every iteration makes sure next NPC doesn't assign the same tile space
-		n.clearMapUnitsFromMap()
-		n.setAllNPCTiles()
+		n.FreshenExistingNPCsOnMap()
 		n.calculateNextNPCPosition(npc)
 	}
+	n.FreshenExistingNPCsOnMap()
+}
+
+func (n *NPCAIController) FreshenExistingNPCsOnMap() {
 	n.clearMapUnitsFromMap()
 	n.setAllNPCTiles()
 }

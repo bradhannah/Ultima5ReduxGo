@@ -13,6 +13,8 @@ type NPC struct {
 	Floor    references.FloorNumber
 	AiType   references.AiType
 
+	Visible bool
+
 	NPCNum int
 
 	AStarMap *AStarMap
@@ -27,6 +29,11 @@ func NewNPC(npcReference references.NPCReference, npcNum int) NPC {
 
 	npc.AStarMap = NewAStarMap()
 	npc.CurrentPath = nil
+
+	if !npc.IsEmptyNPC() {
+		npc.Visible = true
+	}
+
 	return npc
 }
 

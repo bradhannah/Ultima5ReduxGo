@@ -154,7 +154,8 @@ func (g *GameScene) smallMapKlimbSecondary(direction references.Direction) {
 func (g *GameScene) smallMapPushSecondary(direction references.Direction) {
 	pushThingPos := direction.GetNewPositionInDirection(&g.gameState.Position)
 
-	pushThingTile := g.gameState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, pushThingPos, g.gameState.Floor)
+	// pushThingTile := g.gameState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, pushThingPos, g.gameState.Floor)
+	pushThingTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(pushThingPos)
 
 	if !pushThingTile.IsPushable {
 		g.output.AddRowStr("Won't budge!")
@@ -193,10 +194,12 @@ func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
 	if openThingTopTile.Index == indexes.Chest {
 		if g.gameState.Location == references.Lord_Britishs_Castle && g.gameState.Floor == references.Basement {
 			g.gameState.Chests[*openThingPos] = references.CreateNewChest(references.LordBritishTreasure)
+			// g.gameState.GetLayeredMapByCurrentLocation().SetTileByLayer(game_state.MapOverrideLayer, openThingPos, indexes.BrickFloor)
+			g.gameState.NPCAIController.RemoveNPCAtPosition(*openThingPos)
+			g.gameState.NPCAIController.FreshenExistingNPCsOnMap()
 			g.addRowStr("Found!")
 		}
 	}
-
 }
 
 func (g *GameScene) smallMapJimmySecondary(direction references.Direction) {

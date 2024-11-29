@@ -8,11 +8,13 @@ func (g *GameState) ActionPushSmallMap(direction references.Direction) bool {
 	smallMap := g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor)
 
 	pushableThingPosition := direction.GetNewPositionInDirection(&g.Position)
-	pushableThingTile := smallMap.GetTileTopMapOnlyTile(pushableThingPosition)
+	pushableThingTile := smallMap.GetTopTile(pushableThingPosition)
+	// pushableThingTile := smallMap.GetTileTopMapOnlyTile(pushableThingPosition)
 
 	farSideOfPushableThingPosition := direction.GetNewPositionInDirection(pushableThingPosition)
 
-	farSideTile := smallMap.GetTileTopMapOnlyTile(farSideOfPushableThingPosition)
+	// farSideTile := smallMap.GetTileTopMapOnlyTile(farSideOfPushableThingPosition)
+	farSideTile := smallMap.GetTopTile(farSideOfPushableThingPosition)
 	bFarSideAccessible := !g.IsOutOfBounds(*farSideOfPushableThingPosition) && farSideTile.Index.IsPushableFloor()
 
 	// chair pushing is different
