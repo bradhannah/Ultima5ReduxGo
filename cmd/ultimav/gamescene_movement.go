@@ -78,11 +78,12 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 
 	direction := game_state.GetKeyAsDirection(key)
 	newPosition := direction.GetNewPositionInDirection(&g.gameState.Position)
-
-	if g.gameState.Location.GetMapType() == references.LargeMapType {
-		g.gameState.Position = *g.gameState.Position.GetWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
+	mapType := g.gameState.Location.GetMapType()
+	if mapType == references.LargeMapType {
+		newPosition = newPosition.GetWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
 	}
-	if g.gameState.IsOutOfBounds(*newPosition) {
+
+	if mapType == references.SmallMapType && g.gameState.IsOutOfBounds(*newPosition) {
 		g.dialogStack.DoModalInputBox(
 			"Dost thou wish to leave?",
 			g.createTextCommandExitBuilding(),
