@@ -8,7 +8,7 @@ type ItemAndQuantity struct {
 	Provision Provision
 }
 
-type Chest struct {
+type ItemStack struct {
 	Items []ItemAndQuantity
 }
 
@@ -18,7 +18,7 @@ const (
 	LordBritishTreasure ChestType = iota
 )
 
-func getLordBritishItems(total int) Chest {
+func getLordBritishItems(total int) ItemStack {
 	var items []ItemAndQuantity
 
 	const oneInXOddsOfGettingProvision = 3
@@ -34,7 +34,7 @@ func getLordBritishItems(total int) Chest {
 			item.Provision = NoProvision
 		}
 	}
-	return Chest{
+	return ItemStack{
 		Items: items,
 	}
 }
@@ -64,11 +64,11 @@ func createRandomProvision() ItemAndQuantity {
 	return item
 }
 
-func CreateNewChest(chestType ChestType) Chest {
+func CreateNewChest(chestType ChestType) ItemStack {
 	switch chestType {
 	case LordBritishTreasure:
 		const minTreasures, maxTreasures = 5, 20 // 15
 		return getLordBritishItems(helpers.RandomIntInRange(minTreasures, maxTreasures))
 	}
-	return Chest{}
+	return ItemStack{}
 }

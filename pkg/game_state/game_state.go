@@ -55,7 +55,7 @@ type GameState struct {
 	openDoorPos   *references.Position
 	openDoorTurns int
 
-	Chests map[references.Position]references.Chest
+	ItemStacks map[references.Position]references.ItemStack
 
 	XTilesInMap int
 	YTilesInMap int

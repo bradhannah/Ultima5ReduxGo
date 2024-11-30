@@ -48,7 +48,7 @@ func (p *ProvisionSummary) Draw(gameState *game_state.GameState, screen *ebiten.
 	p.drawRow(0.875, screen,
 		[3]*ebiten.Image{
 			p.spriteSheet.GetSprite(indexes.ItemTorch),
-			p.spriteSheet.GetSprite(indexes.ItemMoney),
+			p.spriteSheet.GetSprite(indexes.ItemGold),
 			p.spriteSheet.GetSprite(indexes.HolyFloorSymbol),
 		},
 		[3]string{

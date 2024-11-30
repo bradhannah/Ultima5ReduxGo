@@ -2,9 +2,10 @@ package game_state
 
 import (
 	"fmt"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"os"
 	"unsafe"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 const savedGamFileSize = 4192
@@ -43,7 +44,7 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 		return err
 	}
 
-	//var saveGame = GameState{}
+	// var saveGame = GameState{}
 	g.RawSave = [savedGamFileSize]byte(rawSaveGameBytesFromDisk)
 
 	// Overlay player characters over memory rawSaveGameBytesFromDisk to easily consume data
@@ -58,7 +59,7 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 	const lbFloor = 0x2EF
 	g.Location = references.Location(rawSaveGameBytesFromDisk[lbLocation])
 	g.Position = references.Position{X: references.Coordinate(rawSaveGameBytesFromDisk[lbX]), Y: references.Coordinate(rawSaveGameBytesFromDisk[lbY])}
-	//g.Position = ultimav.Position{X: 81, Y: 106}
+	// g.Position = ultimav.Position{X: 81, Y: 106}
 	g.Floor = references.FloorNumber(rawSaveGameBytesFromDisk[lbFloor])
 
 	// Date/Time
@@ -96,6 +97,8 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 		gameRefs.UnderworldLargeMapReference,
 		g.XTilesInMap,
 		g.YTilesInMap)
+
+	g.ItemStacks = make(map[references.Position]references.ItemStack)
 
 	return nil
 }

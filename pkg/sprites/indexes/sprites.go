@@ -87,7 +87,7 @@ const (
 	Clock2                               = 251
 	StarPattern                          = 256
 	Chest                                = 257
-	ItemMoney                            = 258
+	ItemGold                             = 258
 	ItemPotion                           = 259
 	ItemScroll                           = 260
 	ItemWeapon                           = 261

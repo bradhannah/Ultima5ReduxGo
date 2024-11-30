@@ -10,7 +10,7 @@ import (
 )
 
 func getArrowKeyPressed() *ebiten.Key {
-	var keyPressed ebiten.Key = ebiten.KeyF24
+	var keyPressed = ebiten.KeyF24
 	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
 		keyPressed = ebiten.KeyLeft
 	}
@@ -64,8 +64,7 @@ func (g *GameScene) checkAndAutoKlimbStairs(position *references.Position) bool 
 	floorKlimbOffset := g.gameState.LayeredMaps.GetSmallMapFloorKlimbOffset(*position, g.gameState.Floor)
 	if floorKlimbOffset != 0 {
 		// are we on stairs? we need to change floors
-		// g.moveToNewPositionByDirection(direction)
-		g.gameState.Floor += references.FloorNumber(floorKlimbOffset) // references.FloorNumber(newTile.GetSmallMapFloorKlimbOffset())
+		g.gameState.Floor += references.FloorNumber(floorKlimbOffset)
 		g.gameState.UpdateSmallMap(g.gameReferences.TileReferences, g.gameReferences.LocationReferences)
 		return true
 	}

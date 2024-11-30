@@ -115,9 +115,24 @@ func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *game
 	if mapUnitTile == nil || mapUnitTile.Index == 0 {
 		return
 	}
+	var tileIndex indexes.SpriteIndex
 	if layer.IsPositionVisible(pos) {
-		tileIndex := g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, *pos)
-		tileIndex = g.getSmallCalculatedTileIndex(tileIndex, pos)
+		if len(g.gameState.ItemStacks) > 0 {
+			stack, exists := g.gameState.ItemStacks[*pos]
+			allItems := stack.Items
+			if exists {
+				item := stack.Items[len(allItems)-1]
+				if item.Equipment != references.NoEquipment {
+					tileIndex = item.Equipment.GetSpriteIndex()
+				} else {
+					tileIndex = item.Provision.GetSpriteIndex()
+				}
+			}
+		} else {
+			tileIndex = g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, *pos)
+			tileIndex = g.getSmallCalculatedTileIndex(tileIndex, pos)
+		}
+
 		// o := text.NewOutput(uf, 20, 1, 10)
 
 		g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), do)
@@ -208,7 +223,7 @@ func (g *GameScene) refreshAllMapLayerTiles() {
 	}
 
 	// START EQUIPMENT && PROVISIONS
-	// g.gameState.Chests = make(map[references.Position]references.Chest)
+	// g.gameState.ItemStacks = make(map[references.Position]references.ItemStack)
 	// for x = 0; x < xTilesInMap; x++ {
 	// 	for y = 0; y < yTilesInMap; y++ {
 	//
