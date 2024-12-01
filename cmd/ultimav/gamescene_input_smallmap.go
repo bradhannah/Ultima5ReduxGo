@@ -193,7 +193,7 @@ func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
 	openThingTopTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(openThingPos)
 	if openThingTopTile.Index == indexes.Chest {
 		if g.gameState.Location == references.Lord_Britishs_Castle && g.gameState.Floor == references.Basement {
-			g.gameState.ItemStacks[*openThingPos] = references.CreateNewChest(references.LordBritishTreasure)
+			g.gameState.ItemStacks[*openThingPos] = references.CreateNewItemStack(references.LordBritishTreasure)
 			// g.gameState.GetLayeredMapByCurrentLocation().SetTileByLayer(game_state.MapOverrideLayer, openThingPos, indexes.BrickFloor)
 			g.gameState.NPCAIController.RemoveNPCAtPosition(*openThingPos)
 			g.gameState.NPCAIController.FreshenExistingNPCsOnMap()

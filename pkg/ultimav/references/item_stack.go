@@ -1,6 +1,10 @@
 package references
 
-import "github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
+import (
+	"log"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
+)
 
 type ItemAndQuantity struct {
 	Quantity  int
@@ -8,18 +12,25 @@ type ItemAndQuantity struct {
 	Provision Provision
 }
 
+type ItemStacks []ItemAndQuantity
+
+// func (i *ItemStacks) HasItemStacksAtPosition(position *Position) bool {
+// 	_, exists := i[*position]
+// 	return exists
+// }
+
 type ItemStack struct {
-	Items []ItemAndQuantity
+	Items ItemStacks
 }
 
-type ChestType int
+type ItemStackType int
 
 const (
-	LordBritishTreasure ChestType = iota
+	LordBritishTreasure ItemStackType = iota
 )
 
 func getLordBritishItems(total int) ItemStack {
-	var items []ItemAndQuantity
+	var items ItemStacks
 
 	const oneInXOddsOfGettingProvision = 3
 
@@ -64,11 +75,32 @@ func createRandomProvision() ItemAndQuantity {
 	return item
 }
 
-func CreateNewChest(chestType ChestType) ItemStack {
-	switch chestType {
+func CreateNewItemStack(itemStackType ItemStackType) ItemStack {
+	switch itemStackType {
 	case LordBritishTreasure:
 		const minTreasures, maxTreasures = 5, 20 // 15
 		return getLordBritishItems(helpers.RandomIntInRange(minTreasures, maxTreasures))
 	}
 	return ItemStack{}
+}
+
+func (i *ItemStack) HasItems() bool {
+	return len(i.Items) > 0
+}
+
+func (i *ItemStack) popTopItem() ItemAndQuantity {
+	if len(i.Items) == 0 {
+		log.Fatal("Can't pop from empty stack")
+	}
+
+	item := i.Items[len(i.Items)-1]
+	i.Items = i.Items[:len(i.Items)-1]
+	return item
+}
+
+func (i *ItemStack) PeekTopItem() *ItemAndQuantity {
+	if !i.HasItems() {
+		log.Fatal("Can't peek from empty stack")
+	}
+	return &i.Items[len(i.Items)-1]
 }
