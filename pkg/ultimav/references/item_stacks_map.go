@@ -18,6 +18,6 @@ func (i *ItemStacksMap) PopStackAtPosition(pos *Position) *ItemAndQuantity {
 }
 
 func (i *ItemStacksMap) PeekStackAtPosition(pos *Position) *ItemAndQuantity {
-	oof := (*i)[*pos]
+	oof, _ := (*i)[*pos]
 	return oof.PeekTopItem()
 }

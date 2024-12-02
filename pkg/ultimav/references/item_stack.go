@@ -30,7 +30,7 @@ const (
 )
 
 func getLordBritishItems(total int) ItemStack {
-	var items ItemStacks
+	var items ItemStacks = make(ItemStacks, 0, total)
 
 	const oneInXOddsOfGettingProvision = 3
 
@@ -43,6 +43,7 @@ func getLordBritishItems(total int) ItemStack {
 			item.Equipment = getRandomNonSpecialEquipment()
 			item.Quantity = 1
 			item.Provision = NoProvision
+			items = append(items, item)
 		}
 	}
 	return ItemStack{

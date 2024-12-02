@@ -6,9 +6,10 @@ type Provision int
 
 const NumberOfProvisions = 5
 
+const NoProvision Provision = -1
+
 const (
-	NoProvision Provision = -1
-	Food                  = iota
+	Food = iota
 	Gold
 	Key
 	Gem
