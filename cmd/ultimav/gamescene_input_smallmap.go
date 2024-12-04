@@ -227,6 +227,8 @@ func (g *GameScene) smallMapGetSecondary(direction references.Direction) {
 	if g.gameState.ItemStacksMap.HasItemStackAtPosition(getThingPos) {
 		item := g.gameState.ItemStacksMap.Pop(getThingPos)
 		g.gameState.Inventory.PutItemInInventory(item)
+		// if item.
+		// g.addRowStr(fmt.Sprintf("%s!"))
 		return
 	}
 

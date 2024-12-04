@@ -1,6 +1,7 @@
 package references
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
@@ -13,11 +14,6 @@ type ItemAndQuantity struct {
 }
 
 type ItemStacks []ItemAndQuantity
-
-// func (i *ItemStacksMap) HasItemStacksAtPosition(position *Position) bool {
-// 	_, exists := i[*position]
-// 	return exists
-// }
 
 type ItemStack struct {
 	Items ItemStacks
@@ -104,4 +100,11 @@ func (i *ItemStack) PeekTopItem() *ItemAndQuantity {
 		log.Fatal("Can't peek from empty stack")
 	}
 	return &i.Items[len(i.Items)-1]
+}
+
+func (i *ItemAndQuantity) GetFriendlyActionGetMessage() string {
+	if i.Equipment != NoEquipment {
+		return fmt.Sprintf("%s!", i.Equipment)
+	}
+	return ""
 }

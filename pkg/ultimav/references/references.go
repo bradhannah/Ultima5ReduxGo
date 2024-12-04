@@ -6,11 +6,12 @@ type GameReferences struct {
 	OverworldLargeMapReference  *LargeMapReference
 	UnderworldLargeMapReference *LargeMapReference
 
-	LocationReferences *LocationReferences
-	DataOvl            *DataOvl
-	TileReferences     *Tiles
-	LookReferences     *LookReferences
-	NPCReferences      *NPCReferences
+	LocationReferences      *LocationReferences
+	DataOvl                 *DataOvl
+	TileReferences          *Tiles
+	InventoryItemReferences *InventoryItemReferences
+	LookReferences          *LookReferences
+	NPCReferences           *NPCReferences
 }
 
 func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences, error) {
@@ -29,6 +30,7 @@ func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences
 	gameRefs.LocationReferences, err = NewSmallMapReferences(gameConfig, gameRefs.DataOvl)
 
 	gameRefs.TileReferences = NewTileReferences()
+	gameRefs.InventoryItemReferences = NewInventoryItemsReferences()
 	gameRefs.LookReferences = NewLookReferences(gameConfig)
 
 	gameRefs.NPCReferences = NewNPCReferences(gameConfig)
