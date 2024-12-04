@@ -78,19 +78,19 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 	const lbKarma = 0x2e2
 	const lsGold = 0x204
 	g.Karma = Karma(rawSaveGameBytesFromDisk[lbKarma])
-	g.QtyGold = getUint16(&rawSaveGameBytesFromDisk, lsGold)
+	g.Inventory.Gold = getUint16(&rawSaveGameBytesFromDisk, lsGold)
 
-	// Provisions
+	// ProvisionsQuantity
 	const lsFood = 0x202
 	const lbKeys = 0x206
 	const lbGems = 0x207
 	const lbTorches = 0x208
 	const lbSkullKeys = 0x20B
-	g.Provisions.QtyFood = getUint16(&rawSaveGameBytesFromDisk, lsFood)
-	g.Provisions.QtyGems = rawSaveGameBytesFromDisk[lbGems]
-	g.Provisions.QtyTorches = rawSaveGameBytesFromDisk[lbTorches]
-	g.Provisions.QtyKeys = rawSaveGameBytesFromDisk[lbKeys]
-	g.Provisions.QtySkullKeys = rawSaveGameBytesFromDisk[lbSkullKeys]
+	g.Inventory.Provisions.Food = getUint16(&rawSaveGameBytesFromDisk, lsFood)
+	g.Inventory.Provisions.Gems = rawSaveGameBytesFromDisk[lbGems]
+	g.Inventory.Provisions.Torches = rawSaveGameBytesFromDisk[lbTorches]
+	g.Inventory.Provisions.Keys = rawSaveGameBytesFromDisk[lbKeys]
+	g.Inventory.Provisions.SkullKeys = rawSaveGameBytesFromDisk[lbSkullKeys]
 
 	g.LayeredMaps = *NewLayeredMaps(gameRefs.TileReferences,
 		gameRefs.OverworldLargeMapReference,
@@ -98,7 +98,7 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 		g.XTilesInMap,
 		g.YTilesInMap)
 
-	g.ItemStacks = make(map[references.Position]references.ItemStack)
+	g.ItemStacksMap = *references.NewItemStacksMap() // make(map[references.Position]references.ItemStack)
 
 	return nil
 }

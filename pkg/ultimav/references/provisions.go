@@ -14,6 +14,7 @@ const (
 	Key
 	Gem
 	Torches
+	SkullKeys
 )
 
 func (p Provision) GetSpriteIndex() indexes.SpriteIndex {

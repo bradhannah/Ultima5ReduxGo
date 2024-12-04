@@ -164,7 +164,7 @@ func (l *LayeredMap) SetTileByLayer(layer LayerType, position *references.Positi
 }
 
 func (l *LayeredMap) UnSetTileByLayer(layer LayerType, position *references.Position) {
-	l.SetTileByLayer(layer, position, -1)
+	l.SetTileByLayer(layer, position, indexes.NoSprites)
 }
 
 func (l *LayeredMap) GetTileByLayer(layer LayerType, position *references.Position) *references.Tile {

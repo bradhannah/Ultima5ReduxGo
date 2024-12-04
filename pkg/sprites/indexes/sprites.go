@@ -3,7 +3,8 @@ package indexes
 type SpriteIndex int
 
 const (
-	Nothing                  SpriteIndex = 0
+	NoSprites                SpriteIndex = -1
+	Bang                                 = 0
 	Water1                               = 1
 	Water2                               = 2
 	WaterShallow                         = 3

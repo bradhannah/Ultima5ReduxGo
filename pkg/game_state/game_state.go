@@ -47,26 +47,34 @@ type GameState struct {
 
 	DateTime datetime.UltimaDate
 
-	Provisions Provisions
-	Karma      Karma
-	QtyGold    uint16
+	Inventory Inventory
+	Karma     Karma
 
 	// open door
 	openDoorPos   *references.Position
 	openDoorTurns int
 
-	ItemStacks references.ItemStacksMap
+	ItemStacksMap references.ItemStacksMap
 
 	XTilesInMap int
 	YTilesInMap int
 }
 
-type Provisions struct {
-	QtyFood      uint16
-	QtyGems      byte
-	QtyTorches   byte
-	QtyKeys      byte
-	QtySkullKeys byte
+const (
+	MaxGold               = 9999
+	MaxProvisionFood      = 9999
+	MaxProvisionGems      = 99
+	MaxProvisionTorches   = 99
+	MaxProvisionKey       = 99
+	MaxProvisionSkullKeys = 99
+)
+
+type ProvisionsQuantity struct {
+	Food      uint16
+	Gems      byte
+	Torches   byte
+	Keys      byte
+	SkullKeys byte
 }
 
 func (g *GameState) IsAvatarAtPosition(pos *references.Position) bool {

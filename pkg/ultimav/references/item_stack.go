@@ -14,7 +14,7 @@ type ItemAndQuantity struct {
 
 type ItemStacks []ItemAndQuantity
 
-// func (i *ItemStacks) HasItemStacksAtPosition(position *Position) bool {
+// func (i *ItemStacksMap) HasItemStacksAtPosition(position *Position) bool {
 // 	_, exists := i[*position]
 // 	return exists
 // }

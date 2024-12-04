@@ -110,52 +110,37 @@ func (g *GameScene) refreshSpecialTileOverrideExceptions(pos *references.Positio
 }
 
 func (g *GameScene) refreshProvisionsAndEquipmentMapTiles(pos *references.Position, layer *game_state.LayeredMap) {
-	if layer.IsPositionVisible(pos) {
-		if !g.gameState.ItemStacks.HasStackAtPosition(pos) {
-			return
-		}
-
-		item := g.gameState.ItemStacks.PeekStackAtPosition(pos)
-		if item == nil {
-			log.Fatal("Unexpected: item should exist since we checked ahead of it")
-		}
-		var tileIndex indexes.SpriteIndex
-		if item.Equipment != references.NoEquipment {
-			tileIndex = item.Equipment.GetSpriteIndex()
-		} else {
-			tileIndex = item.Provision.GetSpriteIndex()
-		}
-		layer.SetTileByLayer(game_state.EquipmentAndProvisionsLayer, pos, tileIndex)
-		// g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), do)
+	if !layer.IsPositionVisible(pos) {
+		layer.UnSetTileByLayer(game_state.EquipmentAndProvisionsLayer, pos)
+		return
 	}
-}
 
-// func (g *GameScene) refreshProvisionsAndEquipmentMapTiles(pos *references.Position, layer *game_state.LayeredMap, do *ebiten.DrawImageOptions) {
-// 	if layer.IsPositionVisible(pos) {
-// 		if !g.gameState.ItemStacks.HasStackAtPosition(pos) {
-// 			return
-// 		}
-//
-// 		item := g.gameState.ItemStacks.PeekStackAtPosition(pos)
-// 		if item == nil {
-// 			log.Fatal("Unexpected: item should exist since we checked ahead of it")
-// 		}
-// 		var tileIndex indexes.SpriteIndex
-// 		if item.Equipment != references.NoEquipment {
-// 			tileIndex = item.Equipment.GetSpriteIndex()
-// 		} else {
-// 			tileIndex = item.Provision.GetSpriteIndex()
-// 		}
-// 		g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), do)
-// 	}
-// }
+	if !g.gameState.ItemStacksMap.HasItemStackAtPosition(pos) {
+		layer.UnSetTileByLayer(game_state.EquipmentAndProvisionsLayer, pos)
+		return
+	}
+
+	item := g.gameState.ItemStacksMap.Peek(pos)
+	if item == nil {
+		log.Fatal("Unexpected: item should exist since we checked ahead of it")
+	}
+	var tileIndex indexes.SpriteIndex
+	if item.Equipment != references.NoEquipment {
+		tileIndex = item.Equipment.GetSpriteIndex()
+	} else {
+		tileIndex = item.Provision.GetSpriteIndex()
+	}
+	layer.SetTileByLayer(game_state.EquipmentAndProvisionsLayer, pos, tileIndex)
+	// g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), do)
+
+}
 
 func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *game_state.LayeredMap, do *ebiten.DrawImageOptions) {
 	mapUnitTile := layer.GetTileByLayer(game_state.MapUnitLayer, pos)
 	underTile := layer.GetTileTopMapOnlyTile(pos)
 	if mapUnitTile == nil || mapUnitTile.Index == 0 {
 		mapUnitTile = layer.GetTileByLayer(game_state.EquipmentAndProvisionsLayer, pos)
-		if mapUnitTile == nil || mapUnitTile.Index == 0 {
+		if mapUnitTile == nil || mapUnitTile.Index == indexes.NoSprites {
 			return
 		}
 		// return
@@ -165,7 +150,9 @@ func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *game
 
 		tileIndex = g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, *pos)
 		tileIndex = g.getSmallCalculatedTileIndex(tileIndex, pos)
-		g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), do)
+		if tileIndex != indexes.NoSprites {
+			g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), do)
+		}
 	}
 
 	// o := text.NewOutput(uf, 20, 1, 10)

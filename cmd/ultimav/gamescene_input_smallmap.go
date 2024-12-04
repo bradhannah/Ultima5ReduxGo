@@ -72,7 +72,7 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 
 	switch g.secondaryKeyState {
 	case JimmyDoorDirectionInput:
-		if g.gameState.Provisions.QtyKeys <= 0 {
+		if g.gameState.Inventory.Provisions.Keys <= 0 {
 			g.addRowStr("No Keys!")
 			g.secondaryKeyState = PrimaryInput
 			g.keyboard.SetLastKeyPressedNow()
@@ -177,7 +177,7 @@ func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
 	if openThingTile.Index.IsDoor() {
 		switch g.gameState.OpenDoor(direction) {
 		case game_state.OpenDoorNotADoor:
-			g.addRowStr("Nothing to open!")
+			g.addRowStr("Bang to open!")
 		case game_state.OpenDoorLocked:
 			g.addRowStr("Locked!")
 		case game_state.OpenDoorLockedMagical:
@@ -194,7 +194,8 @@ func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
 	openThingTopTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(openThingPos)
 	if openThingTopTile.Index == indexes.Chest {
 		if g.gameState.Location == references.Lord_Britishs_Castle && g.gameState.Floor == references.Basement {
-			g.gameState.ItemStacks[*openThingPos] = references.CreateNewItemStack(references.LordBritishTreasure)
+			itemStack := references.CreateNewItemStack(references.LordBritishTreasure)
+			g.gameState.ItemStacksMap.Push(openThingPos, &itemStack)
 			g.gameState.NPCAIController.RemoveNPCAtPosition(*openThingPos)
 			g.gameState.NPCAIController.FreshenExistingNPCsOnMap()
 			g.addRowStr("Found!")
@@ -223,6 +224,12 @@ func (g *GameScene) smallMapGetSecondary(direction references.Direction) {
 	getThingTile := g.gameState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, getThingPos, g.gameState.Floor)
 	mapLayers := g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor)
 
+	if g.gameState.ItemStacksMap.HasItemStackAtPosition(getThingPos) {
+		item := g.gameState.ItemStacksMap.Pop(getThingPos)
+		g.gameState.Inventory.PutItemInInventory(item)
+		return
+	}
+
 	switch getThingTile.Index {
 	case indexes.WheatInField:
 		g.addRowStr("Crops picked! Those aren't yours Avatar!")
@@ -230,12 +237,12 @@ func (g *GameScene) smallMapGetSecondary(direction references.Direction) {
 		g.gameState.Karma = g.gameState.Karma.GetDecreasedKarma(1)
 	case indexes.RightSconce, indexes.LeftScone:
 		g.addRowStr("Borrowed!")
-		g.gameState.Provisions.QtyTorches++
+		g.gameState.Inventory.Provisions.Torches++
 		mapLayers.SetTileByLayer(game_state.MapLayer, getThingPos, indexes.BrickFloor)
 	case indexes.TableFoodBoth, indexes.TableFoodBottom, indexes.TableFoodTop:
 		if g.getFoodFromTable(direction) {
 			g.addRowStr("Mmmmm...! But that food isn't yours!")
-			g.gameState.Provisions.QtyFood++
+			g.gameState.Inventory.Provisions.Food++
 			g.gameState.Karma = g.gameState.Karma.GetDecreasedKarma(1)
 		}
 	case indexes.Carpet2_MagicCarpet:

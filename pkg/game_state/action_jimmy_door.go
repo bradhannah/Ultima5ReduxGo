@@ -1,10 +1,11 @@
 package game_state
 
 import (
+	"golang.org/x/exp/rand"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
-	"golang.org/x/exp/rand"
 )
 
 type JimmyDoorState int
@@ -35,11 +36,11 @@ func (g *GameState) JimmyDoor(direction references.Direction, player *PlayerChar
 			g.LayeredMaps.GetLayeredMap(mapType, g.Floor).SetTileByLayer(MapOverrideLayer, newPosition, unlockedDoor)
 			return JimmyUnlocked
 		} else {
-			//g.Provisions.QtyKeys = helpers.Max(g.Provisions.QtyKeys-1, 0)
+			// g.ProvisionsQuantity.Keys = helpers.Max(g.ProvisionsQuantity.Keys-1, 0)
 			return JimmyBrokenPick
 		}
 	case indexes.MagicLockDoor, indexes.MagicLockDoorWithView:
-		g.Provisions.QtyKeys = helpers.Max(g.Provisions.QtyKeys-1, 0)
+		g.Inventory.Provisions.Keys = helpers.Max(g.Inventory.Provisions.Keys-1, 0)
 		return JimmyLockedMagical
 	default:
 		return JimmyNotADoor
