@@ -1,7 +1,5 @@
 package references
 
-import "github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
-
 type Equipment int
 
 func (e Equipment) ID() int {
@@ -62,37 +60,5 @@ const (
 	AmuletOfTurning  Equipment = 45
 	SpikedCollar     Equipment = 46
 	Ankh             Equipment = 47
-	// FlamPor          Equipment = 48
-	// VasFlam          Equipment = 49
-	// InCorp           Equipment = 50
-	// UusNox           Equipment = 51
-	// UusZu            Equipment = 52
-	// UusFlam          Equipment = 53
-	// UusSanct         Equipment = 54
-	NoEquipment Equipment = 255 // 0xFF in decimal
+	NoEquipment      Equipment = 255 // 0xFF in decimal
 )
-
-func (e Equipment) GetSpriteIndex() indexes.SpriteIndex {
-	if e >= LeatherHelm && e <= SpikedHelm {
-		return indexes.ItemHelm
-	}
-	if e >= SmallShield && e <= JewelShield {
-		return indexes.ItemShield
-	}
-	if e >= ClothArmour && e <= MysticArmour {
-		return indexes.ItemArmour
-	}
-	if e >= Dagger && e <= MysticSword {
-		return indexes.ItemWeapon
-	}
-	if e >= RingInvisibility && e <= RingRegeneration {
-		return indexes.ItemRing
-	}
-	if e >= AmuletOfTurning && e <= Ankh {
-		return indexes.ItemAnkh
-	}
-	// if e >= FlamPor && e <= UusFlam {
-	// return indexes.ItemScroll
-	// }
-	return indexes.Avatar
-}

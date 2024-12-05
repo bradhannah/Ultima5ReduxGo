@@ -2,7 +2,7 @@
   "Reagent": [
     {
       "ItemIndex": 0,
-      "ItemName": "SulfurAsh",
+      "ItemName": "Sulfur Ash",
       "ItemNameHighlight": "sulphurous ash,ash",
       "ItemSprite": 1,
       "ItemSpriteExposed": 0,
@@ -29,7 +29,7 @@
     },
     {
       "ItemIndex": 3,
-      "ItemName": "SpiderSilk",
+      "ItemName": "Spider Silk",
       "ItemNameHighlight": "spider silk,silk",
       "ItemSprite": 1,
       "ItemSpriteExposed": 0,
@@ -38,7 +38,7 @@
     },
     {
       "ItemIndex": 4,
-      "ItemName": "BloodMoss",
+      "ItemName": "Blood Moss",
       "ItemNameHighlight": "blood moss,moss",
       "ItemSprite": 1,
       "ItemSpriteExposed": 0,
@@ -47,7 +47,7 @@
     },
     {
       "ItemIndex": 5,
-      "ItemName": "BlackPearl",
+      "ItemName": "Black Pearl",
       "ItemNameHighlight": "black pearl,pearl",
       "ItemSprite": 1,
       "ItemSpriteExposed": 0,
@@ -56,7 +56,7 @@
     },
     {
       "ItemIndex": 6,
-      "ItemName": "NightShade",
+      "ItemName": "Night Shade",
       "ItemNameHighlight": "nightshade",
       "ItemSprite": 1,
       "ItemSpriteExposed": 0,
@@ -65,7 +65,7 @@
     },
     {
       "ItemIndex": 7,
-      "ItemName": "MandrakeRoot",
+      "ItemName": "Mandrake Root",
       "ItemNameHighlight": "mandrake root,mandrake",
       "ItemSprite": 1,
       "ItemSpriteExposed": 0,
@@ -76,7 +76,7 @@
   "Equipment": [
     {
       "ItemIndex": -2,
-      "ItemName": "BareHands",
+      "ItemName": "Bare Hands",
       "ItemNameHighlight": "",
       "ItemSprite": 265,
       "ItemSpriteExposed": 265,
@@ -85,7 +85,7 @@
     },
     {
       "ItemIndex": 0,
-      "ItemName": "LeatherHelm",
+      "ItemName": "Leather Helm",
       "ItemNameHighlight": "",
       "ItemSprite": 265,
       "ItemSpriteExposed": 265,
@@ -94,7 +94,7 @@
     },
     {
       "ItemIndex": 1,
-      "ItemName": "ChainCoif",
+      "ItemName": "Chain Coif",
       "ItemNameHighlight": "",
       "ItemSprite": 265,
       "ItemSpriteExposed": 265,
@@ -103,7 +103,7 @@
     },
     {
       "ItemIndex": 2,
-      "ItemName": "IronHelm",
+      "ItemName": "Iron Helm",
       "ItemNameHighlight": "",
       "ItemSprite": 265,
       "ItemSpriteExposed": 265,
@@ -112,7 +112,7 @@
     },
     {
       "ItemIndex": 3,
-      "ItemName": "SpikedHelm",
+      "ItemName": "Spiked Helm",
       "ItemNameHighlight": "",
       "ItemSprite": 265,
       "ItemSpriteExposed": 265,
@@ -121,7 +121,7 @@
     },
     {
       "ItemIndex": 4,
-      "ItemName": "SmallShield",
+      "ItemName": "Small Shield",
       "ItemNameHighlight": "",
       "ItemSprite": 262,
       "ItemSpriteExposed": 262,
@@ -130,7 +130,7 @@
     },
     {
       "ItemIndex": 5,
-      "ItemName": "LargeShield",
+      "ItemName": "Large Shield",
       "ItemNameHighlight": "",
       "ItemSprite": 262,
       "ItemSpriteExposed": 262,
@@ -139,7 +139,7 @@
     },
     {
       "ItemIndex": 6,
-      "ItemName": "SpikedShield",
+      "ItemName": "Spiked Shield",
       "ItemNameHighlight": "",
       "ItemSprite": 262,
       "ItemSpriteExposed": 262,
@@ -148,7 +148,7 @@
     },
     {
       "ItemIndex": 7,
-      "ItemName": "MagicShield",
+      "ItemName": "Magic Shield",
       "ItemNameHighlight": "",
       "ItemSprite": 262,
       "ItemSpriteExposed": 262,
@@ -157,7 +157,7 @@
     },
     {
       "ItemIndex": 8,
-      "ItemName": "JewelShield",
+      "ItemName": "Jewel Shield",
       "ItemNameHighlight": "",
       "ItemSprite": 262,
       "ItemSpriteExposed": 262,
@@ -166,7 +166,7 @@
     },
     {
       "ItemIndex": 9,
-      "ItemName": "ClothArmour",
+      "ItemName": "Cloth Armour",
       "ItemNameHighlight": "",
       "ItemSprite": 267,
       "ItemSpriteExposed": 267,
@@ -175,7 +175,7 @@
     },
     {
       "ItemIndex": 10,
-      "ItemName": "LeatherArmour",
+      "ItemName": "Leather Armour",
       "ItemNameHighlight": "",
       "ItemSprite": 267,
       "ItemSpriteExposed": 267,
@@ -193,7 +193,7 @@
     },
     {
       "ItemIndex": 12,
-      "ItemName": "ScaleMail",
+      "ItemName": "Scale Mail",
       "ItemNameHighlight": "",
       "ItemSprite": 267,
       "ItemSpriteExposed": 267,
@@ -202,7 +202,7 @@
     },
     {
       "ItemIndex": 13,
-      "ItemName": "ChainMail",
+      "ItemName": "Chain Mail",
       "ItemNameHighlight": "",
       "ItemSprite": 267,
       "ItemSpriteExposed": 267,
@@ -211,7 +211,7 @@
     },
     {
       "ItemIndex": 14,
-      "ItemName": "PlateMail",
+      "ItemName": "Plate Mail",
       "ItemNameHighlight": "",
       "ItemSprite": 267,
       "ItemSpriteExposed": 267,
@@ -220,7 +220,7 @@
     },
     {
       "ItemIndex": 15,
-      "ItemName": "MysticArmour",
+      "ItemName": "Mystic Armour",
       "ItemNameHighlight": "",
       "ItemSprite": 267,
       "ItemSpriteExposed": 267,
@@ -256,7 +256,7 @@
     },
     {
       "ItemIndex": 19,
-      "ItemName": "FlamingOil",
+      "ItemName": "Flaming Oil",
       "ItemNameHighlight": "",
       "ItemSprite": 261,
       "ItemSpriteExposed": 261,
@@ -265,7 +265,7 @@
     },
     {
       "ItemIndex": 20,
-      "ItemName": "MainGauche",
+      "ItemName": "Main Gauche",
       "ItemNameHighlight": "",
       "ItemSprite": 261,
       "ItemSpriteExposed": 261,
@@ -283,7 +283,7 @@
     },
     {
       "ItemIndex": 22,
-      "ItemName": "ThrowingAxe",
+      "ItemName": "Throwing Axe",
       "ItemNameHighlight": "",
       "ItemSprite": 261,
       "ItemSpriteExposed": 261,
@@ -292,7 +292,7 @@
     },
     {
       "ItemIndex": 23,
-      "ItemName": "ShortSword",
+      "ItemName": "Short Sword",
       "ItemNameHighlight": "",
       "ItemSprite": 261,
       "ItemSpriteExposed": 261,
@@ -310,7 +310,7 @@
     },
     {
       "ItemIndex": 25,
-      "ItemName": "MorningStar",
+      "ItemName": "Morning Star",
       "ItemNameHighlight": "",
       "ItemSprite": 261,
       "ItemSpriteExposed": 261,
@@ -355,7 +355,7 @@
     },
     {
       "ItemIndex": 30,
-      "ItemName": "LongSword",
+      "ItemName": "Long Sword",
       "ItemNameHighlight": "",
       "ItemSprite": 261,
       "ItemSpriteExposed": 261,
@@ -364,7 +364,7 @@
     },
     {
       "ItemIndex": 31,
-      "ItemName": "TwoHHammer",
+      "ItemName": "Two Handed Hammer",
       "ItemNameHighlight": "",
       "ItemSprite": 261,
       "ItemSpriteExposed": 261,
@@ -373,7 +373,7 @@
     },
     {
       "ItemIndex": 32,
-      "ItemName": "TwoHAxe",
+      "ItemName": "Two Handed Axe",
       "ItemNameHighlight": "",
       "ItemSprite": 261,
       "ItemSpriteExposed": 261,
@@ -382,7 +382,7 @@
     },
     {
       "ItemIndex": 33,
-      "ItemName": "TwoHSword",
+      "ItemName": "Two Handed Sword",
       "ItemNameHighlight": "",
       "ItemSprite": 261,
       "ItemSpriteExposed": 261,
@@ -400,7 +400,7 @@
     },
     {
       "ItemIndex": 35,
-      "ItemName": "SwordofChaos",
+      "ItemName": "Chaos Sword",
       "ItemNameHighlight": "",
       "ItemSprite": 261,
       "ItemSpriteExposed": 261,
@@ -409,7 +409,7 @@
     },
     {
       "ItemIndex": 36,
-      "ItemName": "MagicBow",
+      "ItemName": "Magic Bow",
       "ItemNameHighlight": "",
       "ItemSprite": 261,
       "ItemSpriteExposed": 261,
@@ -418,7 +418,7 @@
     },
     {
       "ItemIndex": 37,
-      "ItemName": "SilverSword",
+      "ItemName": "Silver Sword",
       "ItemNameHighlight": "",
       "ItemSprite": 261,
       "ItemSpriteExposed": 261,
@@ -427,7 +427,7 @@
     },
     {
       "ItemIndex": 38,
-      "ItemName": "MagicAxe",
+      "ItemName": "Magic Axe",
       "ItemNameHighlight": "",
       "ItemSprite": 261,
       "ItemSpriteExposed": 261,
@@ -436,7 +436,7 @@
     },
     {
       "ItemIndex": 39,
-      "ItemName": "GlassSword",
+      "ItemName": "Glass Sword",
       "ItemNameHighlight": "",
       "ItemSprite": 261,
       "ItemSpriteExposed": 261,
@@ -445,7 +445,7 @@
     },
     {
       "ItemIndex": 40,
-      "ItemName": "JeweledSword",
+      "ItemName": "Jewelled Sword",
       "ItemNameHighlight": "",
       "ItemSprite": 261,
       "ItemSpriteExposed": 261,
@@ -454,7 +454,7 @@
     },
     {
       "ItemIndex": 41,
-      "ItemName": "MysticSword",
+      "ItemName": "Mystic Sword",
       "ItemNameHighlight": "",
       "ItemSprite": 261,
       "ItemSpriteExposed": 261,
@@ -463,7 +463,7 @@
     },
     {
       "ItemIndex": 42,
-      "ItemName": "RingInvisibility",
+      "ItemName": "Ring Invisibility",
       "ItemNameHighlight": "",
       "ItemSprite": 266,
       "ItemSpriteExposed": 266,
@@ -472,7 +472,7 @@
     },
     {
       "ItemIndex": 43,
-      "ItemName": "RingProtection",
+      "ItemName": "Ring Protection",
       "ItemNameHighlight": "",
       "ItemSprite": 266,
       "ItemSpriteExposed": 266,
@@ -481,7 +481,7 @@
     },
     {
       "ItemIndex": 44,
-      "ItemName": "RingRegeneration",
+      "ItemName": "Ring Regeneration",
       "ItemNameHighlight": "",
       "ItemSprite": 266,
       "ItemSpriteExposed": 266,
@@ -490,7 +490,7 @@
     },
     {
       "ItemIndex": 45,
-      "ItemName": "AmuletOfTurning",
+      "ItemName": "Amulet Of Turning",
       "ItemNameHighlight": "",
       "ItemSprite": 268,
       "ItemSpriteExposed": 268,
@@ -499,7 +499,7 @@
     },
     {
       "ItemIndex": 46,
-      "ItemName": "SpikedCollar",
+      "ItemName": "Spiked Collar",
       "ItemNameHighlight": "",
       "ItemSprite": 268,
       "ItemSpriteExposed": 268,

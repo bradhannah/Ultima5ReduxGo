@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"log"
+	"strings"
 )
 
 type ItemTypeStringIndex string
@@ -142,4 +143,17 @@ func (i *InventoryItemReferences) GetReferenceByItem(item Item) InventoryItem {
 		return i.Shard[Shard(item.ID())]
 	}
 	panic("Unexpected: item type invalid")
+}
+
+func (i *InventoryItemReferences) getItemsAsStrings(itemStack *ItemStack) []string {
+	var items []string
+	for _, item := range itemStack.Items {
+		items = append(items, i.GetReferenceByItem(item.Item).ItemName)
+	}
+	return items
+}
+
+func (i *InventoryItemReferences) GetListOfItems(itemStack *ItemStack) string {
+	itemStrings := i.getItemsAsStrings(itemStack)
+	return strings.Join(itemStrings, "\n")
 }

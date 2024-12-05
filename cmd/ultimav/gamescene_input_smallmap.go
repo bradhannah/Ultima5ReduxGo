@@ -171,7 +171,6 @@ func (g *GameScene) smallMapPushSecondary(direction references.Direction) {
 
 func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
 	openThingPos := direction.GetNewPositionInDirection(&g.gameState.Position)
-	// openThingTile := g.gameState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, openThingPos, g.gameState.Floor)
 	openThingTile := g.gameState.GetLayeredMapByCurrentLocation().GetTileTopMapOnlyTile(openThingPos)
 
 	if openThingTile.Index.IsDoor() {
@@ -190,15 +189,15 @@ func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
 		return
 	}
 
-	// g.gameState.GetLayeredMapByCurrentLocation().SetTileByLayer(game_state.MapOverrideLayer, openThingPos, indexes.BrickFloor)
 	openThingTopTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(openThingPos)
 	if openThingTopTile.Index == indexes.Chest {
 		if g.gameState.Location == references.Lord_Britishs_Castle && g.gameState.Floor == references.Basement {
 			itemStack := references.CreateNewItemStack(references.LordBritishTreasure)
+			g.output.AddRowStr("Found:")
+			g.output.AddRowStr(g.gameReferences.InventoryItemReferences.GetListOfItems(&itemStack))
 			g.gameState.ItemStacksMap.Push(openThingPos, &itemStack)
 			g.gameState.NPCAIController.RemoveNPCAtPosition(*openThingPos)
 			g.gameState.NPCAIController.FreshenExistingNPCsOnMap()
-			g.addRowStr("Found!")
 		}
 	}
 }
