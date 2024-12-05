@@ -11,8 +11,8 @@ type Inventory struct {
 }
 
 func (i *Inventory) PutItemInInventory(item *references.ItemAndQuantity) {
-	if item.Provision != references.NoProvision {
-		switch item.Provision {
+	if item.Item.Type() == references.ItemTypeProvision {
+		switch references.Provision(item.Item.ID()) {
 		case references.Food:
 			i.Provisions.Food = helpers.Min(i.Provisions.Food+uint16(item.Quantity), MaxProvisionFood)
 		case references.Key:

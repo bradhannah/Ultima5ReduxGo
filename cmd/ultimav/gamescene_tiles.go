@@ -125,10 +125,10 @@ func (g *GameScene) refreshProvisionsAndEquipmentMapTiles(pos *references.Positi
 		log.Fatal("Unexpected: item should exist since we checked ahead of it")
 	}
 	var tileIndex indexes.SpriteIndex
-	if item.Equipment != references.NoEquipment {
-		tileIndex = item.Equipment.GetSpriteIndex()
+	if item.Item.Type() == references.ItemTypeEquipment {
+		tileIndex = references.Equipment(item.Item.ID()).GetSpriteIndex()
 	} else {
-		tileIndex = item.Provision.GetSpriteIndex()
+		tileIndex = references.Provision(item.Item.ID()).GetSpriteIndex()
 	}
 	layer.SetTileByLayer(game_state.EquipmentAndProvisionsLayer, pos, tileIndex)
 	// g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), do)

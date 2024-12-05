@@ -1,16 +1,14 @@
 package references
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 )
 
 type ItemAndQuantity struct {
-	Quantity  int
-	Equipment Equipment
-	Provision Provision
+	Quantity int
+	Item     Item
 }
 
 type ItemStacks []ItemAndQuantity
@@ -36,9 +34,9 @@ func getLordBritishItems(total int) ItemStack {
 			items = append(items, createRandomProvision())
 		} else {
 			item := ItemAndQuantity{}
-			item.Equipment = getRandomNonSpecialEquipment()
+			item.Item = getRandomNonSpecialEquipment()
 			item.Quantity = 1
-			item.Provision = NoProvision
+			// item.Item = NoProvision
 			items = append(items, item)
 		}
 	}
@@ -61,9 +59,10 @@ func getRandomNonSpecialEquipment() Equipment {
 
 func createRandomProvision() ItemAndQuantity {
 	item := ItemAndQuantity{}
-	item.Provision = Provision(helpers.RandomIntInRange(0, int(Torches)))
-	item.Equipment = NoEquipment
-	if item.Provision == Gold {
+	provision := Provision(helpers.RandomIntInRange(0, int(Torches)))
+	item.Item = provision
+	// item.Equipment = NoEquipment
+	if provision == Gold {
 		const minGold, maxGold = 10, 60
 		item.Quantity = helpers.RandomIntInRange(minGold, maxGold)
 	} else {
@@ -102,9 +101,6 @@ func (i *ItemStack) PeekTopItem() *ItemAndQuantity {
 	return &i.Items[len(i.Items)-1]
 }
 
-func (i *ItemAndQuantity) GetFriendlyActionGetMessage() string {
-	if i.Equipment != NoEquipment {
-		return fmt.Sprintf("%s!", i.Equipment)
-	}
-	return ""
+func (i *ItemAndQuantity) GetAsProvision() Provision {
+	return Provision(i.Item.ID())
 }

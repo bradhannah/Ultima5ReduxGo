@@ -114,6 +114,32 @@ func (i *InventoryItemReferences) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (i *InventoryItemReferences) GetEquipmentReference() InventoryItem {
-	return InventoryItem{}
+// func (i *InventoryItemReferences) GetEquipmentReference() InventoryItem {
+// 	return InventoryItem{}
+// }
+
+func (i *InventoryItemReferences) GetReferenceByItem(item Item) InventoryItem {
+	switch item.Type() {
+	case ItemTypeEquipment:
+		return i.Equipment[Equipment(item.ID())]
+	case ItemTypeReagent:
+		return i.Reagent[Reagent(item.ID())]
+	case ItemTypeSpell:
+		return i.Spell[Spell(item.ID())]
+	case ItemTypePotion:
+		return i.Potion[Potion(item.ID())]
+	case ItemTypeScroll:
+		return i.Scroll[Scroll(item.ID())]
+	case ItemTypeSpecialItem:
+		return i.Special[SpecialItem(item.ID())]
+	case ItemTypeMoonstone:
+		return i.Moonstone[Moonstone(item.ID())]
+	case ItemTypeProvision:
+		return i.Provision[Provision(item.ID())]
+	case ItemTypeQuestItem:
+		return i.QuestItem[QuestItem(item.ID())]
+	case ItemTypeShard:
+		return i.Shard[Shard(item.ID())]
+	}
+	panic("Unexpected: item type invalid")
 }
