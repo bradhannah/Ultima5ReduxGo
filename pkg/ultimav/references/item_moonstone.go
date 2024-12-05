@@ -2,6 +2,14 @@ package references
 
 type Moonstone int
 
+func (m Moonstone) ID() int {
+	return int(m)
+}
+
+func (m Moonstone) Type() ItemType {
+	return ItemTypeMoonstone
+}
+
 const (
 	NewMoon        Moonstone = 0
 	CrescentWaxing           = 1

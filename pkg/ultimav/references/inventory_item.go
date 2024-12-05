@@ -6,19 +6,19 @@ import (
 	"log"
 )
 
-type ItemType string
+type ItemTypeStringIndex string
 
 const (
-	ItemTypeReagent     ItemType = "Reagent"
-	ItemTypeEquipment            = "Equipment"
-	ItemTypeSpell                = "Spell"
-	ItemTypeSpecialItem          = "Special"
-	ItemTypeScroll               = "Scroll"
-	ItemTypePotion               = "Potion"
-	ItemTypeShard                = "Shard"
-	ItemTypeQuestItem            = "QuestItem"
-	ItemTypeMoonstone            = "Moonstone"
-	ItemTypeProvision            = "Provision"
+	ItemTypeReagentStr     ItemTypeStringIndex = "Reagent"
+	ItemTypeEquipmentStr                       = "Equipment"
+	ItemTypeSpellStr                           = "Spell"
+	ItemTypeSpecialItemStr                     = "Special"
+	ItemTypeScrollStr                          = "Scroll"
+	ItemTypePotionStr                          = "Potion"
+	ItemTypeShardStr                           = "Shard"
+	ItemTypeQuestItemStr                       = "QuestItem"
+	ItemTypeMoonstoneStr                       = "Moonstone"
+	ItemTypeProvisionStr                       = "Provision"
 )
 
 var (
@@ -26,7 +26,7 @@ var (
 	inventoryDetails []byte
 )
 
-type inventoryItemsMap map[ItemType][]InventoryItem
+type inventoryItemsMap map[ItemTypeStringIndex][]InventoryItem
 
 type InventoryItemReferences struct {
 	inventoryItemsMap inventoryItemsMap
@@ -61,43 +61,43 @@ func NewInventoryItemsReferences() *InventoryItemReferences {
 	inventoryItems.Moonstone = make(map[Moonstone]InventoryItem)
 	inventoryItems.Provision = make(map[Provision]InventoryItem)
 
-	for _, equipment := range inventoryItems.inventoryItemsMap[ItemTypeEquipment] {
+	for _, equipment := range inventoryItems.inventoryItemsMap[ItemTypeEquipmentStr] {
 		inventoryItems.Equipment[Equipment(equipment.ItemIndex)] = equipment
 	}
 
-	for _, reagent := range inventoryItems.inventoryItemsMap[ItemTypeReagent] {
+	for _, reagent := range inventoryItems.inventoryItemsMap[ItemTypeReagentStr] {
 		inventoryItems.Reagent[Reagent(reagent.ItemIndex)] = reagent
 	}
 
-	for _, spell := range inventoryItems.inventoryItemsMap[ItemTypeSpell] {
+	for _, spell := range inventoryItems.inventoryItemsMap[ItemTypeSpellStr] {
 		inventoryItems.Spell[Spell(spell.ItemIndex)] = spell
 	}
 
-	for _, scroll := range inventoryItems.inventoryItemsMap[ItemTypeScroll] {
+	for _, scroll := range inventoryItems.inventoryItemsMap[ItemTypeScrollStr] {
 		inventoryItems.Scroll[Scroll(scroll.ItemIndex)] = scroll
 	}
 
-	for _, special := range inventoryItems.inventoryItemsMap[ItemTypeSpecialItem] {
+	for _, special := range inventoryItems.inventoryItemsMap[ItemTypeSpecialItemStr] {
 		inventoryItems.Special[SpecialItem(special.ItemIndex)] = special
 	}
 
-	for _, potion := range inventoryItems.inventoryItemsMap[ItemTypePotion] {
+	for _, potion := range inventoryItems.inventoryItemsMap[ItemTypePotionStr] {
 		inventoryItems.Potion[Potion(potion.ItemIndex)] = potion
 	}
 
-	for _, shard := range inventoryItems.inventoryItemsMap[ItemTypeShard] {
+	for _, shard := range inventoryItems.inventoryItemsMap[ItemTypeShardStr] {
 		inventoryItems.Shard[Shard(shard.ItemIndex)] = shard
 	}
 
-	for _, quest := range inventoryItems.inventoryItemsMap[ItemTypeQuestItem] {
+	for _, quest := range inventoryItems.inventoryItemsMap[ItemTypeQuestItemStr] {
 		inventoryItems.QuestItem[QuestItem(quest.ItemIndex)] = quest
 	}
 
-	for _, moonstone := range inventoryItems.inventoryItemsMap[ItemTypeMoonstone] {
+	for _, moonstone := range inventoryItems.inventoryItemsMap[ItemTypeMoonstoneStr] {
 		inventoryItems.Moonstone[Moonstone(moonstone.ItemIndex)] = moonstone
 	}
 
-	for _, provision := range inventoryItems.inventoryItemsMap[ItemTypeProvision] {
+	for _, provision := range inventoryItems.inventoryItemsMap[ItemTypeProvisionStr] {
 		inventoryItems.Provision[Provision(provision.ItemIndex)] = provision
 	}
 
@@ -114,6 +114,6 @@ func (i *InventoryItemReferences) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (i *InventoryItemReferences) GetEquipmentReference(equipment Equipment) InventoryItem {
+func (i *InventoryItemReferences) GetEquipmentReference() InventoryItem {
 	return InventoryItem{}
 }

@@ -2,6 +2,14 @@ package references
 
 type SpecialItem int
 
+func (s SpecialItem) ID() int {
+	return int(s)
+}
+
+func (s SpecialItem) Type() ItemType {
+	return ItemTypeSpecialItem
+}
+
 const (
 	Carpet      SpecialItem = 0
 	Grapple                 = 1

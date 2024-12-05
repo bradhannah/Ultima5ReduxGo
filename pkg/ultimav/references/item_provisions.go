@@ -4,6 +4,14 @@ import "github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 
 type Provision int
 
+func (p Provision) ID() int {
+	return int(p)
+}
+
+func (p Provision) Type() ItemType {
+	return ItemTypeProvision
+}
+
 const NumberOfProvisions = 5
 
 const NoProvision Provision = -1

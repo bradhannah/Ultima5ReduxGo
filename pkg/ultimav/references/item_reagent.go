@@ -2,6 +2,14 @@ package references
 
 type Reagent int
 
+func (r Reagent) ID() int {
+	return int(r)
+}
+
+func (r Reagent) Type() ItemType {
+	return ItemTypeReagent
+}
+
 const (
 	SulfurAsh    Reagent = 0
 	Ginseng              = 1

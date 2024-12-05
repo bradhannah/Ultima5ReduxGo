@@ -2,6 +2,14 @@ package references
 
 type Scroll int
 
+func (s Scroll) ID() int {
+	return int(s)
+}
+
+func (s Scroll) Type() ItemType {
+	return ItemTypeScroll
+}
+
 const (
 	ScrollVasLor     Scroll = 0
 	ScrollRelHur            = 1

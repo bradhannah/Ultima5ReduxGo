@@ -4,6 +4,14 @@ import "github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 
 type Equipment int
 
+func (e Equipment) ID() int {
+	return int(e)
+}
+
+func (e Equipment) Type() ItemType {
+	return ItemTypeEquipment
+}
+
 const (
 	BareHands        Equipment = -2
 	LeatherHelm      Equipment = 0

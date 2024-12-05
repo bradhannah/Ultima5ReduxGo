@@ -2,6 +2,14 @@ package references
 
 type Spell int
 
+func (s Spell) ID() int {
+	return int(s)
+}
+
+func (s Spell) Type() ItemType {
+	return ItemTypeSpell
+}
+
 const (
 	InLor         Spell = 0
 	GravPor       Spell = 1
