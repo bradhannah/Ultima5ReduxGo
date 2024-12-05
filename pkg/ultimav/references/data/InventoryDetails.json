@@ -518,7 +518,7 @@
   ],
   "Spell": [
     {
-      "ItemIndex": null,
+      "ItemIndex": 0,
       "ItemName": "In_Lor",
       "ItemNameHighlight": "In Lor",
       "ItemSprite": 260,
@@ -527,7 +527,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 1,
       "ItemName": "Grav_Por",
       "ItemNameHighlight": "Grav Por",
       "ItemSprite": 260,
@@ -536,7 +536,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 2,
       "ItemName": "An_Zu",
       "ItemNameHighlight": "An Zu",
       "ItemSprite": 260,
@@ -545,7 +545,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 3,
       "ItemName": "An_Nox",
       "ItemNameHighlight": "An Nox",
       "ItemSprite": 260,
@@ -554,7 +554,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 4,
       "ItemName": "Mani",
       "ItemNameHighlight": "Vas Mani,Mani",
       "ItemSprite": 260,
@@ -563,7 +563,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 5,
       "ItemName": "An_Ylem",
       "ItemNameHighlight": "An Ylem",
       "ItemSprite": 260,
@@ -572,7 +572,7 @@
       "ItemDescriptionAttribution": "The Book of Brad"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 6,
       "ItemName": "An_Sanct",
       "ItemNameHighlight": "An Sanct",
       "ItemSprite": 260,
@@ -581,7 +581,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 7,
       "ItemName": "An_Xen_Corp",
       "ItemNameHighlight": "An Xen Corp",
       "ItemSprite": 260,
@@ -590,7 +590,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 8,
       "ItemName": "Rel_Hur",
       "ItemNameHighlight": "Rel Hur",
       "ItemSprite": 260,
@@ -599,7 +599,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 9,
       "ItemName": "In_Wis",
       "ItemNameHighlight": "In Wis",
       "ItemSprite": 260,
@@ -608,7 +608,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 10,
       "ItemName": "Kal_Xen",
       "ItemNameHighlight": "Kal Xen",
       "ItemSprite": 260,
@@ -617,7 +617,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 11,
       "ItemName": "In_Xen_Mani",
       "ItemNameHighlight": "In Xen Mani",
       "ItemSprite": 260,
@@ -626,7 +626,7 @@
       "ItemDescriptionAttribution": "The Book of Brad"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 12,
       "ItemName": "Vas_Lor",
       "ItemNameHighlight": "Vas Lor",
       "ItemSprite": 260,
@@ -635,7 +635,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": 49,
+      "ItemIndex": 13,
       "ItemName": "Vas_Flam",
       "ItemNameHighlight": "Vas Flam",
       "ItemSprite": 260,
@@ -644,7 +644,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 14,
       "ItemName": "In_Flam_Grav",
       "ItemNameHighlight": "In Flam Grav",
       "ItemSprite": 260,
@@ -653,7 +653,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 15,
       "ItemName": "In_Nox_Grav",
       "ItemNameHighlight": "In Nox Grav",
       "ItemSprite": 260,
@@ -662,7 +662,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 16,
       "ItemName": "In_Zu_Grav",
       "ItemNameHighlight": "In Zu Grav",
       "ItemSprite": 260,
@@ -671,7 +671,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 17,
       "ItemName": "In_Por",
       "ItemNameHighlight": "In Por",
       "ItemSprite": 260,
@@ -680,7 +680,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 18,
       "ItemName": "An_Grav",
       "ItemNameHighlight": "An Grav",
       "ItemSprite": 260,
@@ -689,7 +689,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 19,
       "ItemName": "In_Sanct",
       "ItemNameHighlight": "In Sanct",
       "ItemSprite": 260,
@@ -698,7 +698,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 20,
       "ItemName": "In_Sanct_Grav",
       "ItemNameHighlight": "In Sanct Grav",
       "ItemSprite": 260,
@@ -707,7 +707,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 21,
       "ItemName": "Uus_Por",
       "ItemNameHighlight": "Uus Por",
       "ItemSprite": 260,
@@ -716,7 +716,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 22,
       "ItemName": "Des_Por",
       "ItemNameHighlight": "Des Por",
       "ItemSprite": 260,
@@ -725,7 +725,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 23,
       "ItemName": "Wis_Quas",
       "ItemNameHighlight": "Wis Quas",
       "ItemSprite": 260,
@@ -734,7 +734,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 24,
       "ItemName": "In_Bet_Xen",
       "ItemNameHighlight": "In Bet Xen",
       "ItemSprite": 260,
@@ -743,7 +743,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 25,
       "ItemName": "An_Ex_Por",
       "ItemNameHighlight": "An Ex Por",
       "ItemSprite": 260,
@@ -752,7 +752,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 26,
       "ItemName": "In_Ex_Por",
       "ItemNameHighlight": "In Ex Por",
       "ItemSprite": 260,
@@ -761,7 +761,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 27,
       "ItemName": "Vas_Mani",
       "ItemNameHighlight": "Vas Mani",
       "ItemSprite": 260,
@@ -770,7 +770,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 28,
       "ItemName": "In_Zu",
       "ItemNameHighlight": "In Zu",
       "ItemSprite": 260,
@@ -779,7 +779,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 29,
       "ItemName": "Rel_Tym",
       "ItemNameHighlight": "Rel Tym",
       "ItemSprite": 260,
@@ -788,7 +788,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 30,
       "ItemName": "In_Vas_Por_Ylem",
       "ItemNameHighlight": "In Vas Por Ylem",
       "ItemSprite": 260,
@@ -797,7 +797,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 31,
       "ItemName": "Quas_An_Wis",
       "ItemNameHighlight": "Quas An Wis",
       "ItemSprite": 260,
@@ -806,7 +806,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 32,
       "ItemName": "In_An",
       "ItemNameHighlight": "In An",
       "ItemSprite": 260,
@@ -815,7 +815,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 33,
       "ItemName": "Wis_An_Ylem",
       "ItemNameHighlight": "Wis An Ylem",
       "ItemSprite": 260,
@@ -824,7 +824,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 34,
       "ItemName": "An_Xen_Ex",
       "ItemNameHighlight": "An Xen Ex",
       "ItemSprite": 260,
@@ -833,7 +833,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 35,
       "ItemName": "Rel_Xen_Bet",
       "ItemNameHighlight": "Rel Xen Bet",
       "ItemSprite": 260,
@@ -842,7 +842,7 @@
       "ItemDescriptionAttribution": "The Book of Brad"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 36,
       "ItemName": "Sanct_Lor",
       "ItemNameHighlight": "Sanct Lor",
       "ItemSprite": 260,
@@ -851,7 +851,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 37,
       "ItemName": "Xen_Corp",
       "ItemNameHighlight": "Xen Corp",
       "ItemSprite": 260,
@@ -860,7 +860,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 38,
       "ItemName": "In_Quas_Xen",
       "ItemNameHighlight": "In Quas Xen",
       "ItemSprite": 260,
@@ -869,7 +869,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 39,
       "ItemName": "In_Quas_Wis",
       "ItemNameHighlight": "In Quas Wis",
       "ItemSprite": 260,
@@ -878,7 +878,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 40,
       "ItemName": "In_Nox_Hur",
       "ItemNameHighlight": "In Nor Hur",
       "ItemSprite": 260,
@@ -887,7 +887,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 41,
       "ItemName": "In_Quas_Corp",
       "ItemNameHighlight": "In Quas Corp",
       "ItemSprite": 260,
@@ -896,7 +896,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 42,
       "ItemName": "In_Mani_Corp",
       "ItemNameHighlight": "In Mani Corp",
       "ItemSprite": 260,
@@ -905,7 +905,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 43,
       "ItemName": "Kal_Xen_Corp",
       "ItemNameHighlight": "Kal Xen Corp",
       "ItemSprite": 260,
@@ -914,7 +914,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 44,
       "ItemName": "In_Vas_Grav_Corp",
       "ItemNameHighlight": "In Vas Grav Corp",
       "ItemSprite": 260,
@@ -923,7 +923,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 45,
       "ItemName": "In_Flam_Hur",
       "ItemNameHighlight": "In Flam Hur",
       "ItemSprite": 260,
@@ -932,7 +932,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 46,
       "ItemName": "Vas_Rel_Por",
       "ItemNameHighlight": "Vas Rel Por",
       "ItemSprite": 260,
@@ -941,7 +941,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 47,
       "ItemName": "An_Tym",
       "ItemNameHighlight": "An Tym",
       "ItemSprite": 260,
@@ -950,7 +950,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 48,
       "ItemName": "Nox",
       "ItemNameHighlight": "Nox",
       "ItemSprite": 260,
@@ -959,45 +959,45 @@
       "ItemDescriptionAttribution": "The Book of Brad"
     }
   ],
-  "SpecialItem": [
+  "Special": [
     {
-      "ItemIndex": null,
+      "ItemIndex": 0,
       "ItemName": "Carpet",
-      "ItemNameHighlight": "",
+      "ItemNameHighlight": "Carpet",
       "ItemSprite": 283,
       "ItemSpriteExposed": 283,
       "ItemDescription": "Said to have been brought to Britannia from a faraway land of trackless deserts and strange, humped beasts, the magic carpet is an excellent conveyance for quick travel over swamps, calm waters and other places when ground travel is impeded or imperiled. Since it flies only a handspan from the ground, it cannot be used to pass over mountains, walls, or any sort of high obstruction. Rapid waters will soak it, subjecting its riders to freezing spray and possible drowning.",
       "ItemDescriptionAttribution": "Paths of Destiny (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 1,
       "ItemName": "Grapple",
-      "ItemNameHighlight": "",
+      "ItemNameHighlight": "Grapple",
       "ItemSprite": 12,
       "ItemSpriteExposed": 12,
       "ItemDescription": "The grapple is an important tool for mountain-climbing.",
       "ItemDescriptionAttribution": "UltimaCodex.com"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 2,
       "ItemName": "Spyglass",
-      "ItemNameHighlight": "",
+      "ItemNameHighlight": "Spyglass",
       "ItemSprite": 89,
       "ItemSpriteExposed": 89,
       "ItemDescription": "Normally used by sailors as a navigational aid, it is possible to study the planets and brighter stars with even a small spyglass. ",
       "ItemDescriptionAttribution": "Paths of Destiny (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 3,
       "ItemName": "HMSCape",
-      "ItemNameHighlight": "",
+      "ItemNameHighlight": "HMSCape",
       "ItemSprite": 260,
       "ItemSpriteExposed": 260,
       "ItemDescription": "The H.M.S. Cape had seen better days. Algae and ribbons of seaweed covered her. Bloated, dead sailors bobbed with the current, arms and legs tangled in the seaweed and wreckage. I shuddered at the sight of their watery grave, but I did not hesitate.",
       "ItemDescriptionAttribution": "Ultima: The Avatar Adventures"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 4,
       "ItemName": "PocketWatch",
       "ItemNameHighlight": "",
       "ItemSprite": 256,
@@ -1006,7 +1006,7 @@
       "ItemDescriptionAttribution": "UltimaCodex.com"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 5,
       "ItemName": "BlackBadge",
       "ItemNameHighlight": "",
       "ItemSprite": 256,
@@ -1015,7 +1015,7 @@
       "ItemDescriptionAttribution": "Paths of Destiny (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 6,
       "ItemName": "WoodenBox",
       "ItemNameHighlight": "",
       "ItemSprite": 270,
@@ -1024,9 +1024,9 @@
       "ItemDescriptionAttribution": "The Book of Brad"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 7,
       "ItemName": "Sextant",
-      "ItemNameHighlight": "",
+      "ItemNameHighlight": "Sextant",
       "ItemSprite": 256,
       "ItemSpriteExposed": 256,
       "ItemDescription": "The sextant is a tool commonly used in celestial navigation, as it allows its user to take an accurate measurement of a heavenly body relative to the horizon. Once a navigator ascertains this angle, he may use it to reliably determine his geographic position. ",
@@ -1035,7 +1035,7 @@
   ],
   "Scroll": [
     {
-      "ItemIndex": null,
+      "ItemIndex": 0,
       "ItemName": "Vas_Lor",
       "ItemNameHighlight": "",
       "ItemSprite": 260,
@@ -1044,7 +1044,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 1,
       "ItemName": "Rel_Hur",
       "ItemNameHighlight": "",
       "ItemSprite": 260,
@@ -1053,7 +1053,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 2,
       "ItemName": "In_Sanct",
       "ItemNameHighlight": "",
       "ItemSprite": 260,
@@ -1062,7 +1062,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 3,
       "ItemName": "In_An",
       "ItemNameHighlight": "",
       "ItemSprite": 260,
@@ -1071,7 +1071,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 4,
       "ItemName": "In_Quas_Wis",
       "ItemNameHighlight": "",
       "ItemSprite": 260,
@@ -1080,7 +1080,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 5,
       "ItemName": "Kal_Xen_Corp",
       "ItemNameHighlight": "",
       "ItemSprite": 260,
@@ -1089,7 +1089,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 6,
       "ItemName": "In_Mani_Corp",
       "ItemNameHighlight": "",
       "ItemSprite": 260,
@@ -1098,7 +1098,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 7,
       "ItemName": "An_Tym",
       "ItemNameHighlight": "",
       "ItemSprite": 260,
@@ -1109,7 +1109,7 @@
   ],
   "Potion": [
     {
-      "ItemIndex": null,
+      "ItemIndex": 0,
       "ItemName": "Blue",
       "ItemNameHighlight": "",
       "ItemSprite": 259,
@@ -1118,7 +1118,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 1,
       "ItemName": "Yellow",
       "ItemNameHighlight": "",
       "ItemSprite": 259,
@@ -1127,7 +1127,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 2,
       "ItemName": "Red",
       "ItemNameHighlight": "",
       "ItemSprite": 259,
@@ -1136,7 +1136,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 3,
       "ItemName": "Green",
       "ItemNameHighlight": "",
       "ItemSprite": 259,
@@ -1145,7 +1145,7 @@
       "ItemDescriptionAttribution": "UltimaCodex.com and Brad"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 4,
       "ItemName": "Orange",
       "ItemNameHighlight": "",
       "ItemSprite": 259,
@@ -1154,7 +1154,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 5,
       "ItemName": "Purple",
       "ItemNameHighlight": "",
       "ItemSprite": 259,
@@ -1163,7 +1163,7 @@
       "ItemDescriptionAttribution": "Brad"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 6,
       "ItemName": "Black",
       "ItemNameHighlight": "",
       "ItemSprite": 259,
@@ -1172,7 +1172,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 7,
       "ItemName": "White",
       "ItemNameHighlight": "",
       "ItemSprite": 259,
@@ -1183,7 +1183,7 @@
   ],
   "Shard": [
     {
-      "ItemIndex": null,
+      "ItemIndex": 0,
       "ItemName": "Falsehood       ",
       "ItemNameHighlight": "                        ",
       "ItemSprite": 436,
@@ -1192,7 +1192,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 1,
       "ItemName": "Hatred",
       "ItemNameHighlight": "",
       "ItemSprite": 436,
@@ -1201,7 +1201,7 @@
       "ItemDescriptionAttribution": "The Book of Lore (Ultima V)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 2,
       "ItemName": "Cowardice",
       "ItemNameHighlight": "",
       "ItemSprite": 436,
@@ -1212,7 +1212,7 @@
   ],
   "QuestItem": [
     {
-      "ItemIndex": null,
+      "ItemIndex": 0,
       "ItemName": "Amulet",
       "ItemNameHighlight": "",
       "ItemSprite": 439,
@@ -1221,7 +1221,7 @@
       "ItemDescriptionAttribution": "UltimaCodex.com"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 1,
       "ItemName": "Crown",
       "ItemNameHighlight": "",
       "ItemSprite": 437,
@@ -1230,7 +1230,7 @@
       "ItemDescriptionAttribution": "UltimaCodex.com and The Book of Brad"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 2,
       "ItemName": "Sceptre",
       "ItemNameHighlight": "",
       "ItemSprite": 438,
@@ -1241,7 +1241,7 @@
   ],
   "Moonstone": [
     {
-      "ItemIndex": null,
+      "ItemIndex": 0,
       "ItemName": "NewMoon",
       "ItemNameHighlight": "",
       "ItemSprite": 281,
@@ -1250,7 +1250,7 @@
       "ItemDescriptionAttribution": "Compendium (Ultima VI)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 1,
       "ItemName": "CrescentWaxing",
       "ItemNameHighlight": "",
       "ItemSprite": 281,
@@ -1259,7 +1259,7 @@
       "ItemDescriptionAttribution": "Compendium (Ultima VI)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 2,
       "ItemName": "FirstQuarter",
       "ItemNameHighlight": "",
       "ItemSprite": 281,
@@ -1268,7 +1268,7 @@
       "ItemDescriptionAttribution": "Compendium (Ultima VI)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 3,
       "ItemName": "GibbousWaxing",
       "ItemNameHighlight": "",
       "ItemSprite": 281,
@@ -1277,7 +1277,7 @@
       "ItemDescriptionAttribution": "Compendium (Ultima VI)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 4,
       "ItemName": "FullMoon",
       "ItemNameHighlight": "",
       "ItemSprite": 281,
@@ -1286,7 +1286,7 @@
       "ItemDescriptionAttribution": "Compendium (Ultima VI)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 5,
       "ItemName": "GibbousWaning",
       "ItemNameHighlight": "",
       "ItemSprite": 281,
@@ -1295,7 +1295,7 @@
       "ItemDescriptionAttribution": ""
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 6,
       "ItemName": "LastQuarter",
       "ItemNameHighlight": "",
       "ItemSprite": 281,
@@ -1304,7 +1304,7 @@
       "ItemDescriptionAttribution": "Compendium (Ultima VI)"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 7,
       "ItemName": "CrescentWaning",
       "ItemNameHighlight": "",
       "ItemSprite": 281,
@@ -1315,7 +1315,7 @@
   ],
   "Provision": [
     {
-      "ItemIndex": null,
+      "ItemIndex": 0,
       "ItemName": "Torches",
       "ItemNameHighlight": "",
       "ItemSprite": 269,
@@ -1324,7 +1324,7 @@
       "ItemDescriptionAttribution": "The Book of Brad"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 1,
       "ItemName": "Gems",
       "ItemNameHighlight": "",
       "ItemSprite": 264,
@@ -1333,7 +1333,7 @@
       "ItemDescriptionAttribution": "The Book of Brad"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 2,
       "ItemName": "Keys",
       "ItemNameHighlight": "",
       "ItemSprite": 263,
@@ -1342,7 +1342,7 @@
       "ItemDescriptionAttribution": "The Book of Brad"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 3,
       "ItemName": "SkullKeys",
       "ItemNameHighlight": "",
       "ItemSprite": 263,
@@ -1351,7 +1351,7 @@
       "ItemDescriptionAttribution": "The Book of Brad"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 4,
       "ItemName": "Food",
       "ItemNameHighlight": "",
       "ItemSprite": 271,
@@ -1360,7 +1360,7 @@
       "ItemDescriptionAttribution": "The Book of Brad"
     },
     {
-      "ItemIndex": null,
+      "ItemIndex": 5,
       "ItemName": "Gold",
       "ItemNameHighlight": "",
       "ItemSprite": 258,

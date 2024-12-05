@@ -54,14 +54,14 @@ const (
 	AmuletOfTurning  Equipment = 45
 	SpikedCollar     Equipment = 46
 	Ankh             Equipment = 47
-	FlamPor          Equipment = 48
-	VasFlam          Equipment = 49
-	InCorp           Equipment = 50
-	UusNox           Equipment = 51
-	UusZu            Equipment = 52
-	UusFlam          Equipment = 53
-	UusSanct         Equipment = 54
-	NoEquipment      Equipment = 255 // 0xFF in decimal
+	// FlamPor          Equipment = 48
+	// VasFlam          Equipment = 49
+	// InCorp           Equipment = 50
+	// UusNox           Equipment = 51
+	// UusZu            Equipment = 52
+	// UusFlam          Equipment = 53
+	// UusSanct         Equipment = 54
+	NoEquipment Equipment = 255 // 0xFF in decimal
 )
 
 func (e Equipment) GetSpriteIndex() indexes.SpriteIndex {
@@ -83,8 +83,8 @@ func (e Equipment) GetSpriteIndex() indexes.SpriteIndex {
 	if e >= AmuletOfTurning && e <= Ankh {
 		return indexes.ItemAnkh
 	}
-	if e >= FlamPor && e <= UusFlam {
-		return indexes.ItemScroll
-	}
+	// if e >= FlamPor && e <= UusFlam {
+	// return indexes.ItemScroll
+	// }
 	return indexes.Avatar
 }

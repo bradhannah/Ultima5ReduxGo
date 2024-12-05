@@ -48,7 +48,7 @@ func getLordBritishItems(total int) ItemStack {
 }
 
 func getRandomNonSpecialEquipment() Equipment {
-	const totalEquipmentIncludingSpecial = UusSanct + 1
+	const totalEquipmentIncludingSpecial = Ankh + 1
 
 	for {
 		equipment := Equipment(helpers.RandomIntInRange(0, int(totalEquipmentIncludingSpecial)))
