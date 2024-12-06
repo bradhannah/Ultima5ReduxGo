@@ -152,6 +152,7 @@ const (
 	Rat_KeyIndex           = 400
 	Troll_KeyIndex         = 484
 	Whirlpool_KeyIndex     = 492
+	Manacles_Prisoner      = 356
 )
 
 func (s SpriteIndex) IsDoor() bool {

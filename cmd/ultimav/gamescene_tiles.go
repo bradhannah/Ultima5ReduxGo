@@ -32,6 +32,8 @@ func (g *GameScene) getSmallCalculatedNPCTileIndex(ogSpriteIndex indexes.SpriteI
 		return indexes.AvatarOnLadderUp
 	case indexes.LadderDown:
 		return indexes.AvatarOnLadderDown
+	case indexes.Manacles:
+		return indexes.Manacles_Prisoner
 	}
 	return npcIndex
 }

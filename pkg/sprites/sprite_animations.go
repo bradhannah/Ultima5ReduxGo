@@ -15,7 +15,7 @@ const (
 )
 
 func GetSpriteIndexWithAnimationBySpriteIndex(spriteIndex indexes.SpriteIndex, posHash int32) indexes.SpriteIndex {
-	if spriteIndex >= indexes.Waterfall_KeyIndex && spriteIndex < indexes.Waterfall_KeyIndex+4 {
+	if spriteIndex >= indexes.Waterfall_KeyIndex && spriteIndex < indexes.Waterfall_KeyIndex+standardNumberOfAnimationFrames {
 		spriteIndex = indexes.Waterfall_KeyIndex
 	}
 
