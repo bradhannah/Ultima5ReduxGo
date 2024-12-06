@@ -244,7 +244,7 @@ func (n *NPCAIController) performAiMovementOnAssignedPosition(npc *NPC) bool {
 		// set location of Avatar as way point, but only set the first movement from the list if within N of Avatar
 		return true
 	case references.HorseWander:
-		n.wanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
+		return n.wanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
 	case references.StoneGargoyleTrigger:
 		// if they are within 4 then change their AI to Drudgeworth (follow)
 	case references.FixedExceptAttackWhenIsWantedByThePoPo:
@@ -367,6 +367,7 @@ func (n *NPCAIController) createFreshPathToScheduledLocation(npc *NPC) bool {
 }
 
 func (n *NPCAIController) wanderOneTileWithinN(npc *NPC, anchorPos references.Position, withinN int) bool {
+
 	rand.Seed(uint64(time.Now().UnixNano())) // Seed the random number generator
 
 	// Define possible moves: up, down, left, right

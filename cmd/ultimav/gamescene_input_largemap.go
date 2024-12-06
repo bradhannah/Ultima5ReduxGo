@@ -12,12 +12,14 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 	switch key {
 	case ebiten.KeyEscape:
 		g.DoEscapeMenu()
+		return
 	case ebiten.KeySpace:
 		g.addRowStr("Pass")
-		g.gameState.FinishTurn()
+		// g.gameState.FinishTurn()
 	case ebiten.KeyBackquote:
 		// g.bShowDebugConsole = !g.bShowDebugConsole
 		g.ToggleDebug()
+		return
 	case ebiten.KeyEnter:
 		g.addRowStr("Enter")
 	case ebiten.KeyUp:
@@ -62,6 +64,8 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyJ:
 		g.addRowStr("Jimmy-")
 		g.appendToCurrentRowStr("Cannot")
+	default:
+		return
 	}
 
 	// only process end of turn if the turn is actually done.

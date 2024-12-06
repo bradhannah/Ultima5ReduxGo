@@ -15,11 +15,13 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 	switch key {
 	case ebiten.KeyEscape:
 		g.DoEscapeMenu()
+		return
 	case ebiten.KeySpace:
 		g.addRowStr("Pass")
 		// g.gameState.FinishTurn()
 	case ebiten.KeyBackquote:
 		g.ToggleDebug()
+		return
 	case ebiten.KeyEnter:
 		g.addRowStr("Enter")
 	case ebiten.KeyUp:
@@ -58,6 +60,8 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		g.addRowStr("Jimmy-")
 		g.secondaryKeyState = JimmyDoorDirectionInput
 		g.keyboard.SetAllowKeyPressImmediately()
+	default:
+		return
 	}
 
 	// only process end of turn if the turn is actually done.
