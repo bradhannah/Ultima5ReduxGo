@@ -163,3 +163,9 @@ func (g *GameState) SetPartyVehicleDirection(direction references.Direction) {
 	g.PreviousPartyVehicleDirection = g.PartyVehicleDirection
 	g.PartyVehicleDirection = direction
 }
+
+func (g *GameState) BoardVehicle(vehicle references.PartyVehicle) bool {
+	g.PartyVehicle = vehicle
+	return true
+
+}

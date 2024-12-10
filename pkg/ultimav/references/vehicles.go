@@ -86,3 +86,18 @@ func (v PartyVehicle) GetMovementPrefix() string {
 		return ""
 	}
 }
+
+func GetVehicleFromSpriteIndex(spriteIndex indexes.SpriteIndex) PartyVehicle {
+	switch spriteIndex {
+	case indexes.Carpet2_MagicCarpet:
+		return CarpetVehicle
+	case indexes.HorseRight, indexes.HorseLeft:
+		return HorseVehicle
+	case indexes.FrigateDownFurled, indexes.FrigateUpFurled, indexes.FrigateLeftFurled, indexes.FrigateRightFurled:
+		return FrigateVehicle
+	case indexes.SkiffLeft, indexes.SkiffRight, indexes.SkiffUp, indexes.SkiffDown:
+		return SkiffVehicle
+	default:
+		return NoPartyVehicle
+	}
+}

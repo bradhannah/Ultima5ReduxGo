@@ -212,22 +212,23 @@ func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
 func (g *GameScene) smallMapBoard() bool {
 	getThingTile := g.gameState.LayeredMaps.GetTileRefByPosition(references.SmallMapType, game_state.MapUnitLayer, &g.gameState.Position, g.gameState.Floor)
 
+	if !g.gameState.BoardVehicle(references.GetVehicleFromSpriteIndex(getThingTile.Index)) {
+		g.output.AddRowStr("Board what?")
+		return false
+	}
+
+	g.gameState.NPCAIController.RemoveNPCAtPosition(g.gameState.Position)
+
 	switch getThingTile.Index {
 	case indexes.Carpet2_MagicCarpet:
 		g.output.AddRowStr("carpet")
-		g.gameState.PartyVehicle = references.CarpetVehicle
 	case indexes.HorseRight, indexes.HorseLeft:
 		g.output.AddRowStr("horse")
-		g.gameState.PartyVehicle = references.HorseVehicle
 	case indexes.FrigateDownFurled, indexes.FrigateUpFurled, indexes.FrigateLeftFurled, indexes.FrigateRightFurled:
 		g.output.AddRowStr("Frigate")
-		g.gameState.PartyVehicle = references.FrigateVehicle
 	case indexes.SkiffLeft, indexes.SkiffRight, indexes.SkiffUp, indexes.SkiffDown:
 		g.output.AddRowStr("Skiff")
-		g.gameState.PartyVehicle = references.SkiffVehicle
 	default:
-		g.output.AddRowStr("Board what?")
-		return false
 	}
 
 	return true
