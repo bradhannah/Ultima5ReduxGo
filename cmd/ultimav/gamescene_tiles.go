@@ -18,8 +18,10 @@ const (
 )
 
 func (g *GameScene) getSmallCalculatedAvatarTileIndex(ogSpriteIndex indexes.SpriteIndex) indexes.SpriteIndex {
+	if g.gameState.PartyVehicle != references.NoPartyVehicle {
+		return g.gameState.PartyVehicle.GetSpriteByDirection(g.gameState.PreviousPartyVehicleDirection, g.gameState.PartyVehicleDirection)
+	}
 	return g.getSmallCalculatedNPCTileIndex(ogSpriteIndex, indexes.Avatar_KeyIndex, g.gameState.Position)
-
 }
 
 func (g *GameScene) getSmallCalculatedNPCTileIndex(ogSpriteIndex indexes.SpriteIndex, npcIndex indexes.SpriteIndex, spritePosition references.Position) indexes.SpriteIndex {

@@ -30,6 +30,8 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 		g.handleMovement(references.Left.GetDirectionCompassName(), ebiten.KeyLeft)
 	case ebiten.KeyRight:
 		g.handleMovement(references.Right.GetDirectionCompassName(), ebiten.KeyRight)
+	case ebiten.KeyB:
+		g.addRowStr("Board")
 	case ebiten.KeyK:
 		g.addRowStr("Klimb-")
 		g.secondaryKeyState = KlimbDirectionInput

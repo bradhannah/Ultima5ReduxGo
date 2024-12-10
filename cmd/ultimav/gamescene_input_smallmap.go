@@ -32,6 +32,9 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		g.handleMovement(references.Left.GetDirectionCompassName(), ebiten.KeyLeft)
 	case ebiten.KeyRight:
 		g.handleMovement(references.Right.GetDirectionCompassName(), ebiten.KeyRight)
+	case ebiten.KeyB:
+		g.addRowStr("Board")
+		g.smallMapBoard()
 	case ebiten.KeyK:
 		g.smallMapKlimb()
 	case ebiten.KeyL:
@@ -206,6 +209,30 @@ func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
 	}
 }
 
+func (g *GameScene) smallMapBoard() bool {
+	getThingTile := g.gameState.LayeredMaps.GetTileRefByPosition(references.SmallMapType, game_state.MapUnitLayer, &g.gameState.Position, g.gameState.Floor)
+
+	switch getThingTile.Index {
+	case indexes.Carpet2_MagicCarpet:
+		g.output.AddRowStr("carpet")
+		g.gameState.PartyVehicle = references.CarpetVehicle
+	case indexes.HorseRight, indexes.HorseLeft:
+		g.output.AddRowStr("horse")
+		g.gameState.PartyVehicle = references.HorseVehicle
+	case indexes.FrigateDownFurled, indexes.FrigateUpFurled, indexes.FrigateLeftFurled, indexes.FrigateRightFurled:
+		g.output.AddRowStr("Frigate")
+		g.gameState.PartyVehicle = references.FrigateVehicle
+	case indexes.SkiffLeft, indexes.SkiffRight, indexes.SkiffUp, indexes.SkiffDown:
+		g.output.AddRowStr("Skiff")
+		g.gameState.PartyVehicle = references.SkiffVehicle
+	default:
+		g.output.AddRowStr("Board what?")
+		return false
+	}
+
+	return true
+}
+
 func (g *GameScene) smallMapJimmySecondary(direction references.Direction) {
 	jimmyResult := g.gameState.JimmyDoor(direction, &g.gameState.Characters[0])
 
@@ -219,7 +246,6 @@ func (g *GameScene) smallMapJimmySecondary(direction references.Direction) {
 	default:
 		panic("unhandled default case")
 	}
-
 }
 
 func (g *GameScene) smallMapGetSecondary(direction references.Direction) {

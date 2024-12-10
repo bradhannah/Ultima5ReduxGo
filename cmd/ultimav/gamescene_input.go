@@ -17,6 +17,7 @@ var boundKeysGame = []ebiten.Key{
 	ebiten.KeyEnter,
 	ebiten.KeyLeft,
 	ebiten.KeyRight,
+	ebiten.KeyB,
 	ebiten.KeyE,
 	ebiten.KeyX,
 	ebiten.KeyO,

@@ -73,14 +73,22 @@ func (g *GameScene) checkAndAutoKlimbStairs(position *references.Position) bool 
 
 func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 	g.debugMessage = directionStr
-	g.addRowStr(fmt.Sprintf("> %s", directionStr))
 
+	g.addRowStr(fmt.Sprintf("> %s%s", g.gameState.PartyVehicle.GetMovementPrefix(), directionStr))
+	// moveResultsInMovement
 	direction := game_state.GetKeyAsDirection(key)
 	newPosition := direction.GetNewPositionInDirection(&g.gameState.Position)
 	mapType := g.gameState.Location.GetMapType()
 	if mapType == references.LargeMapType {
+		if g.gameState.PartyVehicle == references.FrigateVehicle && !g.gameState.DoesMoveResultInMovement(direction) {
+			g.gameState.SetPartyVehicleDirection(direction)
+			g.output.AddRowStr(fmt.Sprintf("Head %s", direction.GetDirectionCompassName()))
+			return
+		}
+
 		newPosition = newPosition.GetWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
 	}
+	g.gameState.SetPartyVehicleDirection(direction)
 
 	if mapType == references.SmallMapType && g.gameState.IsOutOfBounds(*newPosition) {
 		g.dialogStack.DoModalInputBox(

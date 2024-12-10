@@ -104,6 +104,10 @@ const (
 	ItemFood                             = 271
 	HorseRight                           = 272
 	HorseLeft                            = 273
+	AvatarRidingHorseRight               = 274
+	AvatarRidingHorseLeft                = 275
+	AvatarRidingCarpetRight              = 276
+	AvatarRidingCarpetLeft               = 277
 	HolyFloorSymbol                      = 278
 	AvatarOnLadderUp                     = 279
 	AvatarOnLadderDown                   = 280
@@ -111,6 +115,18 @@ const (
 	Avatar                               = 284
 	DeadBody                             = 286
 	BloodSpatter                         = 287
+	FrigateUpUnfurled                    = 288
+	FrigateLeftUnfurled                  = 289
+	FrigateRightUnfurled                 = 290
+	FrigateDownUnfurled                  = 291
+	FrigateUpFurled                      = 292
+	FrigateRightFurled                   = 293
+	FrigateDownFurled                    = 294
+	FrigateLeftFurled                    = 295
+	SkiffUp                              = 296
+	SkiffRight                           = 297
+	SkiffDown                            = 298
+	SkiffLeft                            = 299
 	PirateShip_Up                        = 300
 	PirateShip_Right                     = 301
 	PirateShip_Left                      = 302
@@ -177,4 +193,12 @@ func (s SpriteIndex) IsBed() bool {
 
 func (s SpriteIndex) IsStairs() bool {
 	return s == Stair3 || s == Stairs4 || s == Stairs1 || s == Stairs2
+}
+
+func (s SpriteIndex) IsFrigateUnfurled() bool {
+	return s == FrigateLeftUnfurled || s == FrigateRightUnfurled || s == FrigateDownUnfurled || s == FrigateUpUnfurled
+}
+
+func (s SpriteIndex) IsFrigateFurled() bool {
+	return s == FrigateLeftFurled || s == FrigateRightFurled || s == FrigateDownFurled || s == FrigateUpFurled
 }

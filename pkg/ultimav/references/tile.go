@@ -7,12 +7,6 @@ import (
 type PartyVehicle int
 
 const (
-	NoPartyVehicle PartyVehicle = iota
-	CarpetVehicle
-	HorseVehicle
-)
-
-const (
 	WeightImpassable = -1
 	WeightIdealPath  = 1
 	WeightPath       = 2
@@ -60,6 +54,10 @@ func (t *Tile) IsPassable(vehicle PartyVehicle) bool {
 		return t.IsCarpetPassable
 	case HorseVehicle:
 		return t.IsHorsePassable
+	case SkiffVehicle:
+		return t.IsSkiffPassable
+	case FrigateVehicle:
+		return t.IsWaterEnemyPassable
 	case NoPartyVehicle:
 		return t.IsWalkingPassable
 	}

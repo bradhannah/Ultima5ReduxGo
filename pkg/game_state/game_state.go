@@ -38,9 +38,11 @@ type GameState struct {
 	Floor          references.FloorNumber
 	avatarPosition references.Position
 
-	LayeredMaps     LayeredMaps
-	NPCAIController NPCAIController
-	PartyVehicle    references.PartyVehicle
+	LayeredMaps                   LayeredMaps
+	NPCAIController               NPCAIController
+	PartyVehicle                  references.PartyVehicle
+	PartyVehicleDirection         references.Direction
+	PreviousPartyVehicleDirection references.Direction
 
 	LastLargeMapPosition references.Position
 	LastLargeMapFloor    references.FloorNumber
@@ -139,4 +141,25 @@ func (g *GameState) GetDrawBridgeWaterByTime(origIndex indexes.SpriteIndex) inde
 		return indexes.WaterShallow
 	}
 	return origIndex
+}
+func (g *GameState) DoesMoveResultInMovement(direction references.Direction) bool {
+	if g.PartyVehicle != references.FrigateVehicle {
+		return true
+	}
+	if g.PartyVehicleDirection == direction {
+		return true
+	}
+	return false
+}
+
+func (g *GameState) SetPartyVehicleDirection(direction references.Direction) {
+	switch g.PartyVehicle {
+	case references.HorseVehicle, references.CarpetVehicle:
+		if direction == references.Up || direction == references.Down {
+			return
+		}
+	case references.FrigateVehicle, references.SkiffVehicle, references.NoPartyVehicle:
+	}
+	g.PreviousPartyVehicleDirection = g.PartyVehicleDirection
+	g.PartyVehicleDirection = direction
 }
