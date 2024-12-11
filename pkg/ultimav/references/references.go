@@ -12,6 +12,7 @@ type GameReferences struct {
 	InventoryItemReferences *InventoryItemReferences
 	LookReferences          *LookReferences
 	NPCReferences           *NPCReferences
+	DockReferences          *DockReferences
 }
 
 func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences, error) {
@@ -34,6 +35,7 @@ func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences
 	gameRefs.LookReferences = NewLookReferences(gameConfig)
 
 	gameRefs.NPCReferences = NewNPCReferences(gameConfig)
+	gameRefs.DockReferences = NewDocks(gameConfig)
 
 	return gameRefs, nil
 }

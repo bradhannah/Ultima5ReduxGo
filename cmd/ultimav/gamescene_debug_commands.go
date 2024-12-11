@@ -24,6 +24,7 @@ func (d *DebugConsole) createDebugFunctions(gameScene *GameScene) *grammar.TextC
 	textCommands = append(textCommands, *d.createResolutionUp())
 	textCommands = append(textCommands, *d.createResolutionDown())
 	textCommands = append(textCommands, *d.createFullScreenToggle())
+	textCommands = append(textCommands, *d.createBuyBoat())
 
 	return &textCommands
 }
@@ -191,6 +192,38 @@ func (d *DebugConsole) createGoSmall() *grammar.TextCommand {
 		})
 }
 
+func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
+	return grammar.NewTextCommand([]grammar.Match{
+		grammar.MatchString{
+			Str:           "buyboat",
+			Description:   "Gets a frigate or skiff and puts at dock",
+			CaseSensitive: false,
+		},
+		grammar.MatchStringList{
+			Strings:       []string{"frigate", "skiff"},
+			Description:   "Type of boat",
+			CaseSensitive: false,
+		},
+		grammar.MatchStringList{
+			Strings:       references.GetListOfAllLocationsWithDocksAsString(),
+			Description:   "Small map locations with docks",
+			CaseSensitive: false,
+		},
+	},
+		func(s string, command *grammar.TextCommand) {
+			outputStr := strings.ToLower(d.TextInput.GetText())
+			boatType := command.GetIndexAsString(1, outputStr)
+			locationStr := command.GetIndexAsString(2, outputStr)
+			slr := d.gameScene.gameReferences.LocationReferences.GetSmallLocationReference(locationStr)
+
+			d.dumpQuickState(slr.FriendlyLocationName)
+
+			// put the boat
+			_ = boatType
+
+		})
+}
+
 // Helper function for the flor up command
 func (d *DebugConsole) createResolutionUp() *grammar.TextCommand {
 	return grammar.NewTextCommand([]grammar.Match{
@@ -228,11 +261,6 @@ func (d *DebugConsole) createFullScreenToggle() *grammar.TextCommand {
 			CaseSensitive: false,
 		}},
 		func(s string, command *grammar.TextCommand) {
-			// d.gameScene.dialogStack.DoModalInputBox(
-			// 	"Dost thou wish to leave?",
-			// 	d.gameScene.createTextCommandExitBuilding(),
-			// 	d.gameScene.keyboard)
-
 			d.gameScene.gameConfig.SetFullScreen(!d.gameScene.gameConfig.SavedConfigData.FullScreen)
 		})
 }
