@@ -33,8 +33,7 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyRight:
 		g.handleMovement(references.Right.GetDirectionCompassName(), ebiten.KeyRight)
 	case ebiten.KeyB:
-		g.addRowStr("Board")
-		g.smallMapBoard()
+		g.actionBoard()
 	case ebiten.KeyK:
 		g.smallMapKlimb()
 	case ebiten.KeyL:
@@ -209,30 +208,30 @@ func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
 	}
 }
 
-func (g *GameScene) smallMapBoard() bool {
-	getThingTile := g.gameState.LayeredMaps.GetTileRefByPosition(references.SmallMapType, game_state.MapUnitLayer, &g.gameState.Position, g.gameState.Floor)
-
-	if !g.gameState.BoardVehicle(references.GetVehicleFromSpriteIndex(getThingTile.Index)) {
-		g.output.AddRowStr("Board what?")
-		return false
-	}
-
-	g.gameState.NPCAIController.RemoveNPCAtPosition(g.gameState.Position)
-
-	switch getThingTile.Index {
-	case indexes.Carpet2_MagicCarpet:
-		g.output.AddRowStr("carpet")
-	case indexes.HorseRight, indexes.HorseLeft:
-		g.output.AddRowStr("horse")
-	case indexes.FrigateDownFurled, indexes.FrigateUpFurled, indexes.FrigateLeftFurled, indexes.FrigateRightFurled:
-		g.output.AddRowStr("Frigate")
-	case indexes.SkiffLeft, indexes.SkiffRight, indexes.SkiffUp, indexes.SkiffDown:
-		g.output.AddRowStr("Skiff")
-	default:
-	}
-
-	return true
-}
+// func (g *GameScene) smallMapBoard() bool {
+// 	getThingTile := g.gameState.LayeredMaps.GetTileRefByPosition(references.SmallMapType, game_state.MapUnitLayer, &g.gameState.Position, g.gameState.Floor)
+//
+// 	if !g.gameState.BoardVehicle(references.GetVehicleFromSpriteIndex(getThingTile.Index)) {
+// 		g.output.AddRowStr("Board what?")
+// 		return false
+// 	}
+//
+// 	g.gameState.NPCAIController.RemoveNPCAtPosition(g.gameState.Position)
+//
+// 	switch getThingTile.Index {
+// 	case indexes.Carpet2_MagicCarpet:
+// 		g.output.AddRowStr("carpet")
+// 	case indexes.HorseRight, indexes.HorseLeft:
+// 		g.output.AddRowStr("horse")
+// 	case indexes.FrigateDownFurled, indexes.FrigateUpFurled, indexes.FrigateLeftFurled, indexes.FrigateRightFurled:
+// 		g.output.AddRowStr("Frigate")
+// 	case indexes.SkiffLeft, indexes.SkiffRight, indexes.SkiffUp, indexes.SkiffDown:
+// 		g.output.AddRowStr("Skiff")
+// 	default:
+// 	}
+//
+// 	return true
+// }
 
 func (g *GameScene) smallMapJimmySecondary(direction references.Direction) {
 	jimmyResult := g.gameState.JimmyDoor(direction, &g.gameState.Characters[0])
