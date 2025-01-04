@@ -30,6 +30,10 @@ func NewNPC(npcReference references.NPCReference, npcNum int) NPC {
 	npc.AStarMap = NewAStarMap()
 	npc.CurrentPath = nil
 
+	// npc.Position = npcReference.Position
+	// npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate()
+	// npc.Floor = npcReference.
+
 	if !npc.IsEmptyNPC() {
 		npc.Visible = true
 	}

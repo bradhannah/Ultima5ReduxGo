@@ -28,7 +28,7 @@ func (g *GameState) smallMapProcessEndOfTurn() {
 }
 
 func (g *GameState) smallMapProcessNPCs() {
-	g.NPCAIController.CalculateNextNPCPositions()
+	g.CurrentNPCAIController.CalculateNextNPCPositions()
 }
 
 func (g *GameState) smallMapProcessTurnDoors() {

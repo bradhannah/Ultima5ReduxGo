@@ -25,8 +25,8 @@ func (g *GameState) EnterBuilding(
 		// 	// npcRefs,
 		// 	g.XTilesInMap,
 		// 	g.YTilesInMap)
-		// g.NPCAIController = *NewNPCAIController(slr, tileRefs, g)
-		// g.NPCAIController.PopulateMapFirstLoad(
+		// g.CurrentNPCAIController = *NewNPCAIControllerSmallMap(slr, tileRefs, g)
+		// g.CurrentNPCAIController.PopulateMapFirstLoad(
 		// 	g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor),
 		// 	g.DateTime,
 		// )

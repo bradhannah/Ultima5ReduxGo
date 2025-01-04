@@ -202,8 +202,8 @@ func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
 			g.output.AddRowStr("Found:")
 			g.output.AddRowStr(g.gameReferences.InventoryItemReferences.GetListOfItems(&itemStack))
 			g.gameState.ItemStacksMap.Push(openThingPos, &itemStack)
-			g.gameState.NPCAIController.RemoveNPCAtPosition(*openThingPos)
-			g.gameState.NPCAIController.FreshenExistingNPCsOnMap()
+			g.gameState.CurrentNPCAIController.GetNpcs().RemoveNPCAtPosition(*openThingPos)
+			g.gameState.CurrentNPCAIController.FreshenExistingNPCsOnMap()
 		}
 	}
 }
@@ -216,7 +216,7 @@ func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
 // 		return false
 // 	}
 //
-// 	g.gameState.NPCAIController.RemoveNPCAtPosition(g.gameState.Position)
+// 	g.gameState.CurrentNPCAIController.RemoveNPCAtPosition(g.gameState.Position)
 //
 // 	switch getThingTile.Index {
 // 	case indexes.Carpet2_MagicCarpet:

@@ -18,6 +18,7 @@ const (
 	NoStatedNpc         = 0xFF
 	Guard               = 0xFE
 	WishingWell         = 0xFD
+	Vehicle             = 0x1F
 	// unknowns may be crown and sandlewood box
 )
 
@@ -32,4 +33,17 @@ type NPCReference struct {
 
 func (n *NPCReference) GetTileIndex() indexes.SpriteIndex {
 	return indexes.SpriteIndex(int(n.Type) + 0x100)
+}
+
+func (n *NPCReference) SetKeyIndex(index indexes.SpriteIndex) {
+	n.Type = NPCType(index - 0x100)
+}
+
+func NewNPCReferenceForVehicle(vehicle PartyVehicle, position Position, floorNumber FloorNumber) *NPCReference {
+	npcRef := &NPCReference{}
+	npcRef.Position = position
+	npcRef.Type = Vehicle
+	npcRef.SetKeyIndex(vehicle.GetSpriteByDirection(NoneDirection, NoneDirection))
+	npcRef.Schedule = CreateNPCScheduledFixedOneLocation(position, floorNumber)
+	return npcRef
 }

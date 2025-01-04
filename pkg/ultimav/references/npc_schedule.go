@@ -35,6 +35,18 @@ func CreateNPCSchedule(rawData []byte) NPCSchedule {
 	return *npcSchedule
 }
 
+func CreateNPCScheduledFixedOneLocation(position Position, floorNumber FloorNumber) NPCSchedule {
+	npcSchedule := CreateNPCSchedule(make([]byte, sizeOfNPCSchedule))
+	for i := 0; i < totalScheduleItemsPerNpc; i++ {
+		npcSchedule.X[i] = byte(position.X)
+		npcSchedule.Y[i] = byte(position.Y)
+		npcSchedule.Floor[i] = byte(floorNumber)
+		npcSchedule.Ai[i] = byte(Fixed)
+		npcSchedule.Time[i] = byte(i)
+	}
+	return npcSchedule
+}
+
 func (n *NPCSchedule) GetPreviousIndividualNPCBehaviourByUltimaDate(ud datetime.UltimaDate) IndividualNPCBehaviour {
 	index := n.getScheduleIndex(ud)
 	if index == 0 {

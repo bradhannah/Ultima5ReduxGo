@@ -100,6 +100,10 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 
 	g.ItemStacksMap = *references.NewItemStacksMap() // make(map[references.Position]references.ItemStack)
 
+	// g.LargeMapNPCAIController[Underworld] = NewNPCAIControllerSmallMap(
+	// 	gameRefs.LocationReferences.GetLocationReference(Underworld),
+	// )
+
 	return nil
 }
 

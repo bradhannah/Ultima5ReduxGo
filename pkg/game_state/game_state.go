@@ -38,8 +38,10 @@ type GameState struct {
 	Floor          references.FloorNumber
 	avatarPosition references.Position
 
-	LayeredMaps                   LayeredMaps
-	NPCAIController               NPCAIController
+	LayeredMaps             LayeredMaps
+	CurrentNPCAIController  NPCAIController
+	LargeMapNPCAIController map[references.World]NPCAIControllerLargeMap
+
 	PartyVehicle                  references.PartyVehicle
 	PartyVehicleDirection         references.Direction
 	PreviousPartyVehicleDirection references.Direction
@@ -167,5 +169,4 @@ func (g *GameState) SetPartyVehicleDirection(direction references.Direction) {
 func (g *GameState) BoardVehicle(vehicle references.PartyVehicle) bool {
 	g.PartyVehicle = vehicle
 	return true
-
 }

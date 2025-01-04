@@ -152,7 +152,6 @@ func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *game
 	}
 	var tileIndex indexes.SpriteIndex
 	if layer.IsPositionVisible(pos) {
-
 		tileIndex = g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, *pos)
 		tileIndex = g.getSmallCalculatedTileIndex(tileIndex, pos)
 		if tileIndex != indexes.NoSprites {

@@ -15,7 +15,7 @@ func (g *GameScene) actionBoard() references.PartyVehicle {
 		return references.NoPartyVehicle
 	}
 
-	g.gameState.NPCAIController.RemoveNPCAtPosition(g.gameState.Position)
+	g.gameState.CurrentNPCAIController.GetNpcs().RemoveNPCAtPosition(g.gameState.Position)
 
 	switch vehicle {
 	case references.CarpetVehicle:
