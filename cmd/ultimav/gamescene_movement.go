@@ -87,6 +87,7 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 		}
 
 		newPosition = newPosition.GetWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
+
 	}
 	g.gameState.SetPartyVehicleDirection(direction)
 
@@ -103,6 +104,12 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 	if g.gameState.IsPassable(newPosition) || g.gameState.DebugOptions.FreeMove {
 		g.moveToNewPositionByDirection(direction)
 		g.debugConsole.Output.AddRowStr(fmt.Sprintf("X: %d, Y: %d", newPosition.X, newPosition.Y))
+		extraMovementStr := g.gameState.GetExtraMovementString()
+		if extraMovementStr != "" {
+			g.output.AddRowStr(extraMovementStr)
+		}
+
+		g.output.AddRowStr(fmt.Sprintf("X: %d, Y: %d", newPosition.X, newPosition.Y))
 	} else {
 		g.addRowStr("Blocked!")
 	}

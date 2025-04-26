@@ -112,8 +112,12 @@ func (g *GameState) IsOutOfBounds(position references.Position) bool {
 	return false
 }
 
+func (g *GameState) GetCurrentMap() *LayeredMap {
+	return g.LayeredMaps.GetLayeredMap(g.Location.GetMapType(), g.Floor)
+}
+
 func (g *GameState) IsPassable(pos *references.Position) bool {
-	theMap := g.LayeredMaps.GetLayeredMap(g.Location.GetMapType(), g.Floor)
+	theMap := g.GetCurrentMap()
 	topTile := theMap.GetTopTile(pos)
 	if topTile == nil {
 		return false
@@ -169,4 +173,20 @@ func (g *GameState) SetPartyVehicleDirection(direction references.Direction) {
 func (g *GameState) BoardVehicle(vehicle references.PartyVehicle) bool {
 	g.PartyVehicle = vehicle
 	return true
+}
+
+func (g *GameState) GetExtraMovementString() string {
+	if g.Location.GetMapType() == references.LargeMapType {
+		switch g.GetCurrentMap().GetTopTile(&g.Position).SpeedFactor {
+		case 4:
+			return "Slow Progress!"
+		case 6:
+			return "Very Slow!"
+		case 1, 2, -1:
+			return ""
+		default:
+			return "Untrodden Combat Tile"
+		}
+	}
+	return ""
 }
