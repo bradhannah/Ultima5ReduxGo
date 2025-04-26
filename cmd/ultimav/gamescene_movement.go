@@ -71,6 +71,8 @@ func (g *GameScene) checkAndAutoKlimbStairs(position *references.Position) bool 
 	return false
 }
 
+// handleMovement
+// Handles the movement of the player in the game scene
 func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 	g.debugMessage = directionStr
 
@@ -79,6 +81,7 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 	direction := game_state.GetKeyAsDirection(key)
 	newPosition := direction.GetNewPositionInDirection(&g.gameState.Position)
 	mapType := g.gameState.Location.GetMapType()
+
 	if mapType == references.LargeMapType {
 		if g.gameState.PartyVehicle == references.FrigateVehicle && !g.gameState.DoesMoveResultInMovement(direction) {
 			g.gameState.SetPartyVehicleDirection(direction)

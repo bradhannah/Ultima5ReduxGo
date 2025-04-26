@@ -8,6 +8,7 @@ const (
 	HorseVehicle
 	SkiffVehicle
 	FrigateVehicle
+	NPC
 )
 
 func (v PartyVehicle) GetSpriteByDirection(previousDirection Direction, direction Direction) indexes.SpriteIndex {

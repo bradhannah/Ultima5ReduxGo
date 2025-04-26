@@ -60,6 +60,8 @@ func (t *Tile) IsPassable(vehicle PartyVehicle) bool {
 		return t.IsWaterEnemyPassable
 	case NoPartyVehicle:
 		return t.IsWalkingPassable
+	case NPC:
+		return t.IsLandEnemyPassable
 	}
 	return false
 }
