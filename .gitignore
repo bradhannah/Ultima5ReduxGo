@@ -1,3 +1,5 @@
+.DS_STORE
+# Binaries for programs and plugins
 bin/*
 
 # If you prefer the allow list template instead of the deny list, see community template:

@@ -4,6 +4,8 @@ import "github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 
 type NPCS []*NPC
 
+const maxNPCS = 32
+
 func (n *NPCS) getNextAvailableNPCIndexNumber() int {
 	for i, npc := range *n {
 		if npc.IsEmptyNPC() {

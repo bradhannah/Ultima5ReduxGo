@@ -10,10 +10,6 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
-const maxNPCS = 32
-
-type XyOccupiedMap map[int]map[int]bool
-
 type NPCAIControllerSmallMap struct {
 	tileRefs  *references.Tiles
 	slr       *references.SmallLocationReference
@@ -45,6 +41,45 @@ func (n *NPCAIControllerSmallMap) GetNpcs() *NPCS {
 	return &n.npcs
 }
 
+func (n *NPCAIControllerSmallMap) PopulateMapFirstLoad() {
+	n.generateNPCs()
+
+	for i, npc := range n.npcs {
+		_ = i
+		if npc.IsEmptyNPC() || !npc.Visible {
+			continue
+		}
+		indiv := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+
+		npc.Position = indiv.Position
+		npc.Floor = indiv.Floor
+		npc.AiType = indiv.Ai
+	}
+	n.setAllNPCTiles()
+}
+
+func (n *NPCAIControllerSmallMap) CalculateNextNPCPositions() {
+	n.clearMapUnitsFromMap()
+	n.updateAllNPCAiTypes()
+	n.positionOccupiedChance = n.createFreshXyOccupiedMap()
+
+	for _, npc := range n.npcs {
+		if npc.IsEmptyNPC() {
+			continue
+		}
+		// very lazy approach - but making sure every NPC is in correct spot on map
+		// for every iteration makes sure next NPC doesn't assign the same tile space
+		n.FreshenExistingNPCsOnMap()
+		n.calculateNextNPCPosition(npc)
+	}
+	n.FreshenExistingNPCsOnMap()
+}
+
+func (n *NPCAIControllerSmallMap) FreshenExistingNPCsOnMap() {
+	n.clearMapUnitsFromMap()
+	n.setAllNPCTiles()
+}
+
 func (n *NPCAIControllerSmallMap) createFreshXyOccupiedMap() *XyOccupiedMap {
 	xy := make(XyOccupiedMap)
 	for _, npc := range n.npcs {
@@ -69,27 +104,6 @@ func (n *NPCAIControllerSmallMap) generateNPCs() {
 		npcs = append(npcs, &npc)
 	}
 	n.npcs = npcs
-}
-
-// func (n *NPCAIControllerSmallMap) RemoveNPCAtPosition(position references.Position) bool {
-// 	return n.npcs.RemoveNPCAtPosition(position)
-// }
-
-func (n *NPCAIControllerSmallMap) PopulateMapFirstLoad() {
-	n.generateNPCs()
-
-	for i, npc := range n.npcs {
-		_ = i
-		if npc.IsEmptyNPC() || !npc.Visible {
-			continue
-		}
-		indiv := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
-
-		npc.Position = indiv.Position
-		npc.Floor = indiv.Floor
-		npc.AiType = indiv.Ai
-	}
-	n.setAllNPCTiles()
 }
 
 func (n *NPCAIControllerSmallMap) updateAllNPCAiTypes() {
@@ -120,28 +134,6 @@ func (n *NPCAIControllerSmallMap) setAllNPCTiles() {
 
 func (n *NPCAIControllerSmallMap) clearMapUnitsFromMap() {
 	n.gameState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
-}
-
-func (n *NPCAIControllerSmallMap) CalculateNextNPCPositions() {
-	n.clearMapUnitsFromMap()
-	n.updateAllNPCAiTypes()
-	n.positionOccupiedChance = n.createFreshXyOccupiedMap()
-
-	for _, npc := range n.npcs {
-		if npc.IsEmptyNPC() {
-			continue
-		}
-		// very lazy approach - but making sure every NPC is in correct spot on map
-		// for every iteration makes sure next NPC doesn't assign the same tile space
-		n.FreshenExistingNPCsOnMap()
-		n.calculateNextNPCPosition(npc)
-	}
-	n.FreshenExistingNPCsOnMap()
-}
-
-func (n *NPCAIControllerSmallMap) FreshenExistingNPCsOnMap() {
-	n.clearMapUnitsFromMap()
-	n.setAllNPCTiles()
 }
 
 func (n *NPCAIControllerSmallMap) calculateNextNPCPosition(npc *NPC) {
