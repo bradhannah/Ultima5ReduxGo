@@ -91,8 +91,5 @@ func (l *LayeredMaps) GetSmallMapFloorKlimbOffset(position references.Position, 
 
 func (l *LayeredMaps) HasLowerFloor(currentFloor references.FloorNumber) bool {
 	_, exists := l.layeredMaps[references.SmallMapType][currentFloor-1]
-	if !exists {
-		return false
-	}
-	return true
+	return exists
 }

@@ -1,7 +1,6 @@
 package game_state
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
@@ -96,7 +95,7 @@ func (g *GameState) GetLayeredMapByCurrentLocation() *LayeredMap {
 func (g *GameState) IsOutOfBounds(position references.Position) bool {
 	if g.Location.GetMapType() == references.LargeMapType {
 		if position.X > references.XLargeMapTiles-1 || position.Y >= references.YLargeMapTiles {
-			log.Fatal(fmt.Sprintf("Exceeded large map tiles: X=%d, Y=%d", position.X, position.Y))
+			log.Fatalf("Exceeded large map tiles: X=%d, Y=%d", position.X, position.Y)
 		}
 		return false
 	}
@@ -114,6 +113,15 @@ func (g *GameState) IsOutOfBounds(position references.Position) bool {
 
 func (g *GameState) GetCurrentMap() *LayeredMap {
 	return g.LayeredMaps.GetLayeredMap(g.Location.GetMapType(), g.Floor)
+}
+
+func (g *GameState) GetCurrentLayeredMapAvatarTopTile() *references.Tile {
+	theMap := g.GetCurrentMap()
+	topTile := theMap.GetTopTile(&g.Position)
+	if topTile == nil {
+		return nil
+	}
+	return topTile
 }
 
 func (g *GameState) IsPassable(pos *references.Position) bool {
@@ -173,20 +181,4 @@ func (g *GameState) SetPartyVehicleDirection(direction references.Direction) {
 func (g *GameState) BoardVehicle(vehicle references.PartyVehicle) bool {
 	g.PartyVehicle = vehicle
 	return true
-}
-
-func (g *GameState) GetExtraMovementString() string {
-	if g.Location.GetMapType() == references.LargeMapType {
-		switch g.GetCurrentMap().GetTopTile(&g.Position).SpeedFactor {
-		case 4:
-			return "Slow Progress!"
-		case 6:
-			return "Very Slow!"
-		case 1, 2, -1:
-			return ""
-		default:
-			return "Untrodden Combat Tile"
-		}
-	}
-	return ""
 }

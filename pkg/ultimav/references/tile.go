@@ -113,3 +113,16 @@ func (t *Tile) GetWalkableWeight() int {
 func (t *Tile) IsWalkableDuringWander() bool {
 	return t.IsWalkingPassable && !t.Index.IsBed() && !t.Index.IsDoor()
 }
+
+func (t *Tile) GetExtraMovementString() string {
+	switch t.SpeedFactor {
+	case 4:
+		return "Slow Progress!"
+	case 6:
+		return "Very Slow!"
+	case 1, 2, -1:
+		return ""
+	default:
+		return "Untrodden Combat Tile"
+	}
+}

@@ -104,7 +104,8 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 	if g.gameState.IsPassable(newPosition) || g.gameState.DebugOptions.FreeMove {
 		g.moveToNewPositionByDirection(direction)
 		g.debugConsole.Output.AddRowStr(fmt.Sprintf("X: %d, Y: %d", newPosition.X, newPosition.Y))
-		extraMovementStr := g.gameState.GetExtraMovementString()
+		avatarTopTile := g.gameState.GetCurrentLayeredMapAvatarTopTile()
+		extraMovementStr := avatarTopTile.GetExtraMovementString()
 		if extraMovementStr != "" {
 			g.output.AddRowStr(extraMovementStr)
 		}

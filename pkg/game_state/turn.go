@@ -6,6 +6,7 @@ import (
 )
 
 func (g *GameState) FinishTurn() {
+
 	switch g.Location.GetMapType() {
 	case references.SmallMapType:
 		g.smallMapProcessEndOfTurn()
@@ -17,11 +18,15 @@ func (g *GameState) FinishTurn() {
 }
 
 func (g *GameState) largeMapProcessEndOfTurn() {
-	g.DateTime.Advance(DefaultLargeMapMinutesPerTurn)
+	topTile := g.GetCurrentLayeredMapAvatarTopTile()
+
+	// we care about speed factor only for large maps
+	g.DateTime.Advance(topTile.SpeedFactor)
 }
 
 func (g *GameState) smallMapProcessEndOfTurn() {
 	g.smallMapProcessTurnDoors()
+	// small maps are always 1 minute per turn
 	g.DateTime.Advance(DefaultSmallMapMinutesPerTurn)
 
 	g.smallMapProcessNPCs()
