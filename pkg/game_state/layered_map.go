@@ -47,7 +47,7 @@ func newLayeredMap(xMax references.Coordinate, yMax references.Coordinate, tileR
 	layeredMap.bWrappingMap = bWrappingMap
 	layeredMap.tileRefs = tileRefs
 
-	for mapLayer, _ := range layeredMap.layers {
+	for mapLayer := range layeredMap.layers {
 		layeredMap.visibleFlags = make(map[references.Coordinate]map[references.Coordinate]bool)
 		layeredMap.testForVisibilityMap = make(map[references.Coordinate]map[references.Coordinate]bool)
 		layeredMap.layers[mapLayer] = make(map[references.Coordinate]map[references.Coordinate]indexes.SpriteIndex)

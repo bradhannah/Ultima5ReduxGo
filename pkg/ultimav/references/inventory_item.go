@@ -11,15 +11,15 @@ type ItemTypeStringIndex string
 
 const (
 	ItemTypeReagentStr     ItemTypeStringIndex = "Reagent"
-	ItemTypeEquipmentStr                       = "Equipment"
-	ItemTypeSpellStr                           = "Spell"
-	ItemTypeSpecialItemStr                     = "Special"
-	ItemTypeScrollStr                          = "Scroll"
-	ItemTypePotionStr                          = "Potion"
-	ItemTypeShardStr                           = "Shard"
-	ItemTypeQuestItemStr                       = "QuestItem"
-	ItemTypeMoonstoneStr                       = "Moonstone"
-	ItemTypeProvisionStr                       = "Provision"
+	ItemTypeEquipmentStr   ItemTypeStringIndex = "Equipment"
+	ItemTypeSpellStr       ItemTypeStringIndex = "Spell"
+	ItemTypeSpecialItemStr ItemTypeStringIndex = "Special"
+	ItemTypeScrollStr      ItemTypeStringIndex = "Scroll"
+	ItemTypePotionStr      ItemTypeStringIndex = "Potion"
+	ItemTypeShardStr       ItemTypeStringIndex = "Shard"
+	ItemTypeQuestItemStr   ItemTypeStringIndex = "QuestItem"
+	ItemTypeMoonstoneStr   ItemTypeStringIndex = "Moonstone"
+	ItemTypeProvisionStr   ItemTypeStringIndex = "Provision"
 )
 
 var (

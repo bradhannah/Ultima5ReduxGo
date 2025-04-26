@@ -29,14 +29,15 @@ func NewDocks(gameConfig *config.UltimaVConfiguration) *DockReferences {
 	dockRefs := &DockReferences{}
 	dockLocations := GetListOfAllLocationsWithDocks()
 
-	for i := 0; i < totalDocks; i++ {
-		dock := DockReference{}
-		dock.Location = dockLocations[i]
-		dock.Position = Position{
-			X: Coordinate(gameConfig.RawDataOvl[startDockXOffset+i]),
-			Y: Coordinate(gameConfig.RawDataOvl[startDockYOffset+i]),
+	for i, loc := range dockLocations {
+		dock := DockReference{
+			Location: loc,
+			Position: Position{
+				X: Coordinate(gameConfig.RawDataOvl[startDockXOffset+i]),
+				Y: Coordinate(gameConfig.RawDataOvl[startDockYOffset+i]),
+			},
 		}
-		*dockRefs = append(*dockRefs)
+		*dockRefs = append(*dockRefs, dock)
 	}
 	return dockRefs
 }

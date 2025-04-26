@@ -6,7 +6,7 @@ type FloorNumber int8
 
 const (
 	Basement  FloorNumber = -1
-	MainFloor             = 0
+	MainFloor FloorNumber = 0
 )
 
 type LadderOrStairType int

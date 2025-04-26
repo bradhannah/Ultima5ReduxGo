@@ -152,10 +152,7 @@ func (s *SmallLocationReference) CanGoUpOneFloor(currentFloor FloorNumber) bool 
 
 func (s *SmallLocationReference) CanGoDownOneFloor(currentFloor FloorNumber) bool {
 	if currentFloor < 0 {
-		if s.HasBasement() {
-			return true
-		}
-		return false
+		return s.HasBasement()
 	}
 	return true
 }
