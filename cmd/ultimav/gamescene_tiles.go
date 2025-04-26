@@ -100,6 +100,8 @@ func (g *GameScene) getCorrectAvatarEatingInChairTile(avatarChairTileIndex index
 	return avatarChairTileIndex
 }
 
+// refreshSpecialTileOverrideExceptions
+// Refreshes the special tiles that are not in the map like Portcullis, drawbridge and mirrors
 func (g *GameScene) refreshSpecialTileOverrideExceptions(pos *references.Position, layer *game_state.LayeredMap) {
 	tile := layer.GetTileTopMapOnlyTile(pos)
 	if tile == nil {
@@ -110,6 +112,12 @@ func (g *GameScene) refreshSpecialTileOverrideExceptions(pos *references.Positio
 		layer.SetTileByLayer(game_state.MapOverrideLayer, pos, g.gameState.GetArchwayPortcullisSpriteByTime())
 	case indexes.WoodenPlankVert1Floor, indexes.WoodenPlankVert2Floor:
 		g.setDrawBridge(layer, pos, tile.Index)
+	case indexes.Mirror, indexes.MirrorAvatar:
+		if g.gameState.IsAvatarAtPosition(pos.GetPositionDown()) {
+			layer.SetTileByLayer(game_state.MapOverrideLayer, pos, indexes.MirrorAvatar)
+		} else {
+			layer.SetTileByLayer(game_state.MapOverrideLayer, pos, indexes.Mirror)
+		}
 	}
 }
 
@@ -187,6 +195,7 @@ func (g *GameScene) refreshStaticMapTiles(pos *references.Position, mapLayer *ga
 	g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(spriteIndex), do)
 }
 
+// refreshAllMapLayerTiles
 func (g *GameScene) refreshAllMapLayerTiles() {
 	layer := g.gameState.GetLayeredMapByCurrentLocation()
 	layer.RecalculateVisibleTiles(g.gameState.Position)
