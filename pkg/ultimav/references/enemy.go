@@ -1,59 +1,50 @@
 package references
 
-//"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
-
-type rawEnemyReference struct {
-	EnemyStats           map[enemyStat]int
-	AdditionalEnemyFlags AdditionalEnemyFlags
-	EnemyAbilities       map[enemyAbility]bool
-	AttackRange          byte
-	AttackThing          byte
-	Friend               byte
-	Thing                byte
-}
-
-type enemyAbility int
+type EnemyAbility int
 
 const (
-	Bludgeons         enemyAbility = 0
-	PossessCharm      enemyAbility = 1
-	Undead            enemyAbility = 2
-	DivideOnHit       enemyAbility = 3
-	Immortal          enemyAbility = 4
-	PoisonAtRange     enemyAbility = 5
-	StealsFood        enemyAbility = 6
-	NoCorpse          enemyAbility = 7
-	RangedMagic       enemyAbility = 8
-	Teleport          enemyAbility = 9
-	DisappearsOnDeath enemyAbility = 10
-	Invisibility      enemyAbility = 11
-	GatesInDaemon     enemyAbility = 12
-	Poison            enemyAbility = 13
-	InfectWithPlague  enemyAbility = 14
+	beginningOfEra1 = 0
+	beginningOfEra2 = 10000
+	beginningOfEra3 = 30000
 )
-
-type enemyStat int
 
 const (
-	EnemyStatArmour         enemyStat = 0
-	EnemyStatDamage         enemyStat = 1
-	EnemyStatDexterity      enemyStat = 2
-	EnemyStatHitPoints      enemyStat = 3
-	EnemyStatIntelligence   enemyStat = 4
-	EnemyStatMaxPerMap      enemyStat = 5
-	EnemyStatStrength       enemyStat = 6
-	EnemyStatTreasureNumber enemyStat = 7
+	Bludgeons         EnemyAbility = 0
+	PossessCharm      EnemyAbility = 1
+	Undead            EnemyAbility = 2
+	DivideOnHit       EnemyAbility = 3
+	Immortal          EnemyAbility = 4
+	PoisonAtRange     EnemyAbility = 5
+	StealsFood        EnemyAbility = 6
+	NoCorpse          EnemyAbility = 7
+	RangedMagic       EnemyAbility = 8
+	Teleport          EnemyAbility = 9
+	DisappearsOnDeath EnemyAbility = 10
+	Invisibility      EnemyAbility = 11
+	GatesInDaemon     EnemyAbility = 12
+	Poison            EnemyAbility = 13
+	InfectWithPlague  EnemyAbility = 14
 )
 
-func createEmptyEnemyReference() rawEnemyReference {
-	var e rawEnemyReference
-	e.AdditionalEnemyFlags = AdditionalEnemyFlags{}
-	e.EnemyAbilities = make(map[enemyAbility]bool)
-	e.EnemyStats = make(map[enemyStat]int)
-	return e
+type EnemyReference struct {
+	KeyFrameTile   *Tile
+	Armour         int
+	Damage         int
+	Dexterity      int
+	HitPoints      int
+	Intelligence   int
+	MaxPerMap      int
+	Strength       int
+	TreasureNumber int
+
+	enemyAbilities       map[EnemyAbility]bool
+	additionalEnemyFlags AdditionalEnemyFlags
+
+	AttackRange int
+	Friend      *EnemyReference
 }
 
-func (e *rawEnemyReference) CanMoveToTile(tile *Tile) bool {
+func (e *EnemyReference) CanMoveToTile(tile *Tile) bool {
 	if !e.isMonsterSpawnableOnTile(tile) {
 		return false
 	}
@@ -65,7 +56,21 @@ func (e *rawEnemyReference) CanMoveToTile(tile *Tile) bool {
 	}
 }
 
-func (e *rawEnemyReference) isMonsterSpawnableOnTile(tile *Tile) bool {
+func (e *EnemyReference) isMonsterSpawnableOnTile(tile *Tile) bool {
 	return tile.IsBoatPassable || tile.IsCarpetPassable || tile.IsHorsePassable ||
 		tile.IsWalkingPassable || tile.IsWaterEnemyPassable || tile.IsLandEnemyPassable
+}
+
+func (e *EnemyReference) HasAbility(ability EnemyAbility) bool {
+	return e.enemyAbilities[ability]
+}
+
+func (e *EnemyReference) GetEraWeightByTurn(nTurn int) int {
+	if nTurn >= beginningOfEra3 {
+		return e.additionalEnemyFlags.Era3Weight
+	}
+	if nTurn >= beginningOfEra2 {
+		return e.additionalEnemyFlags.Era2Weight
+	}
+	return e.additionalEnemyFlags.Era1Weight
 }

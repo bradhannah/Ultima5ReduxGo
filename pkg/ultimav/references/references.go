@@ -13,7 +13,7 @@ type GameReferences struct {
 	LookReferences          *LookReferences
 	NPCReferences           *NPCReferences
 	DockReferences          *DockReferences
-	EnemyReferences         *rawEnemyReferences
+	EnemyReferences         *EnemyReferences
 }
 
 func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences, error) {
@@ -38,7 +38,7 @@ func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences
 	gameRefs.NPCReferences = NewNPCReferences(gameConfig)
 	gameRefs.DockReferences = NewDocks(gameConfig)
 
-	gameRefs.EnemyReferences = NewRawEnemyReferences(gameConfig)
+	gameRefs.EnemyReferences = NewAllEnemyReferences(gameConfig, gameRefs.TileReferences)
 
 	return gameRefs, nil
 }

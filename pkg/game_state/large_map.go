@@ -11,7 +11,7 @@ var nChanceToGenerateEnemy = 10
 
 func (g *GameState) largeMapGenerateAndCleanupEnemies() {
 	if g.Location.GetMapType() != references.LargeMapType {
-		log.Fatalf("Expected large map type, got %s", g.Location.GetMapType())
+		log.Fatalf("Expected large map type, got %d", g.Location.GetMapType())
 	}
 	// get all the enemies
 
