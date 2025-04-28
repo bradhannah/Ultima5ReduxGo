@@ -9,12 +9,14 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 )
 
-const (
-	enemyAttackRangeOffset = 0x15AC
-	enemyRangeThingOffset  = 0x15DC
-	enemyFriendsOffset     = 0x16E4
-	enemyThingOffset       = 0x1714
-)
+// const (
+//
+//	enemyAttackRangeOffset = 0x15AC
+//	enemyRangeThingOffset  = 0x15DC
+//	enemyFriendsOffset     = 0x16E4
+//	enemyThingOffset       = 0x1714
+//
+// )
 const (
 	nTotalEnemies = 48
 )

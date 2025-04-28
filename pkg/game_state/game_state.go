@@ -39,7 +39,7 @@ type GameState struct {
 
 	LayeredMaps             LayeredMaps
 	CurrentNPCAIController  NPCAIController
-	LargeMapNPCAIController map[references.World]NPCAIControllerLargeMap
+	LargeMapNPCAIController map[references.World]*NPCAIControllerLargeMap
 
 	PartyVehicle                  references.PartyVehicle
 	PartyVehicleDirection         references.Direction

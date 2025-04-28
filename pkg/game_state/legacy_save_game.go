@@ -98,11 +98,20 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 		g.XTilesInMap,
 		g.YTilesInMap)
 
-	g.ItemStacksMap = *references.NewItemStacksMap() // make(map[references.Position]references.ItemStack)
+	g.LargeMapNPCAIController = make(map[references.World]*NPCAIControllerLargeMap)
+	g.LargeMapNPCAIController[references.OVERWORLD] = NewNPCAIControllerLargeMap(
+		references.OVERWORLD, gameRefs.TileReferences, g)
+	// TODO: load the npcs from the save game
+	g.LargeMapNPCAIController[references.UNDERWORLD] = NewNPCAIControllerLargeMap(
+		references.UNDERWORLD, gameRefs.TileReferences, g)
+	// TODO: load the npcs from the save game
 
-	// g.LargeMapNPCAIController[Underworld] = NewNPCAIControllerSmallMap(
-	// 	gameRefs.LocationReferences.GetLocationReference(Underworld),
-	// )
+	// if we are on a large map, we set this right away.
+	if g.Location.GetMapType() == references.LargeMapType {
+		g.CurrentNPCAIController = g.GetCurrentLargeMapNPCAIController()
+	}
+
+	g.ItemStacksMap = *references.NewItemStacksMap()
 
 	return nil
 }

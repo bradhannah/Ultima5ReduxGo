@@ -6,4 +6,6 @@ func (g *GameState) ExitSmallMap() {
 	g.Location = references.Britannia_Underworld
 	g.Floor = g.LastLargeMapFloor
 	g.Position = g.LastLargeMapPosition
+
+	g.UpdateLargeMap()
 }

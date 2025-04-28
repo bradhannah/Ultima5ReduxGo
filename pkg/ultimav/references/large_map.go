@@ -46,9 +46,9 @@ func (m *LargeMapReference) GetSpriteIndex(x Coordinate, y Coordinate) indexes.S
 	return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.SpriteIndex(m.rawData[wrappedPos.X][wrappedPos.Y]), 0)
 }
 
-func loadLargeMapNpcs() {
+// func loadLargeMapNpcs() {
 
-}
+// }
 
 func loadLargeMapFromFile(world World, gameConfig *config.UltimaVConfiguration) (*LargeMapReference, error) {
 	mapFileAndPath, dataOvlFileAndPath := path.Join(gameConfig.SavedConfigData.DataFilePath, legacy.BRIT_DAT), path.Join(gameConfig.SavedConfigData.DataFilePath, legacy.DATA_OVL)

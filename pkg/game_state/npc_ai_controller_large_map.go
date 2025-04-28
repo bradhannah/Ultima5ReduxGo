@@ -1,6 +1,10 @@
 package game_state
 
-import "github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+import (
+	"fmt"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+)
 
 type NPCAIControllerLargeMap struct {
 	tileRefs  *references.Tiles
@@ -33,23 +37,11 @@ func (n *NPCAIControllerLargeMap) GetNpcs() *NPCS {
 	return &n.npcs
 }
 
-// func (n NPCAIControllerLargeMap) RemoveNPCAtPosition(position references.Position) bool {
-// 	return n.npcs.RemoveNPCAtPosition(position)
-// }
-
-// 	for _, npc := range n.npcs {
-// 		if npc.Position == position {
-// 			npc.Visible = false
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
-
 func (n *NPCAIControllerLargeMap) PopulateMapFirstLoad() {
 }
 
 func (n *NPCAIControllerLargeMap) CalculateNextNPCPositions() {
+	fmt.Print("hello")
 }
 
 func (n *NPCAIControllerLargeMap) FreshenExistingNPCsOnMap() {
