@@ -1,8 +1,6 @@
 package game_state
 
 import (
-	"fmt"
-
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -40,9 +38,29 @@ func (n *NPCAIControllerLargeMap) GetNpcs() *NPCS {
 func (n *NPCAIControllerLargeMap) PopulateMapFirstLoad() {
 }
 
-func (n *NPCAIControllerLargeMap) CalculateNextNPCPositions() {
-	fmt.Print("hello")
+func (n *NPCAIControllerLargeMap) AdvanceNextTurnCalcAndMoveNPCs() {
+	n.clearMapUnitsFromMap()
+
+	n.positionOccupiedChance = createFreshXyOccupiedMap()
+
+	// n.updateAllNPCAiTypes()
+	// n.positionOccupiedChance = n.createFreshXyOccupiedMap()
+
+	// for _, npc := range n.npcs {
+	// 	if npc.IsEmptyNPC() {
+	// 		continue
+	// 	}
+	// 	// very lazy approach - but making sure every NPC is in correct spot on map
+	// 	// for every iteration makes sure next NPC doesn't assign the same tile space
+	// 	n.FreshenExistingNPCsOnMap()
+	// 	n.calculateNextNPCPosition(npc)
+	// }
+	// n.FreshenExistingNPCsOnMap()
 }
 
 func (n *NPCAIControllerLargeMap) FreshenExistingNPCsOnMap() {
+}
+
+func (n *NPCAIControllerLargeMap) clearMapUnitsFromMap() {
+	n.gameState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
 }

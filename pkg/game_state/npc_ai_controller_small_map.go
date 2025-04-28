@@ -58,10 +58,10 @@ func (n *NPCAIControllerSmallMap) PopulateMapFirstLoad() {
 	n.setAllNPCTiles()
 }
 
-func (n *NPCAIControllerSmallMap) CalculateNextNPCPositions() {
+func (n *NPCAIControllerSmallMap) AdvanceNextTurnCalcAndMoveNPCs() {
 	n.clearMapUnitsFromMap()
 	n.updateAllNPCAiTypes()
-	n.positionOccupiedChance = n.createFreshXyOccupiedMap()
+	n.positionOccupiedChance = createFreshXyOccupiedMap()
 
 	for _, npc := range n.npcs {
 		if npc.IsEmptyNPC() {
@@ -78,21 +78,6 @@ func (n *NPCAIControllerSmallMap) CalculateNextNPCPositions() {
 func (n *NPCAIControllerSmallMap) FreshenExistingNPCsOnMap() {
 	n.clearMapUnitsFromMap()
 	n.setAllNPCTiles()
-}
-
-func (n *NPCAIControllerSmallMap) createFreshXyOccupiedMap() *XyOccupiedMap {
-	xy := make(XyOccupiedMap)
-	for _, npc := range n.npcs {
-		if npc.IsEmptyNPC() || !npc.Visible {
-			continue
-		}
-		_, exists := xy[int(npc.Position.X)]
-		if !exists {
-			xy[int(npc.Position.X)] = make(map[int]bool)
-		}
-		xy[int(npc.Position.X)][int(npc.Position.Y)] = true
-	}
-	return &xy
 }
 
 func (n *NPCAIControllerSmallMap) generateNPCs() {

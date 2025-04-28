@@ -25,7 +25,7 @@ func (g *GameState) FinishTurn() {
 func (g *GameState) largeMapProcessEndOfTurn() {
 	topTile := g.GetCurrentLayeredMapAvatarTopTile()
 
-	g.CurrentNPCAIController.CalculateNextNPCPositions()
+	g.CurrentNPCAIController.AdvanceNextTurnCalcAndMoveNPCs()
 
 	// we care about speed factor only for large maps
 	g.DateTime.Advance(topTile.SpeedFactor)
@@ -40,7 +40,7 @@ func (g *GameState) smallMapProcessEndOfTurn() {
 }
 
 func (g *GameState) smallMapProcessNPCs() {
-	g.CurrentNPCAIController.CalculateNextNPCPositions()
+	g.CurrentNPCAIController.AdvanceNextTurnCalcAndMoveNPCs()
 }
 
 func (g *GameState) smallMapProcessTurnDoors() {
