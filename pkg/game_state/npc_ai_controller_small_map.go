@@ -15,7 +15,7 @@ type NPCAIControllerSmallMap struct {
 	slr       *references.SmallLocationReference
 	gameState *GameState
 
-	npcs NPCS
+	mapUnits MapUnits
 
 	positionOccupiedChance *XyOccupiedMap
 }
@@ -37,123 +37,139 @@ func NewNPCAIControllerSmallMap(
 	return npcsAiCont
 }
 
-func (n *NPCAIControllerSmallMap) GetNpcs() *NPCS {
-	return &n.npcs
+func (n *NPCAIControllerSmallMap) GetNpcs() *MapUnits {
+	return &n.mapUnits
 }
 
 func (n *NPCAIControllerSmallMap) PopulateMapFirstLoad() {
 	n.generateNPCs()
 
-	for i, npc := range n.npcs {
+	for i, npc := range n.mapUnits {
 		_ = i
-		if npc.IsEmptyNPC() || !npc.Visible {
+		if npc.IsEmptyMapUnit() || !npc.IsVisible() {
 			continue
 		}
-		indiv := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
 
-		npc.Position = indiv.Position
-		npc.Floor = indiv.Floor
-		npc.AiType = indiv.Ai
+		switch thing := npc.(type) {
+		case *NPCFriendly:
+			if n.gameState.Floor == npc.Floor() {
+				indiv := thing.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+				thing.SetIndividualNPCBehaviour(indiv)
+				// mapUnit.Position = indiv.Position
+				// mapUnit.Floor = indiv.Floor
+				// mapUnit.AiType = indiv.Ai
+			}
+		case *NPCEnemy:
+			if n.gameState.Floor == npc.Floor() {
+				//lm.SetTileByLayer(MapUnitLayer, npc.PosPtr(), mapUnit.GetTileIndex())
+			}
+		}
+
 	}
-	n.setAllNPCTiles()
+	n.placeNPCsOnLayeredMap()
 }
 
 func (n *NPCAIControllerSmallMap) AdvanceNextTurnCalcAndMoveNPCs() {
-	n.clearMapUnitsFromMap()
+	//n.clearMapUnitsFromMap()
+	n.gameState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
 	n.updateAllNPCAiTypes()
-	n.positionOccupiedChance = createFreshXyOccupiedMap()
+	n.positionOccupiedChance = n.mapUnits.createFreshXyOccupiedMap()
 
-	for _, npc := range n.npcs {
-		if npc.IsEmptyNPC() {
+	for _, mu := range n.mapUnits {
+		friendly := getMapUnitAsFriendlyOrNil(&mu)
+		if friendly == nil {
 			continue
 		}
+
 		// very lazy approach - but making sure every NPC is in correct spot on map
 		// for every iteration makes sure next NPC doesn't assign the same tile space
 		n.FreshenExistingNPCsOnMap()
-		n.calculateNextNPCPosition(npc)
+		n.calculateNextNPCPosition(friendly)
 	}
 	n.FreshenExistingNPCsOnMap()
 }
 
 func (n *NPCAIControllerSmallMap) FreshenExistingNPCsOnMap() {
-	n.clearMapUnitsFromMap()
-	n.setAllNPCTiles()
+	//n.clearMapUnitsFromMap()
+	n.gameState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
+	n.placeNPCsOnLayeredMap()
 }
 
 func (n *NPCAIControllerSmallMap) generateNPCs() {
-	npcs := make([]*NPC, 0)
+	npcs := make([]MapUnit, 0)
 	// get the correct schedule
 	npcsRefs := n.slr.GetNPCReferences()
 	for nNpc, npcRef := range *npcsRefs {
-		npc := NewNPC(npcRef, nNpc)
-		npcs = append(npcs, &npc)
+		npc := NewNPCFriendly(npcRef, nNpc)
+		npcs = append(npcs, npc)
 	}
-	n.npcs = npcs
+	n.mapUnits = npcs
 }
 
 func (n *NPCAIControllerSmallMap) updateAllNPCAiTypes() {
-	for i, npc := range n.npcs {
-		_ = i
-		if npc.IsEmptyNPC() {
+	for _, npc := range n.mapUnits {
+		friendly := getMapUnitAsFriendlyOrNil(&npc)
+		if friendly == nil {
 			continue
 		}
 
-		indiv := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+		indiv := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
 
-		npc.AiType = indiv.Ai
+		friendly.mapUnitDetails.AiType = indiv.Ai
 	}
 }
 
-func (n *NPCAIControllerSmallMap) setAllNPCTiles() {
+func (n *NPCAIControllerSmallMap) placeNPCsOnLayeredMap() {
 	lm := n.gameState.GetLayeredMapByCurrentLocation()
 
-	for _, npc := range n.npcs {
-		if npc.IsEmptyNPC() || !npc.Visible {
+	for _, npc := range n.mapUnits {
+		friendly := getMapUnitAsFriendlyOrNil(&npc)
+		if friendly == nil || !friendly.IsVisible() {
 			continue
 		}
-		if n.gameState.Floor == npc.Floor {
-			lm.SetTileByLayer(MapUnitLayer, &npc.Position, npc.NPCReference.GetTileIndex())
+		if n.gameState.Floor == npc.Floor() {
+			lm.SetTileByLayer(MapUnitLayer, npc.PosPtr(), friendly.NPCReference.GetTileIndex())
 		}
 	}
 }
 
-func (n *NPCAIControllerSmallMap) clearMapUnitsFromMap() {
-	n.gameState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
-}
+// func (n *NPCAIControllerSmallMap) clearMapUnitsFromMap() {
+// 	n.gameState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
+// }
 
-func (n *NPCAIControllerSmallMap) calculateNextNPCPosition(npc *NPC) {
-	refBehaviour := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+func (n *NPCAIControllerSmallMap) calculateNextNPCPosition(friendly *NPCFriendly) {
+	refBehaviour := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
 
 	// TEST: let's always finish what they are doing first before considering the next logic
-	if n.moveNPCOnCalculatedPath(npc) {
+	if n.moveNPCOnCalculatedPath(friendly) {
 		return
 	}
 
-	if npc.Position.Equals(&refBehaviour.Position) && npc.Floor == refBehaviour.Floor {
-		if n.performAiMovementOnAssignedPosition(npc) {
+	if friendly.PosPtr().Equals(&refBehaviour.Position) && friendly.Floor() == refBehaviour.Floor {
+		if n.performAiMovementOnAssignedPosition(friendly) {
 			return
 		}
-	} else if npc.Floor != refBehaviour.Floor { // the NPC is on the wrong floor according to their schedule
-		if npc.Floor == n.gameState.Floor { // the NPC is on the Avatar's current floor
-			n.performAiMovementFromCurrentFloorToDifferentFloor(npc)
+	} else if friendly.Floor() != refBehaviour.Floor { // the NPC is on the wrong floor according to their schedule
+		if friendly.Floor() == n.gameState.Floor { // the NPC is on the Avatar's current floor
+			n.performAiMovementFromCurrentFloorToDifferentFloor(friendly)
 			return
 		}
 		// the NPC is on another floor and needs to come to ours
-		n.performAiMovementFromDifferentFloorToOurFloor(npc)
+		n.performAiMovementFromDifferentFloorToOurFloor(friendly)
 	} else {
-		if n.performAiMovementNotOnAssignedPosition(npc) {
+		if n.performAiMovementNotOnAssignedPosition(friendly) {
 			return
 		}
 	}
 }
 
 // performAiMovementFromCurrentFloorToDifferentFloor From DIFFERENT floor to OUR floor
-func (n *NPCAIControllerSmallMap) performAiMovementFromDifferentFloorToOurFloor(npc *NPC) bool {
+func (n *NPCAIControllerSmallMap) performAiMovementFromDifferentFloorToOurFloor(friendly *NPCFriendly) bool {
 	// called if the NPC is currently on a different floor then the current floor
-	refBehaviour := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+	refBehaviour := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
 
 	// current floor matters - if they are coming to your floor - then teleport them
-	closestLadderPos := n.slr.GetClosestLadder(refBehaviour.Position, npc.Floor, n.gameState.Floor)
+	closestLadderPos := n.slr.GetClosestLadder(refBehaviour.Position, friendly.Floor(), n.gameState.Floor)
 
 	// check if something or someone else is on the ladder, if so then we skip it for this turn
 	// and try again next turn
@@ -162,52 +178,52 @@ func (n *NPCAIControllerSmallMap) performAiMovementFromDifferentFloorToOurFloor(
 		return false
 	}
 
-	npc.Position = closestLadderPos
-	npc.Floor = refBehaviour.Floor
+	friendly.SetPos(closestLadderPos)
+	friendly.SetFloor(refBehaviour.Floor)
 	return true
 }
 
 // performAiMovementFromCurrentFloorToDifferentFloor From OUR floor to DIFFERENT floor
-func (n *NPCAIControllerSmallMap) performAiMovementFromCurrentFloorToDifferentFloor(npc *NPC) bool {
+func (n *NPCAIControllerSmallMap) performAiMovementFromCurrentFloorToDifferentFloor(friendly *NPCFriendly) bool {
 	// called if the NPC is currently on a different floor then the current floor
-	refBehaviour := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+	refBehaviour := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
 
-	currentNpcMapTile := n.gameState.GetLayeredMapByCurrentLocation().GetTileTopMapOnlyTile(&npc.Position)
+	currentNpcMapTile := n.gameState.GetLayeredMapByCurrentLocation().GetTileTopMapOnlyTile(friendly.PosPtr())
 	if references.IsSpecificLadderOrStairs(currentNpcMapTile.Index,
-		references.GetLadderOfStairsType(npc.Floor, refBehaviour.Floor)) {
+		references.GetLadderOfStairsType(friendly.Floor(), refBehaviour.Floor)) {
 		// we have arrived at the ladder, so we will change their position as well
 		// to make sure they "come down from" the correct spot as well
-		npc.Floor = refBehaviour.Floor
-		npc.Position = refBehaviour.Position
+		friendly.SetFloor(refBehaviour.Floor)
+		friendly.SetPos(refBehaviour.Position)
 		return true
 	}
 
 	// // current floor matters - if they are coming to your floor - then teleport them
-	closestLadderPos := n.slr.GetClosestLadder(refBehaviour.Position, npc.Floor, refBehaviour.Floor) // n.gameState.Floor)
+	closestLadderPos := n.slr.GetClosestLadder(refBehaviour.Position, friendly.Floor(), refBehaviour.Floor) // n.gameState.Floor)
 	tile := n.gameState.GetLayeredMapByCurrentLocation().GetTopTile(&closestLadderPos)
 	if !tile.IsWalkingPassable {
 		return false
 	}
 
 	// the ladder is not used, so let's build a path
-	if n.createFreshPathToScheduledLocation(npc) {
+	if n.createFreshPathToScheduledLocation(friendly) {
 		return true
 	}
 
 	return false
 }
 
-func (n *NPCAIControllerSmallMap) performAiMovementOnAssignedPosition(npc *NPC) bool {
-	npcSched := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
-	nWanderDistance := n.getWanderDistanceByAiType(npc.AiType)
+func (n *NPCAIControllerSmallMap) performAiMovementOnAssignedPosition(friendly *NPCFriendly) bool {
+	npcSched := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+	nWanderDistance := n.getWanderDistanceByAiType(friendly.mapUnitDetails.AiType)
 
-	switch npc.AiType {
+	switch friendly.mapUnitDetails.AiType {
 	case references.BlackthornGuardFixed, references.Fixed:
 	case references.MerchantBuyingSellingCustom, references.MerchantBuyingSellingWander, references.Wander:
-		n.wanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
+		n.wanderOneTileWithinN(&friendly.mapUnitDetails, npcSched.Position, nWanderDistance)
 		return true
 	case references.BigWander, references.BlackthornGuardWander:
-		n.wanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
+		n.wanderOneTileWithinN(&friendly.mapUnitDetails, npcSched.Position, nWanderDistance)
 		return true
 	case references.ChildRunAway:
 		return true
@@ -221,7 +237,7 @@ func (n *NPCAIControllerSmallMap) performAiMovementOnAssignedPosition(npc *NPC) 
 		// set location of Avatar as way point, but only set the first movement from the list if within N of Avatar
 		return true
 	case references.HorseWander:
-		return n.wanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
+		return n.wanderOneTileWithinN(&friendly.mapUnitDetails, npcSched.Position, nWanderDistance)
 	case references.StoneGargoyleTrigger:
 		// if they are within 4 then change their AI to Drudgeworth (follow)
 	case references.FixedExceptAttackWhenIsWantedByThePoPo:
@@ -240,30 +256,30 @@ func (n *NPCAIControllerSmallMap) performAiMovementOnAssignedPosition(npc *NPC) 
 	return false
 }
 
-func (n *NPCAIControllerSmallMap) performAiMovementNotOnAssignedPosition(npc *NPC) bool {
-	npcSched := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
-	nWanderDistance := n.getWanderDistanceByAiType(npc.AiType)
+func (n *NPCAIControllerSmallMap) performAiMovementNotOnAssignedPosition(friendly *NPCFriendly) bool {
+	npcSched := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+	nWanderDistance := n.getWanderDistanceByAiType(friendly.mapUnitDetails.AiType)
 
-	if n.moveNPCOnCalculatedPath(npc) {
+	if n.moveNPCOnCalculatedPath(friendly) {
 		return true
 	}
 
-	switch npc.AiType {
+	switch friendly.mapUnitDetails.AiType {
 	case references.BlackthornGuardFixed, references.Fixed, references.CustomAi, references.MerchantBuyingSelling:
-		if n.createFreshPathToScheduledLocation(npc) {
-			npc.Position = npc.DequeueNextPosition()
+		if n.createFreshPathToScheduledLocation(friendly) {
+			friendly.SetPos(friendly.mapUnitDetails.DequeueNextPosition())
 			return true
 		}
 		return false
 	case references.BigWander, references.BlackthornGuardWander, references.MerchantBuyingSellingCustom, references.MerchantBuyingSellingWander, references.Wander, references.HorseWander:
-		if !npcSched.Position.IsWithinN(&npc.Position, nWanderDistance) {
-			if n.createFreshPathToScheduledLocation(npc) {
-				npc.Position = npc.DequeueNextPosition()
+		if !npcSched.Position.IsWithinN(friendly.PosPtr(), nWanderDistance) {
+			if n.createFreshPathToScheduledLocation(friendly) {
+				friendly.SetPos(friendly.mapUnitDetails.DequeueNextPosition())
 				return true
 			}
 			return false
 		}
-		return n.wanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
+		return n.wanderOneTileWithinN(&friendly.mapUnitDetails, npcSched.Position, nWanderDistance)
 	case references.ChildRunAway:
 		// run away
 		return true
@@ -284,15 +300,15 @@ func (n *NPCAIControllerSmallMap) performAiMovementNotOnAssignedPosition(npc *NP
 		references.GenericExtortingGuard,
 		references.HalfYourGoldExtortingGuard,
 		references.SmallWanderWantsToChat:
-		if !npcSched.Position.IsWithinN(&npc.Position, nWanderDistance) {
-			if n.createFreshPathToScheduledLocation(npc) {
-				npc.Position = npc.DequeueNextPosition()
+		if !npcSched.Position.IsWithinN(friendly.PosPtr(), nWanderDistance) {
+			if n.createFreshPathToScheduledLocation(friendly) {
+				friendly.SetPos(friendly.mapUnitDetails.DequeueNextPosition())
 				return true
 			}
 			return false
 		}
 		if helpers.OneInXOdds(3) {
-			return n.wanderOneTileWithinN(npc, npcSched.Position, nWanderDistance)
+			return n.wanderOneTileWithinN(&friendly.mapUnitDetails, npcSched.Position, nWanderDistance)
 		}
 		return false
 	default:
@@ -301,49 +317,49 @@ func (n *NPCAIControllerSmallMap) performAiMovementNotOnAssignedPosition(npc *NP
 	return false
 }
 
-func (n *NPCAIControllerSmallMap) moveNPCOnCalculatedPath(npc *NPC) bool {
-	if !npc.HasAPathAlreadyCalculated() {
+func (n *NPCAIControllerSmallMap) moveNPCOnCalculatedPath(friendly *NPCFriendly) bool {
+	if !friendly.mapUnitDetails.HasAPathAlreadyCalculated() {
 		return false
 	}
 
-	newPos := npc.DequeueNextPosition()
+	newPos := friendly.mapUnitDetails.DequeueNextPosition()
 	newPosTile := n.gameState.GetLayeredMapByCurrentLocation().GetTopTile(&newPos)
 	passable := newPosTile.IsWalkingPassable || newPosTile.Index.IsUnlockedDoor()
 	if passable && n.gameState.Position != newPos {
-		npc.Position = newPos
+		friendly.SetPos(newPos)
 		return true
 	}
 	return false
 }
 
-func (n *NPCAIControllerSmallMap) createFreshPathToScheduledLocation(npc *NPC) bool {
+func (n *NPCAIControllerSmallMap) createFreshPathToScheduledLocation(friendly *NPCFriendly) bool {
 	// set up all the walkable and non walkable tiles plus the weights
-	npc.AStarMap.InitializeByLayeredMap(
+	friendly.mapUnitDetails.AStarMap.InitializeByLayeredMap(
 		n.gameState.GetLayeredMapByCurrentLocation(),
 		[]references.Position{n.gameState.Position},
 	)
 
-	npcBehaviour := npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+	npcBehaviour := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
 
 	var path []references.Position
-	if npcBehaviour.Floor != npc.Floor {
+	if npcBehaviour.Floor != friendly.Floor() {
 		// we prefer to find the best ladder or stairs
-		closestFloorChangePosition := n.slr.GetClosestLadder(npc.Position, npc.Floor, npcBehaviour.Floor)
-		path = npc.AStarMap.AStar(npc.Position, closestFloorChangePosition)
+		closestFloorChangePosition := n.slr.GetClosestLadder(friendly.Pos(), friendly.Floor(), npcBehaviour.Floor)
+		path = friendly.mapUnitDetails.AStarMap.AStar(friendly.Pos(), closestFloorChangePosition)
 	} else {
-		path = npc.AStarMap.AStar(npc.Position, npcBehaviour.Position)
+		path = friendly.mapUnitDetails.AStarMap.AStar(friendly.Pos(), npcBehaviour.Position)
 	}
 
-	npc.CurrentPath = &path
+	friendly.mapUnitDetails.CurrentPath = &path
 	if len(path) == 0 {
 		return false
 	}
 	// always pop the first because it is the current tile
-	npc.DequeueNextPosition()
-	return npc.HasAPathAlreadyCalculated()
+	friendly.mapUnitDetails.DequeueNextPosition()
+	return friendly.mapUnitDetails.HasAPathAlreadyCalculated()
 }
 
-func (n *NPCAIControllerSmallMap) wanderOneTileWithinN(npc *NPC, anchorPos references.Position, withinN int) bool {
+func (n *NPCAIControllerSmallMap) wanderOneTileWithinN(npc *MapUnitDetails, anchorPos references.Position, withinN int) bool {
 
 	rand.Seed(uint64(time.Now().UnixNano())) // Seed the random number generator
 
