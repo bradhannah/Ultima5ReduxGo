@@ -27,6 +27,7 @@ type UltimaDate struct {
 	Day    byte
 	Hour   byte
 	Minute byte
+	Turn   uint32
 }
 
 func (d *UltimaDate) GetDateAsString() string {
@@ -53,6 +54,7 @@ func (d *UltimaDate) GetTimeAsString() string {
 }
 
 func (d *UltimaDate) Advance(nMinutes int) {
+	d.Turn = d.Turn + 1
 
 	// nMinute that time advancement does not exceed 9 hours (for time-saving assumptions)
 	if nMinutes > MinutesPerHour*9 {

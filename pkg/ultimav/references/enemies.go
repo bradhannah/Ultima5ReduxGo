@@ -1,25 +1,31 @@
 package references
 
 import (
+	"fmt"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 )
 
 type EnemyReferences []EnemyReference
 
-const nFirstEnemyTileReferenceIndex = 384 // Sea horse
+const nFirstEnemyTileReferenceIndex = 320 // Sea horse
 const nFramesPerEnemy = 4
 
 func NewAllEnemyReferences(gameConfig *config.UltimaVConfiguration,
 	tiles *Tiles) *EnemyReferences {
 	rawEnemyReferences := newRawEnemyReferences(gameConfig)
 
-	enemyRefs := EnemyReferences{}
+	// enemyRefs := EnemyReferences{}
+	enemyRefs := make(EnemyReferences, 0, len(rawEnemyReferences.enemies))
 
 	for nEnemy := 0; nEnemy < len(rawEnemyReferences.enemies); nEnemy++ {
 		rawEnemyRef := rawEnemyReferences.enemies[nEnemy]
+		spriteIndex := indexes.SpriteIndex(nFirstEnemyTileReferenceIndex + (nEnemy * nFramesPerEnemy))
+		fmt.Sprint("a")
 		enemyRef := EnemyReference{
-			KeyFrameTile:         tiles.GetTile(indexes.SpriteIndex(nFirstEnemyTileReferenceIndex + (nEnemy * nFramesPerEnemy))),
+			KeyFrameTile: tiles.GetTile(spriteIndex),
+			// KeyFrameTile:         tiles.GetTile(indexes.SpriteIndex(nFirstEnemyTileReferenceIndex + (nEnemy * nFramesPerEnemy))),
 			Armour:               rawEnemyRef.EnemyStats[EnemyStatArmour],
 			Damage:               rawEnemyRef.EnemyStats[EnemyStatDamage],
 			Dexterity:            rawEnemyRef.EnemyStats[EnemyStatDexterity],

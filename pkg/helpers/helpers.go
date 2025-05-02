@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"reflect"
-	"time"
 
 	"golang.org/x/exp/constraints"
 	"golang.org/x/exp/rand"
@@ -41,7 +40,7 @@ func IsOfTypeInterface(inst interface{}, iface interface{}) bool {
 }
 
 func OneInXOdds(odds int) bool {
-	rand.Seed(uint64(time.Now().UnixNano()))
+	//rand.Seed(uint64(time.Now().UnixNano()))
 
 	return rand.Intn(odds) == 0
 }
@@ -50,6 +49,17 @@ func RandomIntInRange(min, max int) int {
 	if min > max {
 		panic("min cannot be greater than max")
 	}
-	rand.Seed(uint64(time.Now().UnixNano())) // Seed the random number generator
+	//rand.Seed(uint64(time.Now().UnixNano())) // Seed the random number generator
 	return rand.Intn(max-min+1) + min
 }
+
+func PickOneOf[T any](a, b T) T {
+	if OneInXOdds(2) {
+		return a
+	}
+	return b
+}
+
+// func Swap[T comparable](a, b T) (T, T) {
+// 	return b, a
+// }

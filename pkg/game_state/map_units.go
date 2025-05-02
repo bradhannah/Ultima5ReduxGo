@@ -76,3 +76,18 @@ func getMapUnitAsFriendlyOrNil(mu *MapUnit) *NPCFriendly {
 	}
 	return nil
 }
+
+func getMapUnitAsEnemyOrNil(mu *MapUnit) *NPCEnemy {
+	if (*mu).IsEmptyMapUnit() {
+		return nil
+	}
+	switch mapUnit := (*mu).(type) {
+	case *NPCFriendly:
+		return nil
+	case *NPCEnemy:
+		return mapUnit
+	default:
+		log.Fatal("Unknown Map Unit Type")
+	}
+	return nil
+}

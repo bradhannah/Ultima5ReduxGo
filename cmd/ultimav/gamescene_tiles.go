@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"log"
 
@@ -153,6 +154,9 @@ func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *game
 	underTile := layer.GetTileTopMapOnlyTile(pos)
 	if mapUnitTile == nil || mapUnitTile.Index == 0 {
 		mapUnitTile = layer.GetTileByLayer(game_state.EquipmentAndProvisionsLayer, pos)
+		if mapUnitTile != nil && mapUnitTile.Index >= 512 {
+			fmt.Sprint("test")
+		}
 		if mapUnitTile == nil || mapUnitTile.Index == indexes.NoSprites {
 			return
 		}
@@ -162,6 +166,9 @@ func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *game
 	if layer.IsPositionVisible(pos) {
 		tileIndex = g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, *pos)
 		tileIndex = g.getSmallCalculatedTileIndex(tileIndex, pos)
+		if mapUnitTile != nil && mapUnitTile.Index >= 512 {
+			fmt.Sprint("test")
+		}
 		if tileIndex != indexes.NoSprites {
 			g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), do)
 		}

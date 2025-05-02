@@ -15,10 +15,6 @@ func NewNPCFriendly(npcReference references.NPCReference, npcNum int) *NPCFriend
 	friendly.mapUnitDetails.AStarMap = NewAStarMap()
 	friendly.mapUnitDetails.CurrentPath = nil
 
-	// npc.Position = npcReference.Position
-	// npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate()
-	// npc.Floor = npcReference.
-
 	if !friendly.IsEmptyMapUnit() {
 		friendly.mapUnitDetails.Visible = true
 	}

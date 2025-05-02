@@ -2,16 +2,11 @@ package references
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 )
 
 type EnemyAbility int
-
-const (
-	beginningOfEra1 = 0
-	beginningOfEra2 = 10000
-	beginningOfEra3 = 30000
-)
 
 const (
 	Bludgeons         EnemyAbility = 0
@@ -49,6 +44,28 @@ type EnemyReference struct {
 	Friend      *EnemyReference
 }
 
+func (e *EnemyReference) GetEraWeight(era Era) int {
+	switch era {
+	case EarlyEra:
+		return e.additionalEnemyFlags.Era1Weight
+	case MiddleEra:
+		return e.additionalEnemyFlags.Era2Weight
+	case LateEra:
+		return e.additionalEnemyFlags.Era3Weight
+	default:
+		log.Fatal("Unepxected Era")
+		return 0
+	}
+
+	// if nTurn >= beginningOfEra3 {
+	// 	return e.additionalEnemyFlags.Era3Weight
+	// }
+	// if nTurn >= beginningOfEra2 {
+	// 	return e.additionalEnemyFlags.Era2Weight
+	// }
+	// return e.additionalEnemyFlags.Era1Weight
+}
+
 func (e *EnemyReference) CanMoveToTile(tile *Tile) bool {
 	if !e.isMonsterSpawnableOnTile(tile) {
 		return false
@@ -70,26 +87,17 @@ func (e *EnemyReference) HasAbility(ability EnemyAbility) bool {
 	return e.enemyAbilities[ability]
 }
 
-func (e *EnemyReference) GetEraWeightByTurn(nTurn int) int {
-	if nTurn >= beginningOfEra3 {
-		return e.additionalEnemyFlags.Era3Weight
-	}
-	if nTurn >= beginningOfEra2 {
-		return e.additionalEnemyFlags.Era2Weight
-	}
-	return e.additionalEnemyFlags.Era1Weight
-}
-
 // GetRandomEnemyReferenceByEraAndTile returns a randomly selected enemy that is appropriate
 // for the given nTurn era and is able to spawn on the provided tile.
 // It returns an error if no enemies exist for the era.
 // If none of the possible enemies can move onto the tile, it returns (nil, nil).
-func (e *EnemyReferences) GetRandomEnemyReferenceByEraAndTile(nTurn int, tile *Tile) (*EnemyReference, error) {
+func (e *EnemyReferences) GetRandomEnemyReferenceByEraAndTile(era Era, tile *Tile) (*EnemyReference, error) {
 	// Filter enemy references based on era weight.
 	possibleEnemies := make([]*EnemyReference, 0)
-	for i := range *e {
-		if (*e)[i].GetEraWeightByTurn(nTurn) > 0 {
-			possibleEnemies = append(possibleEnemies, &(*e)[i])
+	for _, v := range *e {
+		// if (*e)[i].GetEraWeight(era) > 0 {
+		if v.GetEraWeight(era) > 0 {
+			possibleEnemies = append(possibleEnemies, &v) //&(*e)[i])
 		}
 	}
 
@@ -108,7 +116,7 @@ func (e *EnemyReferences) GetRandomEnemyReferenceByEraAndTile(nTurn int, tile *T
 
 	// if no enemy can go on that tile, return nil.
 	if len(enemiesThatCanGoOnTile) == 0 {
-		return nil, nil
+		return nil, fmt.Errorf("no enemies can go on tile %s", tile.Name)
 	}
 
 	// Choose a random enemy reference from the filtered list.

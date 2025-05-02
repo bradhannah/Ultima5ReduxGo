@@ -34,6 +34,8 @@ func NewNPCAIControllerSmallMap(
 	xy := make(XyOccupiedMap)
 	npcsAiCont.positionOccupiedChance = &xy
 
+	npcsAiCont.mapUnits = make(MapUnits, 0, maxNPCS)
+
 	return npcsAiCont
 }
 
@@ -50,19 +52,14 @@ func (n *NPCAIControllerSmallMap) PopulateMapFirstLoad() {
 			continue
 		}
 
-		switch thing := npc.(type) {
+		switch mapUnit := npc.(type) {
 		case *NPCFriendly:
 			if n.gameState.Floor == npc.Floor() {
-				indiv := thing.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
-				thing.SetIndividualNPCBehaviour(indiv)
-				// mapUnit.Position = indiv.Position
-				// mapUnit.Floor = indiv.Floor
-				// mapUnit.AiType = indiv.Ai
+				indiv := mapUnit.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+				mapUnit.SetIndividualNPCBehaviour(indiv)
 			}
 		case *NPCEnemy:
-			if n.gameState.Floor == npc.Floor() {
-				//lm.SetTileByLayer(MapUnitLayer, npc.PosPtr(), mapUnit.GetTileIndex())
-			}
+			// do not support NPC Enemy on small map
 		}
 
 	}

@@ -1,6 +1,9 @@
 package game_state
 
 import (
+	"log"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -9,7 +12,7 @@ type NPCAIControllerLargeMap struct {
 	World     references.World
 	gameState *GameState
 
-	npcs MapUnits
+	mapUnits MapUnits
 
 	positionOccupiedChance *XyOccupiedMap
 }
@@ -28,25 +31,42 @@ func NewNPCAIControllerLargeMap(
 	xy := make(XyOccupiedMap)
 	npcsAiCont.positionOccupiedChance = &xy
 
+	npcsAiCont.mapUnits = make(MapUnits, 0, maxNPCS)
+
 	return npcsAiCont
 }
 
 func (n *NPCAIControllerLargeMap) GetNpcs() *MapUnits {
-	return &n.npcs
+	return &n.mapUnits
 }
 
 func (n *NPCAIControllerLargeMap) PopulateMapFirstLoad() {
 }
 
+func (n *NPCAIControllerLargeMap) placeNPCsOnLayeredMap() {
+	lm := n.gameState.GetLayeredMapByCurrentLocation()
+
+	for _, npc := range n.mapUnits {
+		enemy := getMapUnitAsEnemyOrNil(&npc)
+		if enemy == nil || !enemy.IsVisible() {
+			continue
+		}
+		if n.gameState.Floor == npc.Floor() {
+			//_ = lm
+			lm.SetTileByLayer(MapUnitLayer, npc.PosPtr(), enemy.EnemyReference.KeyFrameTile.Index)
+		}
+	}
+}
+
 func (n *NPCAIControllerLargeMap) AdvanceNextTurnCalcAndMoveNPCs() {
 	//n.clearMapUnitsFromMap()
+	n.generateEraBoundMonster()
 
-	// n.updateAllNPCAiTypes()
-	n.positionOccupiedChance = n.npcs.createFreshXyOccupiedMap()
+	n.positionOccupiedChance = n.mapUnits.createFreshXyOccupiedMap()
 
 	n.gameState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
 
-	for _, npc := range n.npcs {
+	for _, npc := range n.mapUnits {
 		if npc.IsEmptyMapUnit() {
 			continue
 		}
@@ -65,30 +85,41 @@ func (n *NPCAIControllerLargeMap) FreshenExistingNPCsOnMap() {
 	n.placeNPCsOnLayeredMap()
 }
 
-// func (n *NPCAIControllerLargeMap) clearMapUnitsFromMap() {
-// 	n.gameState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
-// }
-
-func (n *NPCAIControllerLargeMap) placeNPCsOnLayeredMap() {
-	lm := n.gameState.GetLayeredMapByCurrentLocation()
-
-	for _, npc := range n.npcs {
-		if npc.IsEmptyMapUnit() || !npc.IsVisible() {
-			continue
-		}
-		switch mapUnit := npc.(type) {
-		case *NPCFriendly:
-			if n.gameState.Floor == npc.Floor() {
-				lm.SetTileByLayer(MapUnitLayer, npc.PosPtr(), mapUnit.NPCReference.GetTileIndex())
-			}
-		case *NPCEnemy:
-			if n.gameState.Floor == npc.Floor() {
-				//lm.SetTileByLayer(MapUnitLayer, npc.PosPtr(), mapUnit.GetTileIndex())
-			}
-		}
-	}
-}
-
 func (n *NPCAIControllerLargeMap) generateEraBoundMonster() {
-	//enemy := NewFriendlyNPC(references.NewNPCReferenceForMonster(references.MonsterType(0), references.Position{}, references.FloorNumber(0)), 0)
+	const nYDistanceAway = 6
+	const nXDistanceAway = 9
+
+	var dX, dY references.Coordinate
+
+	for i := 0; i < 10; i = i + 1 {
+		if helpers.OneInXOdds(2) { // do dY
+			dY = references.Coordinate(helpers.PickOneOf(nYDistanceAway, -nYDistanceAway))
+			dX = references.Coordinate(helpers.RandomIntInRange(-nXDistanceAway, nXDistanceAway))
+
+		} else { // do dX
+			dY = references.Coordinate(helpers.RandomIntInRange(-nYDistanceAway, nYDistanceAway))
+			dX = references.Coordinate(helpers.PickOneOf(nXDistanceAway, -nXDistanceAway))
+		}
+
+		pos := references.Position{X: n.gameState.Position.X + dX, Y: n.gameState.Position.Y + dY}
+
+		tile := n.gameState.GetLayeredMapByCurrentLocation().GetTopTile(&pos)
+		enemy, err := n.gameState.GameReferences.EnemyReferences.GetRandomEnemyReferenceByEraAndTile(n.gameState.GetEra(), tile)
+
+		if err != nil {
+			log.Printf("Error getting random enemy reference: %v", err)
+			continue
+			//return
+		} else if enemy == nil {
+			log.Fatal("Unexpected nil")
+		}
+
+		npc := NewEnemyNPC(*enemy, len(n.mapUnits))
+
+		npc.SetPos(pos)
+		npc.SetFloor(n.gameState.Floor)
+		npc.SetVisible(true)
+		n.mapUnits = append(n.mapUnits, &npc)
+		return
+	}
 }

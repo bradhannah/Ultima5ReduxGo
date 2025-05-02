@@ -89,3 +89,7 @@ func (g *GameState) GenerateAndCleanupEnemies() {
 		panic("unhandled default case")
 	}
 }
+
+func (g *GameState) GetEra() references.Era {
+	return references.GetEraByTurn(int(g.DateTime.Turn))
+}
