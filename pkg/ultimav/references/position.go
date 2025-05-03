@@ -1,6 +1,10 @@
 package references
 
-import "github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
+import (
+	"math"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
+)
 
 type Coordinate int16
 
@@ -43,6 +47,31 @@ func (p *Position) GetPositionUp() *Position {
 
 func (p *Position) GetPositionDown() *Position {
 	return &Position{p.X, p.Y + 1}
+}
+
+func (p *Position) GetFourDirectionsWrapped(maxX, maxY Coordinate) []Position {
+	return []Position{
+		{X: move(p.X, maxX, true, true), Y: p.Y},  // Left
+		{X: move(p.X, maxX, false, true), Y: p.Y}, // Right
+		{X: p.X, Y: move(p.Y, maxY, true, true)},  // Up
+		{X: p.X, Y: move(p.Y, maxY, false, true)}, // Down
+	}
+}
+
+func (p *Position) GetWrappedDistanceBetweenWrapped(p2 *Position, maxX, maxY Coordinate) float64 {
+	dxRaw := float64(helpers.AbsInt(int(p.X - p2.X)))
+	dyRaw := float64(helpers.AbsInt(int(p.Y - p2.Y)))
+	dx := math.Min(dxRaw, float64(maxX)-dxRaw)
+	dy := math.Min(dyRaw, float64(maxY)-dyRaw)
+	return math.Sqrt(dx*dx + dy*dy)
+}
+
+func (p *Position) GetDistanceBetween(p2 *Position) float64 {
+	dx := float64(p.X - p2.X)
+	dy := float64(p.Y - p2.Y)
+	preSqrt := dx*dx + dy*dy
+	result := math.Sqrt(preSqrt)
+	return result
 }
 
 func (p *Position) GoLeft(bLarge bool) {
@@ -121,3 +150,21 @@ func (p *Position) HeuristicTileDistance(b Position) int {
 func (p *Position) IsZeros() bool {
 	return p.X == 0 && p.Y == 0
 }
+
+func (p *Position) IsNextTo(position Position) bool {
+	return (p.X == position.X && helpers.AbsInt(int(p.Y-position.Y)) == 1) ||
+		(p.Y == position.Y && helpers.AbsInt(int(p.X-position.X)) == 1)
+}
+
+// func (p *Position) GetSingleDirectionPositionCloserTo(position Position) *Position {
+// 	if p.X < position.X {
+// 		p.X++
+// 	} else if p.X > position.X {
+// 		p.X--
+// 	} else if p.Y < position.Y {
+// 		p.Y++
+// 	} else if p.Y > position.Y {
+// 		p.Y--
+// 	}
+// 	return p
+// }

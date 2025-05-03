@@ -3,7 +3,6 @@ package game_state
 import (
 	"log"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -15,23 +14,24 @@ func (g *GameState) UpdateLargeMap() {
 	}
 }
 
-func (g *GameState) largeMapGenerateAndCleanupEnemies() {
-	if g.Location.GetMapType() != references.LargeMapType {
-		log.Fatalf("Expected large map type, got %d", g.Location.GetMapType())
-	}
-	// get all the enemies
+// func (g *GameState) largeMapGenerateAndCleanupEnemies() {
+// 	if g.Location.GetMapType() != references.LargeMapType {
+// 		log.Fatalf("Expected large map type, got %d", g.Location.GetMapType())
+// 	}
+// 	// get all the enemies
 
-	// ClearEnemiesIfFarAway()
-	_ = g.LargeMapNPCAIController[references.OVERWORLD]
-	g.Location.GetMapType()
-	if helpers.RandomIntInRange(0, 100) < nChanceToGenerateEnemy {
-		g.generateNewEnemy()
-	}
-}
+// 	// ClearEnemiesIfFarAway()
+// 	_ = g.LargeMapNPCAIController[references.OVERWORLD]
+// 	g.Location.GetMapType()
+// 	if helpers.RandomIntInRange(0, 100) < nChanceToGenerateEnemy {
+// 		//g.generateNewEnemy()
+// 		g.CurrentNPCAIController.GenerateEraBoundMonster()
+// 	}
+// }
 
-func (g *GameState) generateNewEnemy() {
+// func (g *GameState) generateNewEnemy() {
 
-}
+// }
 
 func (g *GameState) IsOverworld() bool {
 	return g.Floor == references.FloorNumber(references.OVERWORLD) && g.Location.GetMapType() == references.LargeMapType
