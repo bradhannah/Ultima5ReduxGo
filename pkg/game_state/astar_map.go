@@ -15,12 +15,12 @@ type AStarNode struct {
 
 type AStarMap struct {
 	walkableMap map[references.Position]int
-	// topLeft     references.Position
+	bWrap       bool
+	maxX, maxY  references.Coordinate
 }
 
 func NewAStarMap() *AStarMap {
 	a := &AStarMap{}
-	// a.topLeft = topLeft
 	return a
 }
 
@@ -46,7 +46,7 @@ func (m *AStarMap) AStar(start, goal references.Position) []references.Position 
 
 		// If we've reached the goal, reconstruct the path
 		if current.Position == goal {
-			return reconstructPath(current)
+			return m.reconstructPath(current)
 		}
 
 		closedSet[current.Position] = true
@@ -84,9 +84,14 @@ func (m *AStarMap) AStar(start, goal references.Position) []references.Position 
 	return nil
 }
 
-func reconstructPath(node *AStarNode) []references.Position {
+func (m *AStarMap) reconstructPath(node *AStarNode) []references.Position {
 	var path []references.Position
 	for node != nil {
+		if m.bWrap {
+			// if it is wrapped, then we check for wrapping at this last possible moment
+			node.Position = *node.Position.GetWrapped(m.maxX, m.maxY)
+		}
+
 		path = append([]references.Position{node.Position}, path...)
 		node = node.Parent
 	}
@@ -94,6 +99,7 @@ func reconstructPath(node *AStarNode) []references.Position {
 }
 
 func (m *AStarMap) InitializeByLayeredMap(lMap *LayeredMap, extraBlockTiles []references.Position) {
+	m.bWrap = false
 	m.walkableMap = make(map[references.Position]int)
 	for x := references.Coordinate(0); x < lMap.xMax; x++ {
 		for y := references.Coordinate(0); y < lMap.yMax; y++ {
@@ -108,6 +114,36 @@ func (m *AStarMap) InitializeByLayeredMap(lMap *LayeredMap, extraBlockTiles []re
 	for i := 0; i < len(extraBlockTiles); i++ {
 		m.walkableMap[extraBlockTiles[i]] = -1
 	}
+}
+
+func (m *AStarMap) InitializeByLayeredMapWithLimit(lMap *LayeredMap,
+	extraBlockTiles []references.Position,
+	bWrap bool,
+	centerPos references.Position,
+	nMaxRadius int,
+	maxX, maxY references.Coordinate) {
+
+	m.bWrap = bWrap
+	m.maxX, m.maxY = maxX, maxY
+	m.walkableMap = make(map[references.Position]int)
+
+	for x := references.Coordinate(int(centerPos.X) - nMaxRadius); x < centerPos.X+references.Coordinate(nMaxRadius); x++ {
+		for y := references.Coordinate(int(centerPos.Y) - nMaxRadius); y < centerPos.Y+references.Coordinate(nMaxRadius); y++ {
+			pos := references.Position{
+				X: x % maxX,
+				Y: y % maxY,
+			}
+			if m.bWrap {
+				pos = *pos.GetWrapped(m.maxX, m.maxY)
+			}
+			topTile := lMap.GetTopTile(&pos)
+			m.walkableMap[pos] = topTile.GetWalkableWeight()
+		}
+	}
+	for i := 0; i < len(extraBlockTiles); i++ {
+		m.walkableMap[extraBlockTiles[i]] = -1
+	}
+
 }
 
 type aStarPriorityQueue []*AStarNode
