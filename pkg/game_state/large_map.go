@@ -6,7 +6,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
-var nChanceToGenerateEnemy = 10
+var nChanceToGenerateEnemy = 1
 
 func (g *GameState) UpdateLargeMap() {
 	if g.Location.GetMapType() != references.LargeMapType {

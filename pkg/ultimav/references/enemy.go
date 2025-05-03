@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"strings"
 )
 
 type EnemyAbility int
@@ -66,16 +67,99 @@ func (e *EnemyReference) GetEraWeight(era Era) int {
 	// return e.additionalEnemyFlags.Era1Weight
 }
 
-func (e *EnemyReference) CanMoveToTile(tile *Tile) bool {
+//  protected override bool CanMoveToDumb(Map map, Point2D mapUnitPosition)
+// {
+// 	if (EnemyReference.DoesNotMove) return false;
+
+// 	bool bCanMove = false;
+// 	TileReference tileReference = map.GetTileReference(mapUnitPosition);
+
+// 	bool bIsMapUnitOnTile = map.IsMapUnitOccupiedTile(mapUnitPosition);
+// 	if (bIsMapUnitOnTile) return false;
+
+// 	if (EnemyReference.IsSandEnemy)
+// 	{
+// 		// if tile is sand
+// 		bCanMove |= tileReference.Name.IndexOf("sand", 0, StringComparison.CurrentCultureIgnoreCase) >= 0;
+// 	}
+// 	else if (EnemyReference.IsWaterEnemy)
+// 	{
+// 		// if tile is water
+// 		bCanMove |= tileReference.IsWaterEnemyPassable;
+// 	}
+// 	else
+// 	{
+// 		// the enemy is a land monster by process of elimination
+// 		bCanMove |= tileReference.IsLandEnemyPassable;
+// 	}
+
+// 	if (EnemyReference.CanFlyOverWater)
+// 	{
+// 		// if tile is water
+// 		bCanMove |= tileReference.IsWaterTile;
+// 	}
+
+// 	if (EnemyReference.CanPassThroughWalls)
+// 	{
+// 		// if tile is wall
+// 		bCanMove |=
+// 			tileReference.Name.IndexOf("wall", 0, StringComparison.CurrentCultureIgnoreCase) >= 0;
+// 	}
+
+// 	return bCanMove;
+// }
+// }
+
+func (e *EnemyReference) CanSpawnToTile(tile *Tile) bool {
+
 	if !e.isMonsterSpawnableOnTile(tile) {
 		return false
 	}
-	switch tile.CombatMapIndex {
-	case "":
-		return false
-	default:
-		return true
+
+	bCanSpawnOnTile := false
+
+	if e.additionalEnemyFlags.IsSandEnemy {
+		bCanSpawnOnTile = bCanSpawnOnTile || strings.HasPrefix(strings.ToLower(tile.Name), "sand")
+	} else if e.additionalEnemyFlags.IsWaterEnemy {
+		bCanSpawnOnTile = bCanSpawnOnTile || tile.IsWaterEnemyPassable
+	} else {
+		bCanSpawnOnTile = bCanSpawnOnTile || tile.IsLandEnemyPassable
 	}
+	return bCanSpawnOnTile
+}
+
+func (e *EnemyReference) CanMoveToTile(tile *Tile) bool {
+
+	if !e.isMonsterSpawnableOnTile(tile) {
+		return false
+	}
+
+	bCanMoveToTile := false
+
+	if e.additionalEnemyFlags.IsSandEnemy {
+		bCanMoveToTile = bCanMoveToTile || strings.HasPrefix(strings.ToLower(tile.Name), "sand")
+	} else if e.additionalEnemyFlags.IsWaterEnemy {
+		bCanMoveToTile = bCanMoveToTile || tile.IsWaterEnemyPassable
+	} else {
+		bCanMoveToTile = bCanMoveToTile || tile.IsLandEnemyPassable
+	}
+
+	if e.additionalEnemyFlags.CanFlyOverWater {
+		bCanMoveToTile = bCanMoveToTile || strings.Contains(strings.ToLower(tile.Name), "water")
+	}
+
+	if e.additionalEnemyFlags.CanPassThroughWalls {
+		bCanMoveToTile = bCanMoveToTile || strings.Contains(strings.ToLower(tile.Name), "wall")
+	}
+
+	return bCanMoveToTile
+
+	// switch tile.CombatMapIndex {
+	// case "":
+	// 	return false
+	// default:
+	// 	return true
+	// }
 }
 
 func (e *EnemyReference) isMonsterSpawnableOnTile(tile *Tile) bool {
@@ -109,7 +193,7 @@ func (e *EnemyReferences) GetRandomEnemyReferenceByEraAndTile(era Era, tile *Til
 	// Filter the enemies that can move onto the given tile.
 	enemiesThatCanGoOnTile := make([]*EnemyReference, 0)
 	for _, enemy := range possibleEnemies {
-		if enemy.CanMoveToTile(tile) {
+		if enemy.CanSpawnToTile(tile) {
 			enemiesThatCanGoOnTile = append(enemiesThatCanGoOnTile, enemy)
 		}
 	}

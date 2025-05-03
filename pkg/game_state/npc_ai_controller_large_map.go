@@ -1,7 +1,6 @@
 package game_state
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
@@ -113,10 +112,10 @@ func (n *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePoint(
 		references.Coordinate(references.XLargeMapTiles),
 		references.Coordinate(references.YLargeMapTiles))
 
-	// BAJH: optimize a no walk zone around the player to prevent extra computing on a*
+	// BAJH:
 	// make sure the enemy avoids going on top of the player
-	// you may think the short path will be found quickly - and it will - unless there is no way to get to player, in which case
-	// it will take WAY to long to never find a path
+	// make sure the correct enemies spawn on the correct tiles (water, sand, ground)
+	// ALSO - could use already built paths, similar to Small Map to save recompute cycles
 
 	path := mapUnit.MapUnitDetails().AStarMap.AStar(mapUnit.Pos(), n.gameState.Position)
 	if len(path) > 1 {
@@ -129,34 +128,34 @@ func (n *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePoint(
 
 }
 
-func (n *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePointDumb(mapUnit MapUnit) {
-	//var newPos *references.Position = &references.Position{}
+// func (n *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePointDumb(mapUnit MapUnit) {
+// 	//var newPos *references.Position = &references.Position{}
 
-	allDirections := mapUnit.PosPtr().GetFourDirectionsWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
-	// getting the current distance to the player will make sure they never move further away
-	var fCurrentShortestDistance float64 = mapUnit.PosPtr().GetWrappedDistanceBetweenWrapped(&n.gameState.Position, references.XLargeMapTiles, references.YLargeMapTiles)
-	var bestPos references.Position = *mapUnit.PosPtr()
-	bFound := false
-	for _, newPos := range allDirections {
-		fNewDistance := newPos.GetWrappedDistanceBetweenWrapped(&n.gameState.Position, references.XLargeMapTiles, references.YLargeMapTiles)
+// 	allDirections := mapUnit.PosPtr().GetFourDirectionsWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
+// 	// getting the current distance to the player will make sure they never move further away
+// 	var fCurrentShortestDistance float64 = mapUnit.PosPtr().GetWrappedDistanceBetweenWrapped(&n.gameState.Position, references.XLargeMapTiles, references.YLargeMapTiles)
+// 	var bestPos references.Position = *mapUnit.PosPtr()
+// 	bFound := false
+// 	for _, newPos := range allDirections {
+// 		fNewDistance := newPos.GetWrappedDistanceBetweenWrapped(&n.gameState.Position, references.XLargeMapTiles, references.YLargeMapTiles)
 
-		if fNewDistance < fCurrentShortestDistance {
-			if !n.gameState.GetCurrentLayeredMap().GetTopTile(&newPos).IsLandEnemyPassable {
-				continue
-			}
+// 		if fNewDistance < fCurrentShortestDistance {
+// 			if !n.gameState.GetCurrentLayeredMap().GetTopTile(&newPos).IsLandEnemyPassable {
+// 				continue
+// 			}
 
-			bestPos = newPos
-			fCurrentShortestDistance = fNewDistance
-			bFound = true
-		}
-	}
+// 			bestPos = newPos
+// 			fCurrentShortestDistance = fNewDistance
+// 			bFound = true
+// 		}
+// 	}
 
-	if !bFound {
-		// if we don't find a new position, we don't try to move
-		return
-	}
-	mapUnit.SetPos(bestPos)
-}
+// 	if !bFound {
+// 		// if we don't find a new position, we don't try to move
+// 		return
+// 	}
+// 	mapUnit.SetPos(bestPos)
+// }
 
 func (n *NPCAIControllerLargeMap) clearMapUnitsFromMap() {
 	// check if 22 tiles away from player, if so, pop them out of the map
@@ -187,7 +186,7 @@ func (n *NPCAIControllerLargeMap) generateEraBoundMonster() {
 		pos := references.Position{X: n.gameState.Position.X + dX, Y: n.gameState.Position.Y + dY}
 		pos = *pos.GetWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
 		if pos.X < 0 || pos.Y < 0 {
-			fmt.Sprint("oof")
+			log.Fatalf("Unexpected negative position X=%d Y=%d", pos.X, pos.Y)
 		}
 
 		tile := n.gameState.GetLayeredMapByCurrentLocation().GetTopTile(&pos)
