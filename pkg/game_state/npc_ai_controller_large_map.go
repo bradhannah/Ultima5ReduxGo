@@ -59,19 +59,21 @@ func (n *NPCAIControllerLargeMap) placeNPCsOnLayeredMap() {
 }
 
 func (n *NPCAIControllerLargeMap) AdvanceNextTurnCalcAndMoveNPCs() {
-	//n.clearMapUnitsFromMap()
-	if len(n.mapUnits) < maxNPCS && helpers.OneInXOdds(nChanceToGenerateEnemy) {
-		n.generateEraBoundMonster()
-	}
+	const maxTileDistanceBeforeCleanup = 22
 
 	n.positionOccupiedChance = n.mapUnits.createFreshXyOccupiedMap()
 
 	n.gameState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
 
+	// let's filter out all map units that are too far away, or empty before we even begin out
+	// path computing
+	n.mapUnits = helpers.FilterFromSlice(n.mapUnits,
+		func(v MapUnit) bool {
+			bRemove := v.IsEmptyMapUnit() || v.PosPtr().HeuristicTileDistance(n.gameState.Position) > maxTileDistanceBeforeCleanup
+			return !bRemove
+		})
+
 	for _, npc := range n.mapUnits {
-		if npc.IsEmptyMapUnit() {
-			continue
-		}
 		// 	// very lazy approach - but making sure every NPC is in correct spot on map
 		// 	// for every iteration makes sure next NPC doesn't assign the same tile space
 		n.FreshenExistingNPCsOnMap()
@@ -79,7 +81,10 @@ func (n *NPCAIControllerLargeMap) AdvanceNextTurnCalcAndMoveNPCs() {
 	}
 	n.FreshenExistingNPCsOnMap()
 
-	// should we spawn units after these ones have moved? probably
+	if len(n.mapUnits) < maxNPCS && helpers.OneInXOdds(nChanceToGenerateEnemy) {
+		n.generateEraBoundMonster()
+	}
+
 }
 
 func (n *NPCAIControllerLargeMap) calculateNextNPCPosition(mapUnit MapUnit) {
@@ -91,9 +96,6 @@ func (n *NPCAIControllerLargeMap) calculateNextNPCPosition(mapUnit MapUnit) {
 		// if the NPC is next to the player, we don't want to move them
 		return
 	}
-
-	// the dumb way
-	//n.setBestNextPositionToMoveTowardsWalkablePointDumb(mapUnit)
 
 	n.setBestNextPositionToMoveTowardsWalkablePoint(mapUnit)
 
@@ -111,10 +113,7 @@ func (n *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePoint(
 		references.Coordinate(references.XLargeMapTiles),
 		references.Coordinate(references.YLargeMapTiles))
 
-	// BAJH:
-	// make sure the enemy avoids going on top of the player
 	// make sure the correct enemies spawn on the correct tiles (water, sand, ground)
-	// ALSO - could use already built paths, similar to Small Map to save recompute cycles
 
 	path := mapUnit.MapUnitDetails().AStarMap.AStar(n.gameState.Position)
 	if len(path) > 1 {
@@ -130,8 +129,6 @@ func (n *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePoint(
 }
 
 func (n *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePointDumb(mapUnit MapUnit) {
-	//var newPos *references.Position = &references.Position{}
-
 	allDirections := mapUnit.PosPtr().GetFourDirectionsWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
 	// getting the current distance to the player will make sure they never move further away
 	var fCurrentShortestDistance float64 = mapUnit.PosPtr().GetWrappedDistanceBetweenWrapped(&n.gameState.Position, references.XLargeMapTiles, references.YLargeMapTiles)
@@ -163,10 +160,6 @@ func (n *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePointD
 		return
 	}
 	mapUnit.SetPos(bestPos)
-}
-
-func (n *NPCAIControllerLargeMap) clearMapUnitsFromMap() {
-	// check if 22 tiles away from player, if so, pop them out of the map
 }
 
 func (n *NPCAIControllerLargeMap) FreshenExistingNPCsOnMap() {

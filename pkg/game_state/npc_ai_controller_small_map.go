@@ -67,7 +67,6 @@ func (n *NPCAIControllerSmallMap) PopulateMapFirstLoad() {
 }
 
 func (n *NPCAIControllerSmallMap) AdvanceNextTurnCalcAndMoveNPCs() {
-	//n.clearMapUnitsFromMap()
 	n.gameState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
 	n.updateAllNPCAiTypes()
 	n.positionOccupiedChance = n.mapUnits.createFreshXyOccupiedMap()
@@ -87,7 +86,6 @@ func (n *NPCAIControllerSmallMap) AdvanceNextTurnCalcAndMoveNPCs() {
 }
 
 func (n *NPCAIControllerSmallMap) FreshenExistingNPCsOnMap() {
-	//n.clearMapUnitsFromMap()
 	n.gameState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
 	n.placeNPCsOnLayeredMap()
 }
@@ -129,10 +127,6 @@ func (n *NPCAIControllerSmallMap) placeNPCsOnLayeredMap() {
 		}
 	}
 }
-
-// func (n *NPCAIControllerSmallMap) clearMapUnitsFromMap() {
-// 	n.gameState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
-// }
 
 func (n *NPCAIControllerSmallMap) calculateNextNPCPosition(friendly *NPCFriendly) {
 	refBehaviour := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)

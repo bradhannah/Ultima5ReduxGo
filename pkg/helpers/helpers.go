@@ -60,6 +60,17 @@ func PickOneOf[T any](a, b T) T {
 	return b
 }
 
+func FilterFromSlice[T any](s []T, keep func(T) bool) []T {
+	n := 0                // next write position
+	for _, v := range s { // read position
+		if keep(v) {
+			s[n] = v // overwrite; OK even when n==read index
+			n++
+		}
+	}
+	return s[:n] // truncate tail
+}
+
 // func Swap[T comparable](a, b T) (T, T) {
 // 	return b, a
 // }
