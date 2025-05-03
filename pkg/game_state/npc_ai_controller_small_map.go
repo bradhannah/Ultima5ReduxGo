@@ -332,6 +332,7 @@ func (n *NPCAIControllerSmallMap) moveNPCOnCalculatedPath(friendly *NPCFriendly)
 func (n *NPCAIControllerSmallMap) createFreshPathToScheduledLocation(friendly *NPCFriendly) bool {
 	// set up all the walkable and non walkable tiles plus the weights
 	friendly.mapUnitDetails.AStarMap.InitializeByLayeredMap(
+		friendly,
 		n.gameState.GetLayeredMapByCurrentLocation(),
 		[]references.Position{n.gameState.Position},
 	)
@@ -342,9 +343,9 @@ func (n *NPCAIControllerSmallMap) createFreshPathToScheduledLocation(friendly *N
 	if npcBehaviour.Floor != friendly.Floor() {
 		// we prefer to find the best ladder or stairs
 		closestFloorChangePosition := n.slr.GetClosestLadder(friendly.Pos(), friendly.Floor(), npcBehaviour.Floor)
-		path = friendly.mapUnitDetails.AStarMap.AStar(friendly.Pos(), closestFloorChangePosition)
+		path = friendly.mapUnitDetails.AStarMap.AStar(closestFloorChangePosition)
 	} else {
-		path = friendly.mapUnitDetails.AStarMap.AStar(friendly.Pos(), npcBehaviour.Position)
+		path = friendly.mapUnitDetails.AStarMap.AStar(npcBehaviour.Position)
 	}
 
 	friendly.mapUnitDetails.CurrentPath = &path

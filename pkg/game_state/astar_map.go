@@ -17,6 +17,7 @@ type AStarMap struct {
 	walkableMap map[references.Position]int
 	bWrap       bool
 	maxX, maxY  references.Coordinate
+	mapUnit     MapUnit
 }
 
 func NewAStarMap() *AStarMap {
@@ -24,20 +25,20 @@ func NewAStarMap() *AStarMap {
 	return a
 }
 
-func (m *AStarMap) AStar(start, goal references.Position) []references.Position {
+func (m *AStarMap) AStar(goal references.Position) []references.Position {
 	openSet := &aStarPriorityQueue{}
 	heap.Init(openSet)
 
 	startNode := &AStarNode{
-		Position: start,
+		Position: m.mapUnit.Pos(),
 		GScore:   0,
-		FScore:   start.HeuristicTileDistance(goal),
+		FScore:   m.mapUnit.PosPtr().HeuristicTileDistance(goal),
 	}
 	heap.Push(openSet, startNode)
 
 	closedSet := make(map[references.Position]bool)
 	gScore := map[references.Position]int{
-		start: 0,
+		m.mapUnit.Pos(): 0,
 	}
 
 	for openSet.Len() > 0 {
@@ -98,7 +99,8 @@ func (m *AStarMap) reconstructPath(node *AStarNode) []references.Position {
 	return path
 }
 
-func (m *AStarMap) InitializeByLayeredMap(lMap *LayeredMap, extraBlockTiles []references.Position) {
+func (m *AStarMap) InitializeByLayeredMap(mapUnit MapUnit, lMap *LayeredMap, extraBlockTiles []references.Position) {
+	m.mapUnit = mapUnit
 	m.bWrap = false
 	m.walkableMap = make(map[references.Position]int)
 	for x := references.Coordinate(0); x < lMap.xMax; x++ {
@@ -116,13 +118,16 @@ func (m *AStarMap) InitializeByLayeredMap(lMap *LayeredMap, extraBlockTiles []re
 	}
 }
 
-func (m *AStarMap) InitializeByLayeredMapWithLimit(lMap *LayeredMap,
+func (m *AStarMap) InitializeByLayeredMapWithLimit(
+	mapUnit MapUnit,
+	lMap *LayeredMap,
 	extraBlockTiles []references.Position,
 	bWrap bool,
 	centerPos references.Position,
 	nMaxRadius int,
 	maxX, maxY references.Coordinate) {
 
+	m.mapUnit = mapUnit
 	m.bWrap = bWrap
 	m.maxX, m.maxY = maxX, maxY
 	m.walkableMap = make(map[references.Position]int)
@@ -137,7 +142,15 @@ func (m *AStarMap) InitializeByLayeredMapWithLimit(lMap *LayeredMap,
 				pos = *pos.GetWrapped(m.maxX, m.maxY)
 			}
 			topTile := lMap.GetTopTile(&pos)
-			m.walkableMap[pos] = topTile.GetWalkableWeight()
+			if enemy, ok := m.mapUnit.(*NPCEnemy); ok {
+				if enemy.EnemyReference.CanMoveToTile(topTile) {
+					m.walkableMap[pos] = 1
+				} else {
+					m.walkableMap[pos] = -1
+				}
+			} else {
+				m.walkableMap[pos] = topTile.GetWalkableWeight()
+			}
 		}
 	}
 	for i := 0; i < len(extraBlockTiles); i++ {

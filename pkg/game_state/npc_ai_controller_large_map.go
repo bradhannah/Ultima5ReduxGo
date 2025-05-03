@@ -60,28 +60,26 @@ func (n *NPCAIControllerLargeMap) placeNPCsOnLayeredMap() {
 
 func (n *NPCAIControllerLargeMap) AdvanceNextTurnCalcAndMoveNPCs() {
 	//n.clearMapUnitsFromMap()
-	if len(n.mapUnits) < maxNPCS {
-		if helpers.OneInXOdds(nChanceToGenerateEnemy) {
-			n.generateEraBoundMonster()
-		}
-
-		n.positionOccupiedChance = n.mapUnits.createFreshXyOccupiedMap()
-
-		n.gameState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
-
-		for _, npc := range n.mapUnits {
-			if npc.IsEmptyMapUnit() {
-				continue
-			}
-			// 	// very lazy approach - but making sure every NPC is in correct spot on map
-			// 	// for every iteration makes sure next NPC doesn't assign the same tile space
-			n.FreshenExistingNPCsOnMap()
-			n.calculateNextNPCPosition(npc)
-		}
-		n.FreshenExistingNPCsOnMap()
-
-		// should we spawn units after these ones have moved? probably
+	if len(n.mapUnits) < maxNPCS && helpers.OneInXOdds(nChanceToGenerateEnemy) {
+		n.generateEraBoundMonster()
 	}
+
+	n.positionOccupiedChance = n.mapUnits.createFreshXyOccupiedMap()
+
+	n.gameState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
+
+	for _, npc := range n.mapUnits {
+		if npc.IsEmptyMapUnit() {
+			continue
+		}
+		// 	// very lazy approach - but making sure every NPC is in correct spot on map
+		// 	// for every iteration makes sure next NPC doesn't assign the same tile space
+		n.FreshenExistingNPCsOnMap()
+		n.calculateNextNPCPosition(npc)
+	}
+	n.FreshenExistingNPCsOnMap()
+
+	// should we spawn units after these ones have moved? probably
 }
 
 func (n *NPCAIControllerLargeMap) calculateNextNPCPosition(mapUnit MapUnit) {
@@ -104,6 +102,7 @@ func (n *NPCAIControllerLargeMap) calculateNextNPCPosition(mapUnit MapUnit) {
 func (n *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePoint(mapUnit MapUnit) {
 	// this is an optimized a* pathfinding algorithm that limits the size of the map that it reads from
 	mapUnit.MapUnitDetails().AStarMap.InitializeByLayeredMapWithLimit(
+		mapUnit,
 		n.gameState.GetLayeredMapByCurrentLocation(),
 		[]references.Position{},
 		true,
@@ -117,45 +116,54 @@ func (n *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePoint(
 	// make sure the correct enemies spawn on the correct tiles (water, sand, ground)
 	// ALSO - could use already built paths, similar to Small Map to save recompute cycles
 
-	path := mapUnit.MapUnitDetails().AStarMap.AStar(mapUnit.Pos(), n.gameState.Position)
+	path := mapUnit.MapUnitDetails().AStarMap.AStar(n.gameState.Position)
 	if len(path) > 1 {
 		// if the path is empty, we don't move
 		mapUnit.SetPos(path[1])
 	} else {
-		// if we don't find a new position, we don't try to move
+		// if we don't find a new position using AStar, then we at least try to get them closer to the avatar using
+		// basic pathing
+		n.setBestNextPositionToMoveTowardsWalkablePointDumb(mapUnit)
 		return
 	}
 
 }
 
-// func (n *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePointDumb(mapUnit MapUnit) {
-// 	//var newPos *references.Position = &references.Position{}
+func (n *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePointDumb(mapUnit MapUnit) {
+	//var newPos *references.Position = &references.Position{}
 
-// 	allDirections := mapUnit.PosPtr().GetFourDirectionsWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
-// 	// getting the current distance to the player will make sure they never move further away
-// 	var fCurrentShortestDistance float64 = mapUnit.PosPtr().GetWrappedDistanceBetweenWrapped(&n.gameState.Position, references.XLargeMapTiles, references.YLargeMapTiles)
-// 	var bestPos references.Position = *mapUnit.PosPtr()
-// 	bFound := false
-// 	for _, newPos := range allDirections {
-// 		fNewDistance := newPos.GetWrappedDistanceBetweenWrapped(&n.gameState.Position, references.XLargeMapTiles, references.YLargeMapTiles)
+	allDirections := mapUnit.PosPtr().GetFourDirectionsWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
+	// getting the current distance to the player will make sure they never move further away
+	var fCurrentShortestDistance float64 = mapUnit.PosPtr().GetWrappedDistanceBetweenWrapped(&n.gameState.Position, references.XLargeMapTiles, references.YLargeMapTiles)
+	var bestPos references.Position = *mapUnit.PosPtr()
+	bFound := false
+	for _, newPos := range allDirections {
+		fNewDistance := newPos.GetWrappedDistanceBetweenWrapped(&n.gameState.Position, references.XLargeMapTiles, references.YLargeMapTiles)
 
-// 		if fNewDistance < fCurrentShortestDistance {
-// 			if !n.gameState.GetCurrentLayeredMap().GetTopTile(&newPos).IsLandEnemyPassable {
-// 				continue
-// 			}
+		if fNewDistance < fCurrentShortestDistance {
+			topTile := n.gameState.GetCurrentLayeredMap().GetTopTile(&newPos)
+			if enemy, ok := mapUnit.(*NPCEnemy); ok {
+				if !enemy.EnemyReference.CanMoveToTile(topTile) {
+					continue
+				}
+			} else {
+				if !topTile.IsLandEnemyPassable {
+					continue
+				}
+			}
 
-// 			bestPos = newPos
-// 			fCurrentShortestDistance = fNewDistance
-// 			bFound = true
-// 		}
-// 	}
+			bestPos = newPos
+			fCurrentShortestDistance = fNewDistance
+			bFound = true
+		}
+	}
 
-// 	if !bFound {
-// 		// if we don't find a new position, we don't try to move
-// 		return
-// 	}
-// 	mapUnit.SetPos(bestPos)
-// }
+	if !bFound {
+		// if we don't find a new position, we don't try to move
+		return
+	}
+	mapUnit.SetPos(bestPos)
+}
 
 func (n *NPCAIControllerLargeMap) clearMapUnitsFromMap() {
 	// check if 22 tiles away from player, if so, pop them out of the map
