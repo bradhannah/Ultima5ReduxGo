@@ -6,32 +6,15 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
-var nChanceToGenerateEnemy = 1
+//var nChanceToGenerateEnemy = 32
+
+const maxTileDistanceBeforeCleanup = 22
 
 func (g *GameState) UpdateLargeMap() {
 	if g.Location.GetMapType() != references.LargeMapType {
 		log.Fatalf("Expected large map type, got %d", g.Location.GetMapType())
 	}
 }
-
-// func (g *GameState) largeMapGenerateAndCleanupEnemies() {
-// 	if g.Location.GetMapType() != references.LargeMapType {
-// 		log.Fatalf("Expected large map type, got %d", g.Location.GetMapType())
-// 	}
-// 	// get all the enemies
-
-// 	// ClearEnemiesIfFarAway()
-// 	_ = g.LargeMapNPCAIController[references.OVERWORLD]
-// 	g.Location.GetMapType()
-// 	if helpers.RandomIntInRange(0, 100) < nChanceToGenerateEnemy {
-// 		//g.generateNewEnemy()
-// 		g.CurrentNPCAIController.GenerateEraBoundMonster()
-// 	}
-// }
-
-// func (g *GameState) generateNewEnemy() {
-
-// }
 
 func (g *GameState) IsOverworld() bool {
 	return g.Floor == references.FloorNumber(references.OVERWORLD) && g.Location.GetMapType() == references.LargeMapType

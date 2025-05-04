@@ -12,6 +12,6 @@ func (q QuestItem) Type() ItemType {
 
 const (
 	Amulet  QuestItem = 0
-	Crown             = 1
-	Sceptre           = 2
+	Crown   QuestItem = 1
+	Sceptre QuestItem = 2
 )

@@ -12,11 +12,11 @@ func (p Potion) Type() ItemType {
 
 const (
 	Blue   Potion = 0
-	Yellow        = 1
-	Red           = 2
-	Green         = 3
-	Orange        = 4
-	Purple        = 5
-	Black         = 6
-	White         = 7
+	Yellow Potion = 1
+	Red    Potion = 2
+	Green  Potion = 3
+	Orange Potion = 4
+	Purple Potion = 5
+	Black  Potion = 6
+	White  Potion = 7
 )

@@ -20,7 +20,8 @@ const (
 )
 
 type DebugOptions struct {
-	FreeMove bool
+	FreeMove   bool
+	MonsterGen bool
 }
 
 type GameState struct {
@@ -47,6 +48,8 @@ type GameState struct {
 
 	LastLargeMapPosition references.Position
 	LastLargeMapFloor    references.FloorNumber
+
+	TheOdds TheOdds
 
 	DateTime datetime.UltimaDate
 

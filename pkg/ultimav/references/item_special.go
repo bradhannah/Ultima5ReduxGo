@@ -12,11 +12,11 @@ func (s SpecialItem) Type() ItemType {
 
 const (
 	Carpet      SpecialItem = 0
-	Grapple                 = 1
-	Spyglass                = 2
-	HMSCape                 = 3
-	PocketWatch             = 4
-	BlackBadge              = 5
-	WoodenBox               = 6
-	Sextant                 = 7
+	Grapple     SpecialItem = 1
+	Spyglass    SpecialItem = 2
+	HMSCape     SpecialItem = 3
+	PocketWatch SpecialItem = 4
+	BlackBadge  SpecialItem = 5
+	WoodenBox   SpecialItem = 6
+	Sextant     SpecialItem = 7
 )

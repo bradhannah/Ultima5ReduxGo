@@ -25,8 +25,40 @@ func (d *DebugConsole) createDebugFunctions(gameScene *GameScene) *grammar.TextC
 	textCommands = append(textCommands, *d.createResolutionDown())
 	textCommands = append(textCommands, *d.createFullScreenToggle())
 	textCommands = append(textCommands, *d.createBuyBoat())
-
+	textCommands = append(textCommands, *d.createToggleMonsterGen())
+	textCommands = append(textCommands, *d.createMonsterGenerationOdds())
 	return &textCommands
+}
+
+func (d *DebugConsole) createToggleMonsterGen() *grammar.TextCommand {
+	return grammar.NewTextCommand([]grammar.Match{
+		grammar.MatchString{
+			Str:           "toggle_mongen",
+			Description:   "Toggle monster generation",
+			CaseSensitive: false,
+		}},
+		func(s string, command *grammar.TextCommand) {
+			d.gameScene.gameState.DebugOptions.MonsterGen = !d.gameScene.gameState.DebugOptions.MonsterGen
+			d.dumpQuickState(fmt.Sprintf("MonsterGen = %t", d.gameScene.gameState.DebugOptions.MonsterGen))
+		})
+}
+
+func (d *DebugConsole) createMonsterGenerationOdds() *grammar.TextCommand {
+	return grammar.NewTextCommand([]grammar.Match{
+		grammar.MatchString{
+			Str:           "mongenodds",
+			Description:   "Set new monster generation odds",
+			CaseSensitive: false,
+		},
+		grammar.MatchInt{IntMin: 0, IntMax: 1000, Description: "One in X odds of monster generation"},
+	},
+		func(s string, command *grammar.TextCommand) {
+			outputStr := d.TextInput.GetText()
+			n := command.GetIndexAsInt(1, outputStr)
+			d.gameScene.gameState.TheOdds.SetGenerateLargeMapMonster(n)
+
+			d.dumpQuickState(fmt.Sprintf("One In X odds of Monster=%d", n))
+		})
 }
 
 func (d *DebugConsole) dumpQuickState(prefix string) {

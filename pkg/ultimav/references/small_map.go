@@ -74,7 +74,7 @@ func NewSmallMapReferences(gameConfig *config.UltimaVConfiguration, dataOvl *Dat
 	nextOffset = smr.addLocation(East_Britanny, false, 1, nextOffset)
 	nextOffset = smr.addLocation(Paws, false, 1, nextOffset)
 	nextOffset = smr.addLocation(Cove, false, 1, nextOffset)
-	nextOffset = smr.addLocation(Buccaneers_Den, false, 1, nextOffset)
+	_ = smr.addLocation(Buccaneers_Den, false, 1, nextOffset)
 
 	// Towne.dat
 	nextOffset = smr.addLocation(Moonglow, false, 2, 0)
@@ -84,7 +84,7 @@ func NewSmallMapReferences(gameConfig *config.UltimaVConfiguration, dataOvl *Dat
 	nextOffset = smr.addLocation(Minoc, false, 2, nextOffset)
 	nextOffset = smr.addLocation(Trinsic, false, 2, nextOffset)
 	nextOffset = smr.addLocation(Skara_Brae, false, 2, nextOffset)
-	nextOffset = smr.addLocation(New_Magincia, false, 2, nextOffset)
+	_ = smr.addLocation(New_Magincia, false, 2, nextOffset)
 
 	// Dwelling.dat
 	nextOffset = smr.addLocation(Fogsbane, false, 3, 0)
@@ -94,7 +94,7 @@ func NewSmallMapReferences(gameConfig *config.UltimaVConfiguration, dataOvl *Dat
 	nextOffset = smr.addLocation(Iolos_Hut, false, 1, nextOffset)
 	nextOffset = smr.addLocation(Suteks_Hut, false, 1, nextOffset)
 	nextOffset = smr.addLocation(SinVraals_Hut, false, 1, nextOffset)
-	nextOffset = smr.addLocation(Grendels_Hut, false, 1, nextOffset)
+	_ = smr.addLocation(Grendels_Hut, false, 1, nextOffset)
 
 	// Keep.dat
 	nextOffset = smr.addLocation(Ararat, false, 2, 0)
@@ -104,7 +104,7 @@ func NewSmallMapReferences(gameConfig *config.UltimaVConfiguration, dataOvl *Dat
 	nextOffset = smr.addLocation(Stonegate, false, 1, nextOffset)
 	nextOffset = smr.addLocation(Lycaeum, false, 3, nextOffset)
 	nextOffset = smr.addLocation(Empath_Abbey, false, 3, nextOffset)
-	nextOffset = smr.addLocation(Serpents_Hold, true, 3, nextOffset)
+	_ = smr.addLocation(Serpents_Hold, true, 3, nextOffset)
 
 	// DUNGEONS.DAT
 	//nextOffset = smr.addLocation(Deceit, false, 8, 0)

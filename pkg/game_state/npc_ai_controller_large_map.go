@@ -59,7 +59,6 @@ func (n *NPCAIControllerLargeMap) placeNPCsOnLayeredMap() {
 }
 
 func (n *NPCAIControllerLargeMap) AdvanceNextTurnCalcAndMoveNPCs() {
-	const maxTileDistanceBeforeCleanup = 22
 
 	n.positionOccupiedChance = n.mapUnits.createFreshXyOccupiedMap()
 
@@ -81,7 +80,7 @@ func (n *NPCAIControllerLargeMap) AdvanceNextTurnCalcAndMoveNPCs() {
 	}
 	n.FreshenExistingNPCsOnMap()
 
-	if len(n.mapUnits) < maxNPCS && helpers.OneInXOdds(nChanceToGenerateEnemy) {
+	if len(n.mapUnits) < maxNPCS && n.gameState.TheOdds.ShouldGenerateLargeMapMonster() {
 		n.generateEraBoundMonster()
 	}
 
@@ -173,6 +172,10 @@ func (n *NPCAIControllerLargeMap) generateEraBoundMonster() {
 	const nTriesToGetValidEnemy = 10
 
 	var dX, dY references.Coordinate
+
+	if !n.gameState.DebugOptions.MonsterGen {
+		return
+	}
 
 	for range nTriesToGetValidEnemy {
 		if helpers.OneInXOdds(2) { // do dY

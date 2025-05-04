@@ -1,7 +1,7 @@
 package main
 
 import (
-	"image"
+	//"image"
 	"log"
 	"path"
 
@@ -44,20 +44,20 @@ const (
 
 // GameScene is another scene (e.g., the actual game)
 type GameScene struct {
-	gameConfig          *config.UltimaVConfiguration
-	gameReferences      *references.GameReferences
-	spriteSheet         *sprites.SpriteSheet
-	keyboard            *input.Keyboard
-	output              *text.Output
-	ultimaFont          *text.UltimaFont
-	mapImage            *ebiten.Image
-	unscaledMapImage    *ebiten.Image
-	rightSideImage      *ebiten.Image
-	debugWindowImage    *ebiten.Image
-	debugWindowSizeRect *image.Rectangle
-	debugWindowPosRect  *image.Rectangle
-	characterSummary    *mainscreen2.CharacterSummary
-	provisionSummary    *mainscreen2.ProvisionSummary
+	gameConfig       *config.UltimaVConfiguration
+	gameReferences   *references.GameReferences
+	spriteSheet      *sprites.SpriteSheet
+	keyboard         *input.Keyboard
+	output           *text.Output
+	ultimaFont       *text.UltimaFont
+	mapImage         *ebiten.Image
+	unscaledMapImage *ebiten.Image
+	// rightSideImage      *ebiten.Image
+	// debugWindowImage    *ebiten.Image
+	// debugWindowSizeRect *image.Rectangle
+	// debugWindowPosRect  *image.Rectangle
+	characterSummary *mainscreen2.CharacterSummary
+	provisionSummary *mainscreen2.ProvisionSummary
 
 	dialogStack widgets.DialogStack
 

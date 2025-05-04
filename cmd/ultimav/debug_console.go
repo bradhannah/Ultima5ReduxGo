@@ -102,8 +102,6 @@ func (d *DebugConsole) Update() {
 	} else {
 		d.TextInput.Update()
 	}
-
-	return
 }
 
 func (d *DebugConsole) Draw(screen *ebiten.Image) {

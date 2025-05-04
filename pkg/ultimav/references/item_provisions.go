@@ -18,11 +18,11 @@ const NoProvision Provision = -1
 
 const (
 	Torches   Provision = 0
-	Gem                 = 1
-	Key                 = 2
-	SkullKeys           = 3
-	Food                = 4
-	Gold                = 5 // not really a provision - but needed for descriptions
+	Gem       Provision = 1
+	Key       Provision = 2
+	SkullKeys Provision = 3
+	Food      Provision = 4
+	Gold      Provision = 5 // not really a provision - but needed for descriptions
 )
 
 func (p Provision) GetSpriteIndex() indexes.SpriteIndex {

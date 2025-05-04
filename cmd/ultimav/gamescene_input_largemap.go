@@ -54,10 +54,9 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 				slr,
 				g.gameReferences.TileReferences,
 			)
-			g.addRowStr(fmt.Sprintf("%s",
-				g.gameReferences.LocationReferences.GetLocationReference(newLocation).EnteringText))
+			g.addRowStr(g.gameReferences.LocationReferences.GetLocationReference(newLocation).EnteringText)
 		} else {
-			g.addRowStr(fmt.Sprintf("Enter what?"))
+			g.addRowStr("Enter what?")
 		}
 
 	case ebiten.KeyO:

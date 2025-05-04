@@ -49,6 +49,7 @@ func (g *GameState) JimmyDoor(direction references.Direction, player *PlayerChar
 }
 
 func (g *GameState) isJimmySuccessful(player *PlayerCharacter) bool {
+	_ = player
 	// TODO: actual jimmy logic required, currently forced to 50%
 	n := rand.Int()
 	return n%2 == 0

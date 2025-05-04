@@ -8,17 +8,17 @@ type NPCType byte
 
 const (
 	Blacksmith  NPCType = 0x81
-	Barkeeper           = 0x82
-	HorseSeller         = 0x83
-	Shipwright          = 0x84
-	Healer              = 0x87
-	InnKeeper           = 0x88
-	MagicSeller         = 0x85
-	GuildMaster         = 0x86
-	NoStatedNpc         = 0xFF
-	Guard               = 0xFE
-	WishingWell         = 0xFD
-	Vehicle             = 0x1F
+	Barkeeper   NPCType = 0x82
+	HorseSeller NPCType = 0x83
+	Shipwright  NPCType = 0x84
+	Healer      NPCType = 0x87
+	InnKeeper   NPCType = 0x88
+	MagicSeller NPCType = 0x85
+	GuildMaster NPCType = 0x86
+	NoStatedNpc NPCType = 0xFF
+	Guard       NPCType = 0xFE
+	WishingWell NPCType = 0xFD
+	Vehicle     NPCType = 0x1F
 	// unknowns may be crown and sandlewood box
 )
 

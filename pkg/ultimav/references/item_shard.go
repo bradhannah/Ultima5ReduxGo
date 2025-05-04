@@ -12,6 +12,6 @@ func (s Shard) Type() ItemType {
 
 const (
 	Falsehood Shard = 0
-	Hatred          = 1
-	Cowardice       = 2
+	Hatred    Shard = 1
+	Cowardice Shard = 2
 )

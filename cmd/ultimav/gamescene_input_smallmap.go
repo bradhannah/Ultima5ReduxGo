@@ -47,7 +47,7 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		g.secondaryKeyState = GetDirectionInput
 		g.keyboard.SetAllowKeyPressImmediately()
 	case ebiten.KeyE:
-		g.addRowStr(fmt.Sprintf("Enter what?"))
+		g.addRowStr("Enter what?")
 	case ebiten.KeyP:
 		g.addRowStr("Push-")
 		g.secondaryKeyState = PushDirectionInput
