@@ -2,14 +2,14 @@ package game_state
 
 const NMaxPlayerNameSize = 9
 
-const (
-	ubPartyMembers StartingMemoryAddressUb = 0x2B5
-	ubActivePlayer StartingMemoryAddressUb = 0x2D5
-)
+// const (
+// 	ubPartyMembers StartingMemoryAddressUb = 0x2B5
+// 	ubActivePlayer StartingMemoryAddressUb = 0x2D5
+// )
 
-const (
-	u16CurrentYear StartingMemoryAddressU16 = 0x2CE
-)
+// const (
+// 	u16CurrentYear StartingMemoryAddressU16 = 0x2CE
+// )
 
 type PartyStatus byte
 
@@ -25,14 +25,14 @@ type BritOrUnderworld byte
 
 const (
 	Britannia  BritOrUnderworld = 0x00
-	Underworld                  = 0xFF
+	Underworld BritOrUnderworld = 0xFF
 )
 
 type MoonstoneStatus byte
 
 const (
 	Buried      MoonstoneStatus = 0x00
-	InInventory                 = 0xFF
+	InInventory MoonstoneStatus = 0xFF
 )
 
 type PlayerCharacter struct {

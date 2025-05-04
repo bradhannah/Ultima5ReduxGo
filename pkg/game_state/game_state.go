@@ -33,10 +33,10 @@ type GameState struct {
 
 	GameReferences *references.GameReferences
 
-	Location       references.Location
-	Position       references.Position
-	Floor          references.FloorNumber
-	avatarPosition references.Position
+	Location references.Location
+	Position references.Position
+	Floor    references.FloorNumber
+	//avatarPosition references.Position
 
 	LayeredMaps             LayeredMaps
 	CurrentNPCAIController  NPCAIController
