@@ -47,10 +47,10 @@ func (m *IntroMenuScene) GetUltimaConfiguration() *config.UltimaVConfiguration {
 	return m.config
 }
 
-type screenDimensions struct {
-	x int
-	y int
-}
+// type screenDimensions struct {
+// 	x int
+// 	y int
+// }
 
 // var ScreenDimension = screenDimensions{x: 800, y: 600}
 

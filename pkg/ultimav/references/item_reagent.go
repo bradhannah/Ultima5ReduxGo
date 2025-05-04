@@ -12,11 +12,11 @@ func (r Reagent) Type() ItemType {
 
 const (
 	SulfurAsh    Reagent = 0
-	Ginseng              = 1
-	Garlic               = 2
-	SpiderSilk           = 3
-	BloodMoss            = 4
-	BlackPearl           = 5
-	NightShade           = 6
-	MandrakeRoot         = 7
+	Ginseng      Reagent = 1
+	Garlic       Reagent = 2
+	SpiderSilk   Reagent = 3
+	BloodMoss    Reagent = 4
+	BlackPearl   Reagent = 5
+	NightShade   Reagent = 6
+	MandrakeRoot Reagent = 7
 )

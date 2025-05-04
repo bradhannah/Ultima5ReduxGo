@@ -4,7 +4,7 @@ const NMaxPlayerNameSize = 9
 
 const (
 	ubPartyMembers StartingMemoryAddressUb = 0x2B5
-	ubActivePlayer                         = 0x2D5
+	ubActivePlayer StartingMemoryAddressUb = 0x2D5
 )
 
 const (

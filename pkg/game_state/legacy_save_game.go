@@ -113,6 +113,12 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 
 	g.ItemStacksMap = *references.NewItemStacksMap()
 
+	g.TheOdds = NewDefaultTheOdds()
+	g.DebugOptions = DebugOptions{
+		FreeMove:   false,
+		MonsterGen: true,
+	}
+
 	return nil
 }
 

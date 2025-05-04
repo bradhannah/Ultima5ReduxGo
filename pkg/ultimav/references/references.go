@@ -1,6 +1,10 @@
 package references
 
-import "github.com/bradhannah/Ultima5ReduxGo/pkg/config"
+import (
+	"log"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
+)
 
 type GameReferences struct {
 	OverworldLargeMapReference  *LargeMapReference
@@ -30,6 +34,9 @@ func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences
 	}
 	gameRefs.DataOvl = NewDataOvl(gameConfig)
 	gameRefs.LocationReferences, err = NewSmallMapReferences(gameConfig, gameRefs.DataOvl)
+	if err != nil {
+		log.Fatalf("Error when loading locations %e", err)
+	}
 
 	gameRefs.TileReferences = NewTileReferences()
 	gameRefs.InventoryItemReferences = NewInventoryItemsReferences()

@@ -1,8 +1,6 @@
 package references
 
 import (
-	"fmt"
-
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 )
@@ -22,7 +20,7 @@ func NewAllEnemyReferences(gameConfig *config.UltimaVConfiguration,
 	for nEnemy := 0; nEnemy < len(rawEnemyReferences.enemies); nEnemy++ {
 		rawEnemyRef := rawEnemyReferences.enemies[nEnemy]
 		spriteIndex := indexes.SpriteIndex(nFirstEnemyTileReferenceIndex + (nEnemy * nFramesPerEnemy))
-		fmt.Sprint("a")
+
 		enemyRef := EnemyReference{
 			KeyFrameTile: tiles.GetTile(spriteIndex),
 			// KeyFrameTile:         tiles.GetTile(indexes.SpriteIndex(nFirstEnemyTileReferenceIndex + (nEnemy * nFramesPerEnemy))),

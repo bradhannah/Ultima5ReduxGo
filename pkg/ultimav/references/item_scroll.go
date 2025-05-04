@@ -12,11 +12,11 @@ func (s Scroll) Type() ItemType {
 
 const (
 	ScrollVasLor     Scroll = 0
-	ScrollRelHur            = 1
-	ScrollInSanct           = 2
-	ScrollInAn              = 3
-	ScrollInQuasWis         = 4
-	ScrollKalXenCorp        = 5
-	ScrollInManiCorp        = 6
-	ScrollAnTym             = 7
+	ScrollRelHur     Scroll = 1
+	ScrollInSanct    Scroll = 2
+	ScrollInAn       Scroll = 3
+	ScrollInQuasWis  Scroll = 4
+	ScrollKalXenCorp Scroll = 5
+	ScrollInManiCorp Scroll = 6
+	ScrollAnTym      Scroll = 7
 )

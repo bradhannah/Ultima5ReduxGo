@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image"
 	"log"
 
@@ -137,16 +136,9 @@ func (g *GameScene) refreshProvisionsAndEquipmentMapTiles(pos *references.Positi
 	if item == nil {
 		log.Fatal("Unexpected: item should exist since we checked ahead of it")
 	}
-	var tileIndex indexes.SpriteIndex
-	tileIndex = g.gameReferences.InventoryItemReferences.GetReferenceByItem(item.Item).ItemSprite
-	// if item.Item.Type() == references.ItemTypeEquipment {
-	// 	tileIndex = references.Equipment(item.Item.ID()).GetSpriteIndex()
-	// } else {
-	// 	tileIndex = references.Provision(item.Item.ID()).GetSpriteIndex()
-	// }
-	layer.SetTileByLayer(game_state.EquipmentAndProvisionsLayer, pos, tileIndex)
-	// g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), do)
+	tileIndex := g.gameReferences.InventoryItemReferences.GetReferenceByItem(item.Item).ItemSprite
 
+	layer.SetTileByLayer(game_state.EquipmentAndProvisionsLayer, pos, tileIndex)
 }
 
 func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *game_state.LayeredMap, do *ebiten.DrawImageOptions) {
@@ -155,7 +147,7 @@ func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *game
 	if mapUnitTile == nil || mapUnitTile.Index == 0 {
 		mapUnitTile = layer.GetTileByLayer(game_state.EquipmentAndProvisionsLayer, pos)
 		if mapUnitTile != nil && mapUnitTile.Index >= 512 {
-			fmt.Sprint("test")
+			log.Fatalf("Unepexted tile index for map unit = %d", mapUnitTile.Index)
 		}
 		if mapUnitTile == nil || mapUnitTile.Index == indexes.NoSprites {
 			return
@@ -167,7 +159,7 @@ func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *game
 		tileIndex = g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, *pos)
 		tileIndex = g.getSmallCalculatedTileIndex(tileIndex, pos)
 		if mapUnitTile != nil && mapUnitTile.Index >= 512 {
-			fmt.Sprint("test")
+			log.Fatalf("Unexpected map unit index = %d", mapUnitTile.Index)
 		}
 		if tileIndex != indexes.NoSprites {
 			g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), do)

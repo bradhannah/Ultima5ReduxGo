@@ -12,11 +12,11 @@ func (m Moonstone) Type() ItemType {
 
 const (
 	NewMoon        Moonstone = 0
-	CrescentWaxing           = 1
-	FirstQuarter             = 2
-	GibbousWaxing            = 3
-	FullMoon                 = 4
-	GibbousWaning            = 5
-	LastQuarter              = 6
-	CrescentWaning           = 7
+	CrescentWaxing Moonstone = 1
+	FirstQuarter   Moonstone = 2
+	GibbousWaxing  Moonstone = 3
+	FullMoon       Moonstone = 4
+	GibbousWaning  Moonstone = 5
+	LastQuarter    Moonstone = 6
+	CrescentWaning Moonstone = 7
 )
