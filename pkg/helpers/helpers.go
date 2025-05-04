@@ -40,16 +40,23 @@ func IsOfTypeInterface(inst interface{}, iface interface{}) bool {
 }
 
 func OneInXOdds(odds int) bool {
-	//rand.Seed(uint64(time.Now().UnixNano()))
-
 	return rand.Intn(odds) == 0
+}
+
+func HappenedByPercentLikely(likelyhoodToSucceedPercent int) bool {
+	if likelyhoodToSucceedPercent >= 100 {
+		return true
+	}
+	if likelyhoodToSucceedPercent <= 0 {
+		return false
+	}
+	return RandomIntInRange(0, 100) < likelyhoodToSucceedPercent
 }
 
 func RandomIntInRange(min, max int) int {
 	if min > max {
 		panic("min cannot be greater than max")
 	}
-	//rand.Seed(uint64(time.Now().UnixNano())) // Seed the random number generator
 	return rand.Intn(max-min+1) + min
 }
 

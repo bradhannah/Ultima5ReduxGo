@@ -80,10 +80,9 @@ func (n *NPCAIControllerLargeMap) AdvanceNextTurnCalcAndMoveNPCs() {
 	}
 	n.FreshenExistingNPCsOnMap()
 
-	if len(n.mapUnits) < maxNPCS && n.gameState.TheOdds.ShouldGenerateLargeMapMonster() {
+	if len(n.mapUnits) < maxNPCS && n.ShouldGenerateLargeMapMonster() {
 		n.generateEraBoundMonster()
 	}
-
 }
 
 func (n *NPCAIControllerLargeMap) calculateNextNPCPosition(mapUnit MapUnit) {
@@ -93,6 +92,10 @@ func (n *NPCAIControllerLargeMap) calculateNextNPCPosition(mapUnit MapUnit) {
 
 	if mapUnit.PosPtr().IsNextTo(n.gameState.Position) {
 		// if the NPC is next to the player, we don't want to move them
+		return
+	}
+
+	if !n.ShouldEnemyMove() {
 		return
 	}
 
@@ -212,4 +215,12 @@ func (n *NPCAIControllerLargeMap) generateEraBoundMonster() {
 		n.mapUnits = append(n.mapUnits, &npc)
 		return
 	}
+}
+
+func (o *NPCAIControllerLargeMap) ShouldGenerateLargeMapMonster() bool {
+	return helpers.OneInXOdds(o.gameState.TheOdds.GetOneInXLargeMapMonsterGeneration())
+}
+
+func (o *NPCAIControllerLargeMap) ShouldEnemyMove() bool {
+	return helpers.HappenedByPercentLikely(o.gameState.TheOdds.GetPercentLikeyLargeMapMonsterMoves())
 }

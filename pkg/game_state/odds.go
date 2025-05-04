@@ -1,26 +1,30 @@
 package game_state
 
-import "github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
-
 type TheOdds struct {
-	oneInXLargeMapMonsterGeneration int
+	oneInXLargeMapMonsterGeneration   int
+	percentLikelyLargeMapMonsterMoves int
 }
 
 func NewDefaultTheOdds() TheOdds {
 	theOdds := TheOdds{
-		oneInXLargeMapMonsterGeneration: 32,
+		oneInXLargeMapMonsterGeneration:   32,
+		percentLikelyLargeMapMonsterMoves: 75,
 	}
 	return theOdds
 }
 
-func (o *TheOdds) GetLargeMapMonsterGeneration() int {
+func (o *TheOdds) GetOneInXLargeMapMonsterGeneration() int {
 	return o.oneInXLargeMapMonsterGeneration
 }
 
-func (o *TheOdds) ShouldGenerateLargeMapMonster() bool {
-	return helpers.OneInXOdds(o.oneInXLargeMapMonsterGeneration)
+func (o *TheOdds) SetGenerateLargeMapMonster(oneInX int) {
+	o.oneInXLargeMapMonsterGeneration = oneInX
 }
 
-func (o *TheOdds) SetGenerateLargeMapMonster(oneInXLargeMapMonsterGeneration int) {
-	o.oneInXLargeMapMonsterGeneration = oneInXLargeMapMonsterGeneration
+func (o *TheOdds) GetPercentLikeyLargeMapMonsterMoves() int {
+	return o.percentLikelyLargeMapMonsterMoves
+}
+
+func (o *TheOdds) SetPercentLikeyLargeMapMonsterMoves(percent int) {
+	o.percentLikelyLargeMapMonsterMoves = percent
 }
