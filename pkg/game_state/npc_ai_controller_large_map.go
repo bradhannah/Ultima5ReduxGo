@@ -86,10 +86,6 @@ func (n *NPCAIControllerLargeMap) AdvanceNextTurnCalcAndMoveNPCs() {
 }
 
 func (n *NPCAIControllerLargeMap) calculateNextNPCPosition(mapUnit MapUnit) {
-	if mapUnit.IsEmptyMapUnit() {
-		return
-	}
-
 	if mapUnit.PosPtr().IsNextTo(n.gameState.Position) {
 		// if the NPC is next to the player, we don't want to move them
 		return
@@ -223,4 +219,8 @@ func (o *NPCAIControllerLargeMap) ShouldGenerateLargeMapMonster() bool {
 
 func (o *NPCAIControllerLargeMap) ShouldEnemyMove() bool {
 	return helpers.HappenedByPercentLikely(o.gameState.TheOdds.GetPercentLikeyLargeMapMonsterMoves())
+}
+
+func (o *NPCAIControllerLargeMap) RemoveAllEnemies() {
+	o.mapUnits = make(MapUnits, 0, maxNPCS)
 }

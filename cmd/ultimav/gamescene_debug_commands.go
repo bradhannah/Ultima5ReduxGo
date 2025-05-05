@@ -27,13 +27,27 @@ func (d *DebugConsole) createDebugFunctions(gameScene *GameScene) *grammar.TextC
 	textCommands = append(textCommands, *d.createBuyBoat())
 	textCommands = append(textCommands, *d.createToggleMonsterGen())
 	textCommands = append(textCommands, *d.createMonsterGenerationOdds())
+	textCommands = append(textCommands, *d.createRemoveAllMonsters())
 	return &textCommands
+}
+
+func (d *DebugConsole) createRemoveAllMonsters() *grammar.TextCommand {
+	return grammar.NewTextCommand([]grammar.Match{
+		grammar.MatchString{
+			Str:           "mon-delall",
+			Description:   "Delete all monsters",
+			CaseSensitive: false,
+		}},
+		func(s string, command *grammar.TextCommand) {
+			d.gameScene.gameState.CurrentNPCAIController.RemoveAllEnemies()
+			d.dumpQuickState("Removed all enemies")
+		})
 }
 
 func (d *DebugConsole) createToggleMonsterGen() *grammar.TextCommand {
 	return grammar.NewTextCommand([]grammar.Match{
 		grammar.MatchString{
-			Str:           "toggle_mongen",
+			Str:           "mon-toggle-gen",
 			Description:   "Toggle monster generation",
 			CaseSensitive: false,
 		}},
@@ -46,7 +60,7 @@ func (d *DebugConsole) createToggleMonsterGen() *grammar.TextCommand {
 func (d *DebugConsole) createMonsterGenerationOdds() *grammar.TextCommand {
 	return grammar.NewTextCommand([]grammar.Match{
 		grammar.MatchString{
-			Str:           "mongenodds",
+			Str:           "mon-change-odds",
 			Description:   "Set new monster generation odds",
 			CaseSensitive: false,
 		},

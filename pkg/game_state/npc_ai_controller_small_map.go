@@ -411,3 +411,7 @@ func (n *NPCAIControllerSmallMap) getWanderDistanceByAiType(aiType references.Ai
 	}
 	return 0
 }
+
+func (n *NPCAIControllerSmallMap) RemoveAllEnemies() {
+	// noop
+}

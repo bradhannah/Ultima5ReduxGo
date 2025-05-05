@@ -7,4 +7,5 @@ type NPCAIController interface {
 	AdvanceNextTurnCalcAndMoveNPCs()
 	FreshenExistingNPCsOnMap()
 	GetNpcs() *MapUnits
+	RemoveAllEnemies()
 }
