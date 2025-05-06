@@ -119,6 +119,8 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 		MonsterGen: true,
 	}
 
+	g.Lighting = NewLighting(g.XTilesInMap, g.YTilesInMap)
+
 	return nil
 }
 

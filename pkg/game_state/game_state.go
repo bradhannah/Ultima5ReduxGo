@@ -9,9 +9,10 @@ import (
 )
 
 const (
-	NPlayers                      = 6
-	DefaultSmallMapMinutesPerTurn = 1
-	DefaultLargeMapMinutesPerTurn = 2
+	NPlayers                                   = 6
+	DefaultSmallMapMinutesPerTurn              = 1
+	DefaultLargeMapMinutesPerTurn              = 2
+	DefaultNumberOfTurnsUntilTorchExtinguishes = 100
 )
 
 const (
@@ -60,10 +61,14 @@ type GameState struct {
 	openDoorPos   *references.Position
 	openDoorTurns int
 
+	turnsToExtinguishTorch int
+
 	ItemStacksMap references.ItemStacksMap
 
 	XTilesInMap int
 	YTilesInMap int
+
+	Lighting Lighting
 }
 
 const (

@@ -141,6 +141,17 @@ func (g *GameScene) refreshProvisionsAndEquipmentMapTiles(pos *references.Positi
 	layer.SetTileByLayer(game_state.EquipmentAndProvisionsLayer, pos, tileIndex)
 }
 
+func (g *GameScene) getTileVisibilityIndexByPosition(pos *references.Position) int {
+	//if g.gameState.DateTime.
+
+	// if g.gameState.HasTorchLit() {
+
+	// }
+	//g.gameState.XTilesInMap
+	//g.gameState.
+	return 1
+}
+
 func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *game_state.LayeredMap, do *ebiten.DrawImageOptions) {
 	mapUnitTile := layer.GetTileByLayer(game_state.MapUnitLayer, pos)
 	underTile := layer.GetTileTopMapOnlyTile(pos)
@@ -152,10 +163,9 @@ func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *game
 		if mapUnitTile == nil || mapUnitTile.Index == indexes.NoSprites {
 			return
 		}
-		// return
 	}
 	var tileIndex indexes.SpriteIndex
-	if layer.IsPositionVisible(pos) {
+	if layer.IsPositionVisible(pos) && g.getTileVisibilityIndexByPosition(pos) > 0 {
 		tileIndex = g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, *pos)
 		tileIndex = g.getSmallCalculatedTileIndex(tileIndex, pos)
 		if mapUnitTile != nil && mapUnitTile.Index >= 512 {

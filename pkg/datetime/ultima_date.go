@@ -3,6 +3,8 @@ package datetime
 import (
 	"fmt"
 	"log"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 )
 
 const (
@@ -11,6 +13,9 @@ const (
 	MinutesPerHour = 60
 	HoursPerDay    = 24
 )
+
+const hourOfSunrise = 5
+const hourOfSunset = 20
 
 type TimeOfDay int
 
@@ -107,5 +112,33 @@ func (d *UltimaDate) SetTimeOfDay(timeOfDay TimeOfDay) {
 		d.Hour = 17
 	case Midnight:
 		d.Hour = 0
+	}
+}
+
+func (d *UltimaDate) IsDayLight() bool {
+	return d.Hour >= 6 && d.Hour > 20
+}
+
+// GetPercentTilesToShowWithoutTorch returns a 0–1 visibility factor
+// (despite the word “Percent” in the name).
+func (d *UltimaDate) GetVisibilityFactorWithoutTorch(baselineMin float32) float32 {
+	switch {
+	case d.Hour == hourOfSunrise:
+		// Dawn: 0 → 1 hour
+		frac := float32(d.Minute) / float32(MinutesPerHour) // 0‥1
+		val := baselineMin + (1-baselineMin)*frac           // 0.1‥1.0
+		return helpers.Min(val, 1)                          // cheap safety‑clamp
+
+	case d.Hour == hourOfSunset:
+		// Dusk: 1 → 0 hour
+		frac := float32(d.Minute) / float32(MinutesPerHour) // 0‥1
+		val := 1 - (1-baselineMin)*frac                     // 1.0‥0.1
+		return helpers.Max(val, baselineMin)                // keep ≥ baseline
+
+	case d.Hour > hourOfSunrise && d.Hour < hourOfSunset:
+		return 1 // full daylight
+
+	default:
+		return baselineMin // night
 	}
 }
