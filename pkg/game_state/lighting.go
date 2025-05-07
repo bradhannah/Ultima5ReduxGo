@@ -3,11 +3,12 @@ package game_state
 import (
 	"math"
 
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 type Lighting struct {
-	TurnsToExtinguishTorch int
+	turnsToExtinguishTorch int
 
 	xTilesInMap, yTilesInMap int
 	baselineFactor           float32
@@ -30,11 +31,15 @@ func (l *Lighting) GetBaselineRadius() float32 {
 }
 
 func (l *Lighting) HasTorchLit() bool {
-	return l.TurnsToExtinguishTorch > 0
+	return l.turnsToExtinguishTorch > 0
 }
 
 func (l *Lighting) LightTorch() {
-	l.TurnsToExtinguishTorch = DefaultNumberOfTurnsUntilTorchExtinguishes
+	l.turnsToExtinguishTorch = DefaultNumberOfTurnsUntilTorchExtinguishes
+}
+
+func (l *Lighting) AdvanceTurn() {
+	l.turnsToExtinguishTorch = helpers.Max(l.turnsToExtinguishTorch-1, 0)
 }
 
 // ---------------------------------------------------------------------------

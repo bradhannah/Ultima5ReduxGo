@@ -139,7 +139,10 @@ func (l *LayeredMap) SetVisible(bVisible bool, pos *references.Position) {
 	l.visibleFlags[pos.X][pos.Y] = bVisible
 }
 
-func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datetime.UltimaDate) bool {
+func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datetime.UltimaDate, lighting *Lighting) bool {
+	// note: some of this may feel like overkill - but it is setting up for an eventual alpha or gradient
+	// based lighting that degrades as it gets further away
+
 	// first check to see if line of sight allows it to be seen
 	if !l.visibleFlags[pos.X][pos.Y] {
 		return false
@@ -148,7 +151,12 @@ func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datet
 	// next focus on checking the primary lighting
 	xUp := l.xVisibleTiles/2 + 1
 	nToShow := helpers.RoundUp(float32(xUp) * timeOfDay.GetVisibilityFactorWithoutTorch(0.1))
-	return l.distanceMaskMaps[0][*pos] <= int(nToShow)
+	bShow := l.distanceMaskMaps[0][*pos] <= int(nToShow)
+	if lighting.HasTorchLit() && !bShow {
+		return true
+	}
+	return bShow
+
 }
 
 func (l *LayeredMap) GetTopTile(position *references.Position) *references.Tile {

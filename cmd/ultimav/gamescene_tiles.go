@@ -122,7 +122,7 @@ func (g *GameScene) refreshSpecialTileOverrideExceptions(pos *references.Positio
 }
 
 func (g *GameScene) refreshProvisionsAndEquipmentMapTiles(pos *references.Position, layer *game_state.LayeredMap) {
-	if !layer.IsPositionVisible(pos, g.gameState.DateTime) {
+	if !layer.IsPositionVisible(pos, g.gameState.DateTime, &g.gameState.Lighting) {
 		layer.UnSetTileByLayer(game_state.EquipmentAndProvisionsLayer, pos)
 		return
 	}
@@ -165,7 +165,7 @@ func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *game
 		}
 	}
 	var tileIndex indexes.SpriteIndex
-	if layer.IsPositionVisible(pos, g.gameState.DateTime) && g.getTileVisibilityIndexByPosition(pos) > 0 {
+	if layer.IsPositionVisible(pos, g.gameState.DateTime, &g.gameState.Lighting) && g.getTileVisibilityIndexByPosition(pos) > 0 {
 		tileIndex = g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, *pos)
 		tileIndex = g.getSmallCalculatedTileIndex(tileIndex, pos)
 		if mapUnitTile != nil && mapUnitTile.Index >= 512 {
@@ -182,7 +182,7 @@ func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *game
 }
 
 func (g *GameScene) refreshStaticMapTiles(pos *references.Position, mapLayer *game_state.LayeredMap, do *ebiten.DrawImageOptions) {
-	if !mapLayer.IsPositionVisible(pos, g.gameState.DateTime) {
+	if !mapLayer.IsPositionVisible(pos, g.gameState.DateTime, &g.gameState.Lighting) {
 		return
 	}
 

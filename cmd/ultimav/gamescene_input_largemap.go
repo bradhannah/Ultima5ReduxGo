@@ -65,6 +65,12 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyJ:
 		g.addRowStr("Jimmy-")
 		g.appendToCurrentRowStr("Cannot")
+	case ebiten.KeyI:
+		g.debugMessage = "Ignite Torch"
+		g.addRowStr("Ignite Torch!")
+		if !g.gameState.IgniteTorch() {
+			g.addRowStr("None owned!")
+		}
 	default:
 		return
 	}

@@ -62,6 +62,12 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		g.addRowStr("Jimmy-")
 		g.secondaryKeyState = JimmyDoorDirectionInput
 		g.keyboard.SetAllowKeyPressImmediately()
+	case ebiten.KeyI:
+		g.debugMessage = "Ignite Torch"
+		g.addRowStr("Ignite Torch!")
+		if !g.gameState.IgniteTorch() {
+			g.addRowStr("None owned!")
+		}
 	default:
 		return
 	}

@@ -1,7 +1,6 @@
 package game_state
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
@@ -22,7 +21,7 @@ func (g *GameState) FinishTurn() {
 	g.moveNonCombatMapMapUnitsToNextMove()
 	g.GenerateAndCleanupEnemies()
 
-	g.turnsToExtinguishTorch = helpers.Max(g.turnsToExtinguishTorch-1, 0)
+	g.Lighting.AdvanceTurn()
 }
 
 func (g *GameState) largeMapProcessEndOfTurn() {
