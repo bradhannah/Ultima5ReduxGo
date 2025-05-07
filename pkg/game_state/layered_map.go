@@ -90,11 +90,10 @@ func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position, ligh
 	l.floodFillIfInside(avatarPos.GetPositionDown(), true)
 	l.floodFillIfInside(avatarPos.GetPositionUp(), true)
 
+	// build lighting mask
 	l.distanceMaskMaps = make([]DistanceMaskMap, 1)
-	oof := timeOfDay.GetVisibilityFactorWithoutTorch(0.1)
-	_ = oof
 	l.distanceMaskMaps[0] = lighting.BuildDistanceMap(avatarPos, 1)
-	//timeOfDay.GetVisibilityFactorWithoutTorch(0.1))
+
 }
 
 func (l *LayeredMap) floodFillIfInside(pos *references.Position, bForce bool) {
@@ -141,9 +140,14 @@ func (l *LayeredMap) SetVisible(bVisible bool, pos *references.Position) {
 }
 
 func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datetime.UltimaDate) bool {
+	// first check to see if line of sight allows it to be seen
+	if !l.visibleFlags[pos.X][pos.Y] {
+		return false
+	}
+
+	// next focus on checking the primary lighting
 	xUp := l.xVisibleTiles/2 + 1
 	nToShow := helpers.RoundUp(float32(xUp) * timeOfDay.GetVisibilityFactorWithoutTorch(0.1))
-
 	return l.distanceMaskMaps[0][*pos] <= int(nToShow)
 }
 
