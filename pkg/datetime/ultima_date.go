@@ -24,6 +24,7 @@ const (
 	Noon
 	Evening
 	Midnight
+	Dusk
 )
 
 type UltimaDate struct {
@@ -112,6 +113,8 @@ func (d *UltimaDate) SetTimeOfDay(timeOfDay TimeOfDay) {
 		d.Hour = 17
 	case Midnight:
 		d.Hour = 0
+	case Dusk:
+		d.Hour = 20
 	}
 }
 

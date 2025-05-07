@@ -3,6 +3,8 @@ package game_state
 import (
 	"log"
 
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
@@ -28,6 +30,8 @@ type LayeredMap struct {
 
 	visibleFlags         VisibilityCoords
 	testForVisibilityMap VisibilityCoords
+	distanceMaskMaps     []DistanceMaskMap
+	// lighting *Lighting
 
 	tileRefs *references.Tiles
 
@@ -61,7 +65,7 @@ func newLayeredMap(xMax references.Coordinate, yMax references.Coordinate, tileR
 	return &layeredMap
 }
 
-func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position) {
+func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position, lighting *Lighting, timeOfDay datetime.UltimaDate) {
 	l.topLeft = references.Position{
 		X: avatarPos.X - overflowTiles,
 		Y: avatarPos.Y - overflowTiles,
@@ -85,6 +89,12 @@ func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position) {
 	l.floodFillIfInside(avatarPos.GetPositionToRight(), true)
 	l.floodFillIfInside(avatarPos.GetPositionDown(), true)
 	l.floodFillIfInside(avatarPos.GetPositionUp(), true)
+
+	l.distanceMaskMaps = make([]DistanceMaskMap, 1)
+	oof := timeOfDay.GetVisibilityFactorWithoutTorch(0.1)
+	_ = oof
+	l.distanceMaskMaps[0] = lighting.BuildDistanceMap(avatarPos, 1)
+	//timeOfDay.GetVisibilityFactorWithoutTorch(0.1))
 }
 
 func (l *LayeredMap) floodFillIfInside(pos *references.Position, bForce bool) {
@@ -130,8 +140,11 @@ func (l *LayeredMap) SetVisible(bVisible bool, pos *references.Position) {
 	l.visibleFlags[pos.X][pos.Y] = bVisible
 }
 
-func (l *LayeredMap) IsPositionVisible(pos *references.Position) bool {
-	return l.visibleFlags[pos.X][pos.Y]
+func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datetime.UltimaDate) bool {
+	xUp := l.xVisibleTiles/2 + 1
+	nToShow := helpers.RoundUp(float32(xUp) * timeOfDay.GetVisibilityFactorWithoutTorch(0.1))
+
+	return l.distanceMaskMaps[0][*pos] <= int(nToShow)
 }
 
 func (l *LayeredMap) GetTopTile(position *references.Position) *references.Tile {

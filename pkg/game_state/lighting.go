@@ -14,7 +14,7 @@ type Lighting struct {
 	baselineRadius           int
 }
 
-type DistanceMaskMap [][]int
+type DistanceMaskMap map[references.Position]int
 
 func NewLighting(xTilesInMap, yTilesInMap int) Lighting {
 	l := Lighting{}
@@ -37,51 +37,59 @@ func (l *Lighting) LightTorch() {
 	l.TurnsToExtinguishTorch = DefaultNumberOfTurnsUntilTorchExtinguishes
 }
 
-// BuildMask returns a y×x 2‑D slice telling you which tiles are lit
-// (`true`) or hidden (`false`).
+// ---------------------------------------------------------------------------
+// BuildDistanceMap: world‑space, map‑based field‑of‑view
+// ---------------------------------------------------------------------------
+
+// BuildDistanceMap returns a map[MapPos]int where
 //
-//	centre – light source in *screen* coordinates
-//	factor – 0.10 → 1.00 from GetVisibilityFactorWithoutTorch().
-func (l *Lighting) BuildDistanceMask(centre references.Position, factor float32) DistanceMaskMap {
-	w, h := l.xTilesInMap, l.yTilesInMap
-
-	// Allocate & preset to -1 (dark)
-	mask := make(DistanceMaskMap, h)
-	for y := range mask {
-		row := make([]int, w)
-		for x := range row {
-			row[x] = -1
-		}
-		mask[y] = row
-	}
-
+//	value = 0 .. radius     → integer distance from the light centre
+//	key   absent            → tile is completely dark
+//
+// You can map that distance to alpha any way you like, e.g.
+//
+//	alpha = 1 - float32(dist)/float32(radius)
+func (l *Lighting) BuildDistanceMap(centre references.Position, factor float32) DistanceMaskMap {
+	// 1.  Work out how far light reaches for this factor.
 	radius := l.radiusForFactor(factor)
-	radius2 := radius * radius // compare squared distances
+	radius2 := radius * radius // compare squared distance
 
-	for y := 0; y < h; y++ {
-		dy := y - int(centre.Y)
-		for x := 0; x < w; x++ {
-			dx := x - int(centre.X)
-			d2 := dx*dx + dy*dy
-			if d2 <= radius2 { // inside lit circle
-				mask[y][x] = int(math.Sqrt(float64(d2))) // 0,1,2…
+	// 2.  Allocate roughly the right capacity so the map doesn't re‑hash.
+	estCells := (radius*2 + 1) * (radius*2 + 1) // square that bounds the circle
+	m := make(map[references.Position]int, estCells)
+
+	// 3.  Walk the bounding square; keep only points inside the circle.
+	for dy := -radius; dy <= radius; dy++ {
+		for dx := -radius; dx <= radius; dx++ {
+			if dx*dx+dy*dy > radius2 { // outside circle → skip
+				continue
 			}
+
+			worldX := centre.X + references.Coordinate(dx)
+			worldY := centre.Y + references.Coordinate(dy)
+			dist := int(math.Sqrt(float64(dx*dx + dy*dy))) // 0,1,2,..
+
+			m[references.Position{X: worldX, Y: worldY}] = dist
 		}
 	}
-	return mask
+	return m
 }
 
-// ─── Helpers (receiver methods) ────────────────────────────────────────────────
+// ---------------------------------------------------------------------------
+// Helpers (unchanged logic, still receiver methods)
+// ---------------------------------------------------------------------------
+
 func (l *Lighting) radiusForFactor(factor float32) int {
-	if factor <= l.baselineFactor {
+	switch {
+	case factor <= l.baselineFactor:
 		return l.baselineRadius
-	}
-	if factor >= 1 {
+	case factor >= 1:
 		return l.maxRadius()
+	default:
+		norm := (factor - l.baselineFactor) / (1 - l.baselineFactor) // 0‥1
+		return l.baselineRadius +
+			int(math.Round(float64(norm)*float64(l.maxRadius()-l.baselineRadius)))
 	}
-	norm := (factor - l.baselineFactor) / (1 - l.baselineFactor) // 0‥1
-	return l.baselineRadius +
-		int(math.Round(float64(norm)*float64(l.maxRadius()-l.baselineRadius)))
 }
 
 func (l *Lighting) maxRadius() int {
@@ -89,5 +97,3 @@ func (l *Lighting) maxRadius() int {
 		math.Hypot(float64(l.xTilesInMap-1)/2, float64(l.yTilesInMap-1)/2),
 	))
 }
-
-//func (d *DistanceMaskMap) ApplyMaskTo

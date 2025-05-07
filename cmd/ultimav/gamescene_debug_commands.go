@@ -191,7 +191,7 @@ func (d *DebugConsole) createQuickTime() *grammar.TextCommand {
 			CaseSensitive: false,
 		},
 		grammar.MatchStringList{
-			Strings:       []string{"morning", "evening", "midnight", "noon"},
+			Strings:       []string{"morning", "evening", "midnight", "noon", "dusk"},
 			Description:   "General time of day",
 			CaseSensitive: false,
 		},
@@ -208,6 +208,8 @@ func (d *DebugConsole) createQuickTime() *grammar.TextCommand {
 				d.gameScene.gameState.DateTime.SetTimeOfDay(datetime.Midnight)
 			case "noon":
 				d.gameScene.gameState.DateTime.SetTimeOfDay(datetime.Noon)
+			case "dusk":
+				d.gameScene.gameState.DateTime.SetTimeOfDay(datetime.Dusk)
 			}
 			d.dumpQuickState(fmt.Sprintf("thing: %s", outputStr))
 		})

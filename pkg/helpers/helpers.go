@@ -81,3 +81,7 @@ func FilterFromSlice[T any](s []T, keep func(T) bool) []T {
 // func Swap[T comparable](a, b T) (T, T) {
 // 	return b, a
 // }
+
+func RoundUp(f float32) int {
+	return int(f + 0.5)
+}
