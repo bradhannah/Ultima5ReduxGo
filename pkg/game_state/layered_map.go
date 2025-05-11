@@ -28,9 +28,10 @@ type Layer map[references.Coordinate]map[references.Coordinate]indexes.SpriteInd
 type LayeredMap struct {
 	layers [totalLayers]Layer
 
-	visibleFlags         VisibilityCoords
-	testForVisibilityMap VisibilityCoords
-	distanceMaskMaps     []DistanceMaskMap
+	visibleFlags                VisibilityCoords
+	testForVisibilityMap        VisibilityCoords
+	primaryDistanceMaskMap      DistanceMaskMap
+	lightSourcesDistanceMaskMap DistanceMaskMap
 	// lighting *Lighting
 
 	tileRefs *references.Tiles
@@ -91,9 +92,40 @@ func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position, ligh
 	l.floodFillIfInside(avatarPos.GetPositionUp(), true)
 
 	// build lighting mask
-	l.distanceMaskMaps = make([]DistanceMaskMap, 1)
-	l.distanceMaskMaps[0] = lighting.BuildDistanceMap(avatarPos, 1)
+	//l.primaryDistanceMaskMap = make(DistanceMaskMap)
+	l.primaryDistanceMaskMap = lighting.BuildDistanceMap(avatarPos, 1)
 
+	//l.lightSourcesDistanceMaskMap = make(DistanceMaskMap)
+
+	lightSources := l.getAllLightSourcesInRange(avatarPos)
+	l.lightSourcesDistanceMaskMap = lighting.BuildLightSourceDistanceMap(lightSources)
+}
+
+type LightSource struct {
+	Tile *references.Tile
+	Pos  references.Position
+}
+type LightSources []LightSource
+
+func (l *LayeredMap) getAllLightSourcesInRange(centerPosition references.Position) LightSources {
+	ls := make(LightSources, 0)
+
+	for dX := -l.xMax; dX < l.xMax; dX++ {
+		for dY := -l.yMax; dY < l.yMax; dY++ {
+			pos := references.Position{X: centerPosition.X + dX, Y: centerPosition.Y + dY}
+			tile := l.GetTileTopMapOnlyTile(&pos)
+			if tile == nil {
+				continue
+			}
+			if tile.LightEmission > 0 {
+				ls = append(ls, LightSource{
+					Tile: tile,
+					Pos:  pos,
+				})
+			}
+		}
+	}
+	return ls
 }
 
 func (l *LayeredMap) floodFillIfInside(pos *references.Position, bForce bool) {
@@ -151,10 +183,26 @@ func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datet
 	// next focus on checking the primary lighting
 	xUp := l.xVisibleTiles/2 + 1
 	nToShow := helpers.RoundUp(float32(xUp) * timeOfDay.GetVisibilityFactorWithoutTorch(0.1))
-	bShow := l.distanceMaskMaps[0][*pos] <= int(nToShow)
-	if lighting.HasTorchLit() && !bShow {
+	// TODO: hey brad - the nToShow is small because of the Avatar - so this won't quite work.
+	// figure out how to distinguish these two - i think the second map that is more "factual" is better
+	bShow := l.primaryDistanceMaskMap[*pos] <= int(nToShow)
+
+	if bShow {
 		return true
 	}
+
+	if _, ok := l.lightSourcesDistanceMaskMap[*pos]; !ok {
+		// if x, ok := l.lightSourcesDistanceMaskMap[*pos]; !ok {
+		return false
+	} else {
+		bShow = true // <= int(2)
+		//_ = x
+	}
+
+	// TODO NOW - get the actual radius for torches, not entire screen
+	// if lighting.HasTorchLit() && !bShow {
+	// 	return true
+	// }
 	return bShow
 
 }

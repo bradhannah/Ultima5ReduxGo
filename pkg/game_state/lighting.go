@@ -7,6 +7,8 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
+const TorchTileDistance = 2
+
 type Lighting struct {
 	turnsToExtinguishTorch int
 
@@ -54,35 +56,88 @@ func (l *Lighting) AdvanceTurn() {
 // You can map that distance to alpha any way you like, e.g.
 //
 //	alpha = 1 - float32(dist)/float32(radius)
-func (l *Lighting) BuildDistanceMap(centre references.Position, factor float32) DistanceMaskMap {
-	// 1.  Work out how far light reaches for this factor.
+func (l *Lighting) BuildDistanceMap(
+	centre references.Position,
+	factor float32,
+) DistanceMaskMap {
+
+	// 1.  Convert factor → integer radius.
 	radius := l.radiusForFactor(factor)
-	radius2 := radius * radius // compare squared distance
 
-	// 2.  Allocate roughly the right capacity so the map doesn't re‑hash.
-	estCells := (radius*2 + 1) * (radius*2 + 1) // square that bounds the circle
-	m := make(map[references.Position]int, estCells)
+	//    Inclusive threshold: (r + 0.5)²   (makes the outline nicely round)
+	rThresh := float64(radius) + 0.5
+	r2 := rThresh * rThresh
 
-	// 3.  Walk the bounding square; keep only points inside the circle.
+	// 2.  Pre‑allocate close to the number of cells in the bounding square.
+	est := (radius*2 + 1) * (radius*2 + 1)
+	m := make(DistanceMaskMap, est)
+
+	// 3.  Walk the bounding square; keep points inside the disc.
 	for dy := -radius; dy <= radius; dy++ {
 		for dx := -radius; dx <= radius; dx++ {
-			if dx*dx+dy*dy > radius2 { // outside circle → skip
+
+			if float64(dx*dx+dy*dy) > r2 { // outside round disc → skip
 				continue
 			}
 
-			worldX := centre.X + references.Coordinate(dx)
-			worldY := centre.Y + references.Coordinate(dy)
-			dist := int(math.Sqrt(float64(dx*dx + dy*dy))) // 0,1,2,..
+			world := references.Position{
+				X: centre.X + references.Coordinate(dx),
+				Y: centre.Y + references.Coordinate(dy),
+			}
 
-			m[references.Position{X: worldX, Y: worldY}] = dist
+			dist := int(math.Sqrt(float64(dx*dx + dy*dy))) // 0‥radius
+			m[world] = dist
 		}
 	}
 	return m
 }
 
-// ---------------------------------------------------------------------------
-// Helpers (unchanged logic, still receiver methods)
-// ---------------------------------------------------------------------------
+func (l *Lighting) BuildLightSourceDistanceMap(lightSources LightSources) DistanceMaskMap {
+	distanceMaskMap := make(DistanceMaskMap)
+
+	// l.applyTorch(distanceMaskMap, references.Position{X: 80, Y: 103}, int(TorchTileDistance))
+	for _, ls := range lightSources {
+		l.applyTorch(distanceMaskMap, ls.Pos, ls.Tile.LightEmission)
+	}
+
+	//l.applyTorch(,
+	return distanceMaskMap
+
+}
+func (l *Lighting) applyTorch(
+	field map[references.Position]int,
+	pos references.Position,
+	radius int,
+) {
+	if radius <= 0 {
+		return
+	}
+
+	// Pre‑compute the inclusive threshold: (r + 0.5)²
+	rThresh := float64(radius) + 0.5
+	r2 := rThresh * rThresh
+
+	for dy := -radius; dy <= radius; dy++ {
+		for dx := -radius; dx <= radius; dx++ {
+			// Euclidean distance squared
+			if float64(dx*dx+dy*dy) > r2 {
+				continue // outside the nicely‑rounded disc
+			}
+
+			world := references.Position{
+				X: pos.X + references.Coordinate(dx),
+				Y: pos.Y + references.Coordinate(dy),
+			}
+
+			// Store integer Euclidean distance for your fade table
+			dist := int(math.Sqrt(float64(dx*dx + dy*dy)))
+
+			if cur, ok := field[world]; !ok || dist < cur {
+				field[world] = dist // 0..radius
+			}
+		}
+	}
+}
 
 func (l *Lighting) radiusForFactor(factor float32) int {
 	switch {

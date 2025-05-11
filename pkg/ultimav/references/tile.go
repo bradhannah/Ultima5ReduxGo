@@ -29,6 +29,7 @@ type Tile struct {
 	IsLandEnemyPassable       bool   `json:"IsLandEnemyPassable"`
 	IsWaterEnemyPassable      bool   `json:"IsWaterEnemyPassable"`
 	SpeedFactor               int    `json:"SpeedFactor"`
+	LightEmission             int    `json:"LightEmission"`
 	IsPartOfAnimation         bool   `json:"IsPartOfAnimation"`
 	TotalAnimationFrames      int    `json:"TotalAnimationFrames"`
 	AnimationIndex            int    `json:"AnimationIndex"`
