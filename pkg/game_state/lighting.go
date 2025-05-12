@@ -92,12 +92,14 @@ func (l *Lighting) BuildDistanceMap(
 	return m
 }
 
-func (l *Lighting) BuildLightSourceDistanceMap(lightSources LightSources) DistanceMaskMap {
+func (l *Lighting) BuildLightSourceDistanceMap(lightSources LightSources, visibleFlags VisibilityCoords) DistanceMaskMap {
 	distanceMaskMap := make(DistanceMaskMap)
 
 	// l.applyTorch(distanceMaskMap, references.Position{X: 80, Y: 103}, int(TorchTileDistance))
 	for _, ls := range lightSources {
-		l.applyTorch(distanceMaskMap, ls.Pos, ls.Tile.LightEmission)
+		if visibleFlags[ls.Pos.X][ls.Pos.Y] {
+			l.applyTorch(distanceMaskMap, ls.Pos, ls.Tile.LightEmission)
+		}
 	}
 
 	//l.applyTorch(,

@@ -98,7 +98,7 @@ func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position, ligh
 	//l.lightSourcesDistanceMaskMap = make(DistanceMaskMap)
 
 	lightSources := l.getAllLightSourcesInRange(avatarPos)
-	l.lightSourcesDistanceMaskMap = lighting.BuildLightSourceDistanceMap(lightSources)
+	l.lightSourcesDistanceMaskMap = lighting.BuildLightSourceDistanceMap(lightSources, l.visibleFlags)
 }
 
 type LightSource struct {
