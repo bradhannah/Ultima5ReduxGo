@@ -7,7 +7,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
-const TorchTileDistance = 2
+const TorchTileDistance = 3
 
 type Lighting struct {
 	turnsToExtinguishTorch int
@@ -92,13 +92,17 @@ func (l *Lighting) BuildDistanceMap(
 	return m
 }
 
-func (l *Lighting) BuildLightSourceDistanceMap(lightSources LightSources, visibleFlags VisibilityCoords) DistanceMaskMap {
+func (l *Lighting) BuildLightSourceDistanceMap(lightSources LightSources, visibleFlags VisibilityCoords, avatarIgnitedTorch bool, centerPos references.Position) DistanceMaskMap {
 	distanceMaskMap := make(DistanceMaskMap)
+
+	if avatarIgnitedTorch {
+		l.applyLightSource(distanceMaskMap, centerPos, TorchTileDistance)
+	}
 
 	// l.applyTorch(distanceMaskMap, references.Position{X: 80, Y: 103}, int(TorchTileDistance))
 	for _, ls := range lightSources {
 		if visibleFlags[ls.Pos.X][ls.Pos.Y] {
-			l.applyTorch(distanceMaskMap, ls.Pos, ls.Tile.LightEmission)
+			l.applyLightSource(distanceMaskMap, ls.Pos, ls.Tile.LightEmission)
 		}
 	}
 
@@ -106,7 +110,7 @@ func (l *Lighting) BuildLightSourceDistanceMap(lightSources LightSources, visibl
 	return distanceMaskMap
 
 }
-func (l *Lighting) applyTorch(
+func (l *Lighting) applyLightSource(
 	field map[references.Position]int,
 	pos references.Position,
 	radius int,
