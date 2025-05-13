@@ -25,6 +25,14 @@ type LayerType int
 
 type Layer map[references.Coordinate]map[references.Coordinate]indexes.SpriteIndex
 
+type GameDimensions interface {
+	GetTilesVisibleOnScreen() (int, int)
+	GetTopLeftExtent() references.Position
+	GetBottomRightExtent() references.Position
+	GetBottomRightWithoutOverflow() references.Position
+	IsWrappedMap() bool
+}
+
 type LayeredMap struct {
 	layers [totalLayers]Layer
 
@@ -94,7 +102,12 @@ func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position, ligh
 	// build lighting mask
 	l.primaryDistanceMaskMap = lighting.BuildDistanceMap(avatarPos, 1)
 	lightSources := l.getAllLightSourcesInRange(avatarPos)
-	l.lightSourcesDistanceMaskMap = lighting.BuildLightSourceDistanceMap(lightSources, l.visibleFlags, lighting.turnsToExtinguishTorch > 0, avatarPos)
+	l.lightSourcesDistanceMaskMap = lighting.BuildLightSourceDistanceMap(lightSources,
+		l.visibleFlags,
+		lighting.turnsToExtinguishTorch > 0,
+		avatarPos,
+		l.GetTileTopMapOnlyTile,
+	)
 }
 
 type LightSource struct {
@@ -253,4 +266,24 @@ func (l *LayeredMap) ClearMapUnitTiles() {
 			innerMap[innerKey] = 0
 		}
 	}
+}
+
+func (l *LayeredMap) GetTilesVisibleOnScreen() (int, int) {
+	return l.xVisibleTiles, l.yVisibleTiles
+}
+
+func (l *LayeredMap) GetTopLeftExtent() references.Position {
+	return l.topLeft
+}
+
+func (l *LayeredMap) GetBottomRightExtent() references.Position {
+	return l.bottomRight
+}
+
+func (l *LayeredMap) IsWrappedMap() bool {
+	return l.bWrappingMap
+}
+
+func (l *LayeredMap) GetBottomRightWithoutOverflow() references.Position {
+	return references.Position{X: l.xMax, Y: l.yMax}
 }

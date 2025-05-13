@@ -6,6 +6,8 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 )
 
+type GetTileFromPosition func(*Position) *Tile
+
 type Coordinate int16
 
 type Position struct {
@@ -168,3 +170,50 @@ func (p *Position) IsNextTo(position Position) bool {
 // 	}
 // 	return p
 // }
+
+func (p *Position) IsLineOfSightClear(to Position, getTileFromPosition GetTileFromPosition) bool {
+	dx := int(to.X - p.X)
+	dy := int(to.Y - p.Y)
+
+	//helpers.AbsInt()abs := func(n int) int { if n < 0 { return -n }; return n }
+	stepX, stepY := 1, 1
+	if dx < 0 {
+		stepX, dx = -1, -dx
+	}
+	if dy < 0 {
+		stepY, dy = -1, -dy
+	}
+
+	err := dx - dy
+	x, y := int(p.X), int(p.Y)
+	tx, ty := int(to.X), int(to.Y)
+
+	var tile *Tile
+	for !(x == tx && y == ty) {
+		e2 := 2 * err
+		if e2 > -dy {
+			err -= dy
+			x += stepX
+		}
+		if e2 < dx {
+			err += dx
+			y += stepY
+		}
+
+		if x == tx && y == ty {
+			break // reached destination; we don't mind if it’s opaque
+		}
+		toPos := Position{
+			X: Coordinate(x),
+			Y: Coordinate(y),
+		}
+		tile = getTileFromPosition(&toPos)
+		if tile == nil {
+			return false
+		}
+		if tile.BlocksLight {
+			return false
+		}
+	}
+	return true
+}

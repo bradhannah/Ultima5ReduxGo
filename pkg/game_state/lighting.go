@@ -11,18 +11,16 @@ const TorchTileDistance = 3
 
 type Lighting struct {
 	turnsToExtinguishTorch int
-
-	xTilesInMap, yTilesInMap int
-	baselineFactor           float32
-	baselineRadius           int
+	gameDimensions         GameDimensions
+	baselineFactor         float32
+	baselineRadius         int
 }
 
 type DistanceMaskMap map[references.Position]int
 
-func NewLighting(xTilesInMap, yTilesInMap int) Lighting {
+func NewLighting(gameDimensions GameDimensions) Lighting {
 	l := Lighting{}
-	l.xTilesInMap = xTilesInMap
-	l.yTilesInMap = yTilesInMap
+	l.gameDimensions = gameDimensions
 	l.baselineFactor = 0.1
 	l.baselineRadius = 1
 	return l
@@ -44,18 +42,6 @@ func (l *Lighting) AdvanceTurn() {
 	l.turnsToExtinguishTorch = helpers.Max(l.turnsToExtinguishTorch-1, 0)
 }
 
-// ---------------------------------------------------------------------------
-// BuildDistanceMap: world‑space, map‑based field‑of‑view
-// ---------------------------------------------------------------------------
-
-// BuildDistanceMap returns a map[MapPos]int where
-//
-//	value = 0 .. radius     → integer distance from the light centre
-//	key   absent            → tile is completely dark
-//
-// You can map that distance to alpha any way you like, e.g.
-//
-//	alpha = 1 - float32(dist)/float32(radius)
 func (l *Lighting) BuildDistanceMap(
 	centre references.Position,
 	factor float32,
@@ -92,21 +78,24 @@ func (l *Lighting) BuildDistanceMap(
 	return m
 }
 
-func (l *Lighting) BuildLightSourceDistanceMap(lightSources LightSources, visibleFlags VisibilityCoords, avatarIgnitedTorch bool, centerPos references.Position) DistanceMaskMap {
+func (l *Lighting) BuildLightSourceDistanceMap(
+	lightSources LightSources,
+	visibleFlags VisibilityCoords,
+	avatarIgnitedTorch bool,
+	centerPos references.Position,
+	getTileFromPosition references.GetTileFromPosition) DistanceMaskMap {
 	distanceMaskMap := make(DistanceMaskMap)
 
 	if avatarIgnitedTorch {
-		l.applyLightSource(distanceMaskMap, centerPos, TorchTileDistance)
+		l.applyLightSource(distanceMaskMap, centerPos, TorchTileDistance, getTileFromPosition)
 	}
 
-	// l.applyTorch(distanceMaskMap, references.Position{X: 80, Y: 103}, int(TorchTileDistance))
 	for _, ls := range lightSources {
 		if visibleFlags[ls.Pos.X][ls.Pos.Y] {
-			l.applyLightSource(distanceMaskMap, ls.Pos, ls.Tile.LightEmission)
+			l.applyLightSource(distanceMaskMap, ls.Pos, ls.Tile.LightEmission, getTileFromPosition)
 		}
 	}
 
-	//l.applyTorch(,
 	return distanceMaskMap
 
 }
@@ -114,6 +103,7 @@ func (l *Lighting) applyLightSource(
 	field map[references.Position]int,
 	pos references.Position,
 	radius int,
+	_ references.GetTileFromPosition,
 ) {
 	if radius <= 0 {
 		return
@@ -123,6 +113,10 @@ func (l *Lighting) applyLightSource(
 	rThresh := float64(radius) + 0.5
 	r2 := rThresh * rThresh
 
+	//topLeft := l.gameDimensions.GetTopLeftExtent()
+	bottomRight := l.gameDimensions.GetBottomRightWithoutOverflow()
+	bIsWrapped := l.gameDimensions.IsWrappedMap()
+
 	for dy := -radius; dy <= radius; dy++ {
 		for dx := -radius; dx <= radius; dx++ {
 			// Euclidean distance squared
@@ -130,16 +124,38 @@ func (l *Lighting) applyLightSource(
 				continue // outside the nicely‑rounded disc
 			}
 
-			world := references.Position{
+			toPos := references.Position{
 				X: pos.X + references.Coordinate(dx),
 				Y: pos.Y + references.Coordinate(dy),
 			}
 
+			// we don't light the outer rim (overflow) tiles
+			if !bIsWrapped {
+				if toPos.X < 0 || toPos.Y < 0 || toPos.X > bottomRight.X || toPos.Y > bottomRight.Y {
+					continue
+				}
+			} else {
+				// is wrapped
+				toPos = *toPos.GetWrapped(bottomRight.X, bottomRight.Y)
+			}
+
+			// TODO: still need to solve for the lightsource bleeding through the wall when there is a window that is not connected
+			// to the light source
+			// idea: can I just check for a window? I almost need to use a flood fill that ignores windows...
+			// in the end I don't know mind if it bleeds out if it is in the viscinity of the light - but shouldn't show through if I am
+			// not in close to a window with my light source
+
 			// Store integer Euclidean distance for your fade table
 			dist := int(math.Sqrt(float64(dx*dx + dy*dy)))
 
-			if cur, ok := field[world]; !ok || dist < cur {
-				field[world] = dist // 0..radius
+			// disabled: it appears that raycasting is not used in original game to detmermine if a light is obstructed
+			// but I have kept it here "just in case"
+			// if !pos.IsLineOfSight(toPos, getTileFromPosition) {
+			// 	//continue
+			// }
+
+			if cur, ok := field[toPos]; !ok || dist < cur {
+				field[toPos] = dist // 0..radius
 			}
 		}
 	}
@@ -159,7 +175,8 @@ func (l *Lighting) radiusForFactor(factor float32) int {
 }
 
 func (l *Lighting) maxRadius() int {
+	xTilesVisibleOnGameScreen, yTilesVisibleOnGameScreen := l.gameDimensions.GetTilesVisibleOnScreen()
 	return int(math.Ceil(
-		math.Hypot(float64(l.xTilesInMap-1)/2, float64(l.yTilesInMap-1)/2),
+		math.Hypot(float64(xTilesVisibleOnGameScreen)/2, float64(yTilesVisibleOnGameScreen)/2),
 	))
 }

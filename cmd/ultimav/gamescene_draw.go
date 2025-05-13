@@ -24,8 +24,8 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 		g.initializeResizeableVisualElements()
 	}
 
-	mapWidth := sprites.TileSize * xTilesInMap
-	mapHeight := sprites.TileSize * yTilesInMap
+	mapWidth := sprites.TileSize * xTilesVisibleOnGameScreen
+	mapHeight := sprites.TileSize * yTilesVisibleOnGameScreen
 
 	if g.mapImage == nil {
 		g.mapImage = ebiten.NewImage(mapWidth, mapHeight)

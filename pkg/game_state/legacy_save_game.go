@@ -95,8 +95,8 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 	g.LayeredMaps = *NewLayeredMaps(gameRefs.TileReferences,
 		gameRefs.OverworldLargeMapReference,
 		gameRefs.UnderworldLargeMapReference,
-		g.XTilesInMap,
-		g.YTilesInMap)
+		g.XTilesVisibleOnGameScreen,
+		g.YTilesVisibleOnGameScreen)
 
 	g.LargeMapNPCAIController = make(map[references.World]*NPCAIControllerLargeMap)
 	g.LargeMapNPCAIController[references.OVERWORLD] = NewNPCAIControllerLargeMap(
@@ -119,7 +119,7 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 		MonsterGen: true,
 	}
 
-	g.Lighting = NewLighting(g.XTilesInMap, g.YTilesInMap)
+	g.Lighting = NewLighting(g)
 
 	return nil
 }

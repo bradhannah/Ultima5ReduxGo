@@ -18,9 +18,9 @@ import (
 )
 
 const (
-	borderWidthScaling = 601
-	xTilesInMap        = 19
-	yTilesInMap        = 13
+	borderWidthScaling        = 601
+	xTilesVisibleOnGameScreen = 19
+	yTilesVisibleOnGameScreen = 13
 )
 
 const (
@@ -94,9 +94,9 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 
 	// TODO: add a New function to GameState
 	gameScene.gameState = &game_state.GameState{
-		XTilesInMap:    xTilesInMap,
-		YTilesInMap:    yTilesInMap,
-		GameReferences: gameScene.gameReferences,
+		XTilesVisibleOnGameScreen: xTilesVisibleOnGameScreen,
+		YTilesVisibleOnGameScreen: yTilesVisibleOnGameScreen,
+		GameReferences:            gameScene.gameReferences,
 	}
 	err = gameScene.gameState.LoadLegacySaveGame(path.Join(gameScene.gameConfig.SavedConfigData.DataFilePath, "SAVED.GAM"), gameScene.gameReferences)
 

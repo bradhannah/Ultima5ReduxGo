@@ -7,8 +7,8 @@ func (g *GameState) UpdateSmallMap(tileRefs *references.Tiles, locs *references.
 	g.LayeredMaps.ResetAndCreateSmallMap(
 		slr,
 		tileRefs,
-		g.XTilesInMap,
-		g.YTilesInMap)
+		g.XTilesVisibleOnGameScreen,
+		g.YTilesVisibleOnGameScreen)
 	g.CurrentNPCAIController = NewNPCAIControllerSmallMap(slr, tileRefs, g)
 	g.CurrentNPCAIController.PopulateMapFirstLoad()
 }

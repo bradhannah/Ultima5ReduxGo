@@ -63,8 +63,8 @@ type GameState struct {
 
 	ItemStacksMap references.ItemStacksMap
 
-	XTilesInMap int
-	YTilesInMap int
+	XTilesVisibleOnGameScreen int
+	YTilesVisibleOnGameScreen int
 
 	Lighting Lighting
 }
@@ -188,4 +188,24 @@ func (g *GameState) SetPartyVehicleDirection(direction references.Direction) {
 func (g *GameState) BoardVehicle(vehicle references.PartyVehicle) bool {
 	g.PartyVehicle = vehicle
 	return true
+}
+
+func (g *GameState) GetTilesVisibleOnScreen() (int, int) {
+	return g.GetCurrentLayeredMap().GetTilesVisibleOnScreen()
+}
+
+func (g *GameState) GetTopLeftExtent() references.Position {
+	return g.GetCurrentLayeredMap().topLeft
+}
+
+func (g *GameState) GetBottomRightExtent() references.Position {
+	return g.GetCurrentLayeredMap().bottomRight
+}
+
+func (g *GameState) IsWrappedMap() bool {
+	return g.GetCurrentLayeredMap().IsWrappedMap()
+}
+
+func (g *GameState) GetBottomRightWithoutOverflow() references.Position {
+	return g.GetCurrentLayeredMap().GetBottomRightWithoutOverflow()
 }

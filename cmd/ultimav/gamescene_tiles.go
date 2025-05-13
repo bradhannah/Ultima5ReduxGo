@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	xCenter = references.Coordinate(xTilesInMap / 2)
-	yCenter = references.Coordinate(yTilesInMap / 2)
+	xCenter = references.Coordinate(xTilesVisibleOnGameScreen / 2)
+	yCenter = references.Coordinate(yTilesVisibleOnGameScreen / 2)
 )
 
 func (g *GameScene) getSmallCalculatedAvatarTileIndex(ogSpriteIndex indexes.SpriteIndex) indexes.SpriteIndex {
@@ -210,7 +210,7 @@ func (g *GameScene) refreshAllMapLayerTiles() {
 	layer.RecalculateVisibleTiles(g.gameState.Position, &g.gameState.Lighting, g.gameState.DateTime)
 
 	if g.unscaledMapImage == nil {
-		g.unscaledMapImage = ebiten.NewImage(sprites.TileSize*xTilesInMap, sprites.TileSize*yTilesInMap)
+		g.unscaledMapImage = ebiten.NewImage(sprites.TileSize*xTilesVisibleOnGameScreen, sprites.TileSize*yTilesVisibleOnGameScreen)
 	}
 
 	g.unscaledMapImage.Fill(image.Black)
@@ -224,8 +224,8 @@ func (g *GameScene) refreshAllMapLayerTiles() {
 	var x, y references.Coordinate
 	var pos = &references.Position{}
 
-	for x = 0; x < xTilesInMap; x++ {
-		for y = 0; y < yTilesInMap; y++ {
+	for x = 0; x < xTilesVisibleOnGameScreen; x++ {
+		for y = 0; y < yTilesVisibleOnGameScreen; y++ {
 			pos.X = x + g.gameState.Position.X - xCenter
 			pos.Y = y + g.gameState.Position.Y - yCenter
 			if mapType == references.LargeMapType {
