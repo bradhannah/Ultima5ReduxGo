@@ -129,3 +129,7 @@ func (t *Tile) GetExtraMovementString() string {
 		return "Untrodden Combat Tile"
 	}
 }
+
+func (t *Tile) IsWall() bool {
+	return t.Index == indexes.LargeRockWall || t.Index == indexes.StoneBrickWall || t.Index == indexes.StoneBrickWallSecret
+}

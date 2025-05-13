@@ -211,7 +211,8 @@ func (p *Position) IsLineOfSightClear(to Position, getTileFromPosition GetTileFr
 		if tile == nil {
 			return false
 		}
-		if tile.BlocksLight {
+		if tile.IsWindow || tile.IsWall() {
+			//if tile.BlocksLight {
 			return false
 		}
 	}

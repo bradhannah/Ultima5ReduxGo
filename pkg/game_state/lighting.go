@@ -99,63 +99,106 @@ func (l *Lighting) BuildLightSourceDistanceMap(
 	return distanceMaskMap
 
 }
+
 func (l *Lighting) applyLightSource(
 	field map[references.Position]int,
-	pos references.Position,
+	source references.Position,
 	radius int,
-	_ references.GetTileFromPosition,
+	getTile references.GetTileFromPosition,
 ) {
 	if radius <= 0 {
 		return
 	}
 
-	// Pre‑compute the inclusive threshold: (r + 0.5)²
-	rThresh := float64(radius) + 0.5
-	r2 := rThresh * rThresh
+	roundR2 := math.Pow(float64(radius)+0.5, 2)
 
-	//topLeft := l.gameDimensions.GetTopLeftExtent()
-	bottomRight := l.gameDimensions.GetBottomRightWithoutOverflow()
-	bIsWrapped := l.gameDimensions.IsWrappedMap()
+	br := l.gameDimensions.GetBottomRightWithoutOverflow()
+	isWrapped := l.gameDimensions.IsWrappedMap()
 
-	for dy := -radius; dy <= radius; dy++ {
-		for dx := -radius; dx <= radius; dx++ {
-			// Euclidean distance squared
-			if float64(dx*dx+dy*dy) > r2 {
-				continue // outside the nicely‑rounded disc
-			}
+	wrapPos := func(p references.Position) references.Position {
+		if !isWrapped {
+			return p
+		}
+		return *p.GetWrapped(br.X, br.Y)
+	}
+	inBounds := func(p references.Position) bool {
+		return p.X >= 0 && p.Y >= 0 && p.X <= br.X && p.Y <= br.Y
+	}
 
-			toPos := references.Position{
-				X: pos.X + references.Coordinate(dx),
-				Y: pos.Y + references.Coordinate(dy),
-			}
+	// ---------- BFS without Chebyshev counter ----------
+	q := []references.Position{source}
+	seen := make(map[references.Position]struct{}, radius*radius)
 
-			// we don't light the outer rim (overflow) tiles
-			if !bIsWrapped {
-				if toPos.X < 0 || toPos.Y < 0 || toPos.X > bottomRight.X || toPos.Y > bottomRight.Y {
-					continue
+	for len(q) > 0 {
+		curPos := q[0]
+		q = q[1:]
+
+		if _, ok := seen[curPos]; ok {
+			continue
+		}
+		seen[curPos] = struct{}{}
+
+		if !isWrapped && !inBounds(curPos) {
+			continue
+		}
+
+		dx := int(curPos.X - source.X)
+		dy := int(curPos.Y - source.Y)
+		if float64(dx*dx+dy*dy) > roundR2 { // outside round disc
+			continue
+		}
+
+		euclid := int(math.Sqrt(float64(dx*dx + dy*dy)))
+		if cur, ok := field[curPos]; !ok || euclid < cur {
+			field[curPos] = euclid // light this tile (opaque or not)
+		}
+
+		w := wrapPos(curPos)
+		tile := getTile(&w)
+
+		// If tile is opaque, light adjacent walls but DO NOT enqueue further
+		if tile.BlocksLight {
+			for ddy := -1; ddy <= 1; ddy++ {
+				for ddx := -1; ddx <= 1; ddx++ {
+					if ddx == 0 && ddy == 0 {
+						continue
+					}
+					nb := references.Position{
+						X: curPos.X + references.Coordinate(ddx),
+						Y: curPos.Y + references.Coordinate(ddy),
+					}
+					nb = wrapPos(nb)
+					if !isWrapped && !inBounds(nb) {
+						continue
+					}
+
+					ndx := int(nb.X - source.X)
+					ndy := int(nb.Y - source.Y)
+					if float64(ndx*ndx+ndy*ndy) > roundR2 {
+						continue
+					}
+
+					if getTile(&nb).IsWall() {
+						distWall := int(math.Sqrt(float64(ndx*ndx + ndy*ndy)))
+						if cur, ok := field[nb]; !ok || distWall < cur {
+							field[nb] = distWall
+						}
+					}
 				}
-			} else {
-				// is wrapped
-				toPos = *toPos.GetWrapped(bottomRight.X, bottomRight.Y)
 			}
+			continue // stop flood at the opaque tile itself
+		}
 
-			// TODO: still need to solve for the lightsource bleeding through the wall when there is a window that is not connected
-			// to the light source
-			// idea: can I just check for a window? I almost need to use a flood fill that ignores windows...
-			// in the end I don't know mind if it bleeds out if it is in the viscinity of the light - but shouldn't show through if I am
-			// not in close to a window with my light source
-
-			// Store integer Euclidean distance for your fade table
-			dist := int(math.Sqrt(float64(dx*dx + dy*dy)))
-
-			// disabled: it appears that raycasting is not used in original game to detmermine if a light is obstructed
-			// but I have kept it here "just in case"
-			// if !pos.IsLineOfSight(toPos, getTileFromPosition) {
-			// 	//continue
-			// }
-
-			if cur, ok := field[toPos]; !ok || dist < cur {
-				field[toPos] = dist // 0..radius
+		// Transparent tile → enqueue 4‑way neighbours *if inside round disc*
+		for _, dir := range [][2]int{{1, 0}, {-1, 0}, {0, 1}, {0, -1}} {
+			nb := references.Position{
+				X: curPos.X + references.Coordinate(dir[0]),
+				Y: curPos.Y + references.Coordinate(dir[1]),
+			}
+			ndx := int(nb.X - source.X)
+			ndy := int(nb.Y - source.Y)
+			if float64(ndx*ndx+ndy*ndy) <= roundR2 {
+				q = append(q, wrapPos(nb))
 			}
 		}
 	}
