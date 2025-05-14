@@ -87,12 +87,12 @@ func (l *Lighting) BuildLightSourceDistanceMap(
 	distanceMaskMap := make(DistanceMaskMap)
 
 	if avatarIgnitedTorch {
-		l.applyLightSource(distanceMaskMap, centerPos, TorchTileDistance, getTileFromPosition)
+		l.applyLightSource(distanceMaskMap, centerPos, TorchTileDistance) //, getTileFromPosition)
 	}
 
 	for _, ls := range lightSources {
 		if visibleFlags[ls.Pos.X][ls.Pos.Y] {
-			l.applyLightSource(distanceMaskMap, ls.Pos, ls.Tile.LightEmission, getTileFromPosition)
+			l.applyLightSource(distanceMaskMap, ls.Pos, ls.Tile.LightEmission) //, getTileFromPosition)
 		}
 	}
 
@@ -104,18 +104,16 @@ func (l *Lighting) applyLightSource(
 	field map[references.Position]int,
 	source references.Position,
 	radius int,
-	getTile references.GetTileFromPosition,
 ) {
 	if radius <= 0 {
 		return
 	}
 
-	roundR2 := math.Pow(float64(radius)+0.5, 2)
-
+	maxDist2 := math.Pow(float64(radius)+0.5, 2) // (r+0.5)² for round outline
 	br := l.gameDimensions.GetBottomRightWithoutOverflow()
 	isWrapped := l.gameDimensions.IsWrappedMap()
 
-	wrapPos := func(p references.Position) references.Position {
+	wrap := func(p references.Position) references.Position {
 		if !isWrapped {
 			return p
 		}
@@ -125,80 +123,25 @@ func (l *Lighting) applyLightSource(
 		return p.X >= 0 && p.Y >= 0 && p.X <= br.X && p.Y <= br.Y
 	}
 
-	// ---------- BFS without Chebyshev counter ----------
-	q := []references.Position{source}
-	seen := make(map[references.Position]struct{}, radius*radius)
-
-	for len(q) > 0 {
-		curPos := q[0]
-		q = q[1:]
-
-		if _, ok := seen[curPos]; ok {
-			continue
-		}
-		seen[curPos] = struct{}{}
-
-		if !isWrapped && !inBounds(curPos) {
-			continue
-		}
-
-		dx := int(curPos.X - source.X)
-		dy := int(curPos.Y - source.Y)
-		if float64(dx*dx+dy*dy) > roundR2 { // outside round disc
-			continue
-		}
-
-		euclid := int(math.Sqrt(float64(dx*dx + dy*dy)))
-		if cur, ok := field[curPos]; !ok || euclid < cur {
-			field[curPos] = euclid // light this tile (opaque or not)
-		}
-
-		w := wrapPos(curPos)
-		tile := getTile(&w)
-
-		// If tile is opaque, light adjacent walls but DO NOT enqueue further
-		if tile.BlocksLight || tile.IsWindow {
-			for ddy := -1; ddy <= 1; ddy++ {
-				for ddx := -1; ddx <= 1; ddx++ {
-					if ddx == 0 && ddy == 0 {
-						continue
-					}
-					nb := references.Position{
-						X: curPos.X + references.Coordinate(ddx),
-						Y: curPos.Y + references.Coordinate(ddy),
-					}
-					nb = wrapPos(nb)
-					if !isWrapped && !inBounds(nb) {
-						continue
-					}
-
-					ndx := int(nb.X - source.X)
-					ndy := int(nb.Y - source.Y)
-					if float64(ndx*ndx+ndy*ndy) > roundR2 {
-						continue
-					}
-
-					if getTile(&nb).IsWall() {
-						distWall := int(math.Sqrt(float64(ndx*ndx + ndy*ndy)))
-						if cur, ok := field[nb]; !ok || distWall < cur {
-							field[nb] = distWall
-						}
-					}
-				}
-			}
-			continue // stop flood at the opaque tile itself
-		}
-
-		// Transparent tile → enqueue 4‑way neighbours *if inside round disc*
-		for _, dir := range [][2]int{{1, 0}, {-1, 0}, {0, 1}, {0, -1}} {
+	for dy := -radius; dy <= radius; dy++ {
+		for dx := -radius; dx <= radius; dx++ {
 			nb := references.Position{
-				X: curPos.X + references.Coordinate(dir[0]),
-				Y: curPos.Y + references.Coordinate(dir[1]),
+				X: source.X + references.Coordinate(dx),
+				Y: source.Y + references.Coordinate(dy),
 			}
-			ndx := int(nb.X - source.X)
-			ndy := int(nb.Y - source.Y)
-			if float64(ndx*ndx+ndy*ndy) <= roundR2 {
-				q = append(q, wrapPos(nb))
+			nb = wrap(nb)
+			if !isWrapped && !inBounds(nb) {
+				continue
+			}
+
+			dist2 := float64(dx*dx + dy*dy)
+			if dist2 > maxDist2 {
+				continue // outside round disc
+			}
+
+			d := int(math.Sqrt(dist2)) // Euclidean distance for fade
+			if cur := field[nb]; cur == 0 || d < cur {
+				field[nb] = d
 			}
 		}
 	}
