@@ -268,9 +268,15 @@ func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
 
 			// put the boat
 			_ = boatType
-
-			d.gameScene.gameState.CurrentNPCAIController.GetNpcs().AddVehicle(references.FrigateVehicle,
+			bAddedVehicle := d.gameScene.gameState.LargeMapNPCAIController[references.OVERWORLD].GetNpcs().AddVehicle(references.FrigateVehicle,
 				d.gameScene.gameState.Position, d.gameScene.gameState.Floor)
+
+			if !bAddedVehicle {
+				d.dumpQuickState("Unable to add vehicle.")
+			}
+
+			// d.gameScene.gameState.CurrentNPCAIController.GetNpcs().AddVehicle(references.FrigateVehicle,
+			// 	d.gameScene.gameState.Position, d.gameScene.gameState.Floor)
 		})
 }
 

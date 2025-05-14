@@ -34,7 +34,7 @@ func NewNPCAIControllerSmallMap(
 	xy := make(XyOccupiedMap)
 	npcsAiCont.positionOccupiedChance = &xy
 
-	npcsAiCont.mapUnits = make(MapUnits, 0, maxNPCS)
+	npcsAiCont.mapUnits = make(MapUnits, 0, MAXIMUM_NPCS_PER_MAP)
 
 	return npcsAiCont
 }

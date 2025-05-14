@@ -8,14 +8,17 @@ import (
 
 type MapUnits []MapUnit
 
-const maxNPCS = 32
+const MAXIMUM_NPCS_PER_MAP = 32
 
 func (n *MapUnits) getNextAvailableNPCIndexNumber() int {
-	for i, mu := range *n {
-		if mu.IsEmptyMapUnit() {
-			return i
-		}
+	if len(*n) < MAXIMUM_NPCS_PER_MAP {
+		return len(*n)
 	}
+	// for i, mu := range *n {
+	// 	if mu.IsEmptyMapUnit() {
+	// 		return i
+	// 	}
+	// }
 	return -1
 }
 
@@ -42,7 +45,12 @@ func (n *MapUnits) AddVehicle(
 	npcRef := references.NewNPCReferenceForVehicle(vehicle, position, floorNumber)
 
 	npc := NewNPCFriendly(*npcRef, index)
-	(*n)[index] = npc
+	npc.SetPos(position)
+	npc.SetFloor(0)
+	npc.SetVisible(true)
+
+	*n = append(*n, npc)
+	//(*n)[index] = npc
 	return true
 }
 

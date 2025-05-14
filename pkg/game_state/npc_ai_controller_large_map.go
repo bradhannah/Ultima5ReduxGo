@@ -31,7 +31,7 @@ func NewNPCAIControllerLargeMap(
 	xy := make(XyOccupiedMap)
 	npcsAiCont.positionOccupiedChance = &xy
 
-	npcsAiCont.mapUnits = make(MapUnits, 0, maxNPCS)
+	npcsAiCont.mapUnits = make(MapUnits, 0, MAXIMUM_NPCS_PER_MAP)
 
 	return npcsAiCont
 }
@@ -47,13 +47,17 @@ func (n *NPCAIControllerLargeMap) placeNPCsOnLayeredMap() {
 	lm := n.gameState.GetLayeredMapByCurrentLocation()
 
 	for _, npc := range n.mapUnits {
-		enemy := getMapUnitAsEnemyOrNil(&npc)
-		if enemy == nil || !enemy.IsVisible() {
+		if !npc.IsVisible() || n.gameState.Floor != npc.Floor() {
 			continue
 		}
-		if n.gameState.Floor == npc.Floor() {
-			//_ = lm
+		enemy := getMapUnitAsEnemyOrNil(&npc)
+		if enemy != nil {
 			lm.SetTileByLayer(MapUnitLayer, npc.PosPtr(), enemy.EnemyReference.KeyFrameTile.Index)
+			continue
+		}
+		friendly := getMapUnitAsFriendlyOrNil(&npc)
+		if friendly != nil {
+			lm.SetTileByLayer(MapUnitLayer, npc.PosPtr(), friendly.NPCReference.GetTileIndex())
 		}
 	}
 }
@@ -80,12 +84,17 @@ func (n *NPCAIControllerLargeMap) AdvanceNextTurnCalcAndMoveNPCs() {
 	}
 	n.FreshenExistingNPCsOnMap()
 
-	if len(n.mapUnits) < maxNPCS && n.ShouldGenerateLargeMapMonster() {
+	if len(n.mapUnits) < MAXIMUM_NPCS_PER_MAP && n.ShouldGenerateLargeMapMonster() {
 		n.generateEraBoundMonster()
 	}
 }
 
 func (n *NPCAIControllerLargeMap) calculateNextNPCPosition(mapUnit MapUnit) {
+	if _, ok := mapUnit.(*NPCEnemy); !ok {
+		// Friendly units do not currently move in the large maps (ie. Frigates)
+		return
+	}
+
 	if mapUnit.PosPtr().IsNextTo(n.gameState.Position) {
 		// if the NPC is next to the player, we don't want to move them
 		return
@@ -96,7 +105,6 @@ func (n *NPCAIControllerLargeMap) calculateNextNPCPosition(mapUnit MapUnit) {
 	}
 
 	n.setBestNextPositionToMoveTowardsWalkablePoint(mapUnit)
-
 }
 
 func (n *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePoint(mapUnit MapUnit) {
@@ -222,5 +230,5 @@ func (o *NPCAIControllerLargeMap) ShouldEnemyMove() bool {
 }
 
 func (o *NPCAIControllerLargeMap) RemoveAllEnemies() {
-	o.mapUnits = make(MapUnits, 0, maxNPCS)
+	o.mapUnits = make(MapUnits, 0, MAXIMUM_NPCS_PER_MAP)
 }
