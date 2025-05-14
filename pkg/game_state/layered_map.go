@@ -74,7 +74,7 @@ func newLayeredMap(xMax references.Coordinate, yMax references.Coordinate, tileR
 	return &layeredMap
 }
 
-func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position, lighting *Lighting, timeOfDay datetime.UltimaDate) {
+func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position, lighting *Lighting, timeOfDay datetime.UltimaDate, bForceBasement bool) {
 	l.topLeft = references.Position{
 		X: avatarPos.X - overflowTiles,
 		Y: avatarPos.Y - overflowTiles,
@@ -187,7 +187,7 @@ func (l *LayeredMap) SetVisible(bVisible bool, pos *references.Position) {
 	l.visibleFlags[pos.X][pos.Y] = bVisible
 }
 
-func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datetime.UltimaDate, lighting *Lighting) bool {
+func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datetime.UltimaDate, lighting *Lighting, bIsBasement bool) bool {
 	// note: some of this may feel like overkill - but it is setting up for an eventual alpha or gradient
 	// based lighting that degrades as it gets further away
 
@@ -198,7 +198,13 @@ func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datet
 
 	// next focus on checking the primary lighting
 	xUp := l.xVisibleTiles/2 + 1
-	nToShow := helpers.RoundUp(float32(xUp) * timeOfDay.GetVisibilityFactorWithoutTorch(0.1))
+	var nToShow int
+	if bIsBasement {
+		nToShow = 1 //helpers.RoundUp(float32(xUp) * timeOfDay.GetVisibilityFactorWithoutTorch(0.1))
+	} else {
+		nToShow = helpers.RoundUp(float32(xUp) * timeOfDay.GetVisibilityFactorWithoutTorch(0.1))
+	}
+
 	// TODO: hey brad - the nToShow is small because of the Avatar - so this won't quite work.
 	// figure out how to distinguish these two - i think the second map that is more "factual" is better
 	bShow := l.primaryDistanceMaskMap[*pos] <= int(nToShow)
@@ -208,19 +214,13 @@ func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datet
 	}
 
 	if _, ok := l.lightSourcesDistanceMap[*pos]; !ok {
-		// if x, ok := l.lightSourcesDistanceMaskMap[*pos]; !ok {
 		return false
 	} else {
 		bShow = true // <= int(2)
 		//_ = x
 	}
 
-	// TODO NOW - get the actual radius for torches, not entire screen
-	// if lighting.HasTorchLit() && !bShow {
-	// 	return true
-	// }
 	return bShow
-
 }
 
 func (l *LayeredMap) GetTopTile(position *references.Position) *references.Tile {

@@ -72,7 +72,7 @@ func (l Location) GetMapType() GeneralMapType {
 func GetListOfAllSmallMaps() []string {
 	names := make([]string, 0)
 
-	for loc := Moonglow; loc < Serpents_Hold; loc++ {
+	for loc := Moonglow; loc <= Serpents_Hold; loc++ {
 		names = append(names, loc.String())
 	}
 	return names
