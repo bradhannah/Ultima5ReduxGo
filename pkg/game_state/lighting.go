@@ -157,7 +157,7 @@ func (l *Lighting) applyLightSource(
 		tile := getTile(&w)
 
 		// If tile is opaque, light adjacent walls but DO NOT enqueue further
-		if tile.BlocksLight {
+		if tile.BlocksLight || tile.IsWindow {
 			for ddy := -1; ddy <= 1; ddy++ {
 				for ddx := -1; ddx <= 1; ddx++ {
 					if ddx == 0 && ddy == 0 {

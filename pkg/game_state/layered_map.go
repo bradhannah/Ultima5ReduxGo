@@ -151,8 +151,14 @@ func (l *LayeredMap) floodFillIfInside(pos *references.Position, bForce bool) {
 	l.testForVisibilityMap[pos.X][pos.Y] = false
 
 	tile := l.GetTileTopMapOnlyTile(pos)
-	if tile != nil && tile.BlocksLight && !tile.IsWindow {
-		return
+
+	// basically - if they are next to a window, then they can see through - otherwise we treat
+	// the window as opaque and nothing passes through
+	if tile != nil {
+		if tile.IsWindow && bForce {
+		} else if tile.BlocksLight || tile.IsWindow {
+			return
+		}
 	}
 
 	l.setTilesAroundPositionVisible(pos)
