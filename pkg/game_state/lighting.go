@@ -16,7 +16,7 @@ type Lighting struct {
 	baselineRadius         int
 }
 
-type DistanceMaskMap map[references.Position]int
+type DistanceMap map[references.Position]int
 
 func NewLighting(gameDimensions GameDimensions) Lighting {
 	l := Lighting{}
@@ -42,57 +42,26 @@ func (l *Lighting) AdvanceTurn() {
 	l.turnsToExtinguishTorch = helpers.Max(l.turnsToExtinguishTorch-1, 0)
 }
 
-func (l *Lighting) BuildDistanceMap(
-	centre references.Position,
-	factor float32,
-) DistanceMaskMap {
-
-	// 1.  Convert factor → integer radius.
-	radius := l.radiusForFactor(factor)
-
-	//    Inclusive threshold: (r + 0.5)²   (makes the outline nicely round)
-	rThresh := float64(radius) + 0.5
-	r2 := rThresh * rThresh
-
-	// 2.  Pre‑allocate close to the number of cells in the bounding square.
-	est := (radius*2 + 1) * (radius*2 + 1)
-	m := make(DistanceMaskMap, est)
-
-	// 3.  Walk the bounding square; keep points inside the disc.
-	for dy := -radius; dy <= radius; dy++ {
-		for dx := -radius; dx <= radius; dx++ {
-
-			if float64(dx*dx+dy*dy) > r2 { // outside round disc → skip
-				continue
-			}
-
-			world := references.Position{
-				X: centre.X + references.Coordinate(dx),
-				Y: centre.Y + references.Coordinate(dy),
-			}
-
-			dist := int(math.Sqrt(float64(dx*dx + dy*dy))) // 0‥radius
-			m[world] = dist
-		}
-	}
-	return m
+func (l *Lighting) BuildGameScreenDistanceMap(centrePos references.Position) DistanceMap {
+	dmm := make(DistanceMap, 0)
+	l.applyLightSource(dmm, centrePos, 0, 1)
+	return dmm
 }
 
 func (l *Lighting) BuildLightSourceDistanceMap(
 	lightSources LightSources,
 	visibleFlags VisibilityCoords,
 	avatarIgnitedTorch bool,
-	centerPos references.Position,
-	getTileFromPosition references.GetTileFromPosition) DistanceMaskMap {
-	distanceMaskMap := make(DistanceMaskMap)
+	centerPos references.Position) DistanceMap {
+	distanceMaskMap := make(DistanceMap)
 
 	if avatarIgnitedTorch {
-		l.applyLightSource(distanceMaskMap, centerPos, TorchTileDistance) //, getTileFromPosition)
+		l.applyLightSource(distanceMaskMap, centerPos, TorchTileDistance, 1)
 	}
 
 	for _, ls := range lightSources {
 		if visibleFlags[ls.Pos.X][ls.Pos.Y] {
-			l.applyLightSource(distanceMaskMap, ls.Pos, ls.Tile.LightEmission) //, getTileFromPosition)
+			l.applyLightSource(distanceMaskMap, ls.Pos, ls.Tile.LightEmission, 1)
 		}
 	}
 
@@ -101,47 +70,44 @@ func (l *Lighting) BuildLightSourceDistanceMap(
 }
 
 func (l *Lighting) applyLightSource(
-	field map[references.Position]int,
-	source references.Position,
-	radius int,
+	distanceMap DistanceMap,
+	centrePos references.Position,
+	nRadius int, // 0 means “use factor”
+	fFactor float32, // ignored when radius > 0
 ) {
-	if radius <= 0 {
-		return
+	// Decide radius
+	if nRadius <= 0 {
+		nRadius = l.radiusForFactor(fFactor)
+	}
+	if nRadius <= 0 {
+		return // nothing to do
 	}
 
-	maxDist2 := math.Pow(float64(radius)+0.5, 2) // (r+0.5)² for round outline
+	// (r + 0.5)² → keeps outline round
+	maxDist2 := math.Pow(float64(nRadius)+0.5, 2)
+
 	br := l.gameDimensions.GetBottomRightWithoutOverflow()
 	isWrapped := l.gameDimensions.IsWrappedMap()
 
-	wrap := func(p references.Position) references.Position {
-		if !isWrapped {
-			return p
-		}
-		return *p.GetWrapped(br.X, br.Y)
-	}
-	inBounds := func(p references.Position) bool {
-		return p.X >= 0 && p.Y >= 0 && p.X <= br.X && p.Y <= br.Y
-	}
-
-	for dy := -radius; dy <= radius; dy++ {
-		for dx := -radius; dx <= radius; dx++ {
-			nb := references.Position{
-				X: source.X + references.Coordinate(dx),
-				Y: source.Y + references.Coordinate(dy),
-			}
-			nb = wrap(nb)
-			if !isWrapped && !inBounds(nb) {
+	for dy := -nRadius; dy <= nRadius; dy++ {
+		yy := dy * dy
+		for dx := -nRadius; dx <= nRadius; dx++ {
+			dist2 := float64(dx*dx + yy)
+			if dist2 > maxDist2 { // outside disc
 				continue
 			}
 
-			dist2 := float64(dx*dx + dy*dy)
-			if dist2 > maxDist2 {
-				continue // outside round disc
+			p := references.Position{
+				X: centrePos.X + references.Coordinate(dx),
+				Y: centrePos.Y + references.Coordinate(dy),
+			}
+			if isWrapped {
+				p = *p.GetWrapped(br.X, br.Y)
 			}
 
-			d := int(math.Sqrt(dist2)) // Euclidean distance for fade
-			if cur := field[nb]; cur == 0 || d < cur {
-				field[nb] = d
+			d := int(math.Sqrt(dist2)) // Euclidean distance 0‥radius
+			if cur := distanceMap[p]; cur == 0 || d < cur {
+				distanceMap[p] = d
 			}
 		}
 	}

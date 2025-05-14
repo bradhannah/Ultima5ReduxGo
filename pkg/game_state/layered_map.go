@@ -36,10 +36,10 @@ type GameDimensions interface {
 type LayeredMap struct {
 	layers [totalLayers]Layer
 
-	visibleFlags                VisibilityCoords
-	testForVisibilityMap        VisibilityCoords
-	primaryDistanceMaskMap      DistanceMaskMap
-	lightSourcesDistanceMaskMap DistanceMaskMap
+	visibleFlags            VisibilityCoords
+	testForVisibilityMap    VisibilityCoords
+	primaryDistanceMaskMap  DistanceMap
+	lightSourcesDistanceMap DistanceMap
 	// lighting *Lighting
 
 	tileRefs *references.Tiles
@@ -99,14 +99,15 @@ func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position, ligh
 	l.floodFillIfInside(avatarPos.GetPositionDown(), true)
 	l.floodFillIfInside(avatarPos.GetPositionUp(), true)
 
-	// build lighting mask
-	l.primaryDistanceMaskMap = lighting.BuildDistanceMap(avatarPos, 1)
+	// get full game screen lighting map
+	l.primaryDistanceMaskMap = lighting.BuildGameScreenDistanceMap(avatarPos)
+
+	// get lighting sources and overlay them of light map
 	lightSources := l.getAllLightSourcesInRange(avatarPos)
-	l.lightSourcesDistanceMaskMap = lighting.BuildLightSourceDistanceMap(lightSources,
+	l.lightSourcesDistanceMap = lighting.BuildLightSourceDistanceMap(lightSources,
 		l.visibleFlags,
 		lighting.turnsToExtinguishTorch > 0,
 		avatarPos,
-		l.GetTileTopMapOnlyTile,
 	)
 }
 
@@ -206,7 +207,7 @@ func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datet
 		return true
 	}
 
-	if _, ok := l.lightSourcesDistanceMaskMap[*pos]; !ok {
+	if _, ok := l.lightSourcesDistanceMap[*pos]; !ok {
 		// if x, ok := l.lightSourcesDistanceMaskMap[*pos]; !ok {
 		return false
 	} else {
