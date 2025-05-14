@@ -35,3 +35,19 @@ func (g *GameScene) actionBoard() references.PartyVehicle {
 
 	return vehicle
 }
+
+func (g *GameScene) actionExit() {
+	vr := g.gameState.ExitVehicle()
+
+	if vr.ExittedVehicle == references.NoPartyVehicle {
+		g.output.AddRowStr("X-it what?")
+		return
+	}
+	switch vr.ExittedVehicle {
+	case references.CarpetVehicle:
+	case references.FrigateVehicle:
+	case references.SkiffVehicle:
+	case references.HorseVehicle:
+		g.output.AddRowStr("Boop?")
+	}
+}

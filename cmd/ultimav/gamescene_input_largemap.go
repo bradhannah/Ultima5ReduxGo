@@ -9,6 +9,13 @@ import (
 )
 
 func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
+	// if ebiten.IsKeyPressed(ebiten.KeyControl) {
+	// 	if ebiten.IsKeyPressed(ebiten.KeyX) {
+
+	// 		return
+	// 	}
+	// }
+
 	switch key {
 	case ebiten.KeyEscape:
 		g.DoEscapeMenu()
@@ -38,7 +45,7 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyG:
 		g.addRowStr("Get what?")
 	case ebiten.KeyX:
-		g.addRowStr("X-it what?")
+		g.actionExit()
 	case ebiten.KeyP:
 		g.addRowStr("Push what?")
 	case ebiten.KeyL:

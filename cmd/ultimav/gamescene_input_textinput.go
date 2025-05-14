@@ -23,7 +23,7 @@ func (g *GameScene) createTextCommandExitBuilding() *grammar.TextCommand {
 			outputStr := strings.ToLower(ib.GetText())
 
 			if outputStr == "yes" {
-				g.gameState.ExitSmallMap()
+				g.gameState.DebugQuickExitSmallMap()
 				g.dialogStack.PopModalDialog()
 
 			} else if outputStr == "no" {

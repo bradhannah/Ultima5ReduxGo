@@ -12,6 +12,13 @@ import (
 )
 
 func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
+	if ebiten.IsKeyPressed(ebiten.KeyControl) {
+		if ebiten.IsKeyPressed(ebiten.KeyX) {
+			g.gameState.DebugQuickExitSmallMap()
+			return
+		}
+	}
+
 	switch key {
 	case ebiten.KeyEscape:
 		g.DoEscapeMenu()
@@ -40,7 +47,7 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		g.addRowStr("Look-")
 		g.secondaryKeyState = LookDirectionInput
 	case ebiten.KeyX:
-		g.gameState.ExitSmallMap()
+		g.actionExit()
 	case ebiten.KeyG:
 		// get the thing - direction
 		g.addRowStr("Get-")
