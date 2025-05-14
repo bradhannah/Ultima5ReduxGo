@@ -10,8 +10,12 @@ func (g *GameScene) actionBoard() references.PartyVehicle {
 
 	vehicle := references.GetVehicleFromSpriteIndex(getThingTile.Index)
 
-	if g.gameState.BoardVehicle(vehicle) {
+	if vehicle == references.NoPartyVehicle {
 		g.output.AddRowStr("Board what?")
+		return references.NoPartyVehicle
+	}
+
+	if !g.gameState.BoardVehicle(vehicle) {
 		return references.NoPartyVehicle
 	}
 
