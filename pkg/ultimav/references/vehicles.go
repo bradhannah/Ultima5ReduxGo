@@ -1,9 +1,16 @@
 package references
 
-import "github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+import (
+	"fmt"
+	"log"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+)
+
+type VehicleType int
 
 const (
-	NoPartyVehicle PartyVehicle = iota
+	NoPartyVehicle VehicleType = iota
 	CarpetVehicle
 	HorseVehicle
 	SkiffVehicle
@@ -11,9 +18,11 @@ const (
 	NPC
 )
 
-func (v PartyVehicle) GetSpriteByDirection(previousDirection Direction, direction Direction) indexes.SpriteIndex {
+func (v VehicleType) GetSpriteByDirection(previousDirection Direction, direction Direction) indexes.SpriteIndex {
 	switch v {
 	case CarpetVehicle:
+		// note previousDirection exists only for horses and carpet because they do not have vertical
+		// tiles, so we keep the previous left/right direction
 		if direction == Left || (previousDirection == Left && (direction == Up || direction == Down)) {
 			return indexes.AvatarRidingCarpetLeft
 		}
@@ -54,7 +63,7 @@ func (v PartyVehicle) GetSpriteByDirection(previousDirection Direction, directio
 	}
 }
 
-func (v PartyVehicle) RequiresNewSprite(currentDirection Direction, newDirection Direction) bool {
+func (v VehicleType) RequiresNewSprite(currentDirection Direction, newDirection Direction) bool {
 	switch v {
 	case CarpetVehicle, HorseVehicle:
 		if currentDirection == Up || currentDirection == Down || currentDirection == newDirection {
@@ -71,7 +80,7 @@ func (v PartyVehicle) RequiresNewSprite(currentDirection Direction, newDirection
 	panic("Unexpected: must have valid vehicle")
 }
 
-func (v PartyVehicle) GetMovementPrefix() string {
+func (v VehicleType) GetMovementPrefix() string {
 	switch v {
 	case CarpetVehicle:
 		return "Fly "
@@ -88,8 +97,40 @@ func (v PartyVehicle) GetMovementPrefix() string {
 	}
 }
 
-func GetVehicleFromSpriteIndex(spriteIndex indexes.SpriteIndex) PartyVehicle {
-	switch spriteIndex {
+func (v VehicleType) GetLowerCaseName() string {
+	switch v {
+	case NoPartyVehicle:
+		return "none"
+	case FrigateVehicle:
+		return "frigate"
+	case CarpetVehicle:
+		return "carpet"
+	case SkiffVehicle:
+		return "skiff"
+	case HorseVehicle:
+		return "horse"
+	default:
+		log.Fatalf("Bad vehicle type %d", v)
+	}
+	return ""
+}
+
+func (v VehicleType) GetExitString() string {
+	if v == NoPartyVehicle {
+		return ("X-it what?")
+	}
+	return fmt.Sprintf("Xit- %s!", v.GetLowerCaseName())
+}
+
+func (v VehicleType) GetBoardString() string {
+	if v == NoPartyVehicle {
+		return ("X-it what?")
+	}
+	return fmt.Sprintf("Board %s!", v.GetLowerCaseName())
+}
+
+func GetVehicleFromSpriteIndex(s indexes.SpriteIndex) VehicleType {
+	switch s {
 	case indexes.Carpet2_MagicCarpet:
 		return CarpetVehicle
 	case indexes.HorseRight, indexes.HorseLeft:

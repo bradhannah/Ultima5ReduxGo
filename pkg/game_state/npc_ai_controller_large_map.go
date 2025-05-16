@@ -46,18 +46,17 @@ func (n *NPCAIControllerLargeMap) PopulateMapFirstLoad() {
 func (n *NPCAIControllerLargeMap) placeNPCsOnLayeredMap() {
 	lm := n.gameState.GetLayeredMapByCurrentLocation()
 
-	for _, npc := range n.mapUnits {
-		if !npc.IsVisible() || n.gameState.Floor != npc.Floor() {
+	for _, mu := range n.mapUnits {
+		if !mu.IsVisible() || n.gameState.Floor != mu.Floor() {
 			continue
 		}
-		enemy := getMapUnitAsEnemyOrNil(&npc)
-		if enemy != nil {
-			lm.SetTileByLayer(MapUnitLayer, npc.PosPtr(), enemy.EnemyReference.KeyFrameTile.Index)
-			continue
-		}
-		friendly := getMapUnitAsFriendlyOrNil(&npc)
-		if friendly != nil {
-			lm.SetTileByLayer(MapUnitLayer, npc.PosPtr(), friendly.NPCReference.GetTileIndex())
+		switch npc := mu.(type) {
+		case *NPCEnemy:
+			lm.SetTileByLayer(MapUnitLayer, npc.PosPtr(), npc.EnemyReference.KeyFrameTile.Index)
+		case *NPCFriendly:
+			lm.SetTileByLayer(MapUnitLayer, npc.PosPtr(), npc.NPCReference.GetTileIndex())
+		case *NPCVehicle:
+			lm.SetTileByLayer(MapUnitLayer, npc.PosPtr(), npc.GetSprite())
 		}
 	}
 }

@@ -72,15 +72,19 @@ func (n *NPCAIControllerSmallMap) AdvanceNextTurnCalcAndMoveNPCs() {
 	n.positionOccupiedChance = n.mapUnits.createFreshXyOccupiedMap()
 
 	for _, mu := range n.mapUnits {
-		friendly := getMapUnitAsFriendlyOrNil(&mu)
-		if friendly == nil {
-			continue
-		}
+		// friendly := getMapUnitAsFriendlyOrNil(&mu)
+		// if friendly == nil {
+		// 	continue
+		// }
 
 		// very lazy approach - but making sure every NPC is in correct spot on map
 		// for every iteration makes sure next NPC doesn't assign the same tile space
 		n.FreshenExistingNPCsOnMap()
-		n.calculateNextNPCPosition(friendly)
+		// n.calculateNextNPCPosition(friendly)
+		switch npc := mu.(type) {
+		case *NPCFriendly:
+			n.calculateNextNPCPosition(npc)
+		}
 	}
 	n.FreshenExistingNPCsOnMap()
 }
@@ -102,28 +106,34 @@ func (n *NPCAIControllerSmallMap) generateNPCs() {
 }
 
 func (n *NPCAIControllerSmallMap) updateAllNPCAiTypes() {
-	for _, npc := range n.mapUnits {
-		friendly := getMapUnitAsFriendlyOrNil(&npc)
-		if friendly == nil {
-			continue
+	for _, mu := range n.mapUnits {
+		var indiv references.IndividualNPCBehaviour
+		switch npc := mu.(type) {
+		case *NPCFriendly:
+			indiv = npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+
 		}
 
-		indiv := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
-
-		friendly.mapUnitDetails.AiType = indiv.Ai
+		mu.MapUnitDetails().AiType = indiv.Ai
 	}
 }
 
 func (n *NPCAIControllerSmallMap) placeNPCsOnLayeredMap() {
 	lm := n.gameState.GetLayeredMapByCurrentLocation()
 
-	for _, npc := range n.mapUnits {
-		friendly := getMapUnitAsFriendlyOrNil(&npc)
-		if friendly == nil || !friendly.IsVisible() {
-			continue
-		}
-		if n.gameState.Floor == npc.Floor() {
-			lm.SetTileByLayer(MapUnitLayer, npc.PosPtr(), friendly.NPCReference.GetTileIndex())
+	for _, mu := range n.mapUnits {
+		switch npc := mu.(type) {
+		case *NPCFriendly:
+			// friendly := getMapUnitAsFriendlyOrNil(&mu)
+			// if friendly == nil || !friendly.IsVisible() {
+			// 	continue
+			// }
+			if !npc.IsVisible() {
+				continue
+			}
+			if n.gameState.Floor == mu.Floor() {
+				lm.SetTileByLayer(MapUnitLayer, mu.PosPtr(), npc.NPCReference.GetTileIndex())
+			}
 		}
 	}
 }

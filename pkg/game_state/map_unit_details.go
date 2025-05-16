@@ -11,6 +11,7 @@ type MapUnitType int
 const (
 	NonPlayerCharacter MapUnitType = iota
 	Enemy
+	Vehicle
 )
 
 type MapUnit interface {

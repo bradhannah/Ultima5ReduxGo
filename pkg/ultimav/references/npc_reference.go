@@ -39,7 +39,7 @@ func (n *NPCReference) SetKeyIndex(index indexes.SpriteIndex) {
 	n.Type = NPCType(index - 0x100)
 }
 
-func NewNPCReferenceForVehicle(vehicle PartyVehicle, position Position, floorNumber FloorNumber) *NPCReference {
+func NewNPCReferenceForVehicle(vehicle VehicleType, position Position, floorNumber FloorNumber) *NPCReference {
 	npcRef := &NPCReference{}
 	npcRef.Position = position
 	npcRef.Type = Vehicle

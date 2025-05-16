@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
@@ -268,8 +269,14 @@ func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
 
 			// put the boat
 			_ = boatType
-			bAddedVehicle := d.gameScene.gameState.LargeMapNPCAIController[references.OVERWORLD].GetNpcs().AddVehicle(references.FrigateVehicle,
-				d.gameScene.gameState.Position, d.gameScene.gameState.Floor)
+			var boat game_state.NPCVehicle
+			if strings.ToLower(boatType) == "frigate" {
+				boat = game_state.NewNPCVehicle(references.FrigateVehicle, d.gameScene.gameState.Position, d.gameScene.gameState.Floor)
+			} else {
+				boat = game_state.NewNPCVehicle(references.SkiffVehicle, d.gameScene.gameState.Position, d.gameScene.gameState.Floor)
+			}
+
+			bAddedVehicle := d.gameScene.gameState.LargeMapNPCAIController[references.OVERWORLD].GetNpcs().AddVehicle(boat)
 
 			if !bAddedVehicle {
 				d.dumpQuickState("Unable to add vehicle.")

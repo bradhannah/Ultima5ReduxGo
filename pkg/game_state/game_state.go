@@ -43,9 +43,7 @@ type GameState struct {
 	CurrentNPCAIController  NPCAIController
 	LargeMapNPCAIController map[references.World]*NPCAIControllerLargeMap
 
-	PartyVehicle                  references.PartyVehicle
-	PartyVehicleDirection         references.Direction
-	PreviousPartyVehicleDirection references.Direction
+	PartyVehicle NPCVehicle
 
 	LastLargeMapPosition references.Position
 	LastLargeMapFloor    references.FloorNumber
@@ -137,7 +135,7 @@ func (g *GameState) IsPassable(pos *references.Position) bool {
 		return false
 	}
 
-	return topTile.IsPassable(g.PartyVehicle)
+	return topTile.IsPassable(g.PartyVehicle.VehicleType)
 }
 
 func (g *GameState) IsNPCPassable(pos *references.Position) bool {
@@ -163,30 +161,14 @@ func (g *GameState) GetDrawBridgeWaterByTime(origIndex indexes.SpriteIndex) inde
 	}
 	return origIndex
 }
-func (g *GameState) DoesMoveResultInMovement(direction references.Direction) bool {
-	if g.PartyVehicle != references.FrigateVehicle {
-		return true
-	}
-	if g.PartyVehicleDirection == direction {
-		return true
-	}
-	return false
-}
 
-func (g *GameState) SetPartyVehicleDirection(direction references.Direction) {
-	switch g.PartyVehicle {
-	case references.HorseVehicle, references.CarpetVehicle:
-		if direction == references.Up || direction == references.Down {
-			return
-		}
-	case references.FrigateVehicle, references.SkiffVehicle, references.NoPartyVehicle:
-	}
-	g.PreviousPartyVehicleDirection = g.PartyVehicleDirection
-	g.PartyVehicleDirection = direction
-}
-
-func (g *GameState) BoardVehicle(vehicle references.PartyVehicle) bool {
+func (g *GameState) BoardVehicle(vehicle NPCVehicle) bool {
 	g.PartyVehicle = vehicle
+
+	if !g.CurrentNPCAIController.GetNpcs().RemoveNPCAtPosition(g.Position) {
+		log.Fatalf("Unexpected - tried to remove NPC at position X=%d,Y=%d but failed", g.Position.X, g.Position.Y)
+	}
+
 	return true
 }
 

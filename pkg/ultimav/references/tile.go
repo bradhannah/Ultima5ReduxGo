@@ -4,8 +4,6 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 )
 
-type PartyVehicle int
-
 const (
 	WeightImpassable = -1
 	WeightIdealPath  = 1
@@ -49,7 +47,7 @@ type Tile struct {
 	CombatMapIndex            string `json:"CombatMapIndex"`
 }
 
-func (t *Tile) IsPassable(vehicle PartyVehicle) bool {
+func (t *Tile) IsPassable(vehicle VehicleType) bool {
 	switch vehicle {
 	case CarpetVehicle:
 		return t.IsCarpetPassable

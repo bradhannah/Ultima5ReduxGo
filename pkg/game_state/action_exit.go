@@ -11,21 +11,28 @@ func (g *GameState) DebugQuickExitSmallMap() {
 }
 
 type VehicleExitResults struct {
-	ExittedVehicle   references.PartyVehicle
-	ResultingVehicle references.PartyVehicle
+	ExittedVehicle   *NPCVehicle
+	ResultingVehicle *NPCVehicle
 }
 
 func (g *GameState) ExitVehicle() VehicleExitResults {
-	if g.PartyVehicle == references.NoPartyVehicle {
+	if g.PartyVehicle.VehicleType == references.NoPartyVehicle {
 		return VehicleExitResults{
-			ExittedVehicle:   references.NoPartyVehicle,
-			ResultingVehicle: references.NoPartyVehicle,
+			ExittedVehicle:   nil,
+			ResultingVehicle: nil,
 		}
 	}
-	exittedVehicle := g.PartyVehicle
-	g.PartyVehicle = references.NoPartyVehicle
+
+	if g.PartyVehicle.VehicleType == references.FrigateVehicle {
+		// check for skiffs
+	}
+
+	if references.VehicleType(g.PartyVehicle.SkiffQuantity) == references.NoPartyVehicle {
+	}
+	// exittedVehicle := g.PartyVehicle
+	// g.PartyVehicle = references.NoPartyVehicle
 	return VehicleExitResults{
-		ExittedVehicle:   exittedVehicle,
-		ResultingVehicle: references.NoPartyVehicle,
+		ExittedVehicle:   nil,
+		ResultingVehicle: nil,
 	}
 }
