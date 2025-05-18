@@ -63,8 +63,9 @@ func (n *NPCSchedule) GetPreviousIndividualNPCBehaviourByUltimaDate(ud datetime.
 
 func (n *NPCSchedule) GetIndividualNPCBehaviourByUltimaDate(ud datetime.UltimaDate) IndividualNPCBehaviour {
 	index := n.getScheduleIndex(ud)
+	ai := AiType(n.Ai[index])
 	return IndividualNPCBehaviour{
-		Ai:       AiType(n.Ai[index]),
+		Ai:       ai,
 		Position: Position{X: Coordinate(n.X[index]), Y: Coordinate(n.Y[index])},
 		Floor:    FloorNumber(n.Floor[index]),
 	}
@@ -159,4 +160,10 @@ func (n *NPCSchedule) getLatestTimeIndex() int {
 	}
 
 	return nLargestIndex
+}
+
+func (n *NPCSchedule) OverrideAllAI(ai AiType) {
+	for i := 0; i < len(n.Ai); i++ {
+		n.Ai[i] = byte(ai)
+	}
 }

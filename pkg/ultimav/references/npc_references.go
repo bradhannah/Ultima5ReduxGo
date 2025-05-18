@@ -50,10 +50,15 @@ func getNPCsFromFile(path string, locationOffset int) ([]NPCReference, error) {
 		for npcIndex := 0; npcIndex < npcsPerTown; npcIndex++ {
 			npc := NPCReference{}
 			npc.Location = Location(locationOffset + townIndex + 1)
-
 			npc.Schedule = CreateNPCSchedule(townRawData[npcIndex*sizeOfNPCSchedule : (npcIndex*sizeOfNPCSchedule)+sizeOfNPCSchedule])
-			npc.Type = NPCType(townRawData[startingNpcTypeOffset+npcIndex])
+			npc.npcType = NPCType(townRawData[startingNpcTypeOffset+npcIndex])
 			npc.DialogNumber = townRawData[startingNpcDialogNumberOffset+npcIndex]
+
+			sprite := npc.GetSpriteIndex()
+			if sprite.IsHorseUnBoarded() || sprite == 274 || sprite == 275 {
+				npc.Schedule.OverrideAllAI(HorseWander)
+			}
+
 			npcs = append(npcs, npc)
 		}
 	}

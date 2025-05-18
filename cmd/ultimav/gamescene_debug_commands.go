@@ -269,12 +269,17 @@ func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
 
 			// put the boat
 			_ = boatType
-			var boat game_state.NPCVehicle
+			var boat game_state.NPCFriendly
 			if strings.ToLower(boatType) == "frigate" {
-				boat = game_state.NewNPCVehicle(references.FrigateVehicle, d.gameScene.gameState.Position, d.gameScene.gameState.Floor)
+				// TODO: do not accept an NPCReference - instead create one based on the vehicle type since they dumb
+				//boat = *game_state.NewNPCFriendlyVehicle(references.FrigateVehicle, *references.NewNPCReferenceForVehicle())
+				////boat = game_state.NewNPCVehicle(references.FrigateVehicle, d.gameScene.gameState.Position, d.gameScene.gameState.Floor)
 			} else {
-				boat = game_state.NewNPCVehicle(references.SkiffVehicle, d.gameScene.gameState.Position, d.gameScene.gameState.Floor)
+				//boat = *game_state.NewNPCFriendlyVehicle(references.SkiffVehicle)
+				//// boat = game_state.NewNPCVehicle(references.SkiffVehicle, d.gameScene.gameState.Position, d.gameScene.gameState.Floor)
 			}
+			boat.SetPos(d.gameScene.gameState.Position)
+			boat.SetFloor(d.gameScene.gameState.Floor)
 
 			bAddedVehicle := d.gameScene.gameState.LargeMapNPCAIController[references.OVERWORLD].GetNpcs().AddVehicle(boat)
 

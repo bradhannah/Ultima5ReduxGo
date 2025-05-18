@@ -11,8 +11,9 @@ func (g *GameScene) actionBoard() {
 	if vehicle == nil {
 		g.output.AddRowStr("Board what?")
 		return
-		//return game_state.NPCVehicle{VehicleType: references.NoPartyVehicle}
 	}
+
+	// if frigate under, in skiff, add to skiff, board ship, delete skiff
 
 	if !g.gameState.CurrentNPCAIController.GetNpcs().RemoveNPCAtPosition(g.gameState.Position) {
 		log.Fatalf("Unexpected - tried to remove NPC at position X=%d,Y=%d but failed", g.gameState.Position.X, g.gameState.Position.Y)
@@ -23,48 +24,24 @@ func (g *GameScene) actionBoard() {
 
 	if !g.gameState.BoardVehicle(*vehicle) {
 		return
-		//return game_state.NPCVehicle{VehicleType: references.NoPartyVehicle}
 	}
 
-	g.output.AddRowStr(vehicle.VehicleType.GetBoardString())
+	g.output.AddRowStr(vehicle.GetVehicleDetails().VehicleType.GetBoardString())
 
 	// we are boarded...
 	return
 	//return vehicle
 }
 
-// func (g *GameScene) actionBoard() game_state.NPCVehicle {
-// 	getThingTile := g.gameState.GetLayeredMapByCurrentLocation().GetTileByLayer(game_state.MapUnitLayer, &g.gameState.Position)
-
-// 	vehicle := references.GetVehicleFromSpriteIndex(getThingTile.Index)
-
-// 	if vehicle == references.NoPartyVehicle {
-// 		g.output.AddRowStr("Board what?")
-// 		return game_state.NPCVehicle{VehicleType: references.NoPartyVehicle}
-// 	}
-
-// 	if !g.gameState.BoardVehicle(vehicle) {
-// 		return game_state.NPCVehicle{VehicleType: references.NoPartyVehicle}
-// 	}
-
-// 	if !g.gameState.CurrentNPCAIController.GetNpcs().RemoveNPCAtPosition(g.gameState.Position) {
-// 		log.Fatalf("Unexpected - tried to remove NPC at position X=%d,Y=%d but failed", g.gameState.Position.X, g.gameState.Position.Y)
-// 	}
-
-// 	g.output.AddRowStr(vehicle.GetBoardString())
-
-// 	return vehicle
-// }
-
 func (g *GameScene) actionExit() {
 	vr := g.gameState.ExitVehicle()
 
-	if vr.ExittedVehicle.VehicleType == references.NoPartyVehicle {
+	if vr.ExittedVehicle == nil || vr.ExittedVehicle.GetVehicleDetails().VehicleType == references.NoPartyVehicle {
 		g.output.AddRowStr("X-it what?")
 		return
 	}
 	g.output.AddRowStr("X-it-")
-	switch vr.ExittedVehicle.VehicleType {
+	switch vr.ExittedVehicle.GetVehicleDetails().VehicleType {
 	case references.FrigateVehicle:
 		g.output.AppendToCurrentRowStr("frigate!")
 	case references.CarpetVehicle:

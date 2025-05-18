@@ -38,21 +38,23 @@ func (m *MapUnits) GetMapUnitAtPositionOrNil(pos references.Position) *MapUnit {
 	return nil
 }
 
-func (m *MapUnits) GetVehicleAtPositionOrNil(pos references.Position) *NPCVehicle {
+func (m *MapUnits) GetVehicleAtPositionOrNil(pos references.Position) *NPCFriendly {
 	mu := m.GetMapUnitAtPositionOrNil(pos)
 
 	if mu == nil {
 		return nil
 	}
 
-	if vehicle, ok := (*mu).(*NPCVehicle); ok {
-		return vehicle
+	if friendly, ok := (*mu).(*NPCFriendly); ok {
+		if friendly.NPCReference.GetNPCType() == references.Vehicle {
+			return friendly
+		}
 
 	}
 	return nil
 }
 
-func (n *MapUnits) AddVehicle(vehicle NPCVehicle) bool {
+func (n *MapUnits) AddVehicle(vehicle NPCFriendly) bool {
 
 	index := n.getNextAvailableNPCIndexNumber()
 	if index == -1 {
@@ -60,6 +62,7 @@ func (n *MapUnits) AddVehicle(vehicle NPCVehicle) bool {
 	}
 
 	vehicle.mapUnitDetails.NPCNum = index
+	vehicle.SetPos(references.Position{X: references.Coordinate(vehicle.NPCReference.Schedule.X[0]), Y: references.Coordinate(vehicle.NPCReference.Schedule.Y[0])})
 
 	// npcRef := references.NewNPCReferenceForVehicle(vehicle, position, floorNumber)
 
@@ -97,35 +100,3 @@ func As[T interface{ IsEmptyMapUnit() bool }](mu MapUnit) (T, bool) {
 	var zero T
 	return zero, false
 }
-
-// func getMapUnitAsFriendlyOrNil(mu MapUnit) *NPCFriendly {
-// 	if (*mu).IsEmptyMapUnit() {
-// 		return nil
-// 	}
-// 	switch mapUnit := (*mu).(type) {
-// 	case *NPCFriendly:
-// 		return mapUnit
-// 	case *NPCVehicle:
-// 	case *NPCEnemy:
-// 		return nil
-// 	default:
-// 		log.Fatal("Unknown Map Unit Type")
-// 	}
-// 	return nil
-// }
-
-// func getMapUnitAsEnemyOrNil(mu MapUnit) *NPCEnemy {
-// 	if (*mu).IsEmptyMapUnit() {
-// 		return nil
-// 	}
-// 	switch mapUnit := (*mu).(type) {
-// 	case *NPCVehicle:
-// 	case *NPCFriendly:
-// 		return nil
-// 	case *NPCEnemy:
-// 		return mapUnit
-// 	default:
-// 		log.Fatal("Unknown Map Unit Type")
-// 	}
-// 	return nil
-// }

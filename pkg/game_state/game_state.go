@@ -43,7 +43,7 @@ type GameState struct {
 	CurrentNPCAIController  NPCAIController
 	LargeMapNPCAIController map[references.World]*NPCAIControllerLargeMap
 
-	PartyVehicle NPCVehicle
+	PartyVehicle NPCFriendly
 
 	LastLargeMapPosition references.Position
 	LastLargeMapFloor    references.FloorNumber
@@ -135,7 +135,7 @@ func (g *GameState) IsPassable(pos *references.Position) bool {
 		return false
 	}
 
-	return topTile.IsPassable(g.PartyVehicle.VehicleType)
+	return topTile.IsPassable(g.PartyVehicle.GetVehicleDetails().VehicleType)
 }
 
 func (g *GameState) IsNPCPassable(pos *references.Position) bool {
@@ -162,7 +162,7 @@ func (g *GameState) GetDrawBridgeWaterByTime(origIndex indexes.SpriteIndex) inde
 	return origIndex
 }
 
-func (g *GameState) BoardVehicle(vehicle NPCVehicle) bool {
+func (g *GameState) BoardVehicle(vehicle NPCFriendly) bool {
 	g.PartyVehicle = vehicle
 
 	if !g.CurrentNPCAIController.GetNpcs().RemoveNPCAtPosition(g.Position) {

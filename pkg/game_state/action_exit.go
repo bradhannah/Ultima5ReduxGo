@@ -11,28 +11,47 @@ func (g *GameState) DebugQuickExitSmallMap() {
 }
 
 type VehicleExitResults struct {
-	ExittedVehicle   *NPCVehicle
-	ResultingVehicle *NPCVehicle
+	ExittedVehicle   *NPCFriendly
+	ResultingVehicle *NPCFriendly
 }
 
 func (g *GameState) ExitVehicle() VehicleExitResults {
-	if g.PartyVehicle.VehicleType == references.NoPartyVehicle {
+	vehicleType := g.PartyVehicle.GetVehicleDetails().VehicleType
+
+	if vehicleType == references.NoPartyVehicle {
 		return VehicleExitResults{
 			ExittedVehicle:   nil,
 			ResultingVehicle: nil,
 		}
 	}
 
-	if g.PartyVehicle.VehicleType == references.FrigateVehicle {
+	var ver VehicleExitResults
+
+	if vehicleType == references.FrigateVehicle {
 		// check for skiffs
+		if g.PartyVehicle.GetVehicleDetails().SkiffQuantity <= 0 {
+			// boo no skiff
+			ver = VehicleExitResults{
+				ExittedVehicle:   &g.PartyVehicle,
+				ResultingVehicle: nil,
+			}
+			return ver
+		}
+
+		skiff := NewNPCFriendlyVehiceNewRef(references.SkiffVehicle, g.Position, g.Floor)
+		g.PartyVehicle = *skiff
+
+		// yay, exit on skiff
+		return VehicleExitResults{
+			ExittedVehicle:   &g.PartyVehicle,
+			ResultingVehicle: skiff,
+		}
 	}
 
-	if references.VehicleType(g.PartyVehicle.SkiffQuantity) == references.NoPartyVehicle {
-	}
-	// exittedVehicle := g.PartyVehicle
-	// g.PartyVehicle = references.NoPartyVehicle
+	prevVehicle := g.PartyVehicle
+
 	return VehicleExitResults{
-		ExittedVehicle:   nil,
+		ExittedVehicle:   &prevVehicle,
 		ResultingVehicle: nil,
 	}
 }

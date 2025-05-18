@@ -1,5 +1,7 @@
 package indexes
 
+const StandardNumberOfAnimationFrames = 4
+
 type SpriteIndex int
 
 const (
@@ -201,4 +203,29 @@ func (s SpriteIndex) IsFrigateUnfurled() bool {
 
 func (s SpriteIndex) IsFrigateFurled() bool {
 	return s == FrigateLeftFurled || s == FrigateRightFurled || s == FrigateDownFurled || s == FrigateUpFurled
+}
+
+func (s SpriteIndex) IsHorseUnBoarded() bool {
+	return s == HorseLeft || s == HorseRight
+}
+
+func (s SpriteIndex) IsSkiff() bool {
+	return s == SkiffDown || s == SkiffLeft || s == SkiffRight || s == SkiffUp
+}
+
+func (s SpriteIndex) IsMagicCarpetUnboarded() bool {
+	return s == Carpet2_MagicCarpet
+}
+
+func (s SpriteIndex) IsPartOfAnimation(keyFrameIndex SpriteIndex) bool {
+	const lowestPossibleAnimationIndex = 304
+	if s < lowestPossibleAnimationIndex {
+		return s == keyFrameIndex
+	}
+
+	if s >= keyFrameIndex && s <= keyFrameIndex+StandardNumberOfAnimationFrames {
+		return true
+	}
+	return false
+
 }

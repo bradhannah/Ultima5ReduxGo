@@ -5,9 +5,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
-type NPCVehicle struct {
-	mapUnitDetails MapUnitDetails
-
+type VehicleDetails struct {
 	VehicleType   references.VehicleType
 	SkiffQuantity int
 
@@ -15,67 +13,18 @@ type NPCVehicle struct {
 	previousDirection references.Direction
 }
 
-func NewNPCVehicle(vehicleType references.VehicleType, pos references.Position, floor references.FloorNumber) NPCVehicle {
-	return NPCVehicle{
-		mapUnitDetails: MapUnitDetails{
-			NPCNum:      0,
-			AStarMap:    NewAStarMap(),
-			CurrentPath: nil,
-			Position:    pos,
-			Floor:       floor,
-		},
-		VehicleType:   vehicleType,
-		SkiffQuantity: 0,
-	}
-}
+// func NewNPCVehicle(vehicleType references.VehicleType, pos references.Position, floor references.FloorNumber) NPCFriendly {
+// 	return *NewNPCFriendlyVehicle()
+// 	return *NewNPCFriendly(
 
-func (n *NPCVehicle) GetMapUnitType() MapUnitType {
-	return Vehicle
-}
-
-func (n *NPCVehicle) Pos() (_ references.Position) {
-	return n.mapUnitDetails.Position
-}
-
-func (n *NPCVehicle) PosPtr() (_ *references.Position) {
-	return &n.mapUnitDetails.Position
-}
-
-func (n *NPCVehicle) Floor() (_ references.FloorNumber) {
-	return n.mapUnitDetails.Floor
-}
-
-func (n *NPCVehicle) SetPos(pos references.Position) {
-	n.mapUnitDetails.Position = pos
-}
-
-func (n *NPCVehicle) SetFloor(floor references.FloorNumber) {
-	n.mapUnitDetails.Floor = floor
-}
-
-func (n *NPCVehicle) MapUnitDetails() *MapUnitDetails {
-	return &n.mapUnitDetails
-}
-
-func (n *NPCVehicle) SetVisible(visible bool) {
-	n.mapUnitDetails.Visible = visible
-}
-
-func (n *NPCVehicle) IsVisible() (_ bool) {
-	return n.mapUnitDetails.Visible
-}
-
-func (n *NPCVehicle) IsEmptyMapUnit() (_ bool) {
-	return false
-}
-
-// func (n *NPCVehicle) TryToSwitchDirection(direction references.Direction) {
-// 	if n.VehicleType.RequiresNewSprite(n.PreviousDirection, n.CurrentDirection) {
-
+// 	)
+// 	VehicleDetails{
+// 		VehicleType:   vehicleType,
+// 		SkiffQuantity: 0,
 // 	}
 // }
 
-func (n *NPCVehicle) SetPartyVehicleDirection(direction references.Direction) {
+func (n *VehicleDetails) SetPartyVehicleDirection(direction references.Direction) {
 	switch n.VehicleType {
 	case references.HorseVehicle, references.CarpetVehicle:
 		if direction == references.Up || direction == references.Down {
@@ -87,11 +36,11 @@ func (n *NPCVehicle) SetPartyVehicleDirection(direction references.Direction) {
 	n.currentDirection = direction
 }
 
-func (n *NPCVehicle) GetSprite() indexes.SpriteIndex {
+func (n *VehicleDetails) GetSpriteIndex() indexes.SpriteIndex {
 	return n.VehicleType.GetSpriteByDirection(n.previousDirection, n.currentDirection)
 }
 
-func (g *NPCVehicle) DoesMoveResultInMovement(newDirection references.Direction) bool {
+func (g *VehicleDetails) DoesMoveResultInMovement(newDirection references.Direction) bool {
 	if g.VehicleType != references.FrigateVehicle {
 		return true
 	}

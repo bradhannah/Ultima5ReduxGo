@@ -82,6 +82,8 @@ func (n *NPCAIControllerSmallMap) AdvanceNextTurnCalcAndMoveNPCs() {
 		n.FreshenExistingNPCsOnMap()
 		// n.calculateNextNPCPosition(friendly)
 		switch npc := mu.(type) {
+		// case *NPCVehicle:
+		// 	n.calculateNextNPCPosition(npc)
 		case *NPCFriendly:
 			n.calculateNextNPCPosition(npc)
 		}
@@ -99,8 +101,21 @@ func (n *NPCAIControllerSmallMap) generateNPCs() {
 	// get the correct schedule
 	npcsRefs := n.slr.GetNPCReferences()
 	for nNpc, npcRef := range *npcsRefs {
-		npc := NewNPCFriendly(npcRef, nNpc)
-		npcs = append(npcs, npc)
+		if npcRef.IsEmptyNPC() {
+			continue
+		}
+
+		npcType := npcRef.GetNPCType()
+
+		_ = npcType
+		if npcRef.GetNPCType() == references.Vehicle {
+			vehicle := NewNPCFriendlyVehicle(
+				npcRef.GetVehicleType(), npcRef)
+			npcs = append(npcs, vehicle)
+		} else {
+			friendly := NewNPCFriendly(npcRef, nNpc)
+			npcs = append(npcs, friendly)
+		}
 	}
 	n.mapUnits = npcs
 }
@@ -123,22 +138,26 @@ func (n *NPCAIControllerSmallMap) placeNPCsOnLayeredMap() {
 
 	for _, mu := range n.mapUnits {
 		switch npc := mu.(type) {
+		// case *VehicleDetails:
+		// 	if !npc.IsVisible() {
+		// 		continue
+		// 	}
+		// 	if n.gameState.Floor == mu.Floor() {
+		// 		lm.SetTileByLayer(MapUnitLayer, mu.PosPtr(), npc.GetSpriteIndex())
+		// 	}
 		case *NPCFriendly:
-			// friendly := getMapUnitAsFriendlyOrNil(&mu)
-			// if friendly == nil || !friendly.IsVisible() {
-			// 	continue
-			// }
 			if !npc.IsVisible() {
 				continue
 			}
 			if n.gameState.Floor == mu.Floor() {
-				lm.SetTileByLayer(MapUnitLayer, mu.PosPtr(), npc.NPCReference.GetTileIndex())
+				lm.SetTileByLayer(MapUnitLayer, mu.PosPtr(), npc.NPCReference.GetSpriteIndex())
 			}
 		}
 	}
 }
 
 func (n *NPCAIControllerSmallMap) calculateNextNPCPosition(friendly *NPCFriendly) {
+	// func (n *NPCAIControllerSmallMap) calculateNextNPCPosition(friendly *NPCFriendly) {
 	refBehaviour := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
 
 	// TEST: let's always finish what they are doing first before considering the next logic
@@ -238,7 +257,9 @@ func (n *NPCAIControllerSmallMap) performAiMovementOnAssignedPosition(friendly *
 		// set location of Avatar as way point, but only set the first movement from the list if within N of Avatar
 		return true
 	case references.HorseWander:
-		return n.wanderOneTileWithinN(&friendly.mapUnitDetails, npcSched.Position, nWanderDistance)
+		if helpers.OneInXOdds(4) {
+			return n.wanderOneTileWithinN(&friendly.mapUnitDetails, npcSched.Position, nWanderDistance)
+		}
 	case references.StoneGargoyleTrigger:
 		// if they are within 4 then change their AI to Drudgeworth (follow)
 	case references.FixedExceptAttackWhenIsWantedByThePoPo:

@@ -1,10 +1,14 @@
 package game_state
 
-import "github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+import (
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+)
 
 type NPCFriendly struct {
 	NPCReference   references.NPCReference
 	mapUnitDetails MapUnitDetails
+
+	vehicleDetails VehicleDetails
 }
 
 func NewNPCFriendly(npcReference references.NPCReference, npcNum int) *NPCFriendly {
@@ -22,8 +26,29 @@ func NewNPCFriendly(npcReference references.NPCReference, npcNum int) *NPCFriend
 	return &friendly
 }
 
+func NewNPCFriendlyVehicle(vehicleType references.VehicleType, npcRef references.NPCReference) *NPCFriendly {
+	//npcReference := references.NewNPCReferenceForVehicle(vehicleType, references.Position{X: 15, Y: 15}, 0)
+	friendly := NewNPCFriendly(npcRef, int(npcRef.DialogNumber))
+
+	friendly.vehicleDetails = VehicleDetails{
+		currentDirection:  references.NoneDirection,
+		previousDirection: references.NoneDirection,
+		VehicleType:       vehicleType,
+		SkiffQuantity:     0,
+	}
+
+	friendly.SetVisible(true)
+
+	return friendly
+}
+
+func NewNPCFriendlyVehiceNewRef(vehicletype references.VehicleType, pos references.Position, floor references.FloorNumber) *NPCFriendly {
+	npcRef := references.NewNPCReferenceForVehicle(vehicletype, pos, floor)
+	return NewNPCFriendlyVehicle(vehicletype, *npcRef)
+}
+
 func (friendly *NPCFriendly) IsEmptyMapUnit() bool {
-	return friendly.NPCReference.Type == 0 || (friendly.NPCReference.Schedule.X[0] == 0 && friendly.NPCReference.Schedule.Y[0] == 0)
+	return friendly.NPCReference.GetNPCType() == 0 || (friendly.NPCReference.Schedule.X[0] == 0 && friendly.NPCReference.Schedule.Y[0] == 0)
 }
 
 func (friendly *NPCFriendly) GetMapUnitType() MapUnitType {
@@ -65,4 +90,12 @@ func (friendly *NPCFriendly) SetPos(position references.Position) {
 
 func (friendly *NPCFriendly) SetFloor(floor references.FloorNumber) {
 	friendly.mapUnitDetails.Floor = floor
+}
+
+func (friendly *NPCFriendly) GetVehicleDetails() *VehicleDetails {
+	if friendly.NPCReference.GetNPCType() == references.Vehicle {
+		return &friendly.vehicleDetails
+	}
+	//log.Fatal("Wrong type, not a vehicle")
+	return &VehicleDetails{}
 }
