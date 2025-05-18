@@ -1,6 +1,8 @@
 package game_state
 
 import (
+	"fmt"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -45,6 +47,10 @@ func NewNPCFriendlyVehicle(vehicleType references.VehicleType, npcRef references
 func NewNPCFriendlyVehiceNewRef(vehicletype references.VehicleType, pos references.Position, floor references.FloorNumber) *NPCFriendly {
 	npcRef := references.NewNPCReferenceForVehicle(vehicletype, pos, floor)
 	return NewNPCFriendlyVehicle(vehicletype, *npcRef)
+}
+
+func NewNPCFriendlyVehiceNoVehicle() NPCFriendly {
+	return *NewNPCFriendlyVehiceNewRef(references.NoPartyVehicle, references.Position{X: 0, Y: 0}, 0)
 }
 
 func (friendly *NPCFriendly) IsEmptyMapUnit() bool {
@@ -93,6 +99,9 @@ func (friendly *NPCFriendly) SetFloor(floor references.FloorNumber) {
 }
 
 func (friendly *NPCFriendly) GetVehicleDetails() *VehicleDetails {
+	if friendly == nil {
+		fmt.Sprint("oof")
+	}
 	if friendly.NPCReference.GetNPCType() == references.Vehicle {
 		return &friendly.vehicleDetails
 	}

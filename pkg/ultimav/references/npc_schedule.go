@@ -167,3 +167,10 @@ func (n *NPCSchedule) OverrideAllAI(ai AiType) {
 		n.Ai[i] = byte(ai)
 	}
 }
+
+func (n *NPCSchedule) OverrideAllPositions(posX, posY byte) {
+	for i := 0; i < len(n.X); i++ {
+		n.X[i] = posX
+		n.Y[i] = posY
+	}
+}

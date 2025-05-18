@@ -34,21 +34,23 @@ func (g *GameScene) actionBoard() {
 }
 
 func (g *GameScene) actionExit() {
-	vr := g.gameState.ExitVehicle()
+	exittedVehicle := g.gameState.ExitVehicle()
 
-	if vr.ExittedVehicle == nil || vr.ExittedVehicle.GetVehicleDetails().VehicleType == references.NoPartyVehicle {
+	if exittedVehicle == nil || exittedVehicle.GetVehicleDetails().VehicleType == references.NoPartyVehicle {
 		g.output.AddRowStr("X-it what?")
 		return
 	}
-	g.output.AddRowStr("X-it-")
-	switch vr.ExittedVehicle.GetVehicleDetails().VehicleType {
-	case references.FrigateVehicle:
-		g.output.AppendToCurrentRowStr("frigate!")
-	case references.CarpetVehicle:
-		g.output.AppendToCurrentRowStr("carpet!")
-	case references.SkiffVehicle:
-		g.output.AppendToCurrentRowStr("skiff!")
-	case references.HorseVehicle:
-		g.output.AddRowStr("horse!")
-	}
+
+	//g.output.AddRowStr("X-it-")
+	g.output.AddRowStr(exittedVehicle.GetVehicleDetails().VehicleType.GetExitString())
+	// switch exittedVehicle.GetVehicleDetails().VehicleType {
+	// case references.FrigateVehicle:
+	// 	g.output.AppendToCurrentRowStr("frigate!")
+	// case references.CarpetVehicle:
+	// 	g.output.AppendToCurrentRowStr("carpet!")
+	// case references.SkiffVehicle:
+	// 	g.output.AppendToCurrentRowStr("skiff!")
+	// case references.HorseVehicle:
+	// 	g.output.AddRowStr("horse!")
+	// }
 }

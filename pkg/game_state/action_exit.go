@@ -10,48 +10,47 @@ func (g *GameState) DebugQuickExitSmallMap() {
 	g.UpdateLargeMap()
 }
 
-type VehicleExitResults struct {
-	ExittedVehicle   *NPCFriendly
-	ResultingVehicle *NPCFriendly
-}
+// type VehicleExitResults struct {
+// 	ExittedVehicle   *NPCFriendly
+// 	ResultingVehicle *NPCFriendly
+// }
 
-func (g *GameState) ExitVehicle() VehicleExitResults {
+// ExitVehicle
+// returns the previously boarded vehicle - or nil if none was found
+func (g *GameState) ExitVehicle() *NPCFriendly {
 	vehicleType := g.PartyVehicle.GetVehicleDetails().VehicleType
 
 	if vehicleType == references.NoPartyVehicle {
-		return VehicleExitResults{
-			ExittedVehicle:   nil,
-			ResultingVehicle: nil,
-		}
+		return nil
 	}
 
-	var ver VehicleExitResults
-
 	if vehicleType == references.FrigateVehicle {
+		frigate := g.PartyVehicle
+		g.CurrentNPCAIController.GetNpcs().AddVehicle(g.PartyVehicle)
 		// check for skiffs
 		if g.PartyVehicle.GetVehicleDetails().SkiffQuantity <= 0 {
-			// boo no skiff
-			ver = VehicleExitResults{
-				ExittedVehicle:   &g.PartyVehicle,
-				ResultingVehicle: nil,
-			}
-			return ver
+			g.PartyVehicle = NewNPCFriendlyVehiceNoVehicle()
+			return &frigate
 		}
 
 		skiff := NewNPCFriendlyVehiceNewRef(references.SkiffVehicle, g.Position, g.Floor)
 		g.PartyVehicle = *skiff
 
 		// yay, exit on skiff
-		return VehicleExitResults{
-			ExittedVehicle:   &g.PartyVehicle,
-			ResultingVehicle: skiff,
-		}
+		return &frigate
 	}
 
 	prevVehicle := g.PartyVehicle
+	g.PartyVehicle = NewNPCFriendlyVehiceNoVehicle()
 
-	return VehicleExitResults{
-		ExittedVehicle:   &prevVehicle,
-		ResultingVehicle: nil,
-	}
+	// set the vehicle to now use your existing position as it's normal position
+	prevVehicle.SetPos(g.Position)
+	prevVehicle.NPCReference.Schedule.OverrideAllPositions(byte(g.Position.X), byte(g.Position.Y))
+	prevVehicle.SetFloor(g.Floor)
+
+	g.CurrentNPCAIController.GetNpcs().AddVehicle(prevVehicle)
+
+	return &prevVehicle
 }
+
+///func (g *GameState) setNo

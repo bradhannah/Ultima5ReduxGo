@@ -114,7 +114,9 @@ func (n *NPCAIControllerSmallMap) generateNPCs() {
 			npcs = append(npcs, vehicle)
 		} else {
 			friendly := NewNPCFriendly(npcRef, nNpc)
-			npcs = append(npcs, friendly)
+			if !friendly.IsEmptyMapUnit() {
+				npcs = append(npcs, friendly)
+			}
 		}
 	}
 	n.mapUnits = npcs
@@ -294,14 +296,16 @@ func (n *NPCAIControllerSmallMap) performAiMovementNotOnAssignedPosition(friendl
 		}
 		return false
 	case references.BigWander, references.BlackthornGuardWander, references.MerchantBuyingSellingCustom, references.MerchantBuyingSellingWander, references.Wander, references.HorseWander:
-		if !npcSched.Position.IsWithinN(friendly.PosPtr(), nWanderDistance) {
-			if n.createFreshPathToScheduledLocation(friendly) {
-				friendly.SetPos(friendly.mapUnitDetails.DequeueNextPosition())
-				return true
+		if helpers.OneInXOdds(2) {
+			if !npcSched.Position.IsWithinN(friendly.PosPtr(), nWanderDistance) {
+				if n.createFreshPathToScheduledLocation(friendly) {
+					friendly.SetPos(friendly.mapUnitDetails.DequeueNextPosition())
+					return true
+				}
+				return false
 			}
-			return false
+			return n.wanderOneTileWithinN(&friendly.mapUnitDetails, npcSched.Position, nWanderDistance)
 		}
-		return n.wanderOneTileWithinN(&friendly.mapUnitDetails, npcSched.Position, nWanderDistance)
 	case references.ChildRunAway:
 		// run away
 		return true
