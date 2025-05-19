@@ -1,4 +1,4 @@
-package game_state
+package party_state
 
 import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state/util"

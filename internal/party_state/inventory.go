@@ -1,9 +1,26 @@
-package game_state
+package party_state
 
 import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
+
+const (
+	MaxGold               = 9999
+	MaxProvisionFood      = 9999
+	MaxProvisionGems      = 99
+	MaxProvisionTorches   = 99
+	MaxProvisionKey       = 99
+	MaxProvisionSkullKeys = 99
+)
+
+type ProvisionsQuantity struct {
+	Food      uint16
+	Gems      byte
+	Torches   byte
+	Keys      byte
+	SkullKeys byte
+}
 
 type Inventory struct {
 	Provisions ProvisionsQuantity

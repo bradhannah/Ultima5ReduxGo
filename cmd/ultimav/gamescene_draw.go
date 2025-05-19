@@ -44,7 +44,7 @@ func (g *GameScene) Draw(screen *ebiten.Image) {
 
 	g.output.DrawRightSideOutput(screen)
 
-	g.characterSummary.Draw(g.gameState, screen)
+	g.characterSummary.Draw(&g.gameState.PartyState, screen)
 	g.provisionSummary.Draw(g.gameState, screen)
 
 	// draw the dialogs - but stacked on top of each other

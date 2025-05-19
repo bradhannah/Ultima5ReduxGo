@@ -3,6 +3,7 @@ package game_state
 import (
 	"golang.org/x/exp/rand"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
@@ -18,7 +19,7 @@ const (
 	JimmyBrokenPick
 )
 
-func (g *GameState) JimmyDoor(direction references.Direction, player *PlayerCharacter) JimmyDoorState {
+func (g *GameState) JimmyDoor(direction references.Direction, player *party_state.PlayerCharacter) JimmyDoorState {
 	mapType := GetMapTypeByLocation(g.Location)
 
 	newPosition := direction.GetNewPositionInDirection(&g.Position)
@@ -40,7 +41,7 @@ func (g *GameState) JimmyDoor(direction references.Direction, player *PlayerChar
 			return JimmyBrokenPick
 		}
 	case indexes.MagicLockDoor, indexes.MagicLockDoorWithView:
-		g.Inventory.Provisions.Keys = helpers.Max(g.Inventory.Provisions.Keys-1, 0)
+		g.PartyState.Inventory.Provisions.Keys = helpers.Max(g.PartyState.Inventory.Provisions.Keys-1, 0)
 		return JimmyLockedMagical
 	default:
 		return JimmyNotADoor
@@ -48,7 +49,7 @@ func (g *GameState) JimmyDoor(direction references.Direction, player *PlayerChar
 
 }
 
-func (g *GameState) isJimmySuccessful(player *PlayerCharacter) bool {
+func (g *GameState) isJimmySuccessful(player *party_state.PlayerCharacter) bool {
 	_ = player
 	// TODO: actual jimmy logic required, currently forced to 50%
 	n := rand.Int()

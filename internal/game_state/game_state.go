@@ -3,13 +3,13 @@ package game_state
 import (
 	"log"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 const (
-	NPlayers                                   = 6
 	DefaultSmallMapMinutesPerTurn              = 1
 	DefaultLargeMapMinutesPerTurn              = 2
 	DefaultNumberOfTurnsUntilTorchExtinguishes = 100
@@ -26,8 +26,9 @@ type DebugOptions struct {
 }
 
 type GameState struct {
+	PartyState party_state.PartyState
+
 	RawSave         [savedGamFileSize]byte
-	Characters      [NPlayers]PlayerCharacter
 	MoonstoneStatus MoonstoneStatus
 
 	DebugOptions DebugOptions
@@ -37,7 +38,6 @@ type GameState struct {
 	Location references.Location
 	Position references.Position
 	Floor    references.FloorNumber
-	//avatarPosition references.Position
 
 	LayeredMaps             LayeredMaps
 	CurrentNPCAIController  NPCAIController
@@ -52,9 +52,6 @@ type GameState struct {
 
 	DateTime datetime.UltimaDate
 
-	Inventory Inventory
-	Karma     Karma
-
 	// open door
 	openDoorPos   *references.Position
 	openDoorTurns int
@@ -65,23 +62,6 @@ type GameState struct {
 	YTilesVisibleOnGameScreen int
 
 	Lighting Lighting
-}
-
-const (
-	MaxGold               = 9999
-	MaxProvisionFood      = 9999
-	MaxProvisionGems      = 99
-	MaxProvisionTorches   = 99
-	MaxProvisionKey       = 99
-	MaxProvisionSkullKeys = 99
-)
-
-type ProvisionsQuantity struct {
-	Food      uint16
-	Gems      byte
-	Torches   byte
-	Keys      byte
-	SkullKeys byte
 }
 
 func (g *GameState) IsAvatarAtPosition(pos *references.Position) bool {

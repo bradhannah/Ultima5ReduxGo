@@ -5,13 +5,13 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 )
 
 type CharacterSummary struct {
-	characterSummaryImage [game_state.MAX_CHARACTERS_IN_PARTY]*ebiten.Image
+	characterSummaryImage [party_state.MAX_CHARACTERS_IN_PARTY]*ebiten.Image
 	spriteSheet           *sprites.SpriteSheet
 	ultimaFont            *text.UltimaFont
 	output                *text.Output
@@ -45,13 +45,13 @@ func NewCharacterSummary(spriteSheet *sprites.SpriteSheet) *CharacterSummary {
 	return characterSummary
 }
 
-func (c *CharacterSummary) Draw(gameState *game_state.GameState, screen *ebiten.Image) {
+func (c *CharacterSummary) Draw(partyState *party_state.PartyState, screen *ebiten.Image) {
 
 	for i := 0; i < len(c.characterSummaryImage); i++ {
 		// draw onto single summary
-		character := gameState.Characters[i]
+		character := partyState.Characters[i]
 
-		if character.PartyStatus != game_state.InTheParty {
+		if character.PartyStatus != party_state.InTheParty {
 			continue
 		}
 
@@ -84,7 +84,7 @@ func (c *CharacterSummary) Draw(gameState *game_state.GameState, screen *ebiten.
 		rightTextX, rightTextY := sprites.GetTranslateXYByPercent(sprites.PercentBasedCenterPoint{X: 0.98, Y: textTopYPercent})
 		rightTextDop.GeoM.Translate(rightTextX, rightTextY)
 
-		rightTextOutput := fmt.Sprintf("%s\n%dMP", game_state.CharacterStatuses.GetById(character.Status).FriendlyName, character.CurrentMp)
+		rightTextOutput := fmt.Sprintf("%s\n%dMP", party_state.CharacterStatuses.GetById(character.Status).FriendlyName, character.CurrentMp)
 		c.output.DrawTextRightToLeft(screen, rightTextOutput, &rightTextDop)
 	}
 

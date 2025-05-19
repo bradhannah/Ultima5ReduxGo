@@ -91,7 +91,7 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 
 	switch g.secondaryKeyState {
 	case JimmyDoorDirectionInput:
-		if g.gameState.Inventory.Provisions.Keys <= 0 {
+		if g.gameState.PartyState.Inventory.Provisions.Keys <= 0 {
 			g.addRowStr("No Keys!")
 			g.secondaryKeyState = PrimaryInput
 			g.keyboard.SetLastKeyPressedNow()
@@ -222,7 +222,7 @@ func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
 }
 
 func (g *GameScene) smallMapJimmySecondary(direction references.Direction) {
-	jimmyResult := g.gameState.JimmyDoor(direction, &g.gameState.Characters[0])
+	jimmyResult := g.gameState.JimmyDoor(direction, &g.gameState.PartyState.Characters[0])
 
 	switch jimmyResult {
 	case game_state2.JimmyUnlocked:
@@ -243,7 +243,7 @@ func (g *GameScene) smallMapGetSecondary(direction references.Direction) {
 
 	if g.gameState.ItemStacksMap.HasItemStackAtPosition(getThingPos) {
 		item := g.gameState.ItemStacksMap.Pop(getThingPos)
-		g.gameState.Inventory.PutItemInInventory(item)
+		g.gameState.PartyState.Inventory.PutItemInInventory(item)
 
 		itemRef := g.gameReferences.InventoryItemReferences.GetReferenceByItem(item.Item)
 		// if item.
@@ -258,12 +258,12 @@ func (g *GameScene) smallMapGetSecondary(direction references.Direction) {
 		g.gameState.Karma = g.gameState.Karma.GetDecreasedKarma(1)
 	case indexes.RightSconce, indexes.LeftScone:
 		g.addRowStr("Borrowed!")
-		g.gameState.Inventory.Provisions.Torches++
+		g.gameState.PartyState.Inventory.Provisions.Torches++
 		mapLayers.SetTileByLayer(game_state2.MapLayer, getThingPos, indexes.BrickFloor)
 	case indexes.TableFoodBoth, indexes.TableFoodBottom, indexes.TableFoodTop:
 		if g.getFoodFromTable(direction) {
 			g.addRowStr("Mmmmm...! But that food isn't yours!")
-			g.gameState.Inventory.Provisions.Food++
+			g.gameState.PartyState.Inventory.Provisions.Food++
 			g.gameState.Karma = g.gameState.Karma.GetDecreasedKarma(1)
 		}
 	case indexes.Carpet2_MagicCarpet:

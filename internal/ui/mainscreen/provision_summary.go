@@ -39,9 +39,9 @@ func (p *ProvisionSummary) Draw(gameState *game_state.GameState, screen *ebiten.
 			p.spriteSheet.GetSprite(indexes.ItemGem),
 		},
 		[3]string{
-			fmt.Sprintf("%d", gameState.Inventory.Provisions.Food),
-			fmt.Sprintf("%d", gameState.Inventory.Provisions.Keys),
-			fmt.Sprintf("%d", gameState.Inventory.Provisions.Gems),
+			fmt.Sprintf("%d", gameState.PartyState.Inventory.Provisions.Food),
+			fmt.Sprintf("%d", gameState.PartyState.Inventory.Provisions.Keys),
+			fmt.Sprintf("%d", gameState.PartyState.Inventory.Provisions.Gems),
 		},
 	)
 
@@ -52,8 +52,8 @@ func (p *ProvisionSummary) Draw(gameState *game_state.GameState, screen *ebiten.
 			p.spriteSheet.GetSprite(indexes.HolyFloorSymbol),
 		},
 		[3]string{
-			fmt.Sprintf("%d", gameState.Inventory.Provisions.Torches),
-			fmt.Sprintf("%d", gameState.Inventory.Gold),
+			fmt.Sprintf("%d", gameState.PartyState.Inventory.Provisions.Torches),
+			fmt.Sprintf("%d", gameState.PartyState.Inventory.Gold),
 			fmt.Sprintf("%d", gameState.Karma),
 		},
 	)

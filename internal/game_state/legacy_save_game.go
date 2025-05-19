@@ -3,8 +3,8 @@ package game_state
 import (
 	"fmt"
 	"os"
-	"unsafe"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -48,9 +48,7 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 	g.RawSave = [savedGamFileSize]byte(rawSaveGameBytesFromDisk)
 
 	// Overlay player characters over memory rawSaveGameBytesFromDisk to easily consume data
-	const lCharacters = 0x02
-	characterPtr := (*[NPlayers]PlayerCharacter)(unsafe.Pointer(&g.RawSave[lCharacters]))
-	g.Characters = *characterPtr
+	g.PartyState.LoadFromRaw(g.RawSave)
 
 	// world and position
 	const lbLocation = 0x2ED
@@ -77,8 +75,8 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 	// Various Things
 	const lbKarma = 0x2e2
 	const lsGold = 0x204
-	g.Karma = Karma(rawSaveGameBytesFromDisk[lbKarma])
-	g.Inventory.Gold = getUint16(&rawSaveGameBytesFromDisk, lsGold)
+	g.PartyState.Karma = party_state.Karma(rawSaveGameBytesFromDisk[lbKarma])
+	g.PartyState.Inventory.Gold = getUint16(&rawSaveGameBytesFromDisk, lsGold)
 
 	// ProvisionsQuantity
 	const lsFood = 0x202
@@ -86,11 +84,11 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 	const lbGems = 0x207
 	const lbTorches = 0x208
 	const lbSkullKeys = 0x20B
-	g.Inventory.Provisions.Food = getUint16(&rawSaveGameBytesFromDisk, lsFood)
-	g.Inventory.Provisions.Gems = rawSaveGameBytesFromDisk[lbGems]
-	g.Inventory.Provisions.Torches = rawSaveGameBytesFromDisk[lbTorches]
-	g.Inventory.Provisions.Keys = rawSaveGameBytesFromDisk[lbKeys]
-	g.Inventory.Provisions.SkullKeys = rawSaveGameBytesFromDisk[lbSkullKeys]
+	g.PartyState.Inventory.Provisions.Food = getUint16(&rawSaveGameBytesFromDisk, lsFood)
+	g.PartyState.Inventory.Provisions.Gems = rawSaveGameBytesFromDisk[lbGems]
+	g.PartyState.Inventory.Provisions.Torches = rawSaveGameBytesFromDisk[lbTorches]
+	g.PartyState.Inventory.Provisions.Keys = rawSaveGameBytesFromDisk[lbKeys]
+	g.PartyState.Inventory.Provisions.SkullKeys = rawSaveGameBytesFromDisk[lbSkullKeys]
 
 	g.LayeredMaps = *NewLayeredMaps(gameRefs.TileReferences,
 		gameRefs.OverworldLargeMapReference,
