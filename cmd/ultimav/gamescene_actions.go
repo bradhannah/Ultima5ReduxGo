@@ -41,16 +41,5 @@ func (g *GameScene) actionExit() {
 		return
 	}
 
-	//g.output.AddRowStr("X-it-")
 	g.output.AddRowStr(exittedVehicle.GetVehicleDetails().VehicleType.GetExitString())
-	// switch exittedVehicle.GetVehicleDetails().VehicleType {
-	// case references.FrigateVehicle:
-	// 	g.output.AppendToCurrentRowStr("frigate!")
-	// case references.CarpetVehicle:
-	// 	g.output.AppendToCurrentRowStr("carpet!")
-	// case references.SkiffVehicle:
-	// 	g.output.AppendToCurrentRowStr("skiff!")
-	// case references.HorseVehicle:
-	// 	g.output.AddRowStr("horse!")
-	// }
 }

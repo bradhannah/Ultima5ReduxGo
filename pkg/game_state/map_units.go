@@ -64,12 +64,6 @@ func (n *MapUnits) AddVehicle(vehicle NPCFriendly) bool {
 	vehicle.mapUnitDetails.NPCNum = index
 	vehicle.SetPos(references.Position{X: references.Coordinate(vehicle.NPCReference.Schedule.X[0]), Y: references.Coordinate(vehicle.NPCReference.Schedule.Y[0])})
 
-	// npcRef := references.NewNPCReferenceForVehicle(vehicle, position, floorNumber)
-
-	// npc := NewNPCFriendly(*npcRef, index)
-	// npc.SetPos(position)
-	// npc.SetFloor(0)
-	//npc.SetVisible(true)
 	vehicle.SetVisible(true)
 
 	*n = append(*n, &vehicle)

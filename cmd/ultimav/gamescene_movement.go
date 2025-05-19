@@ -58,6 +58,11 @@ func (g *GameScene) moveToNewPositionByDirection(direction references.Direction)
 		g.gameState.Position.GoRight(bLargeMap)
 	case references.NoneDirection:
 	}
+	if g.gameState.PartyVehicle.GetVehicleDetails().VehicleType != references.NoPartyVehicle {
+		g.gameState.PartyVehicle.SetPos(g.gameState.Position)
+		g.gameState.PartyVehicle.NPCReference.Schedule.OverrideAllPositions(byte(g.gameState.Position.X), byte(g.gameState.Position.Y))
+	}
+
 }
 
 func (g *GameScene) checkAndAutoKlimbStairs(position *references.Position) bool {
