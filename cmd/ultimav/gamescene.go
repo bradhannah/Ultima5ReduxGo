@@ -1,15 +1,15 @@
 package main
 
 import (
-	//"image"
+	// "image"
 	"log"
 	"path"
 
 	"github.com/hajimehoshi/ebiten/v2"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
 	mainscreen2 "github.com/bradhannah/Ultima5ReduxGo/internal/ui/mainscreen"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"

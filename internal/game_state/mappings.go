@@ -1,7 +1,7 @@
 package game_state
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state/util"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state/util"
 )
 
 /*
@@ -75,9 +75,9 @@ var CharacterGenders = util.OrderedMapping[CharacterGender]{
 /*
 Other smaller definitions
 */
-//type BritOrUnderworld byte
+// type BritOrUnderworld byte
 //
-//const (
+// const (
 //	Britannia  BritOrUnderworld = 0xff
 //	Underworld BritOrUnderworld = 0x00
-//)
+// )

@@ -1,8 +1,9 @@
 package game_state
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"strings"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 )
 
 func (p *PlayerCharacter) GetNameAsString() string {

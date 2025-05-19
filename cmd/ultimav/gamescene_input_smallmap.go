@@ -6,7 +6,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
+	game_state2 "github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
@@ -137,7 +137,7 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 }
 
 func (g *GameScene) smallMapKlimb() {
-	currentTile := g.gameState.LayeredMaps.GetTileRefByPosition(references.SmallMapType, game_state.MapLayer, &g.gameState.Position, g.gameState.Floor)
+	currentTile := g.gameState.LayeredMaps.GetTileRefByPosition(references.SmallMapType, game_state2.MapLayer, &g.gameState.Position, g.gameState.Floor)
 
 	switch currentTile.Index {
 	case indexes.AvatarOnLadderDown, indexes.LadderDown, indexes.Grate:
@@ -194,13 +194,13 @@ func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
 
 	if openThingTile.Index.IsDoor() {
 		switch g.gameState.OpenDoor(direction) {
-		case game_state.OpenDoorNotADoor:
+		case game_state2.OpenDoorNotADoor:
 			g.addRowStr("Bang to open!")
-		case game_state.OpenDoorLocked:
+		case game_state2.OpenDoorLocked:
 			g.addRowStr("Locked!")
-		case game_state.OpenDoorLockedMagical:
+		case game_state2.OpenDoorLockedMagical:
 			g.addRowStr("Magically Locked!")
-		case game_state.OpenDoorOpened:
+		case game_state2.OpenDoorOpened:
 			g.addRowStr("Opened!")
 		default:
 			log.Fatal("Unrecognized door open state")
@@ -225,11 +225,11 @@ func (g *GameScene) smallMapJimmySecondary(direction references.Direction) {
 	jimmyResult := g.gameState.JimmyDoor(direction, &g.gameState.Characters[0])
 
 	switch jimmyResult {
-	case game_state.JimmyUnlocked:
+	case game_state2.JimmyUnlocked:
 		g.addRowStr("Unlocked!")
-	case game_state.JimmyNotADoor:
+	case game_state2.JimmyNotADoor:
 		g.addRowStr("Not lock!")
-	case game_state.JimmyBrokenPick, game_state.JimmyLockedMagical:
+	case game_state2.JimmyBrokenPick, game_state2.JimmyLockedMagical:
 		g.addRowStr("Key broke!")
 	default:
 		panic("unhandled default case")
@@ -254,12 +254,12 @@ func (g *GameScene) smallMapGetSecondary(direction references.Direction) {
 	switch getThingTile.Index {
 	case indexes.WheatInField:
 		g.addRowStr("Crops picked! Those aren't yours Avatar!")
-		mapLayers.SetTileByLayer(game_state.MapLayer, getThingPos, indexes.PlowedField)
+		mapLayers.SetTileByLayer(game_state2.MapLayer, getThingPos, indexes.PlowedField)
 		g.gameState.Karma = g.gameState.Karma.GetDecreasedKarma(1)
 	case indexes.RightSconce, indexes.LeftScone:
 		g.addRowStr("Borrowed!")
 		g.gameState.Inventory.Provisions.Torches++
-		mapLayers.SetTileByLayer(game_state.MapLayer, getThingPos, indexes.BrickFloor)
+		mapLayers.SetTileByLayer(game_state2.MapLayer, getThingPos, indexes.BrickFloor)
 	case indexes.TableFoodBoth, indexes.TableFoodBottom, indexes.TableFoodTop:
 		if g.getFoodFromTable(direction) {
 			g.addRowStr("Mmmmm...! But that food isn't yours!")
@@ -298,6 +298,6 @@ func (g *GameScene) getFoodFromTable(direction references.Direction) bool {
 		return false
 	}
 
-	mapLayers.SetTileByLayer(game_state.MapLayer, getThingPos, newTileIndex)
+	mapLayers.SetTileByLayer(game_state2.MapLayer, getThingPos, newTileIndex)
 	return true
 }

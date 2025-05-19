@@ -6,7 +6,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/game_state"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
@@ -142,13 +142,13 @@ func (g *GameScene) refreshProvisionsAndEquipmentMapTiles(pos *references.Positi
 }
 
 func (g *GameScene) getTileVisibilityIndexByPosition(pos *references.Position) int {
-	//if g.gameState.DateTime.
+	// if g.gameState.DateTime.
 
 	// if g.gameState.HasTorchLit() {
 
 	// }
-	//g.gameState.XTilesInMap
-	//g.gameState.
+	// g.gameState.XTilesInMap
+	// g.gameState.
 	return 1
 }
 
