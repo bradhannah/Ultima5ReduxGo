@@ -1,6 +1,8 @@
 package references
 
 import (
+	"strings"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 )
 
@@ -15,7 +17,9 @@ type DockReference struct {
 	Position Position
 }
 
-type DockReferences []DockReference
+type DockReferences struct {
+	docks []DockReference
+}
 
 func GetListOfAllLocationsWithDocks() []Location {
 	return []Location{Jhelom, Minoc, East_Britanny, Buccaneers_Den}
@@ -37,7 +41,25 @@ func NewDocks(gameConfig *config.UltimaVConfiguration) *DockReferences {
 				Y: Coordinate(gameConfig.RawDataOvl[startDockYOffset+i]),
 			},
 		}
-		*dockRefs = append(*dockRefs, dock)
+		dockRefs.docks = append(dockRefs.docks, dock)
 	}
 	return dockRefs
+}
+
+func (d *DockReferences) GetDockPosition(dockLocation Location) Position {
+	for _, dock := range d.docks {
+		if dock.Location == dockLocation {
+			return dock.Position
+		}
+	}
+	return Position{}
+}
+
+func (d *DockReferences) GetDockPositionByString(dockLocation string) Position {
+	for _, l := range d.docks {
+		if strings.ToLower(l.Location.String()) == strings.ToLower(dockLocation) {
+			return l.Position
+		}
+	}
+	return Position{}
 }

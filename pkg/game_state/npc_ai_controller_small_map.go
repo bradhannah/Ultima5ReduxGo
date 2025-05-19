@@ -1,6 +1,7 @@
 package game_state
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -72,18 +73,10 @@ func (n *NPCAIControllerSmallMap) AdvanceNextTurnCalcAndMoveNPCs() {
 	n.positionOccupiedChance = n.mapUnits.createFreshXyOccupiedMap()
 
 	for _, mu := range n.mapUnits {
-		// friendly := getMapUnitAsFriendlyOrNil(&mu)
-		// if friendly == nil {
-		// 	continue
-		// }
-
 		// very lazy approach - but making sure every NPC is in correct spot on map
 		// for every iteration makes sure next NPC doesn't assign the same tile space
 		n.FreshenExistingNPCsOnMap()
-		// n.calculateNextNPCPosition(friendly)
 		switch npc := mu.(type) {
-		// case *NPCVehicle:
-		// 	n.calculateNextNPCPosition(npc)
 		case *NPCFriendly:
 			n.calculateNextNPCPosition(npc)
 		}
@@ -159,8 +152,11 @@ func (n *NPCAIControllerSmallMap) placeNPCsOnLayeredMap() {
 }
 
 func (n *NPCAIControllerSmallMap) calculateNextNPCPosition(friendly *NPCFriendly) {
-	// func (n *NPCAIControllerSmallMap) calculateNextNPCPosition(friendly *NPCFriendly) {
 	refBehaviour := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(n.gameState.DateTime)
+
+	if friendly.GetVehicleDetails().VehicleType == references.CarpetVehicle {
+		fmt.Sprint("oof")
+	}
 
 	// TEST: let's always finish what they are doing first before considering the next logic
 	if n.moveNPCOnCalculatedPath(friendly) {

@@ -10,11 +10,6 @@ func (g *GameState) DebugQuickExitSmallMap() {
 	g.UpdateLargeMap()
 }
 
-// type VehicleExitResults struct {
-// 	ExittedVehicle   *NPCFriendly
-// 	ResultingVehicle *NPCFriendly
-// }
-
 // ExitVehicle
 // returns the previously boarded vehicle - or nil if none was found
 func (g *GameState) ExitVehicle() *NPCFriendly {
@@ -52,5 +47,3 @@ func (g *GameState) ExitVehicle() *NPCFriendly {
 
 	return &prevVehicle
 }
-
-///func (g *GameState) setNo

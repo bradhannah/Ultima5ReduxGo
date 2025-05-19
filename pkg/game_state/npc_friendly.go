@@ -38,7 +38,7 @@ func NewNPCFriendlyVehicle(vehicleType references.VehicleType, npcRef references
 		VehicleType:       vehicleType,
 		SkiffQuantity:     0,
 	}
-
+	friendly.SetFloor(references.FloorNumber(npcRef.Schedule.Floor[0]))
 	friendly.SetVisible(true)
 
 	return friendly

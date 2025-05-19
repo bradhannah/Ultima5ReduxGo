@@ -55,8 +55,6 @@ func (n *NPCAIControllerLargeMap) placeNPCsOnLayeredMap() {
 			lm.SetTileByLayer(MapUnitLayer, npc.PosPtr(), npc.EnemyReference.KeyFrameTile.Index)
 		case *NPCFriendly:
 			lm.SetTileByLayer(MapUnitLayer, npc.PosPtr(), npc.NPCReference.GetSpriteIndex())
-			// case *VehicleDetails:
-			// 	lm.SetTileByLayer(MapUnitLayer, npc.PosPtr(), npc.GetSpriteIndex())
 		}
 	}
 }

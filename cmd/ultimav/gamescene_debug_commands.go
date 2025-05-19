@@ -242,6 +242,8 @@ func (d *DebugConsole) createGoSmall() *grammar.TextCommand {
 }
 
 func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
+	docks := references.GetListOfAllLocationsWithDocksAsString()
+	docks = append(docks, "avatar")
 	return grammar.NewTextCommand([]grammar.Match{
 		grammar.MatchString{
 			Str:           "buyboat",
@@ -254,7 +256,7 @@ func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
 			CaseSensitive: false,
 		},
 		grammar.MatchStringList{
-			Strings:       references.GetListOfAllLocationsWithDocksAsString(),
+			Strings:       docks,
 			Description:   "Small map locations with docks",
 			CaseSensitive: false,
 		},
@@ -264,22 +266,33 @@ func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
 			boatType := command.GetIndexAsString(1, outputStr)
 			locationStr := command.GetIndexAsString(2, outputStr)
 			slr := d.gameScene.gameReferences.LocationReferences.GetSmallLocationReference(locationStr)
+			var dockPos references.Position
+			var dockFloor references.FloorNumber
+			if slr == nil {
+				d.dumpQuickState("avatar")
+				dockPos = d.gameScene.gameState.Position
+				dockFloor = d.gameScene.gameState.Floor
+			} else {
+				d.dumpQuickState(slr.FriendlyLocationName)
+				dockPos = d.gameScene.gameReferences.DockReferences.GetDockPositionByString(locationStr)
+				dockFloor = 0
+			}
 
-			d.dumpQuickState(slr.FriendlyLocationName)
-
-			// put the boat
-			_ = boatType
 			var boat game_state.NPCFriendly
 			if strings.ToLower(boatType) == "frigate" {
-				// TODO: do not accept an NPCReference - instead create one based on the vehicle type since they dumb
-				//boat = *game_state.NewNPCFriendlyVehicle(references.FrigateVehicle, *references.NewNPCReferenceForVehicle())
-				////boat = game_state.NewNPCVehicle(references.FrigateVehicle, d.gameScene.gameState.Position, d.gameScene.gameState.Floor)
+				boat = *game_state.NewNPCFriendlyVehicle(references.FrigateVehicle, *references.NewNPCReferenceForVehicle(
+					references.FrigateVehicle,
+					dockPos,
+					dockFloor,
+				))
 			} else {
-				//boat = *game_state.NewNPCFriendlyVehicle(references.SkiffVehicle)
-				//// boat = game_state.NewNPCVehicle(references.SkiffVehicle, d.gameScene.gameState.Position, d.gameScene.gameState.Floor)
+				boat = *game_state.NewNPCFriendlyVehicle(references.SkiffVehicle, *references.NewNPCReferenceForVehicle(
+					references.SkiffVehicle,
+					dockPos,
+					dockFloor,
+				))
 			}
-			boat.SetPos(d.gameScene.gameState.Position)
-			boat.SetFloor(d.gameScene.gameState.Floor)
+			boat.NPCReference.Schedule.OverrideAllPositions(byte(dockPos.X), byte(dockPos.Y))
 
 			bAddedVehicle := d.gameScene.gameState.LargeMapNPCAIController[references.OVERWORLD].GetNpcs().AddVehicle(boat)
 
@@ -287,8 +300,6 @@ func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
 				d.dumpQuickState("Unable to add vehicle.")
 			}
 
-			// d.gameScene.gameState.CurrentNPCAIController.GetNpcs().AddVehicle(references.FrigateVehicle,
-			// 	d.gameScene.gameState.Position, d.gameScene.gameState.Floor)
 		})
 }
 
