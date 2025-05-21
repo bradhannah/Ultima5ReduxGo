@@ -1,7 +1,10 @@
 package sprites
 
-import "testing"
-import "github.com/stretchr/testify/assert"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestBordersEven(t *testing.T) {
 	borderDimensions := getCornersOfReferenceBorder(100, 50)
@@ -20,8 +23,8 @@ func TestBordersEven(t *testing.T) {
 
 	assert.True(t, borderDimensions.topRight.Dx() == borderDimensions.bottomRight.Dx())
 	assert.True(t, borderDimensions.topLeft.Dx() == borderDimensions.bottomLeft.Dx())
-	//assert.True(t, borderDimensions.topRight.Dy() == borderDimensions.bottomRight.Dy())
-	//assert.True(t, borderDimensions.topLeft.Dy() == borderDimensions.bottomLeft.Dy())
+	// assert.True(t, borderDimensions.topRight.Dy() == borderDimensions.bottomRight.Dy())
+	// assert.True(t, borderDimensions.topLeft.Dy() == borderDimensions.bottomLeft.Dy())
 }
 
 func TestBordersOdd(t *testing.T) {

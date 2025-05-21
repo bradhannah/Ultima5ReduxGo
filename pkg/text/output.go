@@ -45,7 +45,7 @@ func (o *Output) SetColor(color color.Color) {
 }
 
 func (o *Output) Clear() {
-	for i, _ := range o.lines {
+	for i := range o.lines {
 		o.lines[i] = ""
 	}
 }

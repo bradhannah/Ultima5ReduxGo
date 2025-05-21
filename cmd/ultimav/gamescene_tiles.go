@@ -6,7 +6,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
@@ -21,7 +21,7 @@ func (g *GameScene) getSmallCalculatedAvatarTileIndex(ogSpriteIndex indexes.Spri
 	if g.gameState.PartyVehicle.GetVehicleDetails().VehicleType != references.NoPartyVehicle {
 		return indexes.SpriteIndex(g.gameState.PartyVehicle.GetVehicleDetails().GetSpriteIndex())
 	}
-	return g.getSmallCalculatedNPCTileIndex(ogSpriteIndex, indexes.Avatar_KeyIndex, g.gameState.Position)
+	return g.getSmallCalculatedNPCTileIndex(ogSpriteIndex, indexes.Avatar_KeyIndex, g.gameState.MapState.PlayerLocation.Position)
 }
 
 func (g *GameScene) getSmallCalculatedNPCTileIndex(ogSpriteIndex indexes.SpriteIndex, npcIndex indexes.SpriteIndex, spritePosition references.Position) indexes.SpriteIndex {
@@ -64,7 +64,7 @@ func (g *GameScene) getCorrectAvatarOnChairTile(spriteIndex indexes.SpriteIndex,
 	return spriteIndex
 }
 
-func (g *GameScene) setDrawBridge(theMap *game_state.LayeredMap, pos *references.Position, spriteIndex indexes.SpriteIndex) bool {
+func (g *GameScene) setDrawBridge(theMap *map_state.LayeredMap, pos *references.Position, spriteIndex indexes.SpriteIndex) bool {
 	const (
 		leftXDrawBridge   = 14
 		rightXDrawBridge  = 16
@@ -73,7 +73,7 @@ func (g *GameScene) setDrawBridge(theMap *game_state.LayeredMap, pos *references
 	)
 
 	if (pos.X >= leftXDrawBridge && pos.X <= rightXDrawBridge) && (pos.Y >= topYDrawBridge && pos.Y <= bottomYDrawBridge) {
-		theMap.SetTileByLayer(game_state.MapOverrideLayer, pos, g.gameState.GetDrawBridgeWaterByTime(spriteIndex))
+		theMap.SetTileByLayer(map_state.MapOverrideLayer, pos, g.gameState.GetDrawBridgeWaterByTime(spriteIndex))
 		return true
 	}
 	return false
@@ -83,14 +83,14 @@ func (g *GameScene) getCorrectAvatarEatingInChairTile(avatarChairTileIndex index
 	switch avatarChairTileIndex {
 	case indexes.ChairFacingDown:
 		downPos := pos.GetPositionDown()
-		downPosTile := g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).GetTopTile(downPos)
+		downPosTile := g.gameState.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.MapState.PlayerLocation.Floor).GetTopTile(downPos)
 		if downPosTile.Index == indexes.TableFoodBoth || downPosTile.Index == indexes.TableFoodTop {
 			return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.AvatarSittingAndEatingFacingDown, 0)
 		}
 		return indexes.AvatarSittingFacingDown
 	case indexes.ChairFacingUp:
 		upPos := pos.GetPositionUp()
-		upPosTile := g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor).GetTopTile(upPos)
+		upPosTile := g.gameState.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.MapState.PlayerLocation.Floor).GetTopTile(upPos)
 		if upPosTile.Index == indexes.TableFoodBoth || upPosTile.Index == indexes.TableFoodBottom {
 			return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.AvatarSittingAndEatingFacingUp, 0)
 		}
@@ -102,33 +102,33 @@ func (g *GameScene) getCorrectAvatarEatingInChairTile(avatarChairTileIndex index
 
 // refreshSpecialTileOverrideExceptions
 // Refreshes the special tiles that are not in the map like Portcullis, drawbridge and mirrors
-func (g *GameScene) refreshSpecialTileOverrideExceptions(pos *references.Position, layer *game_state.LayeredMap) {
+func (g *GameScene) refreshSpecialTileOverrideExceptions(pos *references.Position, layer *map_state.LayeredMap) {
 	tile := layer.GetTileTopMapOnlyTile(pos)
 	if tile == nil {
 		return
 	}
 	switch tile.Index {
 	case indexes.Portcullis, indexes.BrickWallArchway:
-		layer.SetTileByLayer(game_state.MapOverrideLayer, pos, g.gameState.GetArchwayPortcullisSpriteByTime())
+		layer.SetTileByLayer(map_state.MapOverrideLayer, pos, g.gameState.GetArchwayPortcullisSpriteByTime())
 	case indexes.WoodenPlankVert1Floor, indexes.WoodenPlankVert2Floor:
 		g.setDrawBridge(layer, pos, tile.Index)
 	case indexes.Mirror, indexes.MirrorAvatar:
 		if g.gameState.IsAvatarAtPosition(pos.GetPositionDown()) {
-			layer.SetTileByLayer(game_state.MapOverrideLayer, pos, indexes.MirrorAvatar)
+			layer.SetTileByLayer(map_state.MapOverrideLayer, pos, indexes.MirrorAvatar)
 		} else {
-			layer.SetTileByLayer(game_state.MapOverrideLayer, pos, indexes.Mirror)
+			layer.SetTileByLayer(map_state.MapOverrideLayer, pos, indexes.Mirror)
 		}
 	}
 }
 
-func (g *GameScene) refreshProvisionsAndEquipmentMapTiles(pos *references.Position, layer *game_state.LayeredMap) {
-	if !layer.IsPositionVisible(pos, g.gameState.DateTime, &g.gameState.Lighting, g.gameState.Floor < 0) {
-		layer.UnSetTileByLayer(game_state.EquipmentAndProvisionsLayer, pos)
+func (g *GameScene) refreshProvisionsAndEquipmentMapTiles(pos *references.Position, layer *map_state.LayeredMap) {
+	if !layer.IsPositionVisible(pos, g.gameState.DateTime, &g.gameState.MapState.Lighting, g.gameState.MapState.PlayerLocation.Floor < 0) {
+		layer.UnSetTileByLayer(map_state.EquipmentAndProvisionsLayer, pos)
 		return
 	}
 
 	if !g.gameState.ItemStacksMap.HasItemStackAtPosition(pos) {
-		layer.UnSetTileByLayer(game_state.EquipmentAndProvisionsLayer, pos)
+		layer.UnSetTileByLayer(map_state.EquipmentAndProvisionsLayer, pos)
 		return
 	}
 
@@ -138,7 +138,7 @@ func (g *GameScene) refreshProvisionsAndEquipmentMapTiles(pos *references.Positi
 	}
 	tileIndex := g.gameReferences.InventoryItemReferences.GetReferenceByItem(item.Item).ItemSprite
 
-	layer.SetTileByLayer(game_state.EquipmentAndProvisionsLayer, pos, tileIndex)
+	layer.SetTileByLayer(map_state.EquipmentAndProvisionsLayer, pos, tileIndex)
 }
 
 func (g *GameScene) getTileVisibilityIndexByPosition(pos *references.Position) int {
@@ -152,11 +152,11 @@ func (g *GameScene) getTileVisibilityIndexByPosition(pos *references.Position) i
 	return 1
 }
 
-func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *game_state.LayeredMap, do *ebiten.DrawImageOptions) {
-	mapUnitTile := layer.GetTileByLayer(game_state.MapUnitLayer, pos)
+func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *map_state.LayeredMap, do *ebiten.DrawImageOptions) {
+	mapUnitTile := layer.GetTileByLayer(map_state.MapUnitLayer, pos)
 	underTile := layer.GetTileTopMapOnlyTile(pos)
 	if mapUnitTile == nil || mapUnitTile.Index == 0 {
-		mapUnitTile = layer.GetTileByLayer(game_state.EquipmentAndProvisionsLayer, pos)
+		mapUnitTile = layer.GetTileByLayer(map_state.EquipmentAndProvisionsLayer, pos)
 		if mapUnitTile != nil && mapUnitTile.Index >= 512 {
 			log.Fatalf("Unepexted tile index for map unit = %d", mapUnitTile.Index)
 		}
@@ -165,7 +165,7 @@ func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *game
 		}
 	}
 	var tileIndex indexes.SpriteIndex
-	if layer.IsPositionVisible(pos, g.gameState.DateTime, &g.gameState.Lighting, g.gameState.Floor < 0) && g.getTileVisibilityIndexByPosition(pos) > 0 {
+	if layer.IsPositionVisible(pos, g.gameState.DateTime, &g.gameState.MapState.Lighting, g.gameState.MapState.PlayerLocation.Floor < 0) && g.getTileVisibilityIndexByPosition(pos) > 0 {
 		tileIndex = g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, *pos)
 		tileIndex = g.getSmallCalculatedTileIndex(tileIndex, pos)
 		if mapUnitTile != nil && mapUnitTile.Index >= 512 {
@@ -181,8 +181,8 @@ func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *game
 	// o.DrawText(g.unscaledMapImage, fmt.Sprintf("x=%d y=%d", pos.X, pos.Y), &do)
 }
 
-func (g *GameScene) refreshStaticMapTiles(pos *references.Position, mapLayer *game_state.LayeredMap, do *ebiten.DrawImageOptions) {
-	if !mapLayer.IsPositionVisible(pos, g.gameState.DateTime, &g.gameState.Lighting, g.gameState.Floor < 0) {
+func (g *GameScene) refreshStaticMapTiles(pos *references.Position, mapLayer *map_state.LayeredMap, do *ebiten.DrawImageOptions) {
+	if !mapLayer.IsPositionVisible(pos, g.gameState.DateTime, &g.gameState.MapState.Lighting, g.gameState.MapState.PlayerLocation.Floor < 0) {
 		return
 	}
 
@@ -207,14 +207,14 @@ func (g *GameScene) refreshStaticMapTiles(pos *references.Position, mapLayer *ga
 // refreshAllMapLayerTiles
 func (g *GameScene) refreshAllMapLayerTiles() {
 	layer := g.gameState.GetLayeredMapByCurrentLocation()
-	layer.RecalculateVisibleTiles(g.gameState.Position, &g.gameState.Lighting, g.gameState.DateTime, g.gameState.Floor < 0)
+	layer.RecalculateVisibleTiles(g.gameState.MapState.PlayerLocation.Position, &g.gameState.MapState.Lighting, g.gameState.DateTime, g.gameState.MapState.PlayerLocation.Floor < 0)
 
 	if g.unscaledMapImage == nil {
 		g.unscaledMapImage = ebiten.NewImage(sprites.TileSize*xTilesVisibleOnGameScreen, sprites.TileSize*yTilesVisibleOnGameScreen)
 	}
 
 	g.unscaledMapImage.Fill(image.Black)
-	mapType := g.gameState.Location.GetMapType()
+	mapType := g.gameState.MapState.PlayerLocation.Location.GetMapType()
 
 	do := ebiten.DrawImageOptions{}
 
@@ -226,8 +226,8 @@ func (g *GameScene) refreshAllMapLayerTiles() {
 
 	for x = 0; x < xTilesVisibleOnGameScreen; x++ {
 		for y = 0; y < yTilesVisibleOnGameScreen; y++ {
-			pos.X = x + g.gameState.Position.X - xCenter
-			pos.Y = y + g.gameState.Position.Y - yCenter
+			pos.X = x + g.gameState.MapState.PlayerLocation.Position.X - xCenter
+			pos.Y = y + g.gameState.MapState.PlayerLocation.Position.Y - yCenter
 			if mapType == references.LargeMapType {
 				pos = pos.GetWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
 			}
@@ -236,7 +236,7 @@ func (g *GameScene) refreshAllMapLayerTiles() {
 			g.refreshSpecialTileOverrideExceptions(pos, layer)
 			g.refreshProvisionsAndEquipmentMapTiles(pos, layer)
 			g.refreshStaticMapTiles(pos, layer, &do)
-			if g.gameState.Position.Equals(pos) {
+			if g.gameState.MapState.PlayerLocation.Position.Equals(pos) {
 				avatarPos = *pos
 
 				avatarDo = ebiten.DrawImageOptions{}

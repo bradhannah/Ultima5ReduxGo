@@ -3,9 +3,10 @@ package text
 import (
 	"bytes"
 	_ "embed"
+	"log"
+
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"golang.org/x/text/language"
-	"log"
 )
 
 var (

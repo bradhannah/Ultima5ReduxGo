@@ -1,4 +1,4 @@
-package game_state
+package map_units
 
 import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
@@ -71,7 +71,7 @@ func (n *MapUnits) AddVehicle(vehicle NPCFriendly) bool {
 	return true
 }
 
-func (n *MapUnits) createFreshXyOccupiedMap() *XyOccupiedMap {
+func (n *MapUnits) CreateFreshXyOccupiedMap() *XyOccupiedMap {
 	xy := make(XyOccupiedMap)
 	for _, mu := range *n {
 
@@ -94,3 +94,5 @@ func As[T interface{ IsEmptyMapUnit() bool }](mu MapUnit) (T, bool) {
 	var zero T
 	return zero, false
 }
+
+type XyOccupiedMap map[int]map[int]bool

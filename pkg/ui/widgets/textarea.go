@@ -1,8 +1,9 @@
 package widgets
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 )
 
 type TextArea struct {

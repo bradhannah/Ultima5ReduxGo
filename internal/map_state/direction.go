@@ -1,8 +1,9 @@
-package game_state
+package map_state
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 func GetKeyAsDirection(key ebiten.Key) references.Direction {

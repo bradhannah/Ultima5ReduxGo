@@ -1,4 +1,4 @@
-package game_state
+package map_state
 
 import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"

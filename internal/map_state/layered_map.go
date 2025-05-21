@@ -1,4 +1,4 @@
-package game_state
+package map_state
 
 import (
 	"log"
@@ -44,9 +44,9 @@ type LayeredMap struct {
 
 	tileRefs *references.Tiles
 
-	xVisibleTiles, yVisibleTiles int
-	topLeft, bottomRight         references.Position
-	xMax, yMax                   references.Coordinate
+	xVisibleTiles, yVisibleTiles     int
+	TopLeft, BottomRight             references.Position
+	XMaxTilesPerMap, YMaxTilesPerMap references.Coordinate
 
 	bWrappingMap bool
 }
@@ -55,8 +55,8 @@ func newLayeredMap(xMax references.Coordinate, yMax references.Coordinate, tileR
 	layeredMap := LayeredMap{}
 	layeredMap.xVisibleTiles = xVisibleTiles
 	layeredMap.yVisibleTiles = yVisibleTiles
-	layeredMap.xMax = xMax
-	layeredMap.yMax = yMax
+	layeredMap.XMaxTilesPerMap = xMax
+	layeredMap.YMaxTilesPerMap = yMax
 	layeredMap.bWrappingMap = bWrappingMap
 	layeredMap.tileRefs = tileRefs
 
@@ -75,18 +75,18 @@ func newLayeredMap(xMax references.Coordinate, yMax references.Coordinate, tileR
 }
 
 func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position, lighting *Lighting, timeOfDay datetime.UltimaDate, bForceBasement bool) {
-	l.topLeft = references.Position{
+	l.TopLeft = references.Position{
 		X: avatarPos.X - overflowTiles,
 		Y: avatarPos.Y - overflowTiles,
 	}
-	l.bottomRight = references.Position{
+	l.BottomRight = references.Position{
 		X: avatarPos.X + overflowTiles,
 		Y: avatarPos.Y + overflowTiles,
 	}
 
 	// TODO: it's lazy to make both of these calls since it could do in one pass
 	l.testForVisibilityMap.ResetVisibilityCoords(false)
-	l.testForVisibilityMap.SetVisibilityCoordsRectangle(&l.topLeft, &l.bottomRight, l.xMax, l.yMax, l.bWrappingMap)
+	l.testForVisibilityMap.SetVisibilityCoordsRectangle(&l.TopLeft, &l.BottomRight, l.XMaxTilesPerMap, l.YMaxTilesPerMap, l.bWrappingMap)
 	l.visibleFlags.ResetVisibilityCoords(false)
 
 	l.SetVisible(true, &avatarPos)
@@ -120,8 +120,8 @@ type LightSources []LightSource
 func (l *LayeredMap) getAllLightSourcesInRange(centerPosition references.Position) LightSources {
 	ls := make(LightSources, 0)
 
-	for dX := -l.xMax; dX < l.xMax; dX++ {
-		for dY := -l.yMax; dY < l.yMax; dY++ {
+	for dX := -l.XMaxTilesPerMap; dX < l.XMaxTilesPerMap; dX++ {
+		for dY := -l.YMaxTilesPerMap; dY < l.YMaxTilesPerMap; dY++ {
 			pos := references.Position{X: centerPosition.X + dX, Y: centerPosition.Y + dY}
 			tile := l.GetTileTopMapOnlyTile(&pos)
 			if tile == nil {
@@ -140,7 +140,7 @@ func (l *LayeredMap) getAllLightSourcesInRange(centerPosition references.Positio
 
 func (l *LayeredMap) floodFillIfInside(pos *references.Position, bForce bool) {
 	if l.bWrappingMap {
-		pos = pos.GetWrapped(l.xMax, l.yMax)
+		pos = pos.GetWrapped(l.XMaxTilesPerMap, l.YMaxTilesPerMap)
 	}
 
 	if !bForce && !l.testForVisibilityMap[pos.X][pos.Y] {
@@ -200,7 +200,7 @@ func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datet
 	xUp := l.xVisibleTiles/2 + 1
 	var nToShow int
 	if bIsBasement {
-		nToShow = 1 //helpers.RoundUp(float32(xUp) * timeOfDay.GetVisibilityFactorWithoutTorch(0.1))
+		nToShow = 1 // helpers.RoundUp(float32(xUp) * timeOfDay.GetVisibilityFactorWithoutTorch(0.1))
 	} else {
 		nToShow = helpers.RoundUp(float32(xUp) * timeOfDay.GetVisibilityFactorWithoutTorch(0.1))
 	}
@@ -217,7 +217,7 @@ func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datet
 		return false
 	} else {
 		bShow = true // <= int(2)
-		//_ = x
+		// _ = x
 	}
 
 	return bShow
@@ -280,11 +280,11 @@ func (l *LayeredMap) GetTilesVisibleOnScreen() (int, int) {
 }
 
 func (l *LayeredMap) GetTopLeftExtent() references.Position {
-	return l.topLeft
+	return l.TopLeft
 }
 
 func (l *LayeredMap) GetBottomRightExtent() references.Position {
-	return l.bottomRight
+	return l.BottomRight
 }
 
 func (l *LayeredMap) IsWrappedMap() bool {
@@ -292,5 +292,5 @@ func (l *LayeredMap) IsWrappedMap() bool {
 }
 
 func (l *LayeredMap) GetBottomRightWithoutOverflow() references.Position {
-	return references.Position{X: l.xMax, Y: l.yMax}
+	return references.Position{X: l.XMaxTilesPerMap, Y: l.YMaxTilesPerMap}
 }

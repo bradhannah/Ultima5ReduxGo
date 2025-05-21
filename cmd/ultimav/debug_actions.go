@@ -5,13 +5,13 @@ import (
 )
 
 func (g *GameScene) DebugMoveOnMap(position references.Position) {
-	g.gameState.Position = position
+	g.gameState.MapState.PlayerLocation.Position = position
 }
 
 func (g *GameScene) DebugFloorUp() bool {
-	if g.gameState.Location == references.Britannia_Underworld {
-		if g.gameState.Floor == -1 {
-			g.gameState.Floor = 0
+	if g.gameState.MapState.PlayerLocation.Location == references.Britannia_Underworld {
+		if g.gameState.MapState.PlayerLocation.Floor == -1 {
+			g.gameState.MapState.PlayerLocation.Floor = 0
 			return true
 		}
 		return false
@@ -20,19 +20,19 @@ func (g *GameScene) DebugFloorUp() bool {
 	singleMap := g.GetCurrentLocationReference()
 
 	_, maxFloor := singleMap.GetFloorMinMax()
-	if g.gameState.Floor+1 > maxFloor {
+	if g.gameState.MapState.PlayerLocation.Floor+1 > maxFloor {
 		return false
 	}
-	g.gameState.Floor++
+	g.gameState.MapState.PlayerLocation.Floor++
 	g.gameState.UpdateSmallMap(g.gameReferences.TileReferences, g.gameReferences.LocationReferences)
 
 	return true
 }
 
 func (g *GameScene) DebugFloorDown() bool {
-	if g.gameState.Location == references.Britannia_Underworld {
-		if g.gameState.Floor == 0 {
-			g.gameState.Floor = -1
+	if g.gameState.MapState.PlayerLocation.Location == references.Britannia_Underworld {
+		if g.gameState.MapState.PlayerLocation.Floor == 0 {
+			g.gameState.MapState.PlayerLocation.Floor = -1
 			return true
 		}
 		return false
@@ -40,22 +40,22 @@ func (g *GameScene) DebugFloorDown() bool {
 
 	singleMap := g.GetCurrentLocationReference()
 	minFloor, _ := singleMap.GetFloorMinMax()
-	if g.gameState.Floor-1 < minFloor {
+	if g.gameState.MapState.PlayerLocation.Floor-1 < minFloor {
 		return false
 	}
-	g.gameState.Floor--
+	g.gameState.MapState.PlayerLocation.Floor--
 	g.gameState.UpdateSmallMap(g.gameReferences.TileReferences, g.gameReferences.LocationReferences)
 	return true
 }
 
 func (g *GameScene) DebugFloorY(nFloor references.FloorNumber) bool {
-	if g.gameState.Location == references.Britannia_Underworld {
+	if g.gameState.MapState.PlayerLocation.Location == references.Britannia_Underworld {
 		if nFloor < -1 {
-			g.gameState.Floor = -1
+			g.gameState.MapState.PlayerLocation.Floor = -1
 		} else if nFloor > 0 {
-			g.gameState.Floor = 0
+			g.gameState.MapState.PlayerLocation.Floor = 0
 		} else {
-			g.gameState.Floor = nFloor
+			g.gameState.MapState.PlayerLocation.Floor = nFloor
 		}
 		return true
 	}
@@ -65,6 +65,6 @@ func (g *GameScene) DebugFloorY(nFloor references.FloorNumber) bool {
 		// bad
 		return false
 	}
-	g.gameState.Floor = nFloor
+	g.gameState.MapState.PlayerLocation.Floor = nFloor
 	return true
 }

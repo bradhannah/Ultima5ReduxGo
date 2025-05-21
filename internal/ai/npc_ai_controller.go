@@ -1,11 +1,13 @@
-package game_state
+package ai
 
-type XyOccupiedMap map[int]map[int]bool
+import (
+	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
+)
 
 type NPCAIController interface {
 	PopulateMapFirstLoad()
 	AdvanceNextTurnCalcAndMoveNPCs()
 	FreshenExistingNPCsOnMap()
-	GetNpcs() *MapUnits
+	GetNpcs() *map_units.MapUnits
 	RemoveAllEnemies()
 }

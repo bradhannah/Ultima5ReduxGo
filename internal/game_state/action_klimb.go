@@ -6,10 +6,10 @@ import (
 )
 
 func (g *GameState) ActionKlimbSmallMap(direction references.Direction) bool {
-	newPosition := direction.GetNewPositionInDirection(&g.Position)
-	targetTile := g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).GetTileTopMapOnlyTile(newPosition)
+	newPosition := direction.GetNewPositionInDirection(&g.MapState.PlayerLocation.Position)
+	targetTile := g.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.MapState.PlayerLocation.Floor).GetTileTopMapOnlyTile(newPosition)
 	if targetTile.Index == indexes.FenceHoriz || targetTile.Index == indexes.FenceVert {
-		g.Position = *newPosition
+		g.MapState.PlayerLocation.Position = *newPosition
 		return true
 	}
 	return false

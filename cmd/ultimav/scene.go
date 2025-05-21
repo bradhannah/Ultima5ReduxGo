@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 )
 
 var lastResolution config.ScreenResolution
@@ -22,13 +23,13 @@ type Game struct {
 
 // Update calls the current scene's Update method
 func (g *Game) Update() error {
-	//if lastResolution.X == 0 || lastResolution.Y == 0 || lastResolution != config.GetWindowResolutionFromEbiten() {
+	// if lastResolution.X == 0 || lastResolution.Y == 0 || lastResolution != config.GetWindowResolutionFromEbiten() {
 
 	if lastResolution.X == 0 || lastResolution.Y == 0 || lastResolution != g.currentScene.GetUltimaConfiguration().GetCurrentTrackedWindowResolution() || lastResolution != config.GetWindowResolutionFromEbiten() {
 
 		lastResolution = g.currentScene.GetUltimaConfiguration().GetCurrentTrackedWindowResolution()
 
-		//lastResolution = config.GetWindowResolutionFromEbiten()
+		// lastResolution = config.GetWindowResolutionFromEbiten()
 
 		config.SetWindowSize(config.ScreenResolution{X: lastResolution.X, Y: lastResolution.Y})
 		g.currentScene.InvalidateResolution()

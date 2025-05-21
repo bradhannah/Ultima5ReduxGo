@@ -5,6 +5,8 @@ import (
 	"log"
 	"math/rand"
 	"strings"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
 )
 
 type EnemyAbility int
@@ -45,70 +47,19 @@ type EnemyReference struct {
 	Friend      *EnemyReference
 }
 
-func (e *EnemyReference) GetEraWeight(era Era) int {
+func (e *EnemyReference) GetEraWeight(era datetime.Era) int {
 	switch era {
-	case EarlyEra:
+	case datetime.EarlyEra:
 		return e.additionalEnemyFlags.Era1Weight
-	case MiddleEra:
+	case datetime.MiddleEra:
 		return e.additionalEnemyFlags.Era2Weight
-	case LateEra:
+	case datetime.LateEra:
 		return e.additionalEnemyFlags.Era3Weight
 	default:
-		log.Fatal("Unepxected Era")
+		log.Fatal("Unexpected Era")
 		return 0
 	}
-
-	// if nTurn >= beginningOfEra3 {
-	// 	return e.additionalEnemyFlags.Era3Weight
-	// }
-	// if nTurn >= beginningOfEra2 {
-	// 	return e.additionalEnemyFlags.Era2Weight
-	// }
-	// return e.additionalEnemyFlags.Era1Weight
 }
-
-//  protected override bool CanMoveToDumb(Map map, Point2D mapUnitPosition)
-// {
-// 	if (EnemyReference.DoesNotMove) return false;
-
-// 	bool bCanMove = false;
-// 	TileReference tileReference = map.GetTileReference(mapUnitPosition);
-
-// 	bool bIsMapUnitOnTile = map.IsMapUnitOccupiedTile(mapUnitPosition);
-// 	if (bIsMapUnitOnTile) return false;
-
-// 	if (EnemyReference.IsSandEnemy)
-// 	{
-// 		// if tile is sand
-// 		bCanMove |= tileReference.Name.IndexOf("sand", 0, StringComparison.CurrentCultureIgnoreCase) >= 0;
-// 	}
-// 	else if (EnemyReference.IsWaterEnemy)
-// 	{
-// 		// if tile is water
-// 		bCanMove |= tileReference.IsWaterEnemyPassable;
-// 	}
-// 	else
-// 	{
-// 		// the enemy is a land monster by process of elimination
-// 		bCanMove |= tileReference.IsLandEnemyPassable;
-// 	}
-
-// 	if (EnemyReference.CanFlyOverWater)
-// 	{
-// 		// if tile is water
-// 		bCanMove |= tileReference.IsWaterTile;
-// 	}
-
-// 	if (EnemyReference.CanPassThroughWalls)
-// 	{
-// 		// if tile is wall
-// 		bCanMove |=
-// 			tileReference.Name.IndexOf("wall", 0, StringComparison.CurrentCultureIgnoreCase) >= 0;
-// 	}
-
-// 	return bCanMove;
-// }
-// }
 
 func (e *EnemyReference) CanSpawnToTile(tile *Tile) bool {
 
@@ -154,12 +105,6 @@ func (e *EnemyReference) CanMoveToTile(tile *Tile) bool {
 
 	return bCanMoveToTile
 
-	// switch tile.CombatMapIndex {
-	// case "":
-	// 	return false
-	// default:
-	// 	return true
-	// }
 }
 
 func (e *EnemyReference) isMonsterSpawnableOnTile(tile *Tile) bool {
@@ -175,13 +120,13 @@ func (e *EnemyReference) HasAbility(ability EnemyAbility) bool {
 // for the given nTurn era and is able to spawn on the provided tile.
 // It returns an error if no enemies exist for the era.
 // If none of the possible enemies can move onto the tile, it returns (nil, nil).
-func (e *EnemyReferences) GetRandomEnemyReferenceByEraAndTile(era Era, tile *Tile) (*EnemyReference, error) {
+func (e *EnemyReferences) GetRandomEnemyReferenceByEraAndTile(era datetime.Era, tile *Tile) (*EnemyReference, error) {
 	// Filter enemy references based on era weight.
 	possibleEnemies := make([]*EnemyReference, 0)
 	for _, v := range *e {
 		// if (*e)[i].GetEraWeight(era) > 0 {
 		if v.GetEraWeight(era) > 0 {
-			possibleEnemies = append(possibleEnemies, &v) //&(*e)[i])
+			possibleEnemies = append(possibleEnemies, &v) // &(*e)[i])
 		}
 	}
 

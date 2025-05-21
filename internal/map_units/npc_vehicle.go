@@ -1,4 +1,4 @@
-package game_state
+package map_units
 
 import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
@@ -12,17 +12,6 @@ type VehicleDetails struct {
 	currentDirection  references.Direction
 	previousDirection references.Direction
 }
-
-// func NewNPCVehicle(vehicleType references.VehicleType, pos references.Position, floor references.FloorNumber) NPCFriendly {
-// 	return *NewNPCFriendlyVehicle()
-// 	return *NewNPCFriendly(
-
-// 	)
-// 	VehicleDetails{
-// 		VehicleType:   vehicleType,
-// 		SkiffQuantity: 0,
-// 	}
-// }
 
 func (n *VehicleDetails) SetPartyVehicleDirection(direction references.Direction) {
 	switch n.VehicleType {

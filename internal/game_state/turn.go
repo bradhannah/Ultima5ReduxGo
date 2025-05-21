@@ -1,13 +1,12 @@
 package game_state
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 func (g *GameState) FinishTurn() {
 
-	switch g.Location.GetMapType() {
+	switch g.MapState.PlayerLocation.Location.GetMapType() {
 	case references.SmallMapType:
 		g.smallMapProcessEndOfTurn()
 	case references.LargeMapType:
@@ -21,13 +20,13 @@ func (g *GameState) FinishTurn() {
 	g.moveNonCombatMapMapUnitsToNextMove()
 	g.GenerateAndCleanupEnemies()
 
-	g.Lighting.AdvanceTurn()
+	g.MapState.Lighting.AdvanceTurn()
 }
 
 func (g *GameState) largeMapProcessEndOfTurn() {
 	topTile := g.GetCurrentLayeredMapAvatarTopTile()
 
-	//g.LargeMapNPCAIController.AdvanceNextTurnCalcAndMoveNPCs()
+	// g.LargeMapNPCAIController.AdvanceNextTurnCalcAndMoveNPCs()
 
 	g.GetCurrentLargeMapNPCAIController().AdvanceNextTurnCalcAndMoveNPCs()
 
@@ -36,7 +35,7 @@ func (g *GameState) largeMapProcessEndOfTurn() {
 }
 
 func (g *GameState) smallMapProcessEndOfTurn() {
-	g.smallMapProcessTurnDoors()
+	g.MapState.SmallMapProcessTurnDoors()
 	// small maps are always 1 minute per turn
 	g.DateTime.Advance(DefaultSmallMapMinutesPerTurn)
 
@@ -45,24 +44,6 @@ func (g *GameState) smallMapProcessEndOfTurn() {
 
 func (g *GameState) smallMapProcessNPCs() {
 	g.CurrentNPCAIController.AdvanceNextTurnCalcAndMoveNPCs()
-}
-
-func (g *GameState) smallMapProcessTurnDoors() {
-	if g.openDoorPos != nil {
-		if g.openDoorTurns == 0 {
-			tile := g.LayeredMaps.GetTileRefByPosition(references.SmallMapType, MapLayer, g.openDoorPos, g.Floor)
-			var doorTileIndex indexes.SpriteIndex
-			if tile.Index.IsWindowedDoor() {
-				doorTileIndex = indexes.RegularDoorView
-			} else {
-				doorTileIndex = indexes.RegularDoor
-			}
-			g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).SetTileByLayer(MapOverrideLayer, g.openDoorPos, doorTileIndex)
-			g.openDoorPos = nil
-		} else {
-			g.openDoorTurns--
-		}
-	}
 }
 
 // processDamageOnAdvanceTimeNonCombat
@@ -81,12 +62,12 @@ func (g *GameState) moveNonCombatMapMapUnitsToNextMove() {
 // Generates and cleans up enemies on the map
 func (g *GameState) GenerateAndCleanupEnemies() {
 	// TODO: implement this
-	switch g.Location.GetMapType() {
+	switch g.MapState.PlayerLocation.Location.GetMapType() {
 	case references.SmallMapType:
 		return
 	case references.LargeMapType:
-		//g.GetCurrentLayeredMap().
-		//g.largeMapGenerateAndCleanupEnemies()
+		// g.GetCurrentLayeredMap().
+		// g.largeMapGenerateAndCleanupEnemies()
 	case references.DungeonMapType:
 	case references.CombatMapType:
 	default:
@@ -94,6 +75,6 @@ func (g *GameState) GenerateAndCleanupEnemies() {
 	}
 }
 
-func (g *GameState) GetEra() references.Era {
-	return references.GetEraByTurn(int(g.DateTime.Turn))
-}
+// func (g *GameState) GetEra() datetime.Era {
+// 	return GetEraByTurn(int(g.DateTime.Turn))
+// }

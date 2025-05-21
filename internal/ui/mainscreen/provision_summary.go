@@ -54,7 +54,7 @@ func (p *ProvisionSummary) Draw(gameState *game_state.GameState, screen *ebiten.
 		[3]string{
 			fmt.Sprintf("%d", gameState.PartyState.Inventory.Provisions.Torches),
 			fmt.Sprintf("%d", gameState.PartyState.Inventory.Gold),
-			fmt.Sprintf("%d", gameState.Karma),
+			fmt.Sprintf("%d", gameState.PartyState.Karma),
 		},
 	)
 

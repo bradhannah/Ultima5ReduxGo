@@ -2,10 +2,12 @@ package sprites
 
 import (
 	_ "embed"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
-	"github.com/hajimehoshi/ebiten/v2"
 	"image"
 	"math"
+
+	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 )
 
 var (
@@ -54,11 +56,11 @@ func (sb *ReferenceBorder) createBorderImage(idealWidthForScaling, width, height
 
 	img := ebiten.NewImage(width, height)
 
-	//cornerHeight := scaledDimensions.topLeft.Max.Y
+	// cornerHeight := scaledDimensions.topLeft.Max.Y
 	bothCornerHeight := scaledDimensions.topLeft.Bounds().Dy() + scaledDimensions.bottomRight.Bounds().Dy()
 	bothCornerWidth := scaledDimensions.topLeft.Bounds().Dx() + scaledDimensions.bottomRight.Bounds().Dx()
 
-	/// START WITH SIDE AND TOP BORDERS, THEY WILL GET OVERWRITTEN IF NASTY
+	// / START WITH SIDE AND TOP BORDERS, THEY WILL GET OVERWRITTEN IF NASTY
 	// now fill in the blanks with the horizontal and vertical bits
 	// sprite is horizontal
 	// goes from LEFT SIDE, top to bottom
@@ -110,7 +112,7 @@ func (sb *ReferenceBorder) createBorderImage(idealWidthForScaling, width, height
 		vertScaledOpRight.Translate(1, 0)
 	}
 
-	/// START CORNERS
+	// / START CORNERS
 	topLeftOp := ebiten.GeoM{}
 	topLeftOp.Scale(idealScaleX, idealScaleX)
 	img.DrawImage(sb.referenceBorderBits.topLeft, &ebiten.DrawImageOptions{

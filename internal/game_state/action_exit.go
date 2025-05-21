@@ -1,18 +1,21 @@
 package game_state
 
-import "github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+import (
+	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+)
 
 func (g *GameState) DebugQuickExitSmallMap() {
-	g.Location = references.Britannia_Underworld
-	g.Floor = g.LastLargeMapFloor
-	g.Position = g.LastLargeMapPosition
+	g.MapState.PlayerLocation.Location = references.Britannia_Underworld
+	g.MapState.PlayerLocation.Floor = g.LastLargeMapFloor
+	g.MapState.PlayerLocation.Position = g.LastLargeMapPosition
 	g.CurrentNPCAIController = g.GetCurrentLargeMapNPCAIController()
-	g.UpdateLargeMap()
+	g.MapState.UpdateLargeMap()
 }
 
 // ExitVehicle
 // returns the previously boarded vehicle - or nil if none was found
-func (g *GameState) ExitVehicle() *NPCFriendly {
+func (g *GameState) ExitVehicle() *map_units.NPCFriendly {
 	vehicleType := g.PartyVehicle.GetVehicleDetails().VehicleType
 
 	if vehicleType == references.NoPartyVehicle {
@@ -24,11 +27,11 @@ func (g *GameState) ExitVehicle() *NPCFriendly {
 		g.CurrentNPCAIController.GetNpcs().AddVehicle(g.PartyVehicle)
 		// check for skiffs
 		if g.PartyVehicle.GetVehicleDetails().SkiffQuantity <= 0 {
-			g.PartyVehicle = NewNPCFriendlyVehiceNoVehicle()
+			g.PartyVehicle = map_units.NewNPCFriendlyVehiceNoVehicle()
 			return &frigate
 		}
 
-		skiff := NewNPCFriendlyVehiceNewRef(references.SkiffVehicle, g.Position, g.Floor)
+		skiff := map_units.NewNPCFriendlyVehiceNewRef(references.SkiffVehicle, g.MapState.PlayerLocation.Position, g.MapState.PlayerLocation.Floor)
 		g.PartyVehicle = *skiff
 
 		// yay, exit on skiff
@@ -36,12 +39,12 @@ func (g *GameState) ExitVehicle() *NPCFriendly {
 	}
 
 	prevVehicle := g.PartyVehicle
-	g.PartyVehicle = NewNPCFriendlyVehiceNoVehicle()
+	g.PartyVehicle = map_units.NewNPCFriendlyVehiceNoVehicle()
 
 	// set the vehicle to now use your existing position as it's normal position
-	prevVehicle.SetPos(g.Position)
-	prevVehicle.NPCReference.Schedule.OverrideAllPositions(byte(g.Position.X), byte(g.Position.Y))
-	prevVehicle.SetFloor(g.Floor)
+	prevVehicle.SetPos(g.MapState.PlayerLocation.Position)
+	prevVehicle.NPCReference.Schedule.OverrideAllPositions(byte(g.MapState.PlayerLocation.Position.X), byte(g.MapState.PlayerLocation.Position.Y))
+	prevVehicle.SetFloor(g.MapState.PlayerLocation.Floor)
 
 	g.CurrentNPCAIController.GetNpcs().AddVehicle(prevVehicle)
 

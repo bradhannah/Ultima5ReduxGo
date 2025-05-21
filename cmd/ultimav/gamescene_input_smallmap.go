@@ -7,6 +7,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 
 	game_state2 "github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
@@ -137,12 +138,12 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 }
 
 func (g *GameScene) smallMapKlimb() {
-	currentTile := g.gameState.LayeredMaps.GetTileRefByPosition(references.SmallMapType, game_state2.MapLayer, &g.gameState.Position, g.gameState.Floor)
+	currentTile := g.gameState.MapState.LayeredMaps.GetTileRefByPosition(references.SmallMapType, map_state.MapLayer, &g.gameState.MapState.PlayerLocation.Position, g.gameState.MapState.PlayerLocation.Floor)
 
 	switch currentTile.Index {
 	case indexes.AvatarOnLadderDown, indexes.LadderDown, indexes.Grate:
-		if g.GetCurrentLocationReference().CanGoDownOneFloor(g.gameState.Floor) {
-			g.gameState.Floor--
+		if g.GetCurrentLocationReference().CanGoDownOneFloor(g.gameState.MapState.PlayerLocation.Floor) {
+			g.gameState.MapState.PlayerLocation.Floor--
 			g.gameState.UpdateSmallMap(g.gameReferences.TileReferences, g.gameReferences.LocationReferences)
 			g.output.AddRowStr("Klimb-Down!")
 			return
@@ -151,8 +152,8 @@ func (g *GameScene) smallMapKlimb() {
 		}
 
 	case indexes.AvatarOnLadderUp, indexes.LadderUp:
-		if g.GetCurrentLocationReference().CanGoUpOneFloor(g.gameState.Floor) {
-			g.gameState.Floor++
+		if g.GetCurrentLocationReference().CanGoUpOneFloor(g.gameState.MapState.PlayerLocation.Floor) {
+			g.gameState.MapState.PlayerLocation.Floor++
 			g.gameState.UpdateSmallMap(g.gameReferences.TileReferences, g.gameReferences.LocationReferences)
 			g.output.AddRowStr("Klimb-Up!")
 			return
@@ -171,7 +172,7 @@ func (g *GameScene) smallMapKlimbSecondary(direction references.Direction) {
 }
 
 func (g *GameScene) smallMapPushSecondary(direction references.Direction) {
-	pushThingPos := direction.GetNewPositionInDirection(&g.gameState.Position)
+	pushThingPos := direction.GetNewPositionInDirection(&g.gameState.MapState.PlayerLocation.Position)
 
 	// pushThingTile := g.gameState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, pushThingPos, g.gameState.Floor)
 	pushThingTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(pushThingPos)
@@ -189,18 +190,18 @@ func (g *GameScene) smallMapPushSecondary(direction references.Direction) {
 }
 
 func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
-	openThingPos := direction.GetNewPositionInDirection(&g.gameState.Position)
+	openThingPos := direction.GetNewPositionInDirection(&g.gameState.MapState.PlayerLocation.Position)
 	openThingTile := g.gameState.GetLayeredMapByCurrentLocation().GetTileTopMapOnlyTile(openThingPos)
 
 	if openThingTile.Index.IsDoor() {
-		switch g.gameState.OpenDoor(direction) {
-		case game_state2.OpenDoorNotADoor:
+		switch g.gameState.MapState.OpenDoor(direction) {
+		case map_state.OpenDoorNotADoor:
 			g.addRowStr("Bang to open!")
-		case game_state2.OpenDoorLocked:
+		case map_state.OpenDoorLocked:
 			g.addRowStr("Locked!")
-		case game_state2.OpenDoorLockedMagical:
+		case map_state.OpenDoorLockedMagical:
 			g.addRowStr("Magically Locked!")
-		case game_state2.OpenDoorOpened:
+		case map_state.OpenDoorOpened:
 			g.addRowStr("Opened!")
 		default:
 			log.Fatal("Unrecognized door open state")
@@ -210,7 +211,7 @@ func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
 
 	openThingTopTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(openThingPos)
 	if openThingTopTile.Index == indexes.Chest {
-		if g.gameState.Location == references.Lord_Britishs_Castle && g.gameState.Floor == references.Basement {
+		if g.gameState.MapState.PlayerLocation.Location == references.Lord_Britishs_Castle && g.gameState.MapState.PlayerLocation.Floor == references.Basement {
 			itemStack := references.CreateNewItemStack(references.LordBritishTreasure)
 			g.output.AddRowStr("Found:")
 			g.output.AddRowStr(g.gameReferences.InventoryItemReferences.GetListOfItems(&itemStack))
@@ -237,9 +238,9 @@ func (g *GameScene) smallMapJimmySecondary(direction references.Direction) {
 }
 
 func (g *GameScene) smallMapGetSecondary(direction references.Direction) {
-	getThingPos := direction.GetNewPositionInDirection(&g.gameState.Position)
-	getThingTile := g.gameState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, getThingPos, g.gameState.Floor)
-	mapLayers := g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor)
+	getThingPos := direction.GetNewPositionInDirection(&g.gameState.MapState.PlayerLocation.Position)
+	getThingTile := g.gameState.MapState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, getThingPos, g.gameState.MapState.PlayerLocation.Floor)
+	mapLayers := g.gameState.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.MapState.PlayerLocation.Floor)
 
 	if g.gameState.ItemStacksMap.HasItemStackAtPosition(getThingPos) {
 		item := g.gameState.ItemStacksMap.Pop(getThingPos)
@@ -254,26 +255,26 @@ func (g *GameScene) smallMapGetSecondary(direction references.Direction) {
 	switch getThingTile.Index {
 	case indexes.WheatInField:
 		g.addRowStr("Crops picked! Those aren't yours Avatar!")
-		mapLayers.SetTileByLayer(game_state2.MapLayer, getThingPos, indexes.PlowedField)
-		g.gameState.Karma = g.gameState.Karma.GetDecreasedKarma(1)
+		mapLayers.SetTileByLayer(map_state.MapLayer, getThingPos, indexes.PlowedField)
+		g.gameState.PartyState.Karma = g.gameState.PartyState.Karma.GetDecreasedKarma(1)
 	case indexes.RightSconce, indexes.LeftScone:
 		g.addRowStr("Borrowed!")
 		g.gameState.PartyState.Inventory.Provisions.Torches++
-		mapLayers.SetTileByLayer(game_state2.MapLayer, getThingPos, indexes.BrickFloor)
+		mapLayers.SetTileByLayer(map_state.MapLayer, getThingPos, indexes.BrickFloor)
 	case indexes.TableFoodBoth, indexes.TableFoodBottom, indexes.TableFoodTop:
 		if g.getFoodFromTable(direction) {
 			g.addRowStr("Mmmmm...! But that food isn't yours!")
 			g.gameState.PartyState.Inventory.Provisions.Food++
-			g.gameState.Karma = g.gameState.Karma.GetDecreasedKarma(1)
+			g.gameState.PartyState.Karma = g.gameState.PartyState.Karma.GetDecreasedKarma(1)
 		}
 	case indexes.Carpet2_MagicCarpet:
 	}
 }
 
 func (g *GameScene) getFoodFromTable(direction references.Direction) bool {
-	getThingPos := direction.GetNewPositionInDirection(&g.gameState.Position)
-	getThingTile := g.gameState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, getThingPos, g.gameState.Floor)
-	mapLayers := g.gameState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.Floor)
+	getThingPos := direction.GetNewPositionInDirection(&g.gameState.MapState.PlayerLocation.Position)
+	getThingTile := g.gameState.MapState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, getThingPos, g.gameState.MapState.PlayerLocation.Floor)
+	mapLayers := g.gameState.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.MapState.PlayerLocation.Floor)
 
 	var newTileIndex indexes.SpriteIndex
 
@@ -298,6 +299,6 @@ func (g *GameScene) getFoodFromTable(direction references.Direction) bool {
 		return false
 	}
 
-	mapLayers.SetTileByLayer(game_state2.MapLayer, getThingPos, newTileIndex)
+	mapLayers.SetTileByLayer(map_state.MapLayer, getThingPos, newTileIndex)
 	return true
 }

@@ -1,8 +1,10 @@
-package game_state
+package astar
 
 import (
 	"container/heap"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -17,7 +19,7 @@ type AStarMap struct {
 	walkableMap map[references.Position]int
 	bWrap       bool
 	maxX, maxY  references.Coordinate
-	mapUnit     MapUnit
+	mapUnit     map_units.MapUnit
 }
 
 func NewAStarMap() *AStarMap {
@@ -99,12 +101,12 @@ func (m *AStarMap) reconstructPath(node *AStarNode) []references.Position {
 	return path
 }
 
-func (m *AStarMap) InitializeByLayeredMap(mapUnit MapUnit, lMap *LayeredMap, extraBlockTiles []references.Position) {
+func (m *AStarMap) InitializeByLayeredMap(mapUnit map_units.MapUnit, lMap *map_state.LayeredMap, extraBlockTiles []references.Position) {
 	m.mapUnit = mapUnit
 	m.bWrap = false
 	m.walkableMap = make(map[references.Position]int)
-	for x := references.Coordinate(0); x < lMap.xMax; x++ {
-		for y := references.Coordinate(0); y < lMap.yMax; y++ {
+	for x := references.Coordinate(0); x < lMap.XMaxTilesPerMap; x++ {
+		for y := references.Coordinate(0); y < lMap.YMaxTilesPerMap; y++ {
 			pos := references.Position{
 				X: x,
 				Y: y,
@@ -119,8 +121,8 @@ func (m *AStarMap) InitializeByLayeredMap(mapUnit MapUnit, lMap *LayeredMap, ext
 }
 
 func (m *AStarMap) InitializeByLayeredMapWithLimit(
-	mapUnit MapUnit,
-	lMap *LayeredMap,
+	mapUnit map_units.MapUnit,
+	lMap *map_state.LayeredMap,
 	extraBlockTiles []references.Position,
 	bWrap bool,
 	centerPos references.Position,
@@ -142,7 +144,7 @@ func (m *AStarMap) InitializeByLayeredMapWithLimit(
 				pos = *pos.GetWrapped(m.maxX, m.maxY)
 			}
 			topTile := lMap.GetTopTile(&pos)
-			if enemy, ok := m.mapUnit.(*NPCEnemy); ok {
+			if enemy, ok := m.mapUnit.(*map_units.NPCEnemy); ok {
 				if enemy.EnemyReference.CanMoveToTile(topTile) {
 					m.walkableMap[pos] = 1
 				} else {

@@ -3,6 +3,9 @@ package game_state
 import (
 	"log"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/ai"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
@@ -20,64 +23,47 @@ const (
 	nightTowneOpenTime  = 5
 )
 
-type DebugOptions struct {
-	FreeMove   bool
-	MonsterGen bool
-}
-
 type GameState struct {
-	PartyState party_state.PartyState
+	PartyState   party_state.PartyState
+	MapState     map_state.MapState
+	AiController ai.NPCAIController
 
 	RawSave         [savedGamFileSize]byte
 	MoonstoneStatus MoonstoneStatus
 
-	DebugOptions DebugOptions
+	DebugOptions references.DebugOptions
 
 	GameReferences *references.GameReferences
 
-	Location references.Location
-	Position references.Position
-	Floor    references.FloorNumber
+	PartyVehicle map_units.NPCFriendly
 
-	LayeredMaps             LayeredMaps
-	CurrentNPCAIController  NPCAIController
-	LargeMapNPCAIController map[references.World]*NPCAIControllerLargeMap
-
-	PartyVehicle NPCFriendly
+	CurrentNPCAIController  ai.NPCAIController
+	LargeMapNPCAIController map[references.World]*ai.NPCAIControllerLargeMap
 
 	LastLargeMapPosition references.Position
 	LastLargeMapFloor    references.FloorNumber
 
-	TheOdds TheOdds
+	TheOdds references.TheOdds
 
 	DateTime datetime.UltimaDate
 
-	// open door
-	openDoorPos   *references.Position
-	openDoorTurns int
-
 	ItemStacksMap references.ItemStacksMap
-
-	XTilesVisibleOnGameScreen int
-	YTilesVisibleOnGameScreen int
-
-	Lighting Lighting
 }
 
 func (g *GameState) IsAvatarAtPosition(pos *references.Position) bool {
-	return g.Position.Equals(pos)
+	return g.MapState.PlayerLocation.Position.Equals(pos)
 }
 
 func (g *GameState) GetCurrentSmallLocationReference() *references.SmallLocationReference {
-	return g.GameReferences.LocationReferences.GetLocationReference(g.Location)
+	return g.GameReferences.LocationReferences.GetLocationReference(g.MapState.PlayerLocation.Location)
 }
 
-func (g *GameState) GetLayeredMapByCurrentLocation() *LayeredMap {
-	return g.LayeredMaps.GetLayeredMap(g.Location.GetMapType(), g.Floor)
+func (g *GameState) GetLayeredMapByCurrentLocation() *map_state.LayeredMap {
+	return g.MapState.LayeredMaps.GetLayeredMap(g.MapState.PlayerLocation.Location.GetMapType(), g.MapState.PlayerLocation.Floor)
 }
 
 func (g *GameState) IsOutOfBounds(position references.Position) bool {
-	if g.Location.GetMapType() == references.LargeMapType {
+	if g.MapState.PlayerLocation.Location.GetMapType() == references.LargeMapType {
 		if position.X > references.XLargeMapTiles-1 || position.Y >= references.YLargeMapTiles {
 			log.Fatalf("Exceeded large map tiles: X=%d, Y=%d", position.X, position.Y)
 		}
@@ -95,13 +81,13 @@ func (g *GameState) IsOutOfBounds(position references.Position) bool {
 	return false
 }
 
-func (g *GameState) GetCurrentLayeredMap() *LayeredMap {
-	return g.LayeredMaps.GetLayeredMap(g.Location.GetMapType(), g.Floor)
+func (g *GameState) GetCurrentLayeredMap() *map_state.LayeredMap {
+	return g.MapState.LayeredMaps.GetLayeredMap(g.MapState.PlayerLocation.Location.GetMapType(), g.MapState.PlayerLocation.Floor)
 }
 
 func (g *GameState) GetCurrentLayeredMapAvatarTopTile() *references.Tile {
 	theMap := g.GetCurrentLayeredMap()
-	topTile := theMap.GetTopTile(&g.Position)
+	topTile := theMap.GetTopTile(&g.MapState.PlayerLocation.Position)
 	if topTile == nil {
 		return nil
 	}
@@ -118,16 +104,6 @@ func (g *GameState) IsPassable(pos *references.Position) bool {
 	return topTile.IsPassable(g.PartyVehicle.GetVehicleDetails().VehicleType)
 }
 
-func (g *GameState) IsNPCPassable(pos *references.Position) bool {
-	theMap := g.LayeredMaps.GetLayeredMap(g.Location.GetMapType(), g.Floor)
-	topTile := theMap.GetTopTile(pos)
-
-	if topTile == nil {
-		return false
-	}
-	return topTile.IsPassable(references.NPC) || topTile.Index.IsUnlockedDoor()
-}
-
 func (g *GameState) GetArchwayPortcullisSpriteByTime() indexes.SpriteIndex {
 	if g.DateTime.Hour >= nightTowneCloseTime || g.DateTime.Hour < nightTowneOpenTime {
 		return indexes.Portcullis
@@ -142,11 +118,11 @@ func (g *GameState) GetDrawBridgeWaterByTime(origIndex indexes.SpriteIndex) inde
 	return origIndex
 }
 
-func (g *GameState) BoardVehicle(vehicle NPCFriendly) bool {
+func (g *GameState) BoardVehicle(vehicle map_units.NPCFriendly) bool {
 	g.PartyVehicle = vehicle
 
-	if !g.CurrentNPCAIController.GetNpcs().RemoveNPCAtPosition(g.Position) {
-		log.Fatalf("Unexpected - tried to remove NPC at position X=%d,Y=%d but failed", g.Position.X, g.Position.Y)
+	if !g.CurrentNPCAIController.GetNpcs().RemoveNPCAtPosition(g.MapState.PlayerLocation.Position) {
+		log.Fatalf("Unexpected - tried to remove NPC at position X=%d,Y=%d but failed", g.MapState.PlayerLocation.Position.X, g.MapState.PlayerLocation.Position.Y)
 	}
 
 	return true
@@ -157,11 +133,11 @@ func (g *GameState) GetTilesVisibleOnScreen() (int, int) {
 }
 
 func (g *GameState) GetTopLeftExtent() references.Position {
-	return g.GetCurrentLayeredMap().topLeft
+	return g.GetCurrentLayeredMap().TopLeft
 }
 
 func (g *GameState) GetBottomRightExtent() references.Position {
-	return g.GetCurrentLayeredMap().bottomRight
+	return g.GetCurrentLayeredMap().BottomRight
 }
 
 func (g *GameState) IsWrappedMap() bool {
@@ -170,4 +146,17 @@ func (g *GameState) IsWrappedMap() bool {
 
 func (g *GameState) GetBottomRightWithoutOverflow() references.Position {
 	return g.GetCurrentLayeredMap().GetBottomRightWithoutOverflow()
+}
+
+func (g *GameState) GetCurrentLargeMapNPCAIController() *ai.NPCAIControllerLargeMap {
+	if g.MapState.PlayerLocation.Location.GetMapType() != references.LargeMapType {
+		log.Fatalf("Expected large map type, got %d", g.MapState.PlayerLocation.Location.GetMapType())
+	}
+	var npcAiCon *ai.NPCAIControllerLargeMap
+	if g.MapState.IsOverworld() {
+		npcAiCon = g.LargeMapNPCAIController[references.OVERWORLD]
+	} else {
+		npcAiCon = g.LargeMapNPCAIController[references.UNDERWORLD]
+	}
+	return npcAiCon
 }

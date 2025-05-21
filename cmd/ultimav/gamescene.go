@@ -8,6 +8,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	mainscreen2 "github.com/bradhannah/Ultima5ReduxGo/internal/ui/mainscreen"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
@@ -94,10 +95,19 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 
 	// TODO: add a New function to GameState
 	gameScene.gameState = &game_state.GameState{
-		XTilesVisibleOnGameScreen: xTilesVisibleOnGameScreen,
-		YTilesVisibleOnGameScreen: yTilesVisibleOnGameScreen,
-		GameReferences:            gameScene.gameReferences,
+		GameReferences: gameScene.gameReferences,
 	}
+	gameScene.gameState.MapState = *map_state.NewMapState(
+		map_state.NewMapStateInput{
+			GameDimensions:            gameScene.gameState,
+			XTilesVisibleOnGameScreen: xTilesVisibleOnGameScreen,
+			YTilesVisibleOnGameScreen: yTilesVisibleOnGameScreen,
+		},
+	)
+	// 	map_state.MapState{
+	// 	XTilesVisibleOnGameScreen: xTilesVisibleOnGameScreen,
+	// 	YTilesVisibleOnGameScreen: yTilesVisibleOnGameScreen,
+	// }
 	err = gameScene.gameState.LoadLegacySaveGame(path.Join(gameScene.gameConfig.SavedConfigData.DataFilePath, "SAVED.GAM"), gameScene.gameReferences)
 
 	if err != nil {
@@ -153,7 +163,7 @@ func (g *GameScene) addRowStr(str string) {
 }
 
 func (g *GameScene) GetCurrentLocationReference() *references.SmallLocationReference {
-	return g.gameReferences.LocationReferences.GetLocationReference(g.gameState.Location)
+	return g.gameReferences.LocationReferences.GetLocationReference(g.gameState.MapState.PlayerLocation.Location)
 }
 
 func (g *GameScene) IsDebugDialogOpen() bool {

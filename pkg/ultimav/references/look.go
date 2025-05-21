@@ -1,10 +1,11 @@
 package references
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"log"
 	"os"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 )
 
 const totalLooks = 512

@@ -2,6 +2,7 @@ package references
 
 import (
 	"fmt"
+
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 )
 

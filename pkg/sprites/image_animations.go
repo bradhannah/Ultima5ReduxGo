@@ -2,10 +2,11 @@ package sprites
 
 import (
 	"bytes"
-	"github.com/hajimehoshi/ebiten/v2"
 	"image/png"
 	"log"
 	"time"
+
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type ImageAnimation struct {

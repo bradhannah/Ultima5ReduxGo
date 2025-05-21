@@ -24,7 +24,7 @@ const (
 )
 
 func getLordBritishItems(total int) ItemStack {
-	var items ItemStacks = make(ItemStacks, 0, total)
+	var items = make(ItemStacks, 0, total)
 
 	const oneInXOddsOfGettingProvision = 3
 

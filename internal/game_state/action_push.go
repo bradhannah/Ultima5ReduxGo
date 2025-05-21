@@ -1,13 +1,14 @@
 package game_state
 
 import (
+	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 func (g *GameState) ActionPushSmallMap(direction references.Direction) bool {
-	smallMap := g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor)
+	smallMap := g.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.MapState.PlayerLocation.Floor)
 
-	pushableThingPosition := direction.GetNewPositionInDirection(&g.Position)
+	pushableThingPosition := direction.GetNewPositionInDirection(&g.MapState.PlayerLocation.Position)
 	pushableThingTile := smallMap.GetTopTile(pushableThingPosition)
 
 	farSideOfPushableThingPosition := direction.GetNewPositionInDirection(pushableThingPosition)
@@ -19,32 +20,32 @@ func (g *GameState) ActionPushSmallMap(direction references.Direction) bool {
 	if pushableThingTile.IsChair() {
 		if bFarSideAccessible {
 			smallMap.SwapTiles(pushableThingPosition, farSideOfPushableThingPosition)
-			smallMap.SetTileByLayer(MapLayer, farSideOfPushableThingPosition, g.GameReferences.TileReferences.GetChairByPushDirection(direction).Index)
+			smallMap.SetTileByLayer(map_state.MapLayer, farSideOfPushableThingPosition, g.GameReferences.TileReferences.GetChairByPushDirection(direction).Index)
 		} else {
-			smallMap.SwapTiles(&g.Position, pushableThingPosition)
-			smallMap.SetTileByLayer(MapLayer, &g.Position, g.GameReferences.TileReferences.GetChairByPushDirection(direction.GetOppositeDirection()).Index)
+			smallMap.SwapTiles(&g.MapState.PlayerLocation.Position, pushableThingPosition)
+			smallMap.SetTileByLayer(map_state.MapLayer, &g.MapState.PlayerLocation.Position, g.GameReferences.TileReferences.GetChairByPushDirection(direction.GetOppositeDirection()).Index)
 		}
 		// move avatar to the swapped spot
-		g.Position = *pushableThingPosition
+		g.MapState.PlayerLocation.Position = *pushableThingPosition
 		return true
 	} else if pushableThingTile.IsCannon() {
 		if bFarSideAccessible {
 			smallMap.SwapTiles(pushableThingPosition, farSideOfPushableThingPosition)
-			smallMap.SetTileByLayer(MapLayer, farSideOfPushableThingPosition, g.GameReferences.TileReferences.GetCannonByPushDirection(direction).Index)
+			smallMap.SetTileByLayer(map_state.MapLayer, farSideOfPushableThingPosition, g.GameReferences.TileReferences.GetCannonByPushDirection(direction).Index)
 		} else {
-			smallMap.SwapTiles(&g.Position, pushableThingPosition)
-			smallMap.SetTileByLayer(MapLayer, &g.Position, g.GameReferences.TileReferences.GetCannonByPushDirection(direction.GetOppositeDirection()).Index)
+			smallMap.SwapTiles(&g.MapState.PlayerLocation.Position, pushableThingPosition)
+			smallMap.SetTileByLayer(map_state.MapLayer, &g.MapState.PlayerLocation.Position, g.GameReferences.TileReferences.GetCannonByPushDirection(direction.GetOppositeDirection()).Index)
 		}
-		g.Position = *pushableThingPosition
+		g.MapState.PlayerLocation.Position = *pushableThingPosition
 		return true
 	}
 
 	if !bFarSideAccessible {
-		smallMap.SwapTiles(&g.Position, pushableThingPosition)
+		smallMap.SwapTiles(&g.MapState.PlayerLocation.Position, pushableThingPosition)
 	} else {
 		smallMap.SwapTiles(pushableThingPosition, farSideOfPushableThingPosition)
 	}
 	// move avatar to the swapped spot
-	g.Position = *pushableThingPosition
+	g.MapState.PlayerLocation.Position = *pushableThingPosition
 	return true
 }

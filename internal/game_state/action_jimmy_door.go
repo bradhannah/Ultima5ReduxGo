@@ -3,6 +3,7 @@ package game_state
 import (
 	"golang.org/x/exp/rand"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
@@ -20,10 +21,10 @@ const (
 )
 
 func (g *GameState) JimmyDoor(direction references.Direction, player *party_state.PlayerCharacter) JimmyDoorState {
-	mapType := GetMapTypeByLocation(g.Location)
+	mapType := map_state.GetMapTypeByLocation(g.MapState.PlayerLocation.Location)
 
-	newPosition := direction.GetNewPositionInDirection(&g.Position)
-	targetTile := g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.Floor).GetTileTopMapOnlyTile(newPosition)
+	newPosition := direction.GetNewPositionInDirection(&g.MapState.PlayerLocation.Position)
+	targetTile := g.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.MapState.PlayerLocation.Floor).GetTileTopMapOnlyTile(newPosition)
 
 	switch targetTile.Index {
 	case indexes.LockedDoor, indexes.LockedDoorView:
@@ -34,7 +35,7 @@ func (g *GameState) JimmyDoor(direction references.Direction, player *party_stat
 			} else {
 				unlockedDoor = indexes.RegularDoorView
 			}
-			g.LayeredMaps.GetLayeredMap(mapType, g.Floor).SetTileByLayer(MapOverrideLayer, newPosition, unlockedDoor)
+			g.MapState.LayeredMaps.GetLayeredMap(mapType, g.MapState.PlayerLocation.Floor).SetTileByLayer(map_state.MapOverrideLayer, newPosition, unlockedDoor)
 			return JimmyUnlocked
 		} else {
 			// g.ProvisionsQuantity.Keys = helpers.Max(g.ProvisionsQuantity.Keys-1, 0)

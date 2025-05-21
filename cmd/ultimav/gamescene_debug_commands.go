@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
@@ -79,9 +79,9 @@ func (d *DebugConsole) createMonsterGenerationOdds() *grammar.TextCommand {
 func (d *DebugConsole) dumpQuickState(prefix string) {
 	d.Output.AddRowStr(fmt.Sprintf("> %s\n  X=%d,Y=%d,Floor=%d",
 		prefix,
-		d.gameScene.gameState.Position.X,
-		d.gameScene.gameState.Position.Y,
-		d.gameScene.gameState.Floor))
+		d.gameScene.gameState.MapState.PlayerLocation.Position.X,
+		d.gameScene.gameState.MapState.PlayerLocation.Position.Y,
+		d.gameScene.gameState.MapState.PlayerLocation.Floor))
 }
 
 // Helper function for the teleport command
@@ -270,23 +270,23 @@ func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
 			var dockFloor references.FloorNumber
 			if slr == nil {
 				d.dumpQuickState("avatar")
-				dockPos = d.gameScene.gameState.Position
-				dockFloor = d.gameScene.gameState.Floor
+				dockPos = d.gameScene.gameState.MapState.PlayerLocation.Position
+				dockFloor = d.gameScene.gameState.MapState.PlayerLocation.Floor
 			} else {
 				d.dumpQuickState(slr.FriendlyLocationName)
 				dockPos = d.gameScene.gameReferences.DockReferences.GetDockPositionByString(locationStr)
 				dockFloor = 0
 			}
 
-			var boat game_state.NPCFriendly
+			var boat map_units.NPCFriendly
 			if strings.ToLower(boatType) == "frigate" {
-				boat = *game_state.NewNPCFriendlyVehicle(references.FrigateVehicle, *references.NewNPCReferenceForVehicle(
+				boat = *map_units.NewNPCFriendlyVehicle(references.FrigateVehicle, *references.NewNPCReferenceForVehicle(
 					references.FrigateVehicle,
 					dockPos,
 					dockFloor,
 				))
 			} else {
-				boat = *game_state.NewNPCFriendlyVehicle(references.SkiffVehicle, *references.NewNPCReferenceForVehicle(
+				boat = *map_units.NewNPCFriendlyVehicle(references.SkiffVehicle, *references.NewNPCReferenceForVehicle(
 					references.SkiffVehicle,
 					dockPos,
 					dockFloor,

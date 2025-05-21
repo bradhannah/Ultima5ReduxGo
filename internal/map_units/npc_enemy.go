@@ -1,6 +1,8 @@
-package game_state
+package map_units
 
-import "github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+import (
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+)
 
 type NPCEnemy struct {
 	EnemyReference references.EnemyReference
@@ -12,7 +14,7 @@ func NewEnemyNPC(enemyRef references.EnemyReference, npcNum int) NPCEnemy {
 	enemy.EnemyReference = enemyRef
 	enemy.mapUnitDetails.NPCNum = npcNum
 
-	enemy.mapUnitDetails.AStarMap = NewAStarMap()
+	// enemy.mapUnitDetails.AStarMap = map_state.NewAStarMap()
 	enemy.mapUnitDetails.CurrentPath = nil
 
 	return enemy

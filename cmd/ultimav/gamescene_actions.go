@@ -7,7 +7,7 @@ import (
 )
 
 func (g *GameScene) actionBoard() {
-	vehicle := g.gameState.CurrentNPCAIController.GetNpcs().GetVehicleAtPositionOrNil(g.gameState.Position)
+	vehicle := g.gameState.CurrentNPCAIController.GetNpcs().GetVehicleAtPositionOrNil(g.gameState.MapState.PlayerLocation.Position)
 	if vehicle == nil {
 		g.output.AddRowStr("Board what?")
 		return
@@ -15,8 +15,8 @@ func (g *GameScene) actionBoard() {
 
 	// if frigate under, in skiff, add to skiff, board ship, delete skiff
 
-	if !g.gameState.CurrentNPCAIController.GetNpcs().RemoveNPCAtPosition(g.gameState.Position) {
-		log.Fatalf("Unexpected - tried to remove NPC at position X=%d,Y=%d but failed", g.gameState.Position.X, g.gameState.Position.Y)
+	if !g.gameState.CurrentNPCAIController.GetNpcs().RemoveNPCAtPosition(g.gameState.MapState.PlayerLocation.Position) {
+		log.Fatalf("Unexpected - tried to remove NPC at position X=%d,Y=%d but failed", g.gameState.MapState.PlayerLocation.Position.X, g.gameState.MapState.PlayerLocation.Position.Y)
 	}
 	// have you already boarded something else?
 	// I think it shouldn't matter because you shouldn't be allowed on a tile if you have boarded something
@@ -30,7 +30,7 @@ func (g *GameScene) actionBoard() {
 
 	// we are boarded...
 	return
-	//return vehicle
+	// return vehicle
 }
 
 func (g *GameScene) actionExit() {

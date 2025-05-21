@@ -22,7 +22,7 @@ func (g *GameScene) isDirectionKeyValidAndOutput() bool {
 }
 
 func (g *GameScene) commonMapLookSecondary(direction references.Direction) {
-	newPosition := direction.GetNewPositionInDirection(&g.gameState.Position)
+	newPosition := direction.GetNewPositionInDirection(&g.gameState.MapState.PlayerLocation.Position)
 	topTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(newPosition)
 	g.addRowStr(fmt.Sprintf("Thou dost see %s", g.gameReferences.LookReferences.GetTileLookDescription(topTile.Index)))
 	switch topTile.Index {

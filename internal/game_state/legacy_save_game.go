@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/ai"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
@@ -55,10 +57,9 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 	const lbX = 0x2F0
 	const lbY = 0x2F1
 	const lbFloor = 0x2EF
-	g.Location = references.Location(rawSaveGameBytesFromDisk[lbLocation])
-	g.Position = references.Position{X: references.Coordinate(rawSaveGameBytesFromDisk[lbX]), Y: references.Coordinate(rawSaveGameBytesFromDisk[lbY])}
-	// g.Position = ultimav.Position{X: 81, Y: 106}
-	g.Floor = references.FloorNumber(rawSaveGameBytesFromDisk[lbFloor])
+	g.MapState.PlayerLocation.Location = references.Location(rawSaveGameBytesFromDisk[lbLocation])
+	g.MapState.PlayerLocation.Position = references.Position{X: references.Coordinate(rawSaveGameBytesFromDisk[lbX]), Y: references.Coordinate(rawSaveGameBytesFromDisk[lbY])}
+	g.MapState.PlayerLocation.Floor = references.FloorNumber(rawSaveGameBytesFromDisk[lbFloor])
 
 	// Date/Time
 	const lsYear = 0x2CE
@@ -90,34 +91,50 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 	g.PartyState.Inventory.Provisions.Keys = rawSaveGameBytesFromDisk[lbKeys]
 	g.PartyState.Inventory.Provisions.SkullKeys = rawSaveGameBytesFromDisk[lbSkullKeys]
 
-	g.LayeredMaps = *NewLayeredMaps(gameRefs.TileReferences,
+	g.MapState.LayeredMaps = *map_state.NewLayeredMaps(gameRefs.TileReferences,
 		gameRefs.OverworldLargeMapReference,
 		gameRefs.UnderworldLargeMapReference,
-		g.XTilesVisibleOnGameScreen,
-		g.YTilesVisibleOnGameScreen)
+		g.MapState.XTilesVisibleOnGameScreen,
+		g.MapState.YTilesVisibleOnGameScreen)
 
-	g.LargeMapNPCAIController = make(map[references.World]*NPCAIControllerLargeMap)
-	g.LargeMapNPCAIController[references.OVERWORLD] = NewNPCAIControllerLargeMap(
-		references.OVERWORLD, gameRefs.TileReferences, g)
+	g.LargeMapNPCAIController = make(map[references.World]*ai.NPCAIControllerLargeMap)
+	overworldNPCAIInput := ai.NewNPCAIControllerLargeMapInput{
+		World:           references.OVERWORLD,
+		TileRefs:        gameRefs.TileReferences,
+		MapState:        &g.MapState,
+		DebugOptions:    &g.DebugOptions,
+		TheOdds:         &g.TheOdds,
+		EnemyReferences: g.GameReferences.EnemyReferences,
+		DateTime:        &g.DateTime,
+	}
+	g.LargeMapNPCAIController[references.OVERWORLD] = ai.NewNPCAIControllerLargeMap(overworldNPCAIInput)
 	// TODO: load the npcs from the save game
-	g.LargeMapNPCAIController[references.UNDERWORLD] = NewNPCAIControllerLargeMap(
-		references.UNDERWORLD, gameRefs.TileReferences, g)
+	underworldNPCAIInput := ai.NewNPCAIControllerLargeMapInput{
+		World:           references.OVERWORLD,
+		TileRefs:        gameRefs.TileReferences,
+		MapState:        &g.MapState,
+		DebugOptions:    &g.DebugOptions,
+		TheOdds:         &g.TheOdds,
+		EnemyReferences: g.GameReferences.EnemyReferences,
+		DateTime:        &g.DateTime,
+	}
+	g.LargeMapNPCAIController[references.UNDERWORLD] = ai.NewNPCAIControllerLargeMap(underworldNPCAIInput)
 	// TODO: load the npcs from the save game
 
 	// if we are on a large map, we set this right away.
-	if g.Location.GetMapType() == references.LargeMapType {
+	if g.MapState.PlayerLocation.Location.GetMapType() == references.LargeMapType {
 		g.CurrentNPCAIController = g.GetCurrentLargeMapNPCAIController()
 	}
 
 	g.ItemStacksMap = *references.NewItemStacksMap()
 
-	g.TheOdds = NewDefaultTheOdds()
-	g.DebugOptions = DebugOptions{
+	g.TheOdds = references.NewDefaultTheOdds()
+	g.DebugOptions = references.DebugOptions{
 		FreeMove:   false,
 		MonsterGen: true,
 	}
 
-	g.Lighting = NewLighting(g)
+	// g.Lighting = map_state.NewLighting(g)
 
 	return nil
 }

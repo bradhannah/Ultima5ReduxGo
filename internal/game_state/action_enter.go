@@ -13,14 +13,14 @@ func (g *GameState) EnterBuilding(
 	tileRefs *references.Tiles,
 ) {
 	if slr.Location != references.EmptyLocation {
-		g.LastLargeMapPosition = g.Position
-		g.LastLargeMapFloor = g.Floor
-		g.Position = references.Position{
+		g.LastLargeMapPosition = g.MapState.PlayerLocation.Position
+		g.LastLargeMapFloor = g.MapState.PlayerLocation.Floor
+		g.MapState.PlayerLocation.Position = references.Position{
 			X: smallMapStartingPositionX,
 			Y: smallMapStartingPositionY,
 		}
-		g.Location = slr.Location
-		g.Floor = smallMapStartingPositionFloor
+		g.MapState.PlayerLocation.Location = slr.Location
+		g.MapState.PlayerLocation.Floor = smallMapStartingPositionFloor
 		g.UpdateSmallMap(g.GameReferences.TileReferences, g.GameReferences.LocationReferences)
 	}
 }

@@ -72,5 +72,5 @@ func (g *GameScene) drawBorders(screen *ebiten.Image) {
 // drawMap
 func (g *GameScene) drawMap(screen *ebiten.Image) {
 	screen.DrawImage(g.unscaledMapImage, &ebiten.DrawImageOptions{})
-	g.debugMessage = fmt.Sprintf("%d, %d", g.gameState.Position.X, g.gameState.Position.Y)
+	g.debugMessage = fmt.Sprintf("%d, %d", g.gameState.MapState.PlayerLocation.Position.X, g.gameState.MapState.PlayerLocation.Position.Y)
 }

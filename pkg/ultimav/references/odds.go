@@ -1,4 +1,4 @@
-package game_state
+package references
 
 type TheOdds struct {
 	oneInXLargeMapMonsterGeneration   int

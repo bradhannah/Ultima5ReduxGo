@@ -1,18 +1,20 @@
 package text
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/color"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
+	"image"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
-	"image"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 )
 
 var IntroChoices = []string{"Journey Onward", "Select Save Game", "Import from Legacy", "Set Data Directory", "Create Character", "Introduction", "Acknowledgments"}
 
 func (f *UltimaFont) DrawIntroChoices(screen *ebiten.Image, nSelection int) {
-	//nChoices := len(IntroChoices)
+	// nChoices := len(IntroChoices)
 	const lineSpacing = 48
 	const percentBetweenLines = 0.0435
 	const startXFontPercent = 0.655

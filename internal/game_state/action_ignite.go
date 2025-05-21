@@ -5,6 +5,6 @@ func (g *GameState) IgniteTorch() bool {
 		return false
 	}
 	g.PartyState.Inventory.Provisions.Torches--
-	g.Lighting.LightTorch()
+	g.MapState.Lighting.LightTorch()
 	return true
 }

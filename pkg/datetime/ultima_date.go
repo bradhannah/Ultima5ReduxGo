@@ -145,3 +145,7 @@ func (d *UltimaDate) GetVisibilityFactorWithoutTorch(baselineMin float32) float3
 		return baselineMin // night
 	}
 }
+
+func (d *UltimaDate) GetEra() Era {
+	return GetEraByTurn(int(d.Turn))
+}

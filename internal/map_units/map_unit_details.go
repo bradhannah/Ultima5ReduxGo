@@ -1,8 +1,9 @@
-package game_state
+package map_units
 
 import (
 	"log"
 
+	// "github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
@@ -39,20 +40,23 @@ type MapUnitDetails struct {
 
 	NPCNum int
 
-	AStarMap *AStarMap
+	// AStarMap *map_state.AStarMap
 
-	CurrentPath *[]references.Position
+	CurrentPath []references.Position
 }
 
-func (npc *MapUnitDetails) DequeueNextPosition() references.Position {
-	if !npc.HasAPathAlreadyCalculated() {
+func (mu *MapUnitDetails) DequeueNextPosition() references.Position {
+	if !mu.HasAPathAlreadyCalculated() {
 		log.Fatal("NPC has no path calculated")
 	}
-	pos := (*npc.CurrentPath)[0]
-	*npc.CurrentPath = (*npc.CurrentPath)[1:]
+	pos := mu.CurrentPath[0]
+	mu.CurrentPath = mu.CurrentPath[1:]
 	return pos
 }
 
-func (npc *MapUnitDetails) HasAPathAlreadyCalculated() bool {
-	return npc.CurrentPath != nil && len(*npc.CurrentPath) > 0
+func (mu *MapUnitDetails) HasAPathAlreadyCalculated() bool {
+	return mu.CurrentPath != nil && len(mu.CurrentPath) > 0
+}
+func (mu *MapUnitDetails) SetCurrentPath(path []references.Position) {
+	mu.CurrentPath = path
 }

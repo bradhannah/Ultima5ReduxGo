@@ -1,4 +1,4 @@
-package game_state
+package map_state
 
 import (
 	"math"
@@ -8,6 +8,7 @@ import (
 )
 
 const TorchTileDistance = 3
+const DefaultNumberOfTurnsUntilTorchExtinguishes = 100
 
 type Lighting struct {
 	turnsToExtinguishTorch int
@@ -43,7 +44,7 @@ func (l *Lighting) AdvanceTurn() {
 }
 
 func (l *Lighting) BuildGameScreenDistanceMap(centrePos references.Position) DistanceMap {
-	dmm := make(DistanceMap, 0)
+	dmm := make(DistanceMap)
 	l.applyLightSource(dmm, centrePos, 0, 1)
 	return dmm
 }

@@ -2,9 +2,11 @@ package sprites
 
 import (
 	_ "embed"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
-	"github.com/hajimehoshi/ebiten/v2"
 	"image"
+
+	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 )
 
 type SpriteSheet struct {
@@ -28,7 +30,7 @@ var origTiles []byte
 func NewSpriteSheet() *SpriteSheet {
 	spriteSheet := &SpriteSheet{}
 
-	spriteSheet.SpriteImage = NewPngSprite(origTiles) //ebiten.NewImage(origTilesWidth, origTilesHeight)
+	spriteSheet.SpriteImage = NewPngSprite(origTiles) // ebiten.NewImage(origTilesWidth, origTilesHeight)
 
 	return spriteSheet
 }
@@ -54,6 +56,6 @@ func (s *SpriteSheet) GetSprite(nSprite indexes.SpriteIndex) *ebiten.Image {
 		return sprite
 	}
 	return s.spriteImageCache[nSprite]
-	//sprite := s.SpriteImage.SubImage(s.getSpriteImageRectangle(nSprite))
-	//return sprite
+	// sprite := s.SpriteImage.SubImage(s.getSpriteImageRectangle(nSprite))
+	// return sprite
 }

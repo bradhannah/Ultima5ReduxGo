@@ -2,9 +2,10 @@ package sprites
 
 import (
 	"bytes"
-	"github.com/hajimehoshi/ebiten/v2"
 	"image"
 	"log"
+
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 func NewPngSprite(rawBytes []byte) *ebiten.Image {

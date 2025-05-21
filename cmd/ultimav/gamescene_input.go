@@ -34,7 +34,7 @@ var boundKeysGame = []ebiten.Key{
 
 // Update method for the GameScene
 func (g *GameScene) Update(_ *Game) error {
-	mapType := g.gameState.Location.GetMapType()
+	mapType := g.gameState.MapState.PlayerLocation.Location.GetMapType()
 
 	if g.updateDialogs() {
 		// only run a single update routine at a time
@@ -65,7 +65,7 @@ func (g *GameScene) Update(_ *Game) error {
 		return nil
 	}
 
-	switch g.gameState.Location.GetMapType() {
+	switch g.gameState.MapState.PlayerLocation.Location.GetMapType() {
 	case references.LargeMapType:
 		g.largeMapInputHandler(*boundKey)
 	case references.SmallMapType:

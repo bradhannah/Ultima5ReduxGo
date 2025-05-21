@@ -2,6 +2,7 @@ package sprites
 
 import (
 	_ "embed"
+
 	"github.com/hajimehoshi/ebiten/v2"
 )
 

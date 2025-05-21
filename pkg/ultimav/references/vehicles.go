@@ -117,14 +117,14 @@ func (v VehicleType) GetLowerCaseName() string {
 
 func (v VehicleType) GetExitString() string {
 	if v == NoPartyVehicle {
-		return ("X-it what?")
+		return "X-it what?"
 	}
 	return fmt.Sprintf("Xit- %s!", v.GetLowerCaseName())
 }
 
 func (v VehicleType) GetBoardString() string {
 	if v == NoPartyVehicle {
-		return ("X-it what?")
+		return "X-it what?"
 	}
 	return fmt.Sprintf("Board %s!", v.GetLowerCaseName())
 }

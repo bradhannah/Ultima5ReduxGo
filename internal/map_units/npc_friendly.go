@@ -1,4 +1,4 @@
-package game_state
+package map_units
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ func NewNPCFriendly(npcReference references.NPCReference, npcNum int) *NPCFriend
 	friendly.NPCReference = npcReference
 	friendly.mapUnitDetails.NPCNum = npcNum
 
-	friendly.mapUnitDetails.AStarMap = NewAStarMap()
+	// friendly.mapUnitDetails.AStarMap = map_state.NewAStarMap()
 	friendly.mapUnitDetails.CurrentPath = nil
 
 	if !friendly.IsEmptyMapUnit() {
@@ -29,7 +29,7 @@ func NewNPCFriendly(npcReference references.NPCReference, npcNum int) *NPCFriend
 }
 
 func NewNPCFriendlyVehicle(vehicleType references.VehicleType, npcRef references.NPCReference) *NPCFriendly {
-	//npcReference := references.NewNPCReferenceForVehicle(vehicleType, references.Position{X: 15, Y: 15}, 0)
+	// npcReference := references.NewNPCReferenceForVehicle(vehicleType, references.Position{X: 15, Y: 15}, 0)
 	friendly := NewNPCFriendly(npcRef, int(npcRef.DialogNumber))
 
 	friendly.vehicleDetails = VehicleDetails{
@@ -105,6 +105,6 @@ func (friendly *NPCFriendly) GetVehicleDetails() *VehicleDetails {
 	if friendly.NPCReference.GetNPCType() == references.Vehicle {
 		return &friendly.vehicleDetails
 	}
-	//log.Fatal("Wrong type, not a vehicle")
+	// log.Fatal("Wrong type, not a vehicle")
 	return &VehicleDetails{}
 }

@@ -53,7 +53,7 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 		g.secondaryKeyState = LookDirectionInput
 	case ebiten.KeyE:
 		g.debugMessage = "Enter a place"
-		newLocation := g.gameReferences.LocationReferences.WorldLocations.GetLocationByPosition(g.gameState.Position)
+		newLocation := g.gameReferences.LocationReferences.WorldLocations.GetLocationByPosition(g.gameState.MapState.PlayerLocation.Position)
 
 		if newLocation != references.EmptyLocation {
 			slr := g.gameReferences.LocationReferences.GetLocationReference(newLocation)
@@ -96,7 +96,7 @@ func (g *GameScene) largeMapHandleSecondaryInput() {
 		}
 	case LookDirectionInput:
 		if g.isDirectionKeyValidAndOutput() {
-			newPosition := getCurrentPressedArrowKeyAsDirection().GetNewPositionInDirection(&g.gameState.Position)
+			newPosition := getCurrentPressedArrowKeyAsDirection().GetNewPositionInDirection(&g.gameState.MapState.PlayerLocation.Position)
 			topTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(newPosition)
 			g.addRowStr(fmt.Sprintf("Thou dost see %s", g.gameReferences.LookReferences.GetTileLookDescription(topTile.Index)))
 			g.secondaryKeyState = PrimaryInput
