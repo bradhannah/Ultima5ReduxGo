@@ -10,6 +10,7 @@ func (m Moonstone) Type() ItemType {
 	return ItemTypeMoonstone
 }
 
+//goland:noinspection GoUnusedConst
 const (
 	NewMoon        Moonstone = 0
 	CrescentWaxing Moonstone = 1

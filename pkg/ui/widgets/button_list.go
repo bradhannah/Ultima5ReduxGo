@@ -6,7 +6,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	text2 "github.com/hajimehoshi/ebiten/v2/text/v2"
 
-	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	ucolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
@@ -160,5 +160,5 @@ func (b *ButtonListModal) initializeBorder() {
 		EndPercentY:   buttonListModalStartYPercent + (float64(len(b.buttons)) * GetButtonHeightPercent(buttonSize) * buttonSpacingPercent),
 	}
 
-	b.border = NewBorder(p, 601, u_color.Black)
+	b.border = NewBorder(p, 601, ucolor.Black)
 }

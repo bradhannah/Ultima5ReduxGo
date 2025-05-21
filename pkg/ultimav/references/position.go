@@ -158,24 +158,10 @@ func (p *Position) IsNextTo(position Position) bool {
 		(p.Y == position.Y && helpers.AbsInt(int(p.X-position.X)) == 1)
 }
 
-// func (p *Position) GetSingleDirectionPositionCloserTo(position Position) *Position {
-// 	if p.X < position.X {
-// 		p.X++
-// 	} else if p.X > position.X {
-// 		p.X--
-// 	} else if p.Y < position.Y {
-// 		p.Y++
-// 	} else if p.Y > position.Y {
-// 		p.Y--
-// 	}
-// 	return p
-// }
-
 func (p *Position) IsLineOfSightClear(to Position, getTileFromPosition GetTileFromPosition) bool {
 	dx := int(to.X - p.X)
 	dy := int(to.Y - p.Y)
 
-	//helpers.AbsInt()abs := func(n int) int { if n < 0 { return -n }; return n }
 	stepX, stepY := 1, 1
 	if dx < 0 {
 		stepX, dx = -1, -dx
@@ -212,7 +198,6 @@ func (p *Position) IsLineOfSightClear(to Position, getTileFromPosition GetTileFr
 			return false
 		}
 		if tile.IsWindow || tile.IsWall() {
-			//if tile.BlocksLight {
 			return false
 		}
 	}

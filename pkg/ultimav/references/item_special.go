@@ -10,6 +10,7 @@ func (s SpecialItem) Type() ItemType {
 	return ItemTypeSpecialItem
 }
 
+//goland:noinspection GoUnusedConst
 const (
 	Carpet      SpecialItem = 0
 	Grapple     SpecialItem = 1

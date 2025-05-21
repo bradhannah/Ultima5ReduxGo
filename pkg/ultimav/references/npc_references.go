@@ -43,7 +43,7 @@ func getNPCsFromFile(path string, locationOffset int) ([]NPCReference, error) {
 		return nil, err
 	}
 
-	npcs := make([]NPCReference, 0) // npcsPerTown*townsPerNPCFile)
+	npcs := make([]NPCReference, 0)
 	for townIndex := 0; townIndex < townsPerNPCFile; townIndex++ {
 		townOffset := singleTownSize * townIndex
 		townRawData := npcRaw[townOffset : townOffset+singleTownSize]

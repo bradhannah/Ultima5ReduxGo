@@ -10,6 +10,7 @@ func (e Equipment) Type() ItemType {
 	return ItemTypeEquipment
 }
 
+//goland:noinspection GoUnusedConst
 const (
 	BareHands        Equipment = -2
 	LeatherHelm      Equipment = 0

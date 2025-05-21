@@ -8,7 +8,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 
-	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	ucolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 )
 
@@ -31,7 +31,7 @@ func NewOutput(font *UltimaFont, lineSpacing float64, maxLines int, maxCharsPerL
 	output.maxLines = maxLines
 	output.maxCharsPerLine = maxCharsPerLine
 	output.lines = make([]string, maxLines)
-	output.SetColor(u_color.White)
+	output.SetColor(ucolor.White)
 	return output
 }
 

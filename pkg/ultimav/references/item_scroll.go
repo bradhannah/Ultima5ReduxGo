@@ -10,6 +10,7 @@ func (s Scroll) Type() ItemType {
 	return ItemTypeScroll
 }
 
+//goland:noinspection GoUnusedConst
 const (
 	ScrollVasLor     Scroll = 0
 	ScrollRelHur     Scroll = 1

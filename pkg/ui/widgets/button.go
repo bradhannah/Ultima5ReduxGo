@@ -6,9 +6,9 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 
-	e_text "github.com/hajimehoshi/ebiten/v2/text/v2"
+	etext "github.com/hajimehoshi/ebiten/v2/text/v2"
 
-	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	ucolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 )
@@ -121,7 +121,7 @@ func (b *Button) Draw(screen *ebiten.Image) {
 	b.Output.DrawContinuousOutputTexOnXy(screen, image.Point{
 		X: textRect.Min.X + (textRect.Dx() / 2),
 		Y: textRect.Min.Y + (textRect.Dy() / 2),
-	}, false, e_text.AlignCenter, e_text.AlignCenter)
+	}, false, etext.AlignCenter, etext.AlignCenter)
 }
 
 func (b *Button) Update() {
@@ -131,9 +131,9 @@ func (b *Button) SetButtonStatus(buttonStatus ButtonStatus) {
 	b.buttonStatus = buttonStatus
 	switch buttonStatus {
 	case Selected:
-		b.interiorColor = u_color.UltimaBlue
+		b.interiorColor = ucolor.UltimaBlue
 	case NotSelected:
-		b.interiorColor = u_color.LighterBlackSemi
+		b.interiorColor = ucolor.LighterBlackSemi
 	}
 	b.initializeBorder(b.interiorColor)
 }

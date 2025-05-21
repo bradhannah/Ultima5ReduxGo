@@ -10,29 +10,16 @@ import (
 
 const MaxTileDistanceBeforeCleanup = 22
 
-func (g *MapState) UpdateLargeMap() {
-	if g.PlayerLocation.Location.GetMapType() != references.LargeMapType {
-		log.Fatalf("Expected large map type, got %d", g.PlayerLocation.Location.GetMapType())
+func (m *MapState) UpdateLargeMap() {
+	if m.PlayerLocation.Location.GetMapType() != references.LargeMapType {
+		log.Fatalf("Expected large map type, got %d", m.PlayerLocation.Location.GetMapType())
 	}
 }
 
-func (g *MapState) IsOverworld() bool {
-	return g.PlayerLocation.Floor == references.FloorNumber(references.OVERWORLD) && g.PlayerLocation.Location.GetMapType() == references.LargeMapType
+func (m *MapState) IsOverworld() bool {
+	return m.PlayerLocation.Floor == references.FloorNumber(references.OVERWORLD) && m.PlayerLocation.Location.GetMapType() == references.LargeMapType
 }
 
-func (g *MapState) IsUnderworld() bool {
-	return g.PlayerLocation.Floor == references.FloorNumber(references.UNDERWORLD) && g.PlayerLocation.Location.GetMapType() == references.LargeMapType
+func (m *MapState) IsUnderworld() bool {
+	return m.PlayerLocation.Floor == references.FloorNumber(references.UNDERWORLD) && m.PlayerLocation.Location.GetMapType() == references.LargeMapType
 }
-
-// func (g *MapState) GetCurrentLargeMapNPCAIController() *ai.NPCAIControllerLargeMap {
-// 	if g.PlayerLocation.Location.GetMapType() != references.LargeMapType {
-// 		log.Fatalf("Expected large map type, got %d", g.PlayerLocation.Location.GetMapType())
-// 	}
-// 	var npcAiCon *ai.NPCAIControllerLargeMap
-// 	if g.IsOverworld() {
-// 		npcAiCon = g.LargeMapNPCAIController[references.OVERWORLD]
-// 	} else {
-// 		npcAiCon = g.LargeMapNPCAIController[references.UNDERWORLD]
-// 	}
-// 	return npcAiCon
-// }

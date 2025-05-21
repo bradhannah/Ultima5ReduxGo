@@ -11,7 +11,7 @@ import (
 )
 
 type CharacterSummary struct {
-	characterSummaryImage [party_state.MAX_CHARACTERS_IN_PARTY]*ebiten.Image
+	characterSummaryImage [party_state.MaxCharactersInParty]*ebiten.Image
 	spriteSheet           *sprites.SpriteSheet
 	ultimaFont            *text.UltimaFont
 	output                *text.Output

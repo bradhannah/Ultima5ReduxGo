@@ -50,7 +50,6 @@ func getMapMasterFromLocation(location Location) SmallMapMasterTypes {
 		return Towne
 	case Fogsbane, Stormcrow, Waveguide, Greyhaven, Iolos_Hut, Suteks_Hut, SinVraals_Hut, Grendels_Hut:
 		return Dwelling
-		//case _location.spektran
 	case Ararat, Bordermarch, Farthing, Windemere, Stonegate, Lycaeum, Empath_Abbey, Serpents_Hold:
 		return Keep
 	case Deceit, Despise, Destard, Wrong, Covetous, Shame, Hythloth, Doom:
@@ -107,17 +106,17 @@ func NewSmallMapReferences(gameConfig *config.UltimaVConfiguration, dataOvl *Dat
 	_ = smr.addLocation(Serpents_Hold, true, 3, nextOffset)
 
 	// DUNGEONS.DAT
-	//nextOffset = smr.addLocation(Deceit, false, 8, 0)
-	//nextOffset = smr.addLocation(Despise, false, 8, nextOffset)
-	//nextOffset = smr.addLocation(Destard, false, 8, nextOffset)
-	//nextOffset = smr.addLocation(Wrong, false, 8, nextOffset)
-	//nextOffset = smr.addLocation(Covetous, false, 8, nextOffset)
-	//nextOffset = smr.addLocation(Shame, false, 8, nextOffset)
-	//nextOffset = smr.addLocation(Hythloth, false, 8, nextOffset)
-	//nextOffset = smr.addLocation(Doom, false, 8, nextOffset)
-
-	//addLocation(Britannia_Underworld, true, 2, 0)
-	//addLocation(Combat_resting_shrine, false, 1, 0)
+	// nextOffset = smr.addLocation(Deceit, false, 8, 0)
+	// nextOffset = smr.addLocation(Despise, false, 8, nextOffset)
+	// nextOffset = smr.addLocation(Destard, false, 8, nextOffset)
+	// nextOffset = smr.addLocation(Wrong, false, 8, nextOffset)
+	// nextOffset = smr.addLocation(Covetous, false, 8, nextOffset)
+	// nextOffset = smr.addLocation(Shame, false, 8, nextOffset)
+	// nextOffset = smr.addLocation(Hythloth, false, 8, nextOffset)
+	// nextOffset = smr.addLocation(Doom, false, 8, nextOffset)
+	//
+	// addLocation(Britannia_Underworld, true, 2, 0)
+	// addLocation(Combat_resting_shrine, false, 1, 0)
 
 	return smr, nil
 }

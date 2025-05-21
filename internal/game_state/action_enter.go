@@ -8,10 +8,7 @@ const smallMapStartingPositionX = 15
 const smallMapStartingPositionY = 30
 const smallMapStartingPositionFloor = 0
 
-func (g *GameState) EnterBuilding(
-	slr *references.SmallLocationReference,
-	tileRefs *references.Tiles,
-) {
+func (g *GameState) EnterBuilding(slr *references.SmallLocationReference) {
 	if slr.Location != references.EmptyLocation {
 		g.LastLargeMapPosition = g.MapState.PlayerLocation.Position
 		g.LastLargeMapFloor = g.MapState.PlayerLocation.Floor

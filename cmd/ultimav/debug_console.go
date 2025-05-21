@@ -4,9 +4,9 @@ import (
 	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	e_text "github.com/hajimehoshi/ebiten/v2/text/v2"
+	etext "github.com/hajimehoshi/ebiten/v2/text/v2"
 
-	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	ucolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ui/widgets"
@@ -56,7 +56,7 @@ func (d *DebugConsole) initializeResizeableVisualElements() {
 			EndPercentY:   1,
 		},
 		borderWidthScaling,
-		u_color.Black)
+		ucolor.Black)
 
 	d.font = text.NewUltimaFont(text.GetScaledNumberToResolution(debugFontPoint))
 
@@ -117,7 +117,7 @@ func (d *DebugConsole) Draw(screen *ebiten.Image) {
 	d.Output.DrawContinuousOutputTexOnXy(screen, image.Point{
 		X: textRect.Min.X,
 		Y: textRect.Min.Y,
-	}, false, e_text.AlignStart, e_text.AlignStart)
+	}, false, etext.AlignStart, etext.AlignStart)
 	d.border.DrawBorder(screen)
 
 	d.TextInput.Draw(screen)

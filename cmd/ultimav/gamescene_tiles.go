@@ -19,7 +19,7 @@ const (
 
 func (g *GameScene) getSmallCalculatedAvatarTileIndex(ogSpriteIndex indexes.SpriteIndex) indexes.SpriteIndex {
 	if g.gameState.PartyVehicle.GetVehicleDetails().VehicleType != references.NoPartyVehicle {
-		return indexes.SpriteIndex(g.gameState.PartyVehicle.GetVehicleDetails().GetSpriteIndex())
+		return g.gameState.PartyVehicle.GetVehicleDetails().GetSpriteIndex()
 	}
 	return g.getSmallCalculatedNPCTileIndex(ogSpriteIndex, indexes.Avatar_KeyIndex, g.gameState.MapState.PlayerLocation.Position)
 }
@@ -122,7 +122,7 @@ func (g *GameScene) refreshSpecialTileOverrideExceptions(pos *references.Positio
 }
 
 func (g *GameScene) refreshProvisionsAndEquipmentMapTiles(pos *references.Position, layer *map_state.LayeredMap) {
-	if !layer.IsPositionVisible(pos, g.gameState.DateTime, &g.gameState.MapState.Lighting, g.gameState.MapState.PlayerLocation.Floor < 0) {
+	if !layer.IsPositionVisible(pos, g.gameState.DateTime, g.gameState.MapState.PlayerLocation.Floor < 0) {
 		layer.UnSetTileByLayer(map_state.EquipmentAndProvisionsLayer, pos)
 		return
 	}
@@ -165,7 +165,7 @@ func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *map_
 		}
 	}
 	var tileIndex indexes.SpriteIndex
-	if layer.IsPositionVisible(pos, g.gameState.DateTime, &g.gameState.MapState.Lighting, g.gameState.MapState.PlayerLocation.Floor < 0) && g.getTileVisibilityIndexByPosition(pos) > 0 {
+	if layer.IsPositionVisible(pos, g.gameState.DateTime, g.gameState.MapState.PlayerLocation.Floor < 0) && g.getTileVisibilityIndexByPosition(pos) > 0 {
 		tileIndex = g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, *pos)
 		tileIndex = g.getSmallCalculatedTileIndex(tileIndex, pos)
 		if mapUnitTile != nil && mapUnitTile.Index >= 512 {
@@ -182,7 +182,7 @@ func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *map_
 }
 
 func (g *GameScene) refreshStaticMapTiles(pos *references.Position, mapLayer *map_state.LayeredMap, do *ebiten.DrawImageOptions) {
-	if !mapLayer.IsPositionVisible(pos, g.gameState.DateTime, &g.gameState.MapState.Lighting, g.gameState.MapState.PlayerLocation.Floor < 0) {
+	if !mapLayer.IsPositionVisible(pos, g.gameState.DateTime, g.gameState.MapState.PlayerLocation.Floor < 0) {
 		return
 	}
 
@@ -207,7 +207,7 @@ func (g *GameScene) refreshStaticMapTiles(pos *references.Position, mapLayer *ma
 // refreshAllMapLayerTiles
 func (g *GameScene) refreshAllMapLayerTiles() {
 	layer := g.gameState.GetLayeredMapByCurrentLocation()
-	layer.RecalculateVisibleTiles(g.gameState.MapState.PlayerLocation.Position, &g.gameState.MapState.Lighting, g.gameState.DateTime, g.gameState.MapState.PlayerLocation.Floor < 0)
+	layer.RecalculateVisibleTiles(g.gameState.MapState.PlayerLocation.Position, &g.gameState.MapState.Lighting)
 
 	if g.unscaledMapImage == nil {
 		g.unscaledMapImage = ebiten.NewImage(sprites.TileSize*xTilesVisibleOnGameScreen, sprites.TileSize*yTilesVisibleOnGameScreen)

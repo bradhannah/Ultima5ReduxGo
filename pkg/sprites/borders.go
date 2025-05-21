@@ -244,7 +244,7 @@ func getCornersOfReferenceBorder(width, height int) *referenceBorderDimensions {
 	yMiddle := int(math.Round(float64(height) / 2))
 
 	referenceBorderDimensions.topLeft = image.Rectangle{
-		Min: image.Point{0, 0},
+		Min: image.Point{},
 		Max: image.Point{X: xMiddle - 1, Y: yMiddle - 1},
 	}
 	referenceBorderDimensions.topRight = image.Rectangle{

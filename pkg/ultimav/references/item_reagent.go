@@ -10,6 +10,7 @@ func (r Reagent) Type() ItemType {
 	return ItemTypeReagent
 }
 
+//goland:noinspection GoUnusedConst
 const (
 	SulfurAsh    Reagent = 0
 	Ginseng      Reagent = 1

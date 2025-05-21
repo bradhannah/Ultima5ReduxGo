@@ -4,6 +4,7 @@ const StandardNumberOfAnimationFrames = 4
 
 type SpriteIndex int
 
+//goland:noinspection GoSnakeCaseUsage,GoUnusedConst
 const (
 	NoSprites                SpriteIndex = -1
 	Bang                                 = 0
@@ -148,6 +149,8 @@ const (
 	Amulet                               = 439
 	BrickWallArchway                     = 135
 )
+
+//goland:noinspection GoSnakeCaseUsage,GoUnusedConst
 const (
 	Wizard_KeyIndex                  SpriteIndex = 320
 	Bard_KeyIndex                                = 324

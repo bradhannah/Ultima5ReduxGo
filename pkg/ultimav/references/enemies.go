@@ -41,7 +41,7 @@ func NewAllEnemyReferences(gameConfig *config.UltimaVConfiguration,
 		enemyRefs = append(enemyRefs, enemyRef)
 	}
 
-	// do the friend reference population aftewards
+	// do the friend reference population afterwards
 	for nEnemy := 0; nEnemy < len(enemyRefs); nEnemy++ {
 		rawEnemyRef := rawEnemyReferences.enemies[nEnemy]
 		enemyRef := &enemyRefs[nEnemy]

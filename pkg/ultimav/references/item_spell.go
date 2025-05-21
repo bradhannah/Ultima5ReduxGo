@@ -10,6 +10,7 @@ func (s Spell) Type() ItemType {
 	return ItemTypeSpell
 }
 
+//goland:noinspection GoUnusedConst
 const (
 	InLor         Spell = 0
 	GravPor       Spell = 1

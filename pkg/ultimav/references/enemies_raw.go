@@ -45,7 +45,6 @@ type AdditionalEnemyFlags struct {
 
 type rawEnemyReferences struct {
 	enemies []rawEnemyReference
-	//additionalEnemyFlags []AdditionalEnemyFlags
 }
 
 func (e *AdditionalEnemyFlags) UnmarshalJSON(data []byte) error {
@@ -61,12 +60,6 @@ func (e *AdditionalEnemyFlags) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
-
-// func NewEnemyReferences() *EnemyReferences {
-// 	var enemies EnemyReferences
-
-// 	return &enemies
-// }
 
 func newRawEnemyReferences(gameConfig *config.UltimaVConfiguration) *rawEnemyReferences {
 	var enemies rawEnemyReferences
@@ -106,29 +99,27 @@ func newRawEnemyReferences(gameConfig *config.UltimaVConfiguration) *rawEnemyRef
 		// _dataChunks.AddDataChunk(DataChunk.DataFormatType.ByteList, "Enemy Attack Range (1-9)", 0x15AC, 0x30, 0x00, DataChunkName.ENEMY_ATTACK_RANGE);
 		const nRawBytesPerEnemyAttackRange = 1
 		const enemyAttackRangeOffset = 0x15AC
-		enemyRef.AttackRange = byte(gameConfig.RawDataOvl[enemyAttackRangeOffset+(nEnemy*nRawBytesPerEnemyAttackRange)])
+		enemyRef.AttackRange = gameConfig.RawDataOvl[enemyAttackRangeOffset+(nEnemy*nRawBytesPerEnemyAttackRange)]
 
 		// Enemy Range THING
 		// _dataChunks.AddDataChunk(DataChunk.DataFormatType.ByteList, "Enemy Range THING", 0x15DC, 0x30, 0x00, DataChunkName.ENEMY_RANGE_THING);
 		// TODO: unsure what this even is.... ;)
 		const nRawBytesPerEnemyRangeThing = 1
 		const enemyRangeThingOffset = 0x15DC
-		enemyRef.AttackThing = byte(gameConfig.RawDataOvl[enemyRangeThingOffset+(nEnemy*nRawBytesPerEnemyRangeThing)])
+		enemyRef.AttackThing = gameConfig.RawDataOvl[enemyRangeThingOffset+(nEnemy*nRawBytesPerEnemyRangeThing)]
 
 		// Enemy Friends
 		// _dataChunks.AddDataChunk(DataChunk.DataFormatType.ByteList, "Enemy Friends", 0x16E4, 0x30, 0x00,	DataChunkName.ENEMY_FRIENDS);
 		const nRawBytesPerEnemyFriends = 1
 		const enemyFriendsOffset = 0x16E4
-		enemyRef.Friend = byte(gameConfig.RawDataOvl[enemyFriendsOffset+(nEnemy*nRawBytesPerEnemyFriends)])
+		enemyRef.Friend = gameConfig.RawDataOvl[enemyFriendsOffset+(nEnemy*nRawBytesPerEnemyFriends)]
 
 		// Enemy THING
 		// _dataChunks.AddDataChunk(DataChunk.DataFormatType.ByteList, "Enemy THING", 0x1714, 0x30, 0x00, DataChunkName.ENEMY_THING);
 		// TODO: unsure what this even is.... ;)
 		const nRawBytesPerEnemyThing = 1
 		const enemyThingOffset = 0x1714
-		enemyRef.Thing = byte(gameConfig.RawDataOvl[enemyThingOffset+(nEnemy*nRawBytesPerEnemyThing)])
-
-		//fmt.Printf("Monster %d: %v\n", nEnemy, flagsBools)
+		enemyRef.Thing = gameConfig.RawDataOvl[enemyThingOffset+(nEnemy*nRawBytesPerEnemyThing)]
 
 		enemyRef.AdditionalEnemyFlags = allAdditionalEnemyFlags[nEnemy]
 

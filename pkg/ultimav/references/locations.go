@@ -11,6 +11,7 @@ const (
 	DungeonMapType
 )
 
+//goland:noinspection GoSnakeCaseUsage
 const (
 	EmptyLocation         Location = 0xFF
 	Britannia_Underworld  Location = 0x00

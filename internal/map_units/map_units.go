@@ -6,11 +6,11 @@ import (
 
 type MapUnits []MapUnit
 
-const MAXIMUM_NPCS_PER_MAP = 32
+const MaximumNpcsPerMap = 32
 
-func (n *MapUnits) getNextAvailableNPCIndexNumber() int {
-	if len(*n) < MAXIMUM_NPCS_PER_MAP {
-		return len(*n)
+func (m *MapUnits) getNextAvailableNPCIndexNumber() int {
+	if len(*m) < MaximumNpcsPerMap {
+		return len(*m)
 	}
 
 	return -1
@@ -54,9 +54,9 @@ func (m *MapUnits) GetVehicleAtPositionOrNil(pos references.Position) *NPCFriend
 	return nil
 }
 
-func (n *MapUnits) AddVehicle(vehicle NPCFriendly) bool {
+func (m *MapUnits) AddVehicle(vehicle NPCFriendly) bool {
 
-	index := n.getNextAvailableNPCIndexNumber()
+	index := m.getNextAvailableNPCIndexNumber()
 	if index == -1 {
 		return false
 	}
@@ -66,14 +66,14 @@ func (n *MapUnits) AddVehicle(vehicle NPCFriendly) bool {
 
 	vehicle.SetVisible(true)
 
-	*n = append(*n, &vehicle)
+	*m = append(*m, &vehicle)
 
 	return true
 }
 
-func (n *MapUnits) CreateFreshXyOccupiedMap() *XyOccupiedMap {
+func (m *MapUnits) CreateFreshXyOccupiedMap() *XyOccupiedMap {
 	xy := make(XyOccupiedMap)
-	for _, mu := range *n {
+	for _, mu := range *m {
 
 		if mu.IsEmptyMapUnit() || !mu.IsVisible() {
 			continue
@@ -87,12 +87,12 @@ func (n *MapUnits) CreateFreshXyOccupiedMap() *XyOccupiedMap {
 	return &xy
 }
 
-func As[T interface{ IsEmptyMapUnit() bool }](mu MapUnit) (T, bool) {
-	if v, ok := mu.(T); ok && !v.IsEmptyMapUnit() {
-		return v, true
-	}
-	var zero T
-	return zero, false
-}
+// func As[T interface{ IsEmptyMapUnit() bool }](mu MapUnit) (T, bool) {
+// 	if v, ok := mu.(T); ok && !v.IsEmptyMapUnit() {
+// 		return v, true
+// 	}
+// 	var zero T
+// 	return zero, false
+// }
 
 type XyOccupiedMap map[int]map[int]bool

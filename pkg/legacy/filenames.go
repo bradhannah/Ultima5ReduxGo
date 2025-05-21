@@ -1,5 +1,6 @@
 package legacy
 
+//goland:noinspection GoSnakeCaseUsage,GoUnusedConst
 const (
 	BRIT_CBT              = "BRIT.CBT"
 	BRIT_DAT              = "BRIT.DAT"
@@ -33,6 +34,8 @@ const (
 )
 
 // Slices for grouped files
+//
+//goland:noinspection GoUnusedGlobalVariable
 var (
 	TalkFiles     = []string{CASTLE_TLK, TOWNE_TLK, DWELLING_TLK, KEEP_TLK}
 	NpcFiles      = []string{CASTLE_NPC, TOWNE_NPC, DWELLING_NPC, KEEP_NPC}

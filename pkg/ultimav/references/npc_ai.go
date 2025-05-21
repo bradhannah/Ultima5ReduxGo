@@ -18,7 +18,7 @@ const (
 	// CustomAi special conversation for merchants
 	CustomAi = 4
 
-	// ExtortOrAttackOrFollow you better pay the guard or they will attack!
+	// ExtortOrAttackOrFollow you better pay the guard, or they will attack!
 	ExtortOrAttackOrFollow = 6
 
 	// DrudgeWorthThing he's a jerk - he will attack at first opportunity, and get as close to you as possible

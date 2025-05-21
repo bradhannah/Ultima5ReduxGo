@@ -11,6 +11,7 @@ import (
 
 type EnemyAbility int
 
+//goland:noinspection GoUnusedConst
 const (
 	Bludgeons         EnemyAbility = 0
 	PossessCharm      EnemyAbility = 1

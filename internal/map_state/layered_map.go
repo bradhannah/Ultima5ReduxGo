@@ -74,7 +74,7 @@ func newLayeredMap(xMax references.Coordinate, yMax references.Coordinate, tileR
 	return &layeredMap
 }
 
-func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position, lighting *Lighting, timeOfDay datetime.UltimaDate, bForceBasement bool) {
+func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position, lighting *Lighting) {
 	l.TopLeft = references.Position{
 		X: avatarPos.X - overflowTiles,
 		Y: avatarPos.Y - overflowTiles,
@@ -187,7 +187,7 @@ func (l *LayeredMap) SetVisible(bVisible bool, pos *references.Position) {
 	l.visibleFlags[pos.X][pos.Y] = bVisible
 }
 
-func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datetime.UltimaDate, lighting *Lighting, bIsBasement bool) bool {
+func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datetime.UltimaDate, bIsBasement bool) bool {
 	// note: some of this may feel like overkill - but it is setting up for an eventual alpha or gradient
 	// based lighting that degrades as it gets further away
 
@@ -207,7 +207,7 @@ func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datet
 
 	// TODO: hey brad - the nToShow is small because of the Avatar - so this won't quite work.
 	// figure out how to distinguish these two - i think the second map that is more "factual" is better
-	bShow := l.primaryDistanceMaskMap[*pos] <= int(nToShow)
+	bShow := l.primaryDistanceMaskMap[*pos] <= nToShow
 
 	if bShow {
 		return true

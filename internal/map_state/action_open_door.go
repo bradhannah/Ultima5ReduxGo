@@ -14,11 +14,11 @@ const (
 	OpenDoorOpened
 )
 
-func (g *MapState) OpenDoor(direction references.Direction) DoorOpenState {
+func (m *MapState) OpenDoor(direction references.Direction) DoorOpenState {
 	const defaultTurnsForDoorOpen = 2
 
-	newPosition := direction.GetNewPositionInDirection(&g.PlayerLocation.Position)
-	theMap := g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.PlayerLocation.Floor)
+	newPosition := direction.GetNewPositionInDirection(&m.PlayerLocation.Position)
+	theMap := m.LayeredMaps.GetLayeredMap(references.SmallMapType, m.PlayerLocation.Floor)
 	targetTile := theMap.GetTileTopMapOnlyTile(newPosition)
 
 	switch targetTile.Index {
@@ -34,10 +34,10 @@ func (g *MapState) OpenDoor(direction references.Direction) DoorOpenState {
 
 	theMap.SetTileByLayer(MapOverrideLayer, newPosition, indexes.BrickFloor)
 
-	if g.openDoorPos != nil {
-		theMap.UnSetTileByLayer(MapOverrideLayer, g.openDoorPos)
+	if m.openDoorPos != nil {
+		theMap.UnSetTileByLayer(MapOverrideLayer, m.openDoorPos)
 	}
-	g.openDoorPos = newPosition
-	g.openDoorTurns = defaultTurnsForDoorOpen
+	m.openDoorPos = newPosition
+	m.openDoorTurns = defaultTurnsForDoorOpen
 	return OpenDoorOpened
 }

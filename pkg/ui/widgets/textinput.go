@@ -10,13 +10,13 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	e_text "github.com/hajimehoshi/ebiten/v2/text/v2"
+	etext "github.com/hajimehoshi/ebiten/v2/text/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/opentype"
 	"golang.org/x/image/math/fixed"
 
-	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	ucolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
@@ -110,9 +110,9 @@ func NewTextInput(
 
 	textInput.inputColors = TextInputColors{
 		DefaultColor:          color.White,
-		NoMatchesColor:        u_color.Red,
-		OneMatchColor:         u_color.Green,
-		MoreThanOneMatchColor: u_color.Yellow,
+		NoMatchesColor:        ucolor.Red,
+		OneMatchColor:         ucolor.Green,
+		MoreThanOneMatchColor: ucolor.Yellow,
 	}
 
 	return textInput
@@ -146,7 +146,7 @@ func (t *TextInput) Draw(screen *ebiten.Image) {
 	t.output.DrawContinuousOutputTexOnXy(screen, image.Point{
 		X: textRect.Min.X,
 		Y: textRect.Min.Y,
-	}, false, e_text.AlignStart, e_text.AlignStart)
+	}, false, etext.AlignStart, etext.AlignStart)
 	t.drawCursor(screen)
 }
 
@@ -204,9 +204,9 @@ func (t *TextInput) addCharacter(keyStr string) {
 	}
 }
 
-func (t *TextInput) removeRightCharacter(keyStr string) {
-
-}
+// func (t *TextInput) removeRightCharacter(keyStr string) {
+//
+// }
 
 func (t *TextInput) isPerfectMatchWithAutoFillFirstCharacter() bool {
 	perfectMatches := *t.textCommands.GetAllPerfectMatches(t.output.GetOutputStr(false))

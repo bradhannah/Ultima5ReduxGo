@@ -5,13 +5,13 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
-func (m *GameState) UpdateSmallMap(tileRefs *references.Tiles, locs *references.LocationReferences) {
-	slr := locs.GetLocationReference(m.MapState.PlayerLocation.Location)
-	m.MapState.LayeredMaps.ResetAndCreateSmallMap(
+func (g *GameState) UpdateSmallMap(tileRefs *references.Tiles, locs *references.LocationReferences) {
+	slr := locs.GetLocationReference(g.MapState.PlayerLocation.Location)
+	g.MapState.LayeredMaps.ResetAndCreateSmallMap(
 		slr,
 		tileRefs,
-		m.MapState.XTilesVisibleOnGameScreen,
-		m.MapState.YTilesVisibleOnGameScreen)
-	m.CurrentNPCAIController = ai.NewNPCAIControllerSmallMap(slr, tileRefs, &m.MapState, &m.DateTime) // , m.MapState.PlayerLocation)
-	m.CurrentNPCAIController.PopulateMapFirstLoad()
+		g.MapState.XTilesVisibleOnGameScreen,
+		g.MapState.YTilesVisibleOnGameScreen)
+	g.CurrentNPCAIController = ai.NewNPCAIControllerSmallMap(slr, tileRefs, &g.MapState, &g.DateTime)
+	g.CurrentNPCAIController.PopulateMapFirstLoad()
 }

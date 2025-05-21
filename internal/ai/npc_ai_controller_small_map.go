@@ -43,7 +43,7 @@ func NewNPCAIControllerSmallMap(
 	xy := make(map_units.XyOccupiedMap)
 	npcsAiCont.positionOccupiedChance = &xy
 
-	npcsAiCont.mapUnits = make(map_units.MapUnits, 0, map_units.MAXIMUM_NPCS_PER_MAP)
+	npcsAiCont.mapUnits = make(map_units.MapUnits, 0, map_units.MaximumNpcsPerMap)
 
 	return npcsAiCont
 }
@@ -358,7 +358,7 @@ func (n *NPCAIControllerSmallMap) moveNPCOnCalculatedPath(friendly *map_units.NP
 }
 
 func (n *NPCAIControllerSmallMap) createFreshPathToScheduledLocation(friendly *map_units.NPCFriendly) bool {
-	// set up all the walkable and non walkable tiles plus the weights
+	// set up all the walkable and non-walkable tiles plus the weights
 	muDetails := friendly.MapUnitDetails()
 	aStarMap := astar.NewAStarMap()
 	// muDetails.AStarMap.InitializeByLayeredMap(

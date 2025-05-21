@@ -20,7 +20,7 @@ CharacterClass
 enum <ubyte> Class { Avatar = 'A', Fighter = 'F', Bard = 'B', Wizard = 'M' };
 */
 
-const MAX_CHARACTERS_IN_PARTY = 6
+const MaxCharactersInParty = 6
 
 type CharacterClass byte
 
@@ -56,10 +56,9 @@ var CharacterStatuses = util.OrderedMapping[CharacterStatus]{
 	{Id: Dead, FriendlyName: "Dead"},
 }
 
-/*
-Gender
-enum <ubyte> Gender { Male = 0x0B, Female = 0x0C };
-*/
+// Gender
+// enum <ubyte> Gender { Male = 0x0B, Female = 0x0C };
+
 type CharacterGender byte
 
 const (

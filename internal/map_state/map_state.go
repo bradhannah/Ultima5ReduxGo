@@ -37,9 +37,9 @@ func (m *MapState) GetLayeredMapByCurrentLocation() *LayeredMap {
 	return m.LayeredMaps.GetLayeredMap(m.PlayerLocation.Location.GetMapType(), m.PlayerLocation.Floor)
 }
 
-func (g *MapState) IsNPCPassable(pos *references.Position) bool {
-	theMap := g.GetLayeredMapByCurrentLocation()
-	// theMap := g.LayeredMaps.GetLayeredMap(g.PlayerLocation.Location.GetMapType(), g.PlayerLocation.Floor)
+func (m *MapState) IsNPCPassable(pos *references.Position) bool {
+	theMap := m.GetLayeredMapByCurrentLocation()
+	// theMap := m.LayeredMaps.GetLayeredMap(m.PlayerLocation.Location.GetMapType(), m.PlayerLocation.Floor)
 	topTile := theMap.GetTopTile(pos)
 
 	if topTile == nil {

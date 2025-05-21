@@ -5,20 +5,20 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
-func (g *MapState) SmallMapProcessTurnDoors() {
-	if g.openDoorPos != nil {
-		if g.openDoorTurns == 0 {
-			tile := g.LayeredMaps.GetTileRefByPosition(references.SmallMapType, MapLayer, g.openDoorPos, g.PlayerLocation.Floor)
+func (m *MapState) SmallMapProcessTurnDoors() {
+	if m.openDoorPos != nil {
+		if m.openDoorTurns == 0 {
+			tile := m.LayeredMaps.GetTileRefByPosition(references.SmallMapType, MapLayer, m.openDoorPos, m.PlayerLocation.Floor)
 			var doorTileIndex indexes.SpriteIndex
 			if tile.Index.IsWindowedDoor() {
 				doorTileIndex = indexes.RegularDoorView
 			} else {
 				doorTileIndex = indexes.RegularDoor
 			}
-			g.LayeredMaps.GetLayeredMap(references.SmallMapType, g.PlayerLocation.Floor).SetTileByLayer(MapOverrideLayer, g.openDoorPos, doorTileIndex)
-			g.openDoorPos = nil
+			m.LayeredMaps.GetLayeredMap(references.SmallMapType, m.PlayerLocation.Floor).SetTileByLayer(MapOverrideLayer, m.openDoorPos, doorTileIndex)
+			m.openDoorPos = nil
 		} else {
-			g.openDoorTurns--
+			m.openDoorTurns--
 		}
 	}
 }

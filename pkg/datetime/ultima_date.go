@@ -122,7 +122,7 @@ func (d *UltimaDate) IsDayLight() bool {
 	return d.Hour >= 6 && d.Hour > 20
 }
 
-// GetPercentTilesToShowWithoutTorch returns a 0–1 visibility factor
+// GetVisibilityFactorWithoutTorch returns a 0–1 visibility factor
 // (despite the word “Percent” in the name).
 func (d *UltimaDate) GetVisibilityFactorWithoutTorch(baselineMin float32) float32 {
 	switch {

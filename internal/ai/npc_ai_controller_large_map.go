@@ -47,7 +47,7 @@ func NewNPCAIControllerLargeMap(input NewNPCAIControllerLargeMapInput) *NPCAICon
 	xy := make(map_units.XyOccupiedMap)
 	npcsAiCont.positionOccupiedChance = &xy
 
-	npcsAiCont.mapUnits = make(map_units.MapUnits, 0, map_units.MAXIMUM_NPCS_PER_MAP)
+	npcsAiCont.mapUnits = make(map_units.MapUnits, 0, map_units.MaximumNpcsPerMap)
 
 	return npcsAiCont
 }
@@ -97,7 +97,7 @@ func (m *NPCAIControllerLargeMap) AdvanceNextTurnCalcAndMoveNPCs() {
 	}
 	m.FreshenExistingNPCsOnMap()
 
-	if len(m.mapUnits) < map_units.MAXIMUM_NPCS_PER_MAP && m.ShouldGenerateLargeMapMonster() {
+	if len(m.mapUnits) < map_units.MaximumNpcsPerMap && m.ShouldGenerateLargeMapMonster() {
 		m.generateEraBoundMonster()
 	}
 }
@@ -246,5 +246,5 @@ func (m *NPCAIControllerLargeMap) ShouldEnemyMove() bool {
 }
 
 func (m *NPCAIControllerLargeMap) RemoveAllEnemies() {
-	m.mapUnits = make(map_units.MapUnits, 0, map_units.MAXIMUM_NPCS_PER_MAP)
+	m.mapUnits = make(map_units.MapUnits, 0, map_units.MaximumNpcsPerMap)
 }

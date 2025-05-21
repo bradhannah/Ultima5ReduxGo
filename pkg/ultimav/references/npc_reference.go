@@ -68,7 +68,6 @@ func (n *NPCReference) GetNPCType() NPCType {
 	// TODO: requires a check on MapLocation == SmallMapReferences.SingleMapReference.Location.Windemere)
 	if tileIndex.IsPartOfAnimation(indexes.Daemon1_KeyIndex) {
 		_ = "a" // skip for now
-		//return Guard
 	}
 	const avatarTileIndexInNPCRefes = 256
 	if tileIndex == avatarTileIndexInNPCRefes { // it's the Avatar
@@ -108,42 +107,6 @@ func isValidType(nType int) bool {
 	}
 	return false
 }
-
-// public SpecificNpcDialogType NpcType
-// {
-// 	get
-// 	{
-// 		// special override in case it's a guard
-// 		if (NPCKeySprite is (int)TileReference.SpriteIndex.Guard_KeyIndex
-// 			and <= (int)TileReference.SpriteIndex.Guard_KeyIndex + TileReference.N_TYPICAL_ANIMATION_FRAMES)
-// 			return SpecificNpcDialogType.Guard;
-
-// 		// daemons at Windemere are guards too
-// 		if (NPCKeySprite is (int)TileReference.SpriteIndex.Daemon1_KeyIndex
-// 				and <= (int)TileReference.SpriteIndex.Daemon1_KeyIndex +
-// 					   TileReference.N_TYPICAL_ANIMATION_FRAMES
-// 			&& MapLocation == SmallMapReferences.SingleMapReference.Location.Windemere)
-// 			return SpecificNpcDialogType.Guard;
-
-// 		// it's the Avatar
-// 		if (NPCKeySprite == 256) return SpecificNpcDialogType.None;
-
-// 		// it's a merchant
-// 		foreach (int npcType in Enum.GetValues(typeof(SpecificNpcDialogType)))
-// 		{
-// 			if (npcType == DialogNumber)
-// 				return (SpecificNpcDialogType)npcType;
-// 		}
-
-// 		foreach (int npcType in Enum.GetValues(typeof(SpecificNpcDialogType)))
-// 		{
-// 			if (npcType == CharacterType)
-// 				return (SpecificNpcDialogType)npcType;
-// 		}
-
-// 		return SpecificNpcDialogType.None;
-// 	}
-// }
 
 func NewNPCReferenceForVehicle(vehicle VehicleType, position Position, floorNumber FloorNumber) *NPCReference {
 	npcRef := &NPCReference{}

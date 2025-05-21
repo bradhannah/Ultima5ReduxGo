@@ -8,30 +8,30 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
-type AStarNode struct {
+type Node struct {
 	Position references.Position
 	GScore   int // Cost from start to current node
 	FScore   int // GScore + heuristic cost to the goal
-	Parent   *AStarNode
+	Parent   *Node
 }
 
-type AStarMap struct {
+type Map struct {
 	walkableMap map[references.Position]int
 	bWrap       bool
 	maxX, maxY  references.Coordinate
 	mapUnit     map_units.MapUnit
 }
 
-func NewAStarMap() *AStarMap {
-	a := &AStarMap{}
+func NewAStarMap() *Map {
+	a := &Map{}
 	return a
 }
 
-func (m *AStarMap) AStar(goal references.Position) []references.Position {
+func (m *Map) AStar(goal references.Position) []references.Position {
 	openSet := &aStarPriorityQueue{}
 	heap.Init(openSet)
 
-	startNode := &AStarNode{
+	startNode := &Node{
 		Position: m.mapUnit.Pos(),
 		GScore:   0,
 		FScore:   m.mapUnit.PosPtr().HeuristicTileDistance(goal),
@@ -45,7 +45,7 @@ func (m *AStarMap) AStar(goal references.Position) []references.Position {
 
 	for openSet.Len() > 0 {
 		// Get the node with the lowest FScore
-		current := heap.Pop(openSet).(*AStarNode)
+		current := heap.Pop(openSet).(*Node)
 
 		// If we've reached the goal, reconstruct the path
 		if current.Position == goal {
@@ -73,7 +73,7 @@ func (m *AStarMap) AStar(goal references.Position) []references.Position {
 			// Update scores and add to the open set
 			if _, seen := gScore[neighbor]; !seen || tentativeGScore < gScore[neighbor] {
 				gScore[neighbor] = tentativeGScore
-				heap.Push(openSet, &AStarNode{
+				heap.Push(openSet, &Node{
 					Position: neighbor,
 					GScore:   tentativeGScore,
 					FScore:   tentativeGScore + neighbor.HeuristicTileDistance(goal),
@@ -87,7 +87,7 @@ func (m *AStarMap) AStar(goal references.Position) []references.Position {
 	return nil
 }
 
-func (m *AStarMap) reconstructPath(node *AStarNode) []references.Position {
+func (m *Map) reconstructPath(node *Node) []references.Position {
 	var path []references.Position
 	for node != nil {
 		if m.bWrap {
@@ -101,7 +101,7 @@ func (m *AStarMap) reconstructPath(node *AStarNode) []references.Position {
 	return path
 }
 
-func (m *AStarMap) InitializeByLayeredMap(mapUnit map_units.MapUnit, lMap *map_state.LayeredMap, extraBlockTiles []references.Position) {
+func (m *Map) InitializeByLayeredMap(mapUnit map_units.MapUnit, lMap *map_state.LayeredMap, extraBlockTiles []references.Position) {
 	m.mapUnit = mapUnit
 	m.bWrap = false
 	m.walkableMap = make(map[references.Position]int)
@@ -120,7 +120,7 @@ func (m *AStarMap) InitializeByLayeredMap(mapUnit map_units.MapUnit, lMap *map_s
 	}
 }
 
-func (m *AStarMap) InitializeByLayeredMapWithLimit(
+func (m *Map) InitializeByLayeredMapWithLimit(
 	mapUnit map_units.MapUnit,
 	lMap *map_state.LayeredMap,
 	extraBlockTiles []references.Position,
@@ -161,20 +161,23 @@ func (m *AStarMap) InitializeByLayeredMapWithLimit(
 
 }
 
-type aStarPriorityQueue []*AStarNode
+type aStarPriorityQueue []*Node
 
-func (pq aStarPriorityQueue) Len() int { return len(pq) }
-
-func (pq aStarPriorityQueue) Less(i, j int) bool {
-	return pq[i].FScore < pq[j].FScore // Lower FScore has higher priority
+func (pq *aStarPriorityQueue) Len() int {
+	return len(*pq)
 }
 
-func (pq aStarPriorityQueue) Swap(i, j int) {
-	pq[i], pq[j] = pq[j], pq[i]
+func (pq *aStarPriorityQueue) Less(i, j int) bool {
+	return (*pq)[i].FScore < (*pq)[j].FScore // lower FScore = higher priority
+}
+
+func (pq *aStarPriorityQueue) Swap(i, j int) {
+	q := *pq
+	q[i], q[j] = q[j], q[i]
 }
 
 func (pq *aStarPriorityQueue) Push(x interface{}) {
-	*pq = append(*pq, x.(*AStarNode))
+	*pq = append(*pq, x.(*Node))
 }
 
 func (pq *aStarPriorityQueue) Pop() interface{} {

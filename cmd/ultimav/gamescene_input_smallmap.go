@@ -6,7 +6,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 
-	game_state2 "github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
+	gamestate "github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
@@ -226,11 +226,11 @@ func (g *GameScene) smallMapJimmySecondary(direction references.Direction) {
 	jimmyResult := g.gameState.JimmyDoor(direction, &g.gameState.PartyState.Characters[0])
 
 	switch jimmyResult {
-	case game_state2.JimmyUnlocked:
+	case gamestate.JimmyUnlocked:
 		g.addRowStr("Unlocked!")
-	case game_state2.JimmyNotADoor:
+	case gamestate.JimmyNotADoor:
 		g.addRowStr("Not lock!")
-	case game_state2.JimmyBrokenPick, game_state2.JimmyLockedMagical:
+	case gamestate.JimmyBrokenPick, gamestate.JimmyLockedMagical:
 		g.addRowStr("Key broke!")
 	default:
 		panic("unhandled default case")

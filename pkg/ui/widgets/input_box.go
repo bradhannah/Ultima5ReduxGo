@@ -5,7 +5,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 
-	u_color "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	ucolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
@@ -90,7 +90,7 @@ func NewInputBox(question string, textCommand *grammar.TextCommand, keyboard *in
 	inputBox.border = NewBorder(
 		inputBox.borderBoxPercents,
 		inputBoxBorderWidthScaling,
-		u_color.Black,
+		ucolor.Black,
 	)
 
 	return inputBox
