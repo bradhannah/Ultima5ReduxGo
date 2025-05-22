@@ -2,10 +2,10 @@ package game_state
 
 import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/ai"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
-func (g *GameState) UpdateSmallMap(tileRefs *references.Tiles, locs *references.LocationReferences) {
+func (g *GameState) UpdateSmallMap(tileRefs *references2.Tiles, locs *references2.LocationReferences) {
 	slr := locs.GetLocationReference(g.MapState.PlayerLocation.Location)
 	g.MapState.LayeredMaps.ResetAndCreateSmallMap(
 		slr,

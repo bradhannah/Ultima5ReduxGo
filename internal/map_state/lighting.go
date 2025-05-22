@@ -3,8 +3,8 @@ package map_state
 import (
 	"math"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 const TorchTileDistance = 3

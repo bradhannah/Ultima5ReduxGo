@@ -1,7 +1,7 @@
 package game_state
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 func (g *GameState) FinishTurn() {
@@ -15,7 +15,7 @@ func (g *GameState) FinishTurn() {
 		panic("unhandled default case")
 	}
 
-	// process any residual damage such as lava or posion
+	// process any residual damage such as lava or position
 	g.processDamageOnAdvanceTimeNonCombat()
 	g.moveNonCombatMapMapUnitsToNextMove()
 	g.GenerateAndCleanupEnemies()
@@ -30,7 +30,7 @@ func (g *GameState) largeMapProcessEndOfTurn() {
 
 	g.GetCurrentLargeMapNPCAIController().AdvanceNextTurnCalcAndMoveNPCs()
 
-	// we care about speed factor only for large maps
+	// we care about the speed factor only for large maps
 	g.DateTime.Advance(topTile.SpeedFactor)
 }
 

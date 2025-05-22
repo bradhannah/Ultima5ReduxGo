@@ -1,15 +1,15 @@
 package main
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
-func (g *GameScene) DebugMoveOnMap(position references.Position) {
+func (g *GameScene) DebugMoveOnMap(position references2.Position) {
 	g.gameState.MapState.PlayerLocation.Position = position
 }
 
 func (g *GameScene) DebugFloorUp() bool {
-	if g.gameState.MapState.PlayerLocation.Location == references.Britannia_Underworld {
+	if g.gameState.MapState.PlayerLocation.Location == references2.Britannia_Underworld {
 		if g.gameState.MapState.PlayerLocation.Floor == -1 {
 			g.gameState.MapState.PlayerLocation.Floor = 0
 			return true
@@ -30,7 +30,7 @@ func (g *GameScene) DebugFloorUp() bool {
 }
 
 func (g *GameScene) DebugFloorDown() bool {
-	if g.gameState.MapState.PlayerLocation.Location == references.Britannia_Underworld {
+	if g.gameState.MapState.PlayerLocation.Location == references2.Britannia_Underworld {
 		if g.gameState.MapState.PlayerLocation.Floor == 0 {
 			g.gameState.MapState.PlayerLocation.Floor = -1
 			return true
@@ -48,8 +48,8 @@ func (g *GameScene) DebugFloorDown() bool {
 	return true
 }
 
-func (g *GameScene) DebugFloorY(nFloor references.FloorNumber) bool {
-	if g.gameState.MapState.PlayerLocation.Location == references.Britannia_Underworld {
+func (g *GameScene) DebugFloorY(nFloor references2.FloorNumber) bool {
+	if g.gameState.MapState.PlayerLocation.Location == references2.Britannia_Underworld {
 		if nFloor < -1 {
 			g.gameState.MapState.PlayerLocation.Floor = -1
 		} else if nFloor > 0 {

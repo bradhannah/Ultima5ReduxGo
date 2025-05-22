@@ -2,11 +2,11 @@ package game_state
 
 import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
-func (g *GameState) ActionPushSmallMap(direction references.Direction) bool {
-	smallMap := g.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.MapState.PlayerLocation.Floor)
+func (g *GameState) ActionPushSmallMap(direction references2.Direction) bool {
+	smallMap := g.MapState.LayeredMaps.GetLayeredMap(references2.SmallMapType, g.MapState.PlayerLocation.Floor)
 
 	pushableThingPosition := direction.GetNewPositionInDirection(&g.MapState.PlayerLocation.Position)
 	pushableThingTile := smallMap.GetTopTile(pushableThingPosition)

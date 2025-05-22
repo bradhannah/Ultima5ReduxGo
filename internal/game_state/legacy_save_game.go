@@ -7,7 +7,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/ai"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 const savedGamFileSize = 4192
@@ -39,7 +39,7 @@ func (g *GameState) getLegacySavedGamRaw(savedGamFilePath string) ([]byte, error
 	return buffer, nil
 }
 
-func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *references.GameReferences) error {
+func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *references2.GameReferences) error {
 	// Open the file in read-only mode and as binary
 	rawSaveGameBytesFromDisk, err := g.getLegacySavedGamRaw(savedGamFilePath)
 	if err != nil {
@@ -57,9 +57,9 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 	const lbX = 0x2F0
 	const lbY = 0x2F1
 	const lbFloor = 0x2EF
-	g.MapState.PlayerLocation.Location = references.Location(rawSaveGameBytesFromDisk[lbLocation])
-	g.MapState.PlayerLocation.Position = references.Position{X: references.Coordinate(rawSaveGameBytesFromDisk[lbX]), Y: references.Coordinate(rawSaveGameBytesFromDisk[lbY])}
-	g.MapState.PlayerLocation.Floor = references.FloorNumber(rawSaveGameBytesFromDisk[lbFloor])
+	g.MapState.PlayerLocation.Location = references2.Location(rawSaveGameBytesFromDisk[lbLocation])
+	g.MapState.PlayerLocation.Position = references2.Position{X: references2.Coordinate(rawSaveGameBytesFromDisk[lbX]), Y: references2.Coordinate(rawSaveGameBytesFromDisk[lbY])}
+	g.MapState.PlayerLocation.Floor = references2.FloorNumber(rawSaveGameBytesFromDisk[lbFloor])
 
 	// Date/Time
 	const lsYear = 0x2CE
@@ -97,9 +97,9 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 		g.MapState.XTilesVisibleOnGameScreen,
 		g.MapState.YTilesVisibleOnGameScreen)
 
-	g.LargeMapNPCAIController = make(map[references.World]*ai.NPCAIControllerLargeMap)
+	g.LargeMapNPCAIController = make(map[references2.World]*ai.NPCAIControllerLargeMap)
 	overworldNPCAIInput := ai.NewNPCAIControllerLargeMapInput{
-		World:           references.OVERWORLD,
+		World:           references2.OVERWORLD,
 		TileRefs:        gameRefs.TileReferences,
 		MapState:        &g.MapState,
 		DebugOptions:    &g.DebugOptions,
@@ -107,10 +107,10 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 		EnemyReferences: g.GameReferences.EnemyReferences,
 		DateTime:        &g.DateTime,
 	}
-	g.LargeMapNPCAIController[references.OVERWORLD] = ai.NewNPCAIControllerLargeMap(overworldNPCAIInput)
+	g.LargeMapNPCAIController[references2.OVERWORLD] = ai.NewNPCAIControllerLargeMap(overworldNPCAIInput)
 	// TODO: load the npcs from the save game
 	underworldNPCAIInput := ai.NewNPCAIControllerLargeMapInput{
-		World:           references.OVERWORLD,
+		World:           references2.OVERWORLD,
 		TileRefs:        gameRefs.TileReferences,
 		MapState:        &g.MapState,
 		DebugOptions:    &g.DebugOptions,
@@ -118,18 +118,18 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 		EnemyReferences: g.GameReferences.EnemyReferences,
 		DateTime:        &g.DateTime,
 	}
-	g.LargeMapNPCAIController[references.UNDERWORLD] = ai.NewNPCAIControllerLargeMap(underworldNPCAIInput)
+	g.LargeMapNPCAIController[references2.UNDERWORLD] = ai.NewNPCAIControllerLargeMap(underworldNPCAIInput)
 	// TODO: load the npcs from the save game
 
 	// if we are on a large map, we set this right away.
-	if g.MapState.PlayerLocation.Location.GetMapType() == references.LargeMapType {
+	if g.MapState.PlayerLocation.Location.GetMapType() == references2.LargeMapType {
 		g.CurrentNPCAIController = g.GetCurrentLargeMapNPCAIController()
 	}
 
-	g.ItemStacksMap = *references.NewItemStacksMap()
+	g.ItemStacksMap = *references2.NewItemStacksMap()
 
-	g.TheOdds = references.NewDefaultTheOdds()
-	g.DebugOptions = references.DebugOptions{
+	g.TheOdds = references2.NewDefaultTheOdds()
+	g.DebugOptions = references2.DebugOptions{
 		FreeMove:   false,
 		MonsterGen: true,
 	}

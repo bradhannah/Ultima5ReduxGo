@@ -1,7 +1,7 @@
 package map_state
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 type VisibilityCoords map[references.Coordinate]map[references.Coordinate]bool

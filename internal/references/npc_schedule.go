@@ -4,7 +4,7 @@ import (
 	"log"
 	"unsafe"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
 )
 
 const (

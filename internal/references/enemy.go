@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"strings"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
 )
 
 type EnemyAbility int
@@ -68,14 +68,14 @@ func (e *EnemyReference) CanSpawnToTile(tile *Tile) bool {
 		return false
 	}
 
-	bCanSpawnOnTile := false
+	var bCanSpawnOnTile bool
 
 	if e.additionalEnemyFlags.IsSandEnemy {
-		bCanSpawnOnTile = bCanSpawnOnTile || strings.HasPrefix(strings.ToLower(tile.Name), "sand")
+		bCanSpawnOnTile = strings.HasPrefix(strings.ToLower(tile.Name), "sand")
 	} else if e.additionalEnemyFlags.IsWaterEnemy {
-		bCanSpawnOnTile = bCanSpawnOnTile || tile.IsWaterEnemyPassable
+		bCanSpawnOnTile = tile.IsWaterEnemyPassable
 	} else {
-		bCanSpawnOnTile = bCanSpawnOnTile || tile.IsLandEnemyPassable
+		bCanSpawnOnTile = tile.IsLandEnemyPassable
 	}
 	return bCanSpawnOnTile
 }
@@ -86,14 +86,14 @@ func (e *EnemyReference) CanMoveToTile(tile *Tile) bool {
 		return false
 	}
 
-	bCanMoveToTile := false
+	var bCanMoveToTile bool
 
 	if e.additionalEnemyFlags.IsSandEnemy {
-		bCanMoveToTile = bCanMoveToTile || strings.HasPrefix(strings.ToLower(tile.Name), "sand")
+		bCanMoveToTile = strings.HasPrefix(strings.ToLower(tile.Name), "sand")
 	} else if e.additionalEnemyFlags.IsWaterEnemy {
-		bCanMoveToTile = bCanMoveToTile || tile.IsWaterEnemyPassable
+		bCanMoveToTile = tile.IsWaterEnemyPassable
 	} else {
-		bCanMoveToTile = bCanMoveToTile || tile.IsLandEnemyPassable
+		bCanMoveToTile = tile.IsLandEnemyPassable
 	}
 
 	if e.additionalEnemyFlags.CanFlyOverWater {

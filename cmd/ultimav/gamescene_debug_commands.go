@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 func (d *DebugConsole) createDebugFunctions(gameScene *GameScene) *grammar.TextCommands {
@@ -96,9 +96,9 @@ func (d *DebugConsole) createTeleportCommand(gameScene *GameScene) *grammar.Text
 		grammar.MatchInt{IntMin: 0, IntMax: 255},
 	}, func(s string, command *grammar.TextCommand) {
 		outputStr := d.TextInput.GetText()
-		gameScene.DebugMoveOnMap(references.Position{
-			X: references.Coordinate(command.GetIndexAsInt(1, outputStr)),
-			Y: references.Coordinate(command.GetIndexAsInt(2, outputStr)),
+		gameScene.DebugMoveOnMap(references2.Position{
+			X: references2.Coordinate(command.GetIndexAsInt(1, outputStr)),
+			Y: references2.Coordinate(command.GetIndexAsInt(2, outputStr)),
 		})
 		d.dumpQuickState(fmt.Sprintf("Teleported to X=%d,Y=%d",
 			int16(command.GetIndexAsInt(1, outputStr)),
@@ -120,7 +120,7 @@ func (d *DebugConsole) createFloorYCommand() *grammar.TextCommand {
 		func(s string, command *grammar.TextCommand) {
 			outputStr := d.TextInput.GetText()
 
-			res := d.gameScene.DebugFloorY(references.FloorNumber(command.GetIndexAsInt(1, outputStr)))
+			res := d.gameScene.DebugFloorY(references2.FloorNumber(command.GetIndexAsInt(1, outputStr)))
 			d.dumpQuickState(fmt.Sprintf("FloorTeleport Status=%t", res))
 		})
 }
@@ -223,7 +223,7 @@ func (d *DebugConsole) createGoSmall() *grammar.TextCommand {
 			CaseSensitive: false,
 		},
 		grammar.MatchStringList{
-			Strings:       references.GetListOfAllSmallMaps(),
+			Strings:       references2.GetListOfAllSmallMaps(),
 			Description:   "Small map locations",
 			CaseSensitive: false,
 		},
@@ -239,7 +239,7 @@ func (d *DebugConsole) createGoSmall() *grammar.TextCommand {
 }
 
 func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
-	docks := references.GetListOfAllLocationsWithDocksAsString()
+	docks := references2.GetListOfAllLocationsWithDocksAsString()
 	docks = append(docks, "avatar")
 	return grammar.NewTextCommand([]grammar.Match{
 		grammar.MatchString{
@@ -263,8 +263,8 @@ func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
 			boatType := command.GetIndexAsString(1, outputStr)
 			locationStr := command.GetIndexAsString(2, outputStr)
 			slr := d.gameScene.gameReferences.LocationReferences.GetSmallLocationReference(locationStr)
-			var dockPos references.Position
-			var dockFloor references.FloorNumber
+			var dockPos references2.Position
+			var dockFloor references2.FloorNumber
 			if slr == nil {
 				d.dumpQuickState("avatar")
 				dockPos = d.gameScene.gameState.MapState.PlayerLocation.Position
@@ -277,21 +277,21 @@ func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
 
 			var boat map_units.NPCFriendly
 			if strings.ToLower(boatType) == "frigate" {
-				boat = *map_units.NewNPCFriendlyVehicle(references.FrigateVehicle, *references.NewNPCReferenceForVehicle(
-					references.FrigateVehicle,
+				boat = *map_units.NewNPCFriendlyVehicle(references2.FrigateVehicle, *references2.NewNPCReferenceForVehicle(
+					references2.FrigateVehicle,
 					dockPos,
 					dockFloor,
 				))
 			} else {
-				boat = *map_units.NewNPCFriendlyVehicle(references.SkiffVehicle, *references.NewNPCReferenceForVehicle(
-					references.SkiffVehicle,
+				boat = *map_units.NewNPCFriendlyVehicle(references2.SkiffVehicle, *references2.NewNPCReferenceForVehicle(
+					references2.SkiffVehicle,
 					dockPos,
 					dockFloor,
 				))
 			}
 			boat.NPCReference.Schedule.OverrideAllPositions(byte(dockPos.X), byte(dockPos.Y))
 
-			bAddedVehicle := d.gameScene.gameState.LargeMapNPCAIController[references.OVERWORLD].GetNpcs().AddVehicle(boat)
+			bAddedVehicle := d.gameScene.gameState.LargeMapNPCAIController[references2.OVERWORLD].GetNpcs().AddVehicle(boat)
 
 			if !bAddedVehicle {
 				d.dumpQuickState("Unable to add vehicle.")

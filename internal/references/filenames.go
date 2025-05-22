@@ -1,4 +1,4 @@
-package legacy
+package references
 
 //goland:noinspection GoSnakeCaseUsage,GoUnusedConst
 const (

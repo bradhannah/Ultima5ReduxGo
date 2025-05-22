@@ -7,24 +7,24 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 const (
-	xCenter = references.Coordinate(xTilesVisibleOnGameScreen / 2)
-	yCenter = references.Coordinate(yTilesVisibleOnGameScreen / 2)
+	xCenter = references2.Coordinate(xTilesVisibleOnGameScreen / 2)
+	yCenter = references2.Coordinate(yTilesVisibleOnGameScreen / 2)
 )
 
 func (g *GameScene) getSmallCalculatedAvatarTileIndex(ogSpriteIndex indexes.SpriteIndex) indexes.SpriteIndex {
-	if g.gameState.PartyVehicle.GetVehicleDetails().VehicleType != references.NoPartyVehicle {
+	if g.gameState.PartyVehicle.GetVehicleDetails().VehicleType != references2.NoPartyVehicle {
 		return g.gameState.PartyVehicle.GetVehicleDetails().GetSpriteIndex()
 	}
 	return g.getSmallCalculatedNPCTileIndex(ogSpriteIndex, indexes.Avatar_KeyIndex, g.gameState.MapState.PlayerLocation.Position)
 }
 
-func (g *GameScene) getSmallCalculatedNPCTileIndex(ogSpriteIndex indexes.SpriteIndex, npcIndex indexes.SpriteIndex, spritePosition references.Position) indexes.SpriteIndex {
+func (g *GameScene) getSmallCalculatedNPCTileIndex(ogSpriteIndex indexes.SpriteIndex, npcIndex indexes.SpriteIndex, spritePosition references2.Position) indexes.SpriteIndex {
 	switch ogSpriteIndex {
 	case indexes.LeftBed:
 		return indexes.AvatarSleepingInBed
@@ -40,7 +40,7 @@ func (g *GameScene) getSmallCalculatedNPCTileIndex(ogSpriteIndex indexes.SpriteI
 	return npcIndex
 }
 
-func (g *GameScene) getSmallCalculatedTileIndex(ogSpriteIndex indexes.SpriteIndex, pos *references.Position) indexes.SpriteIndex {
+func (g *GameScene) getSmallCalculatedTileIndex(ogSpriteIndex indexes.SpriteIndex, pos *references2.Position) indexes.SpriteIndex {
 	switch ogSpriteIndex {
 	case indexes.Mirror:
 		// is avatar in front of it
@@ -52,7 +52,7 @@ func (g *GameScene) getSmallCalculatedTileIndex(ogSpriteIndex indexes.SpriteInde
 	return sprites.GetSpriteIndexWithAnimationBySpriteIndex(ogSpriteIndex, pos.GetHash())
 }
 
-func (g *GameScene) getCorrectAvatarOnChairTile(spriteIndex indexes.SpriteIndex, position *references.Position) indexes.SpriteIndex {
+func (g *GameScene) getCorrectAvatarOnChairTile(spriteIndex indexes.SpriteIndex, position *references2.Position) indexes.SpriteIndex {
 	switch spriteIndex {
 	case indexes.ChairFacingRight:
 		return indexes.AvatarSittingFacingRight
@@ -64,7 +64,7 @@ func (g *GameScene) getCorrectAvatarOnChairTile(spriteIndex indexes.SpriteIndex,
 	return spriteIndex
 }
 
-func (g *GameScene) setDrawBridge(theMap *map_state.LayeredMap, pos *references.Position, spriteIndex indexes.SpriteIndex) bool {
+func (g *GameScene) setDrawBridge(theMap *map_state.LayeredMap, pos *references2.Position, spriteIndex indexes.SpriteIndex) bool {
 	const (
 		leftXDrawBridge   = 14
 		rightXDrawBridge  = 16
@@ -79,18 +79,18 @@ func (g *GameScene) setDrawBridge(theMap *map_state.LayeredMap, pos *references.
 	return false
 }
 
-func (g *GameScene) getCorrectAvatarEatingInChairTile(avatarChairTileIndex indexes.SpriteIndex, pos *references.Position) indexes.SpriteIndex {
+func (g *GameScene) getCorrectAvatarEatingInChairTile(avatarChairTileIndex indexes.SpriteIndex, pos *references2.Position) indexes.SpriteIndex {
 	switch avatarChairTileIndex {
 	case indexes.ChairFacingDown:
 		downPos := pos.GetPositionDown()
-		downPosTile := g.gameState.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.MapState.PlayerLocation.Floor).GetTopTile(downPos)
+		downPosTile := g.gameState.MapState.LayeredMaps.GetLayeredMap(references2.SmallMapType, g.gameState.MapState.PlayerLocation.Floor).GetTopTile(downPos)
 		if downPosTile.Index == indexes.TableFoodBoth || downPosTile.Index == indexes.TableFoodTop {
 			return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.AvatarSittingAndEatingFacingDown, 0)
 		}
 		return indexes.AvatarSittingFacingDown
 	case indexes.ChairFacingUp:
 		upPos := pos.GetPositionUp()
-		upPosTile := g.gameState.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.MapState.PlayerLocation.Floor).GetTopTile(upPos)
+		upPosTile := g.gameState.MapState.LayeredMaps.GetLayeredMap(references2.SmallMapType, g.gameState.MapState.PlayerLocation.Floor).GetTopTile(upPos)
 		if upPosTile.Index == indexes.TableFoodBoth || upPosTile.Index == indexes.TableFoodBottom {
 			return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.AvatarSittingAndEatingFacingUp, 0)
 		}
@@ -102,7 +102,7 @@ func (g *GameScene) getCorrectAvatarEatingInChairTile(avatarChairTileIndex index
 
 // refreshSpecialTileOverrideExceptions
 // Refreshes the special tiles that are not in the map like Portcullis, drawbridge and mirrors
-func (g *GameScene) refreshSpecialTileOverrideExceptions(pos *references.Position, layer *map_state.LayeredMap) {
+func (g *GameScene) refreshSpecialTileOverrideExceptions(pos *references2.Position, layer *map_state.LayeredMap) {
 	tile := layer.GetTileTopMapOnlyTile(pos)
 	if tile == nil {
 		return
@@ -121,7 +121,7 @@ func (g *GameScene) refreshSpecialTileOverrideExceptions(pos *references.Positio
 	}
 }
 
-func (g *GameScene) refreshProvisionsAndEquipmentMapTiles(pos *references.Position, layer *map_state.LayeredMap) {
+func (g *GameScene) refreshProvisionsAndEquipmentMapTiles(pos *references2.Position, layer *map_state.LayeredMap) {
 	if !layer.IsPositionVisible(pos, g.gameState.DateTime, g.gameState.MapState.PlayerLocation.Floor < 0) {
 		layer.UnSetTileByLayer(map_state.EquipmentAndProvisionsLayer, pos)
 		return
@@ -141,7 +141,7 @@ func (g *GameScene) refreshProvisionsAndEquipmentMapTiles(pos *references.Positi
 	layer.SetTileByLayer(map_state.EquipmentAndProvisionsLayer, pos, tileIndex)
 }
 
-func (g *GameScene) getTileVisibilityIndexByPosition(pos *references.Position) int {
+func (g *GameScene) getTileVisibilityIndexByPosition(pos *references2.Position) int {
 	// if g.gameState.DateTime.
 
 	// if g.gameState.HasTorchLit() {
@@ -152,7 +152,7 @@ func (g *GameScene) getTileVisibilityIndexByPosition(pos *references.Position) i
 	return 1
 }
 
-func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *map_state.LayeredMap, do *ebiten.DrawImageOptions) {
+func (g *GameScene) refreshMapUnitMapTiles(pos *references2.Position, layer *map_state.LayeredMap, do *ebiten.DrawImageOptions) {
 	mapUnitTile := layer.GetTileByLayer(map_state.MapUnitLayer, pos)
 	underTile := layer.GetTileTopMapOnlyTile(pos)
 	if mapUnitTile == nil || mapUnitTile.Index == 0 {
@@ -181,7 +181,7 @@ func (g *GameScene) refreshMapUnitMapTiles(pos *references.Position, layer *map_
 	// o.DrawText(g.unscaledMapImage, fmt.Sprintf("x=%d y=%d", pos.X, pos.Y), &do)
 }
 
-func (g *GameScene) refreshStaticMapTiles(pos *references.Position, mapLayer *map_state.LayeredMap, do *ebiten.DrawImageOptions) {
+func (g *GameScene) refreshStaticMapTiles(pos *references2.Position, mapLayer *map_state.LayeredMap, do *ebiten.DrawImageOptions) {
 	if !mapLayer.IsPositionVisible(pos, g.gameState.DateTime, g.gameState.MapState.PlayerLocation.Floor < 0) {
 		return
 	}
@@ -218,18 +218,18 @@ func (g *GameScene) refreshAllMapLayerTiles() {
 
 	do := ebiten.DrawImageOptions{}
 
-	var avatarPos references.Position
+	var avatarPos references2.Position
 	var avatarDo ebiten.DrawImageOptions
 
-	var x, y references.Coordinate
-	var pos = &references.Position{}
+	var x, y references2.Coordinate
+	var pos = &references2.Position{}
 
 	for x = 0; x < xTilesVisibleOnGameScreen; x++ {
 		for y = 0; y < yTilesVisibleOnGameScreen; y++ {
 			pos.X = x + g.gameState.MapState.PlayerLocation.Position.X - xCenter
 			pos.Y = y + g.gameState.MapState.PlayerLocation.Position.Y - yCenter
-			if mapType == references.LargeMapType {
-				pos = pos.GetWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
+			if mapType == references2.LargeMapType {
+				pos = pos.GetWrapped(references2.XLargeMapTiles, references2.YLargeMapTiles)
 			}
 
 			do.GeoM.Translate(float64(x*sprites.TileSize), float64(y*sprites.TileSize))

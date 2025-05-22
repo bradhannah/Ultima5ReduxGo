@@ -1,7 +1,7 @@
 package map_units
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 type MapUnits []MapUnit
@@ -16,7 +16,7 @@ func (m *MapUnits) getNextAvailableNPCIndexNumber() int {
 	return -1
 }
 
-func (m *MapUnits) RemoveNPCAtPosition(position references.Position) bool {
+func (m *MapUnits) RemoveNPCAtPosition(position references2.Position) bool {
 	// TODO: this doesn't really remove them correctly... I think we don't have to care too much
 	// about their position in the slice as long as we have the index recorded at the time of
 	// reading in the NPC reference data
@@ -29,7 +29,7 @@ func (m *MapUnits) RemoveNPCAtPosition(position references.Position) bool {
 	return false
 }
 
-func (m *MapUnits) GetMapUnitAtPositionOrNil(pos references.Position) *MapUnit {
+func (m *MapUnits) GetMapUnitAtPositionOrNil(pos references2.Position) *MapUnit {
 	for _, mu := range *m {
 		if mu.Pos() == pos {
 			return &mu
@@ -38,7 +38,7 @@ func (m *MapUnits) GetMapUnitAtPositionOrNil(pos references.Position) *MapUnit {
 	return nil
 }
 
-func (m *MapUnits) GetVehicleAtPositionOrNil(pos references.Position) *NPCFriendly {
+func (m *MapUnits) GetVehicleAtPositionOrNil(pos references2.Position) *NPCFriendly {
 	mu := m.GetMapUnitAtPositionOrNil(pos)
 
 	if mu == nil {
@@ -46,7 +46,7 @@ func (m *MapUnits) GetVehicleAtPositionOrNil(pos references.Position) *NPCFriend
 	}
 
 	if friendly, ok := (*mu).(*NPCFriendly); ok {
-		if friendly.NPCReference.GetNPCType() == references.Vehicle {
+		if friendly.NPCReference.GetNPCType() == references2.Vehicle {
 			return friendly
 		}
 
@@ -62,7 +62,7 @@ func (m *MapUnits) AddVehicle(vehicle NPCFriendly) bool {
 	}
 
 	vehicle.mapUnitDetails.NPCNum = index
-	vehicle.SetPos(references.Position{X: references.Coordinate(vehicle.NPCReference.Schedule.X[0]), Y: references.Coordinate(vehicle.NPCReference.Schedule.Y[0])})
+	vehicle.SetPos(references2.Position{X: references2.Coordinate(vehicle.NPCReference.Schedule.X[0]), Y: references2.Coordinate(vehicle.NPCReference.Schedule.Y[0])})
 
 	vehicle.SetVisible(true)
 

@@ -2,11 +2,11 @@ package game_state
 
 import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 func (g *GameState) DebugQuickExitSmallMap() {
-	g.MapState.PlayerLocation.Location = references.Britannia_Underworld
+	g.MapState.PlayerLocation.Location = references2.Britannia_Underworld
 	g.MapState.PlayerLocation.Floor = g.LastLargeMapFloor
 	g.MapState.PlayerLocation.Position = g.LastLargeMapPosition
 	g.CurrentNPCAIController = g.GetCurrentLargeMapNPCAIController()
@@ -18,11 +18,11 @@ func (g *GameState) DebugQuickExitSmallMap() {
 func (g *GameState) ExitVehicle() *map_units.NPCFriendly {
 	vehicleType := g.PartyVehicle.GetVehicleDetails().VehicleType
 
-	if vehicleType == references.NoPartyVehicle {
+	if vehicleType == references2.NoPartyVehicle {
 		return nil
 	}
 
-	if vehicleType == references.FrigateVehicle {
+	if vehicleType == references2.FrigateVehicle {
 		frigate := g.PartyVehicle
 		g.CurrentNPCAIController.GetNpcs().AddVehicle(g.PartyVehicle)
 		// check for skiffs
@@ -31,7 +31,7 @@ func (g *GameState) ExitVehicle() *map_units.NPCFriendly {
 			return &frigate
 		}
 
-		skiff := map_units.NewNPCFriendlyVehiceNewRef(references.SkiffVehicle, g.MapState.PlayerLocation.Position, g.MapState.PlayerLocation.Floor)
+		skiff := map_units.NewNPCFriendlyVehiceNewRef(references2.SkiffVehicle, g.MapState.PlayerLocation.Position, g.MapState.PlayerLocation.Floor)
 		g.PartyVehicle = *skiff
 
 		// yay, exit on skiff

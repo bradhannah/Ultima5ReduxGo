@@ -9,13 +9,13 @@ import (
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	mainscreen2 "github.com/bradhannah/Ultima5ReduxGo/internal/ui/mainscreen"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/ui/widgets"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 const (
@@ -46,7 +46,7 @@ const (
 // GameScene is another scene (e.g., the actual game)
 type GameScene struct {
 	gameConfig       *config.UltimaVConfiguration
-	gameReferences   *references.GameReferences
+	gameReferences   *references2.GameReferences
 	spriteSheet      *sprites.SpriteSheet
 	keyboard         *input.Keyboard
 	output           *text.Output
@@ -88,7 +88,7 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 
 	// load the files man
 	var err error
-	gameScene.gameReferences, err = references.NewGameReferences(gameConfig)
+	gameScene.gameReferences, err = references2.NewGameReferences(gameConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -162,7 +162,7 @@ func (g *GameScene) addRowStr(str string) {
 	g.debugConsole.Output.AddRowStr(str)
 }
 
-func (g *GameScene) GetCurrentLocationReference() *references.SmallLocationReference {
+func (g *GameScene) GetCurrentLocationReference() *references2.SmallLocationReference {
 	return g.gameReferences.LocationReferences.GetLocationReference(g.gameState.MapState.PlayerLocation.Location)
 }
 

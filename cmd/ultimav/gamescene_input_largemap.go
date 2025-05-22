@@ -5,7 +5,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
@@ -30,13 +30,13 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyEnter:
 		g.addRowStr("Enter")
 	case ebiten.KeyUp:
-		g.handleMovement(references.Up.GetDirectionCompassName(), ebiten.KeyUp)
+		g.handleMovement(references2.Up.GetDirectionCompassName(), ebiten.KeyUp)
 	case ebiten.KeyDown:
-		g.handleMovement(references.Down.GetDirectionCompassName(), ebiten.KeyDown)
+		g.handleMovement(references2.Down.GetDirectionCompassName(), ebiten.KeyDown)
 	case ebiten.KeyLeft:
-		g.handleMovement(references.Left.GetDirectionCompassName(), ebiten.KeyLeft)
+		g.handleMovement(references2.Left.GetDirectionCompassName(), ebiten.KeyLeft)
 	case ebiten.KeyRight:
-		g.handleMovement(references.Right.GetDirectionCompassName(), ebiten.KeyRight)
+		g.handleMovement(references2.Right.GetDirectionCompassName(), ebiten.KeyRight)
 	case ebiten.KeyB:
 		g.actionBoard()
 	case ebiten.KeyK:
@@ -55,7 +55,7 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 		g.debugMessage = "Enter a place"
 		newLocation := g.gameReferences.LocationReferences.WorldLocations.GetLocationByPosition(g.gameState.MapState.PlayerLocation.Position)
 
-		if newLocation != references.EmptyLocation {
+		if newLocation != references2.EmptyLocation {
 			slr := g.gameReferences.LocationReferences.GetLocationReference(newLocation)
 			g.gameState.EnterBuilding(slr)
 			g.addRowStr(g.gameReferences.LocationReferences.GetLocationReference(newLocation).EnteringText)

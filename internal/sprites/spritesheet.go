@@ -56,6 +56,4 @@ func (s *SpriteSheet) GetSprite(nSprite indexes.SpriteIndex) *ebiten.Image {
 		return sprite
 	}
 	return s.spriteImageCache[nSprite]
-	// sprite := s.SpriteImage.SubImage(s.getSpriteImageRectangle(nSprite))
-	// return sprite
 }

@@ -1,25 +1,25 @@
 package map_units
 
 import (
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 type VehicleDetails struct {
-	VehicleType   references.VehicleType
+	VehicleType   references2.VehicleType
 	SkiffQuantity int
 
-	currentDirection  references.Direction
-	previousDirection references.Direction
+	currentDirection  references2.Direction
+	previousDirection references2.Direction
 }
 
-func (v *VehicleDetails) SetPartyVehicleDirection(direction references.Direction) {
+func (v *VehicleDetails) SetPartyVehicleDirection(direction references2.Direction) {
 	switch v.VehicleType {
-	case references.HorseVehicle, references.CarpetVehicle:
-		if direction == references.Up || direction == references.Down {
+	case references2.HorseVehicle, references2.CarpetVehicle:
+		if direction == references2.Up || direction == references2.Down {
 			return
 		}
-	case references.FrigateVehicle, references.SkiffVehicle, references.NoPartyVehicle:
+	case references2.FrigateVehicle, references2.SkiffVehicle, references2.NoPartyVehicle:
 	}
 	v.previousDirection = v.currentDirection
 	v.currentDirection = direction
@@ -29,8 +29,8 @@ func (v *VehicleDetails) GetSpriteIndex() indexes.SpriteIndex {
 	return v.VehicleType.GetSpriteByDirection(v.previousDirection, v.currentDirection)
 }
 
-func (v *VehicleDetails) DoesMoveResultInMovement(newDirection references.Direction) bool {
-	if v.VehicleType != references.FrigateVehicle {
+func (v *VehicleDetails) DoesMoveResultInMovement(newDirection references2.Direction) bool {
+	if v.VehicleType != references2.FrigateVehicle {
 		return true
 	}
 	if v.currentDirection == newDirection {

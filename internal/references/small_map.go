@@ -2,7 +2,6 @@ package references
 
 import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/legacy"
 )
 
 const (
@@ -27,15 +26,15 @@ const (
 func getSmallMapFile(smallMap SmallMapMasterTypes) string {
 	switch smallMap {
 	case Castle:
-		return legacy.CASTLE_DAT
+		return CASTLE_DAT
 	case Towne:
-		return legacy.TOWNE_DAT
+		return TOWNE_DAT
 	case Dwelling:
-		return legacy.DWELLING_DAT
+		return DWELLING_DAT
 	case Keep:
-		return legacy.KEEP_DAT
+		return KEEP_DAT
 	case Dungeon:
-		return legacy.DUNGEON_DAT
+		return DUNGEON_DAT
 	default:
 
 		panic("unhandled default case")

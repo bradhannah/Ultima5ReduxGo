@@ -3,8 +3,7 @@ package map_units
 import (
 	"log"
 
-	// "github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 type MapUnitType int
@@ -18,12 +17,12 @@ const (
 type MapUnit interface {
 	GetMapUnitType() MapUnitType
 
-	Pos() references.Position
-	PosPtr() *references.Position
-	Floor() references.FloorNumber
+	Pos() references2.Position
+	PosPtr() *references2.Position
+	Floor() references2.FloorNumber
 
-	SetPos(position references.Position)
-	SetFloor(floor references.FloorNumber)
+	SetPos(position references2.Position)
+	SetFloor(floor references2.FloorNumber)
 
 	MapUnitDetails() *MapUnitDetails
 	SetVisible(visible bool)
@@ -32,9 +31,9 @@ type MapUnit interface {
 }
 
 type MapUnitDetails struct {
-	Position references.Position
-	Floor    references.FloorNumber
-	AiType   references.AiType
+	Position references2.Position
+	Floor    references2.FloorNumber
+	AiType   references2.AiType
 
 	Visible bool
 
@@ -42,10 +41,10 @@ type MapUnitDetails struct {
 
 	// AStarMap *map_state.AStarMap
 
-	CurrentPath []references.Position
+	CurrentPath []references2.Position
 }
 
-func (mu *MapUnitDetails) DequeueNextPosition() references.Position {
+func (mu *MapUnitDetails) DequeueNextPosition() references2.Position {
 	if !mu.HasAPathAlreadyCalculated() {
 		log.Fatal("NPC has no path calculated")
 	}
@@ -57,6 +56,6 @@ func (mu *MapUnitDetails) DequeueNextPosition() references.Position {
 func (mu *MapUnitDetails) HasAPathAlreadyCalculated() bool {
 	return mu.CurrentPath != nil && len(mu.CurrentPath) > 0
 }
-func (mu *MapUnitDetails) SetCurrentPath(path []references.Position) {
+func (mu *MapUnitDetails) SetCurrentPath(path []references2.Position) {
 	mu.CurrentPath = path
 }

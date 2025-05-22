@@ -1,11 +1,11 @@
 package map_state
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 type MapState struct {
-	PlayerLocation references.PlayerLocation
+	PlayerLocation references2.PlayerLocation
 	LayeredMaps    LayeredMaps
 
 	XTilesVisibleOnGameScreen int
@@ -15,7 +15,7 @@ type MapState struct {
 	gameDimensions GameDimensions
 
 	// open door
-	openDoorPos   *references.Position
+	openDoorPos   *references2.Position
 	openDoorTurns int
 }
 
@@ -37,7 +37,7 @@ func (m *MapState) GetLayeredMapByCurrentLocation() *LayeredMap {
 	return m.LayeredMaps.GetLayeredMap(m.PlayerLocation.Location.GetMapType(), m.PlayerLocation.Floor)
 }
 
-func (m *MapState) IsNPCPassable(pos *references.Position) bool {
+func (m *MapState) IsNPCPassable(pos *references2.Position) bool {
 	theMap := m.GetLayeredMapByCurrentLocation()
 	// theMap := m.LayeredMaps.GetLayeredMap(m.PlayerLocation.Location.GetMapType(), m.PlayerLocation.Floor)
 	topTile := theMap.GetTopTile(pos)
@@ -45,5 +45,5 @@ func (m *MapState) IsNPCPassable(pos *references.Position) bool {
 	if topTile == nil {
 		return false
 	}
-	return topTile.IsPassable(references.NPC) || topTile.Index.IsUnlockedDoor()
+	return topTile.IsPassable(references2.NPC) || topTile.Index.IsUnlockedDoor()
 }

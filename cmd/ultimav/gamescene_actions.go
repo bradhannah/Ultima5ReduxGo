@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 func (g *GameScene) actionBoard() {

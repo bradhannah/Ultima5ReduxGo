@@ -1,15 +1,15 @@
 package map_units
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 type NPCEnemy struct {
-	EnemyReference references.EnemyReference
+	EnemyReference references2.EnemyReference
 	mapUnitDetails MapUnitDetails
 }
 
-func NewEnemyNPC(enemyRef references.EnemyReference, npcNum int) NPCEnemy {
+func NewEnemyNPC(enemyRef references2.EnemyReference, npcNum int) NPCEnemy {
 	enemy := NPCEnemy{}
 	enemy.EnemyReference = enemyRef
 	enemy.mapUnitDetails.NPCNum = npcNum
@@ -24,7 +24,7 @@ func (enemy *NPCEnemy) GetMapUnitType() MapUnitType {
 	return Enemy
 }
 
-func (enemy *NPCEnemy) Pos() references.Position {
+func (enemy *NPCEnemy) Pos() references2.Position {
 	return enemy.mapUnitDetails.Position
 }
 
@@ -42,18 +42,18 @@ func (enemy *NPCEnemy) IsEmptyMapUnit() bool {
 	return enemy.EnemyReference.KeyFrameTile == nil
 }
 
-func (enemy *NPCEnemy) Floor() references.FloorNumber {
+func (enemy *NPCEnemy) Floor() references2.FloorNumber {
 	return enemy.mapUnitDetails.Floor
 }
 
-func (enemy *NPCEnemy) PosPtr() *references.Position {
+func (enemy *NPCEnemy) PosPtr() *references2.Position {
 	return &enemy.mapUnitDetails.Position
 }
 
-func (enemy *NPCEnemy) SetPos(position references.Position) {
+func (enemy *NPCEnemy) SetPos(position references2.Position) {
 	enemy.mapUnitDetails.Position = position
 }
 
-func (enemy *NPCEnemy) SetFloor(floor references.FloorNumber) {
+func (enemy *NPCEnemy) SetFloor(floor references2.FloorNumber) {
 	enemy.mapUnitDetails.Floor = floor
 }

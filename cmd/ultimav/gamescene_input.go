@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 const (

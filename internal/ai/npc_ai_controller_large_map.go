@@ -4,20 +4,20 @@ import (
 	"log"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/astar"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 type NPCAIControllerLargeMap struct {
-	World           references.World
-	tileRefs        *references.Tiles
+	World           references2.World
+	tileRefs        *references2.Tiles
 	mapState        *map_state.MapState
-	debugOptions    *references.DebugOptions
-	enemyReferences *references.EnemyReferences
-	theOdds         *references.TheOdds
+	debugOptions    *references2.DebugOptions
+	enemyReferences *references2.EnemyReferences
+	theOdds         *references2.TheOdds
 	dateTime        *datetime.UltimaDate
 
 	mapUnits               map_units.MapUnits
@@ -25,12 +25,12 @@ type NPCAIControllerLargeMap struct {
 }
 
 type NewNPCAIControllerLargeMapInput struct {
-	World           references.World
-	TileRefs        *references.Tiles
+	World           references2.World
+	TileRefs        *references2.Tiles
 	MapState        *map_state.MapState
-	DebugOptions    *references.DebugOptions
-	TheOdds         *references.TheOdds
-	EnemyReferences *references.EnemyReferences
+	DebugOptions    *references2.DebugOptions
+	TheOdds         *references2.TheOdds
+	EnemyReferences *references2.EnemyReferences
 	DateTime        *datetime.UltimaDate
 }
 
@@ -127,12 +127,12 @@ func (m *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePoint(
 		// mapUnit.MapUnitDetails().AStarMap.InitializeByLayeredMapWithLimit(
 		mapUnit,
 		m.mapState.GetLayeredMapByCurrentLocation(),
-		[]references.Position{},
+		[]references2.Position{},
 		true,
 		m.mapState.PlayerLocation.Position,
 		15,
-		references.XLargeMapTiles,
-		references.YLargeMapTiles)
+		references2.XLargeMapTiles,
+		references2.YLargeMapTiles)
 
 	// make sure the correct enemies spawn on the correct tiles (water, sand, ground)
 
@@ -151,13 +151,13 @@ func (m *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePoint(
 }
 
 func (m *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePointDumb(mapUnit map_units.MapUnit) {
-	allDirections := mapUnit.PosPtr().GetFourDirectionsWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
+	allDirections := mapUnit.PosPtr().GetFourDirectionsWrapped(references2.XLargeMapTiles, references2.YLargeMapTiles)
 	// getting the current distance to the player will make sure they never move further away
-	var fCurrentShortestDistance = mapUnit.PosPtr().GetWrappedDistanceBetweenWrapped(&m.mapState.PlayerLocation.Position, references.XLargeMapTiles, references.YLargeMapTiles)
+	var fCurrentShortestDistance = mapUnit.PosPtr().GetWrappedDistanceBetweenWrapped(&m.mapState.PlayerLocation.Position, references2.XLargeMapTiles, references2.YLargeMapTiles)
 	var bestPos = *mapUnit.PosPtr()
 	bFound := false
 	for _, newPos := range allDirections {
-		fNewDistance := newPos.GetWrappedDistanceBetweenWrapped(&m.mapState.PlayerLocation.Position, references.XLargeMapTiles, references.YLargeMapTiles)
+		fNewDistance := newPos.GetWrappedDistanceBetweenWrapped(&m.mapState.PlayerLocation.Position, references2.XLargeMapTiles, references2.YLargeMapTiles)
 
 		if fNewDistance < fCurrentShortestDistance {
 			topTile := m.mapState.GetLayeredMapByCurrentLocation().GetTopTile(&newPos)
@@ -194,7 +194,7 @@ func (m *NPCAIControllerLargeMap) generateEraBoundMonster() {
 	const nXDistanceAway = 9
 	const nTriesToGetValidEnemy = 10
 
-	var dX, dY references.Coordinate
+	var dX, dY references2.Coordinate
 
 	if !m.debugOptions.MonsterGen {
 		return
@@ -202,16 +202,16 @@ func (m *NPCAIControllerLargeMap) generateEraBoundMonster() {
 
 	for range nTriesToGetValidEnemy {
 		if helpers.OneInXOdds(2) { // do dY
-			dY = references.Coordinate(helpers.PickOneOf(nYDistanceAway, -nYDistanceAway))
-			dX = references.Coordinate(helpers.RandomIntInRange(-nXDistanceAway, nXDistanceAway))
+			dY = references2.Coordinate(helpers.PickOneOf(nYDistanceAway, -nYDistanceAway))
+			dX = references2.Coordinate(helpers.RandomIntInRange(-nXDistanceAway, nXDistanceAway))
 
 		} else { // do dX
-			dY = references.Coordinate(helpers.RandomIntInRange(-nYDistanceAway, nYDistanceAway))
-			dX = references.Coordinate(helpers.PickOneOf(nXDistanceAway, -nXDistanceAway))
+			dY = references2.Coordinate(helpers.RandomIntInRange(-nYDistanceAway, nYDistanceAway))
+			dX = references2.Coordinate(helpers.PickOneOf(nXDistanceAway, -nXDistanceAway))
 		}
 
-		pos := references.Position{X: m.mapState.PlayerLocation.Position.X + dX, Y: m.mapState.PlayerLocation.Position.Y + dY}
-		pos = *pos.GetWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
+		pos := references2.Position{X: m.mapState.PlayerLocation.Position.X + dX, Y: m.mapState.PlayerLocation.Position.Y + dY}
+		pos = *pos.GetWrapped(references2.XLargeMapTiles, references2.YLargeMapTiles)
 		if pos.X < 0 || pos.Y < 0 {
 			log.Fatalf("Unexpected negative position X=%d Y=%d", pos.X, pos.Y)
 		}

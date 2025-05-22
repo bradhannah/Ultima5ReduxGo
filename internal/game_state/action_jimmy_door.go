@@ -5,9 +5,9 @@ import (
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
 )
 
 type JimmyDoorState int
@@ -20,11 +20,11 @@ const (
 	JimmyBrokenPick
 )
 
-func (g *GameState) JimmyDoor(direction references.Direction, player *party_state.PlayerCharacter) JimmyDoorState {
+func (g *GameState) JimmyDoor(direction references2.Direction, player *party_state.PlayerCharacter) JimmyDoorState {
 	mapType := map_state.GetMapTypeByLocation(g.MapState.PlayerLocation.Location)
 
 	newPosition := direction.GetNewPositionInDirection(&g.MapState.PlayerLocation.Position)
-	targetTile := g.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.MapState.PlayerLocation.Floor).GetTileTopMapOnlyTile(newPosition)
+	targetTile := g.MapState.LayeredMaps.GetLayeredMap(references2.SmallMapType, g.MapState.PlayerLocation.Floor).GetTileTopMapOnlyTile(newPosition)
 
 	switch targetTile.Index {
 	case indexes.LockedDoor, indexes.LockedDoorView:

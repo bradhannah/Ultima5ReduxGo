@@ -1,19 +1,17 @@
 package map_units
 
 import (
-	"fmt"
-
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 type NPCFriendly struct {
-	NPCReference   references.NPCReference
+	NPCReference   references2.NPCReference
 	mapUnitDetails MapUnitDetails
 
 	vehicleDetails VehicleDetails
 }
 
-func NewNPCFriendly(npcReference references.NPCReference, npcNum int) *NPCFriendly {
+func NewNPCFriendly(npcReference references2.NPCReference, npcNum int) *NPCFriendly {
 	friendly := NPCFriendly{}
 	friendly.NPCReference = npcReference
 	friendly.mapUnitDetails.NPCNum = npcNum
@@ -28,29 +26,29 @@ func NewNPCFriendly(npcReference references.NPCReference, npcNum int) *NPCFriend
 	return &friendly
 }
 
-func NewNPCFriendlyVehicle(vehicleType references.VehicleType, npcRef references.NPCReference) *NPCFriendly {
+func NewNPCFriendlyVehicle(vehicleType references2.VehicleType, npcRef references2.NPCReference) *NPCFriendly {
 	// npcReference := references.NewNPCReferenceForVehicle(vehicleType, references.Position{X: 15, Y: 15}, 0)
 	friendly := NewNPCFriendly(npcRef, int(npcRef.DialogNumber))
 
 	friendly.vehicleDetails = VehicleDetails{
-		currentDirection:  references.NoneDirection,
-		previousDirection: references.NoneDirection,
+		currentDirection:  references2.NoneDirection,
+		previousDirection: references2.NoneDirection,
 		VehicleType:       vehicleType,
 		SkiffQuantity:     0,
 	}
-	friendly.SetFloor(references.FloorNumber(npcRef.Schedule.Floor[0]))
+	friendly.SetFloor(references2.FloorNumber(npcRef.Schedule.Floor[0]))
 	friendly.SetVisible(true)
 
 	return friendly
 }
 
-func NewNPCFriendlyVehiceNewRef(vehicletype references.VehicleType, pos references.Position, floor references.FloorNumber) *NPCFriendly {
-	npcRef := references.NewNPCReferenceForVehicle(vehicletype, pos, floor)
+func NewNPCFriendlyVehiceNewRef(vehicletype references2.VehicleType, pos references2.Position, floor references2.FloorNumber) *NPCFriendly {
+	npcRef := references2.NewNPCReferenceForVehicle(vehicletype, pos, floor)
 	return NewNPCFriendlyVehicle(vehicletype, *npcRef)
 }
 
 func NewNPCFriendlyVehiceNoVehicle() NPCFriendly {
-	return *NewNPCFriendlyVehiceNewRef(references.NoPartyVehicle, references.Position{X: 0, Y: 0}, 0)
+	return *NewNPCFriendlyVehiceNewRef(references2.NoPartyVehicle, references2.Position{X: 0, Y: 0}, 0)
 }
 
 func (friendly *NPCFriendly) IsEmptyMapUnit() bool {
@@ -61,7 +59,7 @@ func (friendly *NPCFriendly) GetMapUnitType() MapUnitType {
 	return NonPlayerCharacter
 }
 
-func (friendly *NPCFriendly) Pos() references.Position {
+func (friendly *NPCFriendly) Pos() references2.Position {
 	return friendly.mapUnitDetails.Position
 }
 
@@ -76,33 +74,33 @@ func (friendly *NPCFriendly) IsVisible() bool {
 	return friendly.mapUnitDetails.Visible
 }
 
-func (friendly *NPCFriendly) Floor() references.FloorNumber {
+func (friendly *NPCFriendly) Floor() references2.FloorNumber {
 	return friendly.mapUnitDetails.Floor
 }
 
-func (friendly *NPCFriendly) PosPtr() *references.Position {
+func (friendly *NPCFriendly) PosPtr() *references2.Position {
 	return &friendly.mapUnitDetails.Position
 }
 
-func (friendly *NPCFriendly) SetIndividualNPCBehaviour(indiv references.IndividualNPCBehaviour) {
+func (friendly *NPCFriendly) SetIndividualNPCBehaviour(indiv references2.IndividualNPCBehaviour) {
 	friendly.mapUnitDetails.Position = indiv.Position
 	friendly.mapUnitDetails.Floor = indiv.Floor
 	friendly.mapUnitDetails.AiType = indiv.Ai
 }
 
-func (friendly *NPCFriendly) SetPos(position references.Position) {
+func (friendly *NPCFriendly) SetPos(position references2.Position) {
 	friendly.mapUnitDetails.Position = position
 }
 
-func (friendly *NPCFriendly) SetFloor(floor references.FloorNumber) {
+func (friendly *NPCFriendly) SetFloor(floor references2.FloorNumber) {
 	friendly.mapUnitDetails.Floor = floor
 }
 
 func (friendly *NPCFriendly) GetVehicleDetails() *VehicleDetails {
 	if friendly == nil {
-		fmt.Sprint("oof")
+		_ = "a"
 	}
-	if friendly.NPCReference.GetNPCType() == references.Vehicle {
+	if friendly.NPCReference.GetNPCType() == references2.Vehicle {
 		return &friendly.vehicleDetails
 	}
 	// log.Fatal("Wrong type, not a vehicle")

@@ -3,14 +3,15 @@ package map_state
 import (
 	"log"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+
+	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 )
 
 const totalLayers = 6
-const overflowTiles = references.Coordinate(10)
+const overflowTiles = references2.Coordinate(10)
 
 const (
 	MapLayer LayerType = iota
@@ -23,13 +24,13 @@ const (
 
 type LayerType int
 
-type Layer map[references.Coordinate]map[references.Coordinate]indexes.SpriteIndex
+type Layer map[references2.Coordinate]map[references2.Coordinate]indexes.SpriteIndex
 
 type GameDimensions interface {
 	GetTilesVisibleOnScreen() (int, int)
-	GetTopLeftExtent() references.Position
-	GetBottomRightExtent() references.Position
-	GetBottomRightWithoutOverflow() references.Position
+	GetTopLeftExtent() references2.Position
+	GetBottomRightExtent() references2.Position
+	GetBottomRightWithoutOverflow() references2.Position
 	IsWrappedMap() bool
 }
 
@@ -42,16 +43,16 @@ type LayeredMap struct {
 	lightSourcesDistanceMap DistanceMap
 	// lighting *Lighting
 
-	tileRefs *references.Tiles
+	tileRefs *references2.Tiles
 
 	xVisibleTiles, yVisibleTiles     int
-	TopLeft, BottomRight             references.Position
-	XMaxTilesPerMap, YMaxTilesPerMap references.Coordinate
+	TopLeft, BottomRight             references2.Position
+	XMaxTilesPerMap, YMaxTilesPerMap references2.Coordinate
 
 	bWrappingMap bool
 }
 
-func newLayeredMap(xMax references.Coordinate, yMax references.Coordinate, tileRefs *references.Tiles, xVisibleTiles int, yVisibleTiles int, bWrappingMap bool) *LayeredMap {
+func newLayeredMap(xMax references2.Coordinate, yMax references2.Coordinate, tileRefs *references2.Tiles, xVisibleTiles int, yVisibleTiles int, bWrappingMap bool) *LayeredMap {
 	layeredMap := LayeredMap{}
 	layeredMap.xVisibleTiles = xVisibleTiles
 	layeredMap.yVisibleTiles = yVisibleTiles
@@ -61,25 +62,25 @@ func newLayeredMap(xMax references.Coordinate, yMax references.Coordinate, tileR
 	layeredMap.tileRefs = tileRefs
 
 	for mapLayer := range layeredMap.layers {
-		layeredMap.visibleFlags = make(map[references.Coordinate]map[references.Coordinate]bool)
-		layeredMap.testForVisibilityMap = make(map[references.Coordinate]map[references.Coordinate]bool)
-		layeredMap.layers[mapLayer] = make(map[references.Coordinate]map[references.Coordinate]indexes.SpriteIndex)
+		layeredMap.visibleFlags = make(map[references2.Coordinate]map[references2.Coordinate]bool)
+		layeredMap.testForVisibilityMap = make(map[references2.Coordinate]map[references2.Coordinate]bool)
+		layeredMap.layers[mapLayer] = make(map[references2.Coordinate]map[references2.Coordinate]indexes.SpriteIndex)
 		for yRow := -overflowTiles - 1; yRow < yMax+overflowTiles; yRow++ {
-			layeredMap.visibleFlags[yRow] = make(map[references.Coordinate]bool)
-			layeredMap.testForVisibilityMap[yRow] = make(map[references.Coordinate]bool)
-			layeredMap.layers[mapLayer][yRow] = make(map[references.Coordinate]indexes.SpriteIndex)
+			layeredMap.visibleFlags[yRow] = make(map[references2.Coordinate]bool)
+			layeredMap.testForVisibilityMap[yRow] = make(map[references2.Coordinate]bool)
+			layeredMap.layers[mapLayer][yRow] = make(map[references2.Coordinate]indexes.SpriteIndex)
 		}
 	}
 
 	return &layeredMap
 }
 
-func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position, lighting *Lighting) {
-	l.TopLeft = references.Position{
+func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references2.Position, lighting *Lighting) {
+	l.TopLeft = references2.Position{
 		X: avatarPos.X - overflowTiles,
 		Y: avatarPos.Y - overflowTiles,
 	}
-	l.BottomRight = references.Position{
+	l.BottomRight = references2.Position{
 		X: avatarPos.X + overflowTiles,
 		Y: avatarPos.Y + overflowTiles,
 	}
@@ -112,17 +113,17 @@ func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references.Position, ligh
 }
 
 type LightSource struct {
-	Tile *references.Tile
-	Pos  references.Position
+	Tile *references2.Tile
+	Pos  references2.Position
 }
 type LightSources []LightSource
 
-func (l *LayeredMap) getAllLightSourcesInRange(centerPosition references.Position) LightSources {
+func (l *LayeredMap) getAllLightSourcesInRange(centerPosition references2.Position) LightSources {
 	ls := make(LightSources, 0)
 
 	for dX := -l.XMaxTilesPerMap; dX < l.XMaxTilesPerMap; dX++ {
 		for dY := -l.YMaxTilesPerMap; dY < l.YMaxTilesPerMap; dY++ {
-			pos := references.Position{X: centerPosition.X + dX, Y: centerPosition.Y + dY}
+			pos := references2.Position{X: centerPosition.X + dX, Y: centerPosition.Y + dY}
 			tile := l.GetTileTopMapOnlyTile(&pos)
 			if tile == nil {
 				continue
@@ -138,7 +139,7 @@ func (l *LayeredMap) getAllLightSourcesInRange(centerPosition references.Positio
 	return ls
 }
 
-func (l *LayeredMap) floodFillIfInside(pos *references.Position, bForce bool) {
+func (l *LayeredMap) floodFillIfInside(pos *references2.Position, bForce bool) {
 	if l.bWrappingMap {
 		pos = pos.GetWrapped(l.XMaxTilesPerMap, l.YMaxTilesPerMap)
 	}
@@ -170,7 +171,7 @@ func (l *LayeredMap) floodFillIfInside(pos *references.Position, bForce bool) {
 	l.floodFillIfInside(pos.GetPositionUp(), false)
 }
 
-func (l *LayeredMap) setTilesAroundPositionVisible(pos *references.Position) {
+func (l *LayeredMap) setTilesAroundPositionVisible(pos *references2.Position) {
 	l.SetVisible(true, pos.GetPositionToLeft())
 	l.SetVisible(true, pos.GetPositionToRight())
 	l.SetVisible(true, pos.GetPositionDown())
@@ -183,11 +184,11 @@ func (l *LayeredMap) setTilesAroundPositionVisible(pos *references.Position) {
 	l.SetVisible(true, pos.GetPositionDown().GetPositionToRight())
 }
 
-func (l *LayeredMap) SetVisible(bVisible bool, pos *references.Position) {
+func (l *LayeredMap) SetVisible(bVisible bool, pos *references2.Position) {
 	l.visibleFlags[pos.X][pos.Y] = bVisible
 }
 
-func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datetime.UltimaDate, bIsBasement bool) bool {
+func (l *LayeredMap) IsPositionVisible(pos *references2.Position, timeOfDay datetime.UltimaDate, bIsBasement bool) bool {
 	// note: some of this may feel like overkill - but it is setting up for an eventual alpha or gradient
 	// based lighting that degrades as it gets further away
 
@@ -223,7 +224,7 @@ func (l *LayeredMap) IsPositionVisible(pos *references.Position, timeOfDay datet
 	return bShow
 }
 
-func (l *LayeredMap) GetTopTile(position *references.Position) *references.Tile {
+func (l *LayeredMap) GetTopTile(position *references2.Position) *references2.Tile {
 	if position == nil {
 		log.Fatal("entered a nil position so I can't get a tile")
 	}
@@ -237,7 +238,7 @@ func (l *LayeredMap) GetTopTile(position *references.Position) *references.Tile 
 	return nil
 }
 
-func (l *LayeredMap) GetTileTopMapOnlyTile(position *references.Position) *references.Tile {
+func (l *LayeredMap) GetTileTopMapOnlyTile(position *references2.Position) *references2.Tile {
 	for i := MapOverrideLayer; i >= MapLayer; i-- {
 		tile := l.GetTileByLayer(i, position)
 		if tile.Index <= 0 {
@@ -248,19 +249,19 @@ func (l *LayeredMap) GetTileTopMapOnlyTile(position *references.Position) *refer
 	return nil
 }
 
-func (l *LayeredMap) SetTileByLayer(layer LayerType, position *references.Position, nIndex indexes.SpriteIndex) {
+func (l *LayeredMap) SetTileByLayer(layer LayerType, position *references2.Position, nIndex indexes.SpriteIndex) {
 	l.layers[layer][position.X][position.Y] = nIndex
 }
 
-func (l *LayeredMap) UnSetTileByLayer(layer LayerType, position *references.Position) {
+func (l *LayeredMap) UnSetTileByLayer(layer LayerType, position *references2.Position) {
 	l.SetTileByLayer(layer, position, indexes.NoSprites)
 }
 
-func (l *LayeredMap) GetTileByLayer(layer LayerType, position *references.Position) *references.Tile {
+func (l *LayeredMap) GetTileByLayer(layer LayerType, position *references2.Position) *references2.Tile {
 	return l.tileRefs.GetTile(l.layers[layer][position.X][position.Y])
 }
 
-func (l *LayeredMap) SwapTiles(pos1 *references.Position, pos2 *references.Position) {
+func (l *LayeredMap) SwapTiles(pos1 *references2.Position, pos2 *references2.Position) {
 	tile1 := l.GetTileTopMapOnlyTile(pos1)
 	tile2 := l.GetTileTopMapOnlyTile(pos2)
 	l.SetTileByLayer(MapLayer, pos1, tile2.Index)
@@ -279,11 +280,11 @@ func (l *LayeredMap) GetTilesVisibleOnScreen() (int, int) {
 	return l.xVisibleTiles, l.yVisibleTiles
 }
 
-func (l *LayeredMap) GetTopLeftExtent() references.Position {
+func (l *LayeredMap) GetTopLeftExtent() references2.Position {
 	return l.TopLeft
 }
 
-func (l *LayeredMap) GetBottomRightExtent() references.Position {
+func (l *LayeredMap) GetBottomRightExtent() references2.Position {
 	return l.BottomRight
 }
 
@@ -291,6 +292,6 @@ func (l *LayeredMap) IsWrappedMap() bool {
 	return l.bWrappingMap
 }
 
-func (l *LayeredMap) GetBottomRightWithoutOverflow() references.Position {
-	return references.Position{X: l.XMaxTilesPerMap, Y: l.YMaxTilesPerMap}
+func (l *LayeredMap) GetBottomRightWithoutOverflow() references2.Position {
+	return references2.Position{X: l.XMaxTilesPerMap, Y: l.YMaxTilesPerMap}
 }

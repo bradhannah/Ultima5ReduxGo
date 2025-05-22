@@ -5,15 +5,8 @@ import (
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
-
-type Node struct {
-	Position references.Position
-	GScore   int // Cost from start to current node
-	FScore   int // GScore + heuristic cost to the goal
-	Parent   *Node
-}
 
 type Map struct {
 	walkableMap map[references.Position]int
@@ -28,7 +21,7 @@ func NewAStarMap() *Map {
 }
 
 func (m *Map) AStar(goal references.Position) []references.Position {
-	openSet := &aStarPriorityQueue{}
+	openSet := &priorityQueue{}
 	heap.Init(openSet)
 
 	startNode := &Node{
@@ -158,32 +151,4 @@ func (m *Map) InitializeByLayeredMapWithLimit(
 	for i := 0; i < len(extraBlockTiles); i++ {
 		m.walkableMap[extraBlockTiles[i]] = -1
 	}
-
-}
-
-type aStarPriorityQueue []*Node
-
-func (pq *aStarPriorityQueue) Len() int {
-	return len(*pq)
-}
-
-func (pq *aStarPriorityQueue) Less(i, j int) bool {
-	return (*pq)[i].FScore < (*pq)[j].FScore // lower FScore = higher priority
-}
-
-func (pq *aStarPriorityQueue) Swap(i, j int) {
-	q := *pq
-	q[i], q[j] = q[j], q[i]
-}
-
-func (pq *aStarPriorityQueue) Push(x interface{}) {
-	*pq = append(*pq, x.(*Node))
-}
-
-func (pq *aStarPriorityQueue) Pop() interface{} {
-	old := *pq
-	n := len(old)
-	item := old[n-1]
-	*pq = old[0 : n-1]
-	return item
 }

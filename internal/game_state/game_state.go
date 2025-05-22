@@ -3,19 +3,18 @@ package game_state
 import (
 	"log"
 
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+
 	"github.com/bradhannah/Ultima5ReduxGo/internal/ai"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/datetime"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 const (
-	DefaultSmallMapMinutesPerTurn              = 1
-	DefaultLargeMapMinutesPerTurn              = 2
-	DefaultNumberOfTurnsUntilTorchExtinguishes = 100
+	DefaultSmallMapMinutesPerTurn = 1
 )
 
 const (
@@ -31,30 +30,30 @@ type GameState struct {
 	RawSave         [savedGamFileSize]byte
 	MoonstoneStatus MoonstoneStatus
 
-	DebugOptions references.DebugOptions
+	DebugOptions references2.DebugOptions
 
-	GameReferences *references.GameReferences
+	GameReferences *references2.GameReferences
 
 	PartyVehicle map_units.NPCFriendly
 
 	CurrentNPCAIController  ai.NPCAIController
-	LargeMapNPCAIController map[references.World]*ai.NPCAIControllerLargeMap
+	LargeMapNPCAIController map[references2.World]*ai.NPCAIControllerLargeMap
 
-	LastLargeMapPosition references.Position
-	LastLargeMapFloor    references.FloorNumber
+	LastLargeMapPosition references2.Position
+	LastLargeMapFloor    references2.FloorNumber
 
-	TheOdds references.TheOdds
+	TheOdds references2.TheOdds
 
 	DateTime datetime.UltimaDate
 
-	ItemStacksMap references.ItemStacksMap
+	ItemStacksMap references2.ItemStacksMap
 }
 
-func (g *GameState) IsAvatarAtPosition(pos *references.Position) bool {
+func (g *GameState) IsAvatarAtPosition(pos *references2.Position) bool {
 	return g.MapState.PlayerLocation.Position.Equals(pos)
 }
 
-func (g *GameState) GetCurrentSmallLocationReference() *references.SmallLocationReference {
+func (g *GameState) GetCurrentSmallLocationReference() *references2.SmallLocationReference {
 	return g.GameReferences.LocationReferences.GetLocationReference(g.MapState.PlayerLocation.Location)
 }
 
@@ -62,9 +61,9 @@ func (g *GameState) GetLayeredMapByCurrentLocation() *map_state.LayeredMap {
 	return g.MapState.LayeredMaps.GetLayeredMap(g.MapState.PlayerLocation.Location.GetMapType(), g.MapState.PlayerLocation.Floor)
 }
 
-func (g *GameState) IsOutOfBounds(position references.Position) bool {
-	if g.MapState.PlayerLocation.Location.GetMapType() == references.LargeMapType {
-		if position.X > references.XLargeMapTiles-1 || position.Y >= references.YLargeMapTiles {
+func (g *GameState) IsOutOfBounds(position references2.Position) bool {
+	if g.MapState.PlayerLocation.Location.GetMapType() == references2.LargeMapType {
+		if position.X > references2.XLargeMapTiles-1 || position.Y >= references2.YLargeMapTiles {
 			log.Fatalf("Exceeded large map tiles: X=%d, Y=%d", position.X, position.Y)
 		}
 		return false
@@ -85,7 +84,7 @@ func (g *GameState) GetCurrentLayeredMap() *map_state.LayeredMap {
 	return g.MapState.LayeredMaps.GetLayeredMap(g.MapState.PlayerLocation.Location.GetMapType(), g.MapState.PlayerLocation.Floor)
 }
 
-func (g *GameState) GetCurrentLayeredMapAvatarTopTile() *references.Tile {
+func (g *GameState) GetCurrentLayeredMapAvatarTopTile() *references2.Tile {
 	theMap := g.GetCurrentLayeredMap()
 	topTile := theMap.GetTopTile(&g.MapState.PlayerLocation.Position)
 	if topTile == nil {
@@ -94,7 +93,7 @@ func (g *GameState) GetCurrentLayeredMapAvatarTopTile() *references.Tile {
 	return topTile
 }
 
-func (g *GameState) IsPassable(pos *references.Position) bool {
+func (g *GameState) IsPassable(pos *references2.Position) bool {
 	theMap := g.GetCurrentLayeredMap()
 	topTile := theMap.GetTopTile(pos)
 	if topTile == nil {
@@ -132,11 +131,11 @@ func (g *GameState) GetTilesVisibleOnScreen() (int, int) {
 	return g.GetCurrentLayeredMap().GetTilesVisibleOnScreen()
 }
 
-func (g *GameState) GetTopLeftExtent() references.Position {
+func (g *GameState) GetTopLeftExtent() references2.Position {
 	return g.GetCurrentLayeredMap().TopLeft
 }
 
-func (g *GameState) GetBottomRightExtent() references.Position {
+func (g *GameState) GetBottomRightExtent() references2.Position {
 	return g.GetCurrentLayeredMap().BottomRight
 }
 
@@ -144,19 +143,19 @@ func (g *GameState) IsWrappedMap() bool {
 	return g.GetCurrentLayeredMap().IsWrappedMap()
 }
 
-func (g *GameState) GetBottomRightWithoutOverflow() references.Position {
+func (g *GameState) GetBottomRightWithoutOverflow() references2.Position {
 	return g.GetCurrentLayeredMap().GetBottomRightWithoutOverflow()
 }
 
 func (g *GameState) GetCurrentLargeMapNPCAIController() *ai.NPCAIControllerLargeMap {
-	if g.MapState.PlayerLocation.Location.GetMapType() != references.LargeMapType {
+	if g.MapState.PlayerLocation.Location.GetMapType() != references2.LargeMapType {
 		log.Fatalf("Expected large map type, got %d", g.MapState.PlayerLocation.Location.GetMapType())
 	}
 	var npcAiCon *ai.NPCAIControllerLargeMap
 	if g.MapState.IsOverworld() {
-		npcAiCon = g.LargeMapNPCAIController[references.OVERWORLD]
+		npcAiCon = g.LargeMapNPCAIController[references2.OVERWORLD]
 	} else {
-		npcAiCon = g.LargeMapNPCAIController[references.UNDERWORLD]
+		npcAiCon = g.LargeMapNPCAIController[references2.UNDERWORLD]
 	}
 	return npcAiCon
 }

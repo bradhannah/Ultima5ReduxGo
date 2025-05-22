@@ -6,7 +6,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ultimav/references"
+	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 func getArrowKeyPressed() *ebiten.Key {
@@ -29,47 +29,47 @@ func getArrowKeyPressed() *ebiten.Key {
 	return &keyPressed
 }
 
-func getCurrentPressedArrowKeyAsDirection() references.Direction {
+func getCurrentPressedArrowKeyAsDirection() references2.Direction {
 	arrowKey := getArrowKeyPressed()
 	if arrowKey == nil {
-		return references.NoneDirection
+		return references2.NoneDirection
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyUp) {
-		return references.Up
+		return references2.Up
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
-		return references.Down
+		return references2.Down
 	} else if ebiten.IsKeyPressed(ebiten.KeyLeft) {
-		return references.Left
+		return references2.Left
 	}
-	return references.Right
+	return references2.Right
 }
 
-func (g *GameScene) moveToNewPositionByDirection(direction references.Direction) {
+func (g *GameScene) moveToNewPositionByDirection(direction references2.Direction) {
 	// TODO: dear future Brad - you will need to change this big time when dungeons and combat come in
-	bLargeMap := g.gameState.MapState.PlayerLocation.Location.GetMapType() == references.LargeMapType
+	bLargeMap := g.gameState.MapState.PlayerLocation.Location.GetMapType() == references2.LargeMapType
 	switch direction {
-	case references.Up:
+	case references2.Up:
 		g.gameState.MapState.PlayerLocation.Position.GoUp(bLargeMap)
-	case references.Down:
+	case references2.Down:
 		g.gameState.MapState.PlayerLocation.Position.GoDown(bLargeMap)
-	case references.Left:
+	case references2.Left:
 		g.gameState.MapState.PlayerLocation.Position.GoLeft(bLargeMap)
-	case references.Right:
+	case references2.Right:
 		g.gameState.MapState.PlayerLocation.Position.GoRight(bLargeMap)
-	case references.NoneDirection:
+	case references2.NoneDirection:
 	}
-	if g.gameState.PartyVehicle.GetVehicleDetails().VehicleType != references.NoPartyVehicle {
+	if g.gameState.PartyVehicle.GetVehicleDetails().VehicleType != references2.NoPartyVehicle {
 		g.gameState.PartyVehicle.SetPos(g.gameState.MapState.PlayerLocation.Position)
 		g.gameState.PartyVehicle.NPCReference.Schedule.OverrideAllPositions(byte(g.gameState.MapState.PlayerLocation.Position.X), byte(g.gameState.MapState.PlayerLocation.Position.Y))
 	}
 
 }
 
-func (g *GameScene) checkAndAutoKlimbStairs(position *references.Position) bool {
+func (g *GameScene) checkAndAutoKlimbStairs(position *references2.Position) bool {
 	floorKlimbOffset := g.gameState.MapState.LayeredMaps.GetSmallMapFloorKlimbOffset(*position, g.gameState.MapState.PlayerLocation.Floor)
 	if floorKlimbOffset != 0 {
 		// are we on stairs? we need to change floors
-		g.gameState.MapState.PlayerLocation.Floor += references.FloorNumber(floorKlimbOffset)
+		g.gameState.MapState.PlayerLocation.Floor += references2.FloorNumber(floorKlimbOffset)
 		g.gameState.UpdateSmallMap(g.gameReferences.TileReferences, g.gameReferences.LocationReferences)
 		return true
 	}
@@ -87,19 +87,19 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 	newPosition := direction.GetNewPositionInDirection(&g.gameState.MapState.PlayerLocation.Position)
 	mapType := g.gameState.MapState.PlayerLocation.Location.GetMapType()
 
-	if mapType == references.LargeMapType {
-		if g.gameState.PartyVehicle.GetVehicleDetails().VehicleType == references.FrigateVehicle && !g.gameState.PartyVehicle.GetVehicleDetails().DoesMoveResultInMovement(direction) {
+	if mapType == references2.LargeMapType {
+		if g.gameState.PartyVehicle.GetVehicleDetails().VehicleType == references2.FrigateVehicle && !g.gameState.PartyVehicle.GetVehicleDetails().DoesMoveResultInMovement(direction) {
 			g.gameState.PartyVehicle.GetVehicleDetails().SetPartyVehicleDirection(direction)
 			g.output.AddRowStr(fmt.Sprintf("Head %s", direction.GetDirectionCompassName()))
 			return
 		}
 
-		newPosition = newPosition.GetWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
+		newPosition = newPosition.GetWrapped(references2.XLargeMapTiles, references2.YLargeMapTiles)
 
 	}
 	g.gameState.PartyVehicle.GetVehicleDetails().SetPartyVehicleDirection(direction)
 
-	if mapType == references.SmallMapType && g.gameState.IsOutOfBounds(*newPosition) {
+	if mapType == references2.SmallMapType && g.gameState.IsOutOfBounds(*newPosition) {
 		g.dialogStack.DoModalInputBox(
 			"Dost thou wish to leave?",
 			g.createTextCommandExitBuilding(),
@@ -123,7 +123,7 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 		g.addRowStr("Blocked!")
 	}
 
-	if g.gameState.MapState.PlayerLocation.Location.GetMapType() == references.SmallMapType {
+	if g.gameState.MapState.PlayerLocation.Location.GetMapType() == references2.SmallMapType {
 		g.checkAndAutoKlimbStairs(newPosition)
 	}
 
