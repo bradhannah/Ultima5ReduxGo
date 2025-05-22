@@ -6,9 +6,9 @@ import (
 	"os"
 	"path"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 )
 
 const (

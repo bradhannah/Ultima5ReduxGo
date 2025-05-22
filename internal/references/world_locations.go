@@ -1,6 +1,6 @@
 package references
 
-import "github.com/bradhannah/Ultima5ReduxGo/pkg/config"
+import "github.com/bradhannah/Ultima5ReduxGo/internal/config"
 
 const xCoordsOffset = 0x1e9a
 const yCoordsOffset = 0x1ec2

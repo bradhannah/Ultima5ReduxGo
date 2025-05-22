@@ -6,8 +6,8 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
 )
 
 type JimmyDoorState int

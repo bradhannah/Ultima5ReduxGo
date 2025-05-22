@@ -10,7 +10,7 @@ import (
 
 	"github.com/spf13/viper"
 
-	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/files"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 )
 
@@ -78,7 +78,7 @@ func NewUltimaVConfiguration() *UltimaVConfiguration {
 	uc.UpdateSaveFile()
 
 	var err error
-	uc.RawDataOvl, err = os.ReadFile(path.Join(uc.SavedConfigData.DataFilePath, references.DATA_OVL))
+	uc.RawDataOvl, err = os.ReadFile(path.Join(uc.SavedConfigData.DataFilePath, files.DATA_OVL))
 	if err != nil {
 		log.Fatal("Ooof, couldn't read DATA.OVL")
 	}
@@ -94,7 +94,7 @@ func NewUltimaVConfiguration() *UltimaVConfiguration {
 }
 
 func (uc *UltimaVConfiguration) GetLookDataFilePath() string {
-	return path.Join(uc.SavedConfigData.DataFilePath, references.LOOK2_DAT)
+	return path.Join(uc.SavedConfigData.DataFilePath, files.LOOK2_DAT)
 }
 
 func (uc *UltimaVConfiguration) GetCurrentTrackedWindowResolution() ScreenResolution {
@@ -128,9 +128,9 @@ func (uc *UltimaVConfiguration) UpdateSaveFile() {
 
 func (uc *UltimaVConfiguration) GetAllNpcFilePaths() []string {
 	return []string{
-		path.Join(uc.SavedConfigData.DataFilePath, references.TOWNE_NPC),
-		path.Join(uc.SavedConfigData.DataFilePath, references.DWELLING_NPC),
-		path.Join(uc.SavedConfigData.DataFilePath, references.CASTLE_NPC),
-		path.Join(uc.SavedConfigData.DataFilePath, references.KEEP_NPC),
+		path.Join(uc.SavedConfigData.DataFilePath, files.TOWNE_NPC),
+		path.Join(uc.SavedConfigData.DataFilePath, files.DWELLING_NPC),
+		path.Join(uc.SavedConfigData.DataFilePath, files.CASTLE_NPC),
+		path.Join(uc.SavedConfigData.DataFilePath, files.KEEP_NPC),
 	}
 }

@@ -6,7 +6,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 )
 
 var (

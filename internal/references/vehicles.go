@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 )
 
 type VehicleType int

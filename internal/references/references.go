@@ -3,7 +3,7 @@ package references
 import (
 	"log"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 )
 
 type GameReferences struct {

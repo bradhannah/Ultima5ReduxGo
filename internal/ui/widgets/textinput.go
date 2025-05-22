@@ -16,11 +16,11 @@ import (
 	"golang.org/x/image/font/opentype"
 	"golang.org/x/image/math/fixed"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/text"
 	ucolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 )
 
 // todo: different background for text?

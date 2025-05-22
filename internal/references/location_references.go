@@ -6,7 +6,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 )
 
 // LocationReferences a collection of SingleSmallMapReferences. Provides an easier way to keep

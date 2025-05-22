@@ -3,7 +3,7 @@ package widgets
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 )
 
 type TextArea struct {

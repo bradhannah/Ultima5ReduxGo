@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ui/widgets"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/ui/widgets"
 )
 
 // const startEscapeMenuPercentY = 0.35

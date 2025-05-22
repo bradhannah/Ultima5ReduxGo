@@ -1,8 +1,8 @@
 package references
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 )
 
 type EnemyReferences []EnemyReference

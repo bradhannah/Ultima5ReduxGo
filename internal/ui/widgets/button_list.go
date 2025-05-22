@@ -6,11 +6,11 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	text2 "github.com/hajimehoshi/ebiten/v2/text/v2"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/text"
 	ucolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
 )
 
 const buttonListModalStartYPercent = 0.35

@@ -7,15 +7,15 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/text"
 	mainscreen2 "github.com/bradhannah/Ultima5ReduxGo/internal/ui/mainscreen"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/ui/widgets"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/text"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/ui/widgets"
 )
 
 const (

@@ -9,7 +9,7 @@ import (
 	gamestate "github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 )
 
 func (g *GameScene) smallMapInputHandler(key ebiten.Key) {

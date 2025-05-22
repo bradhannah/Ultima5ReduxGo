@@ -8,8 +8,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 	ucolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 )
 
 // const maxCharsPerLine = 16

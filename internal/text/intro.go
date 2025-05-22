@@ -7,8 +7,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/color"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
 )
 
 var IntroChoices = []string{"Journey Onward", "Select Save Game", "Import from Legacy", "Set Data Directory", "Create Character", "Introduction", "Acknowledgments"}

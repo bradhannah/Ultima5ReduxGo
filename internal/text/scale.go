@@ -1,7 +1,7 @@
 package text
 
 import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 )
 
 const unscaledWindowWidth = 1920

@@ -7,8 +7,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 )
 
 var gameScreenPercents = sprites.PercentBasedPlacement{

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 )
 
 func (g *GameScene) isDirectionKeyValidAndOutput() bool {

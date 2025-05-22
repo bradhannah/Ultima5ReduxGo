@@ -3,7 +3,7 @@ package map_state
 import (
 	"log"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"

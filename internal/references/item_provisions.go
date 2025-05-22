@@ -1,6 +1,6 @@
 package references
 
-import "github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+import "github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 
 type Provision int
 

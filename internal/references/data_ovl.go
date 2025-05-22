@@ -3,7 +3,7 @@ package references
 import (
 	"fmt"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/config"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 )
 
 const nLocationNameOffset = 0xa4d

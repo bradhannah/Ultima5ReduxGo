@@ -3,7 +3,7 @@ package party_state
 import (
 	"strings"
 
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 )
 
 func (p *PlayerCharacter) GetNameAsString() string {

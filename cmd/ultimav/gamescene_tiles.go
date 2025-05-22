@@ -8,8 +8,8 @@ import (
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 )
 
 const (

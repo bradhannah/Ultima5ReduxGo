@@ -2,7 +2,7 @@ package map_units
 
 import (
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/sprites/indexes"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 )
 
 type VehicleDetails struct {
