@@ -7,6 +7,7 @@ import (
 	"path"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/files"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 )
@@ -46,9 +47,10 @@ func (m *LargeMapReference) GetSpriteIndex(x Coordinate, y Coordinate) indexes.S
 }
 
 func loadLargeMapFromFile(world World, gameConfig *config.UltimaVConfiguration) (*LargeMapReference, error) {
-	mapFileAndPath, dataOvlFileAndPath := path.Join(gameConfig.SavedConfigData.DataFilePath, BRIT_DAT), path.Join(gameConfig.SavedConfigData.DataFilePath, DATA_OVL)
+	mapFileAndPath, dataOvlFileAndPath := path.Join(gameConfig.SavedConfigData.DataFilePath, files.BRIT_DAT),
+		path.Join(gameConfig.SavedConfigData.DataFilePath, files.DATA_OVL)
 	if world == UNDERWORLD {
-		mapFileAndPath = path.Join(gameConfig.SavedConfigData.DataFilePath, UNDER_DAT)
+		mapFileAndPath = path.Join(gameConfig.SavedConfigData.DataFilePath, files.UNDER_DAT)
 		dataOvlFileAndPath = ""
 	}
 
