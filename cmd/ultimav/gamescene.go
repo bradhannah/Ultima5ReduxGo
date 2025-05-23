@@ -9,7 +9,6 @@ import (
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
-	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/text"
@@ -93,25 +92,13 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 		log.Fatal(err)
 	}
 
-	// TODO: add a New function to GameState
-	gameScene.gameState = &game_state.GameState{
-		GameReferences: gameScene.gameReferences,
-	}
-	gameScene.gameState.MapState = *map_state.NewMapState(
-		map_state.NewMapStateInput{
-			GameDimensions:            gameScene.gameState,
-			XTilesVisibleOnGameScreen: xTilesVisibleOnGameScreen,
-			YTilesVisibleOnGameScreen: yTilesVisibleOnGameScreen,
-		},
-	)
-	// 	map_state.MapState{
-	// 	XTilesVisibleOnGameScreen: xTilesVisibleOnGameScreen,
-	// 	YTilesVisibleOnGameScreen: yTilesVisibleOnGameScreen,
-	// }
-	err = gameScene.gameState.LoadLegacySaveGame(path.Join(gameScene.gameConfig.SavedConfigData.DataFilePath, "SAVED.GAM"), gameScene.gameReferences)
-	if err != nil {
-		log.Fatal(err)
-	}
+	saveFilePath := path.Join(gameScene.gameConfig.SavedConfigData.DataFilePath, "SAVED.GAM")
+
+	gameScene.gameState = game_state.NewGameStateFromLegacySaveFile(saveFilePath,
+		gameConfig,
+		gameScene.gameReferences,
+		xTilesVisibleOnGameScreen,
+		yTilesVisibleOnGameScreen)
 
 	gameScene.spriteSheet = sprites.NewSpriteSheet()
 	gameScene.keyboard = input.NewKeyboard(keyPressDelay)

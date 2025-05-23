@@ -7,7 +7,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/ai"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
-	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	references "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 const savedGamFileSize = 4192
@@ -17,7 +17,7 @@ type (
 	StartingMemoryAddressU16 uint16
 )
 
-func (g *GameState) getLegacySavedGamRaw(savedGamFilePath string) ([]byte, error) {
+func getLegacySavedGamRaw(savedGamFilePath string) ([]byte, error) {
 	// Open the file in read-only mode and as binary
 	file, err := os.OpenFile(savedGamFilePath, os.O_RDONLY, 0o666)
 	if err != nil {
@@ -41,17 +41,12 @@ func (g *GameState) getLegacySavedGamRaw(savedGamFilePath string) ([]byte, error
 	return buffer, nil
 }
 
-func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *references2.GameReferences) error {
-	// Open the file in read-only mode and as binary
-	rawSaveGameBytesFromDisk, err := g.getLegacySavedGamRaw(savedGamFilePath)
-	if err != nil {
-		return err
-	}
+func (g *GameState) LoadLegacySaveGameFromBytes(rawSaveData []byte) error {
 
 	// var saveGame = GameState{}
-	g.RawSave = [savedGamFileSize]byte(rawSaveGameBytesFromDisk)
+	g.RawSave = [savedGamFileSize]byte(rawSaveData)
 
-	// Overlay player characters over memory rawSaveGameBytesFromDisk to easily consume data
+	// Overlay player characters over memory rawSaveData to easily consume data
 	g.PartyState.LoadFromRaw(g.RawSave)
 
 	// world and position
@@ -59,9 +54,9 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 	const lbX = 0x2F0
 	const lbY = 0x2F1
 	const lbFloor = 0x2EF
-	g.MapState.PlayerLocation.Location = references2.Location(rawSaveGameBytesFromDisk[lbLocation])
-	g.MapState.PlayerLocation.Position = references2.Position{X: references2.Coordinate(rawSaveGameBytesFromDisk[lbX]), Y: references2.Coordinate(rawSaveGameBytesFromDisk[lbY])}
-	g.MapState.PlayerLocation.Floor = references2.FloorNumber(rawSaveGameBytesFromDisk[lbFloor])
+	g.MapState.PlayerLocation.Location = references.Location(rawSaveData[lbLocation])
+	g.MapState.PlayerLocation.Position = references.Position{X: references.Coordinate(rawSaveData[lbX]), Y: references.Coordinate(rawSaveData[lbY])}
+	g.MapState.PlayerLocation.Floor = references.FloorNumber(rawSaveData[lbFloor])
 
 	// Date/Time
 	const lsYear = 0x2CE
@@ -69,17 +64,17 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 	const lbDay = 0x2D8
 	const lbHour = 0x2D9
 	const lbMinute = 0x2DB
-	g.DateTime.Year = getUint16(&rawSaveGameBytesFromDisk, lsYear)
-	g.DateTime.Month = rawSaveGameBytesFromDisk[lbMonth]
-	g.DateTime.Day = rawSaveGameBytesFromDisk[lbDay]
-	g.DateTime.Hour = rawSaveGameBytesFromDisk[lbHour]
-	g.DateTime.Minute = rawSaveGameBytesFromDisk[lbMinute]
+	g.DateTime.Year = getUint16(&rawSaveData, lsYear)
+	g.DateTime.Month = rawSaveData[lbMonth]
+	g.DateTime.Day = rawSaveData[lbDay]
+	g.DateTime.Hour = rawSaveData[lbHour]
+	g.DateTime.Minute = rawSaveData[lbMinute]
 
 	// Various Things
 	const lbKarma = 0x2e2
 	const lsGold = 0x204
-	g.PartyState.Karma = party_state.Karma(rawSaveGameBytesFromDisk[lbKarma])
-	g.PartyState.Inventory.Gold = getUint16(&rawSaveGameBytesFromDisk, lsGold)
+	g.PartyState.Karma = party_state.Karma(rawSaveData[lbKarma])
+	g.PartyState.Inventory.Gold = getUint16(&rawSaveData, lsGold)
 
 	// ProvisionsQuantity
 	const lsFood = 0x202
@@ -87,51 +82,51 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 	const lbGems = 0x207
 	const lbTorches = 0x208
 	const lbSkullKeys = 0x20B
-	g.PartyState.Inventory.Provisions.Food = getUint16(&rawSaveGameBytesFromDisk, lsFood)
-	g.PartyState.Inventory.Provisions.Gems = rawSaveGameBytesFromDisk[lbGems]
-	g.PartyState.Inventory.Provisions.Torches = rawSaveGameBytesFromDisk[lbTorches]
-	g.PartyState.Inventory.Provisions.Keys = rawSaveGameBytesFromDisk[lbKeys]
-	g.PartyState.Inventory.Provisions.SkullKeys = rawSaveGameBytesFromDisk[lbSkullKeys]
+	g.PartyState.Inventory.Provisions.Food = getUint16(&rawSaveData, lsFood)
+	g.PartyState.Inventory.Provisions.Gems = rawSaveData[lbGems]
+	g.PartyState.Inventory.Provisions.Torches = rawSaveData[lbTorches]
+	g.PartyState.Inventory.Provisions.Keys = rawSaveData[lbKeys]
+	g.PartyState.Inventory.Provisions.SkullKeys = rawSaveData[lbSkullKeys]
 
-	g.MapState.LayeredMaps = *map_state.NewLayeredMaps(gameRefs.TileReferences,
-		gameRefs.OverworldLargeMapReference,
-		gameRefs.UnderworldLargeMapReference,
+	g.MapState.LayeredMaps = *map_state.NewLayeredMaps(g.GameReferences.TileReferences,
+		g.GameReferences.OverworldLargeMapReference,
+		g.GameReferences.UnderworldLargeMapReference,
 		g.MapState.XTilesVisibleOnGameScreen,
 		g.MapState.YTilesVisibleOnGameScreen)
 
-	g.LargeMapNPCAIController = make(map[references2.World]*ai.NPCAIControllerLargeMap)
+	g.LargeMapNPCAIController = make(map[references.World]*ai.NPCAIControllerLargeMap)
 	overworldNPCAIInput := ai.NewNPCAIControllerLargeMapInput{
-		World:           references2.OVERWORLD,
-		TileRefs:        gameRefs.TileReferences,
+		World:           references.OVERWORLD,
+		TileRefs:        g.GameReferences.TileReferences,
 		MapState:        &g.MapState,
 		DebugOptions:    &g.DebugOptions,
 		TheOdds:         &g.TheOdds,
 		EnemyReferences: g.GameReferences.EnemyReferences,
 		DateTime:        &g.DateTime,
 	}
-	g.LargeMapNPCAIController[references2.OVERWORLD] = ai.NewNPCAIControllerLargeMap(overworldNPCAIInput)
+	g.LargeMapNPCAIController[references.OVERWORLD] = ai.NewNPCAIControllerLargeMap(overworldNPCAIInput)
 	// TODO: load the npcs from the save game
 	underworldNPCAIInput := ai.NewNPCAIControllerLargeMapInput{
-		World:           references2.OVERWORLD,
-		TileRefs:        gameRefs.TileReferences,
+		World:           references.OVERWORLD,
+		TileRefs:        g.GameReferences.TileReferences,
 		MapState:        &g.MapState,
 		DebugOptions:    &g.DebugOptions,
 		TheOdds:         &g.TheOdds,
 		EnemyReferences: g.GameReferences.EnemyReferences,
 		DateTime:        &g.DateTime,
 	}
-	g.LargeMapNPCAIController[references2.UNDERWORLD] = ai.NewNPCAIControllerLargeMap(underworldNPCAIInput)
+	g.LargeMapNPCAIController[references.UNDERWORLD] = ai.NewNPCAIControllerLargeMap(underworldNPCAIInput)
 	// TODO: load the npcs from the save game
 
 	// if we are on a large map, we set this right away.
-	if g.MapState.PlayerLocation.Location.GetMapType() == references2.LargeMapType {
+	if g.MapState.PlayerLocation.Location.GetMapType() == references.LargeMapType {
 		g.CurrentNPCAIController = g.GetCurrentLargeMapNPCAIController()
 	}
 
-	g.ItemStacksMap = *references2.NewItemStacksMap()
+	g.ItemStacksMap = *references.NewItemStacksMap()
 
-	g.TheOdds = references2.NewDefaultTheOdds()
-	g.DebugOptions = references2.DebugOptions{
+	g.TheOdds = references.NewDefaultTheOdds()
+	g.DebugOptions = references.DebugOptions{
 		FreeMove:   false,
 		MonsterGen: true,
 	}
@@ -140,6 +135,15 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 
 	return nil
 }
+
+//func (g *GameState) LoadLegacySaveGame(savedGamFilePath string) error {
+//	// Open the file in read-only mode and as binary
+//	rawSaveGameBytesFromDisk, err := g.getLegacySavedGamRaw(savedGamFilePath)
+//	if err != nil {
+//		return err
+//	}
+//	return g.LoadLegacySaveGameFromBytes(rawSaveGameBytesFromDisk)
+//}
 
 func getBytesAsUint16(data0, data1 byte) uint16 {
 	res := uint16(data0) | (uint16(data1) << 8)
