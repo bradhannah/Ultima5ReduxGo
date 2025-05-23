@@ -6,14 +6,13 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/ui/widgets"
 )
 
-// const startEscapeMenuPercentY = 0.35
-
 func (g *GameScene) DoEscapeMenu() {
+	const forceWaitTimeMs = 250
 	bl := widgets.NewButtonListModal(
 		"Ultima V Redux",
 		func() {
 			g.dialogStack.PopModalDialog()
-			g.keyboard.SetForceWaitAnyKey(250)
+			g.keyboard.SetForceWaitAnyKey(forceWaitTimeMs)
 		},
 		g.keyboard,
 		&gameScreenPercents)

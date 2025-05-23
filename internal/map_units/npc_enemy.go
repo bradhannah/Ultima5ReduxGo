@@ -35,9 +35,11 @@ func (enemy *NPCEnemy) MapUnitDetails() *MapUnitDetails {
 func (enemy *NPCEnemy) SetVisible(visible bool) {
 	enemy.mapUnitDetails.Visible = visible
 }
+
 func (enemy *NPCEnemy) IsVisible() bool {
 	return enemy.mapUnitDetails.Visible
 }
+
 func (enemy *NPCEnemy) IsEmptyMapUnit() bool {
 	return enemy.EnemyReference.KeyFrameTile == nil
 }

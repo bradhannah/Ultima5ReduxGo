@@ -70,6 +70,7 @@ func (friendly *NPCFriendly) MapUnitDetails() *MapUnitDetails {
 func (friendly *NPCFriendly) SetVisible(visible bool) {
 	friendly.mapUnitDetails.Visible = visible
 }
+
 func (friendly *NPCFriendly) IsVisible() bool {
 	return friendly.mapUnitDetails.Visible
 }

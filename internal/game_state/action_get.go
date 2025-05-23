@@ -5,6 +5,5 @@ import (
 )
 
 func (g *GameState) ActionGetSmallMap(direction references.Direction) bool {
-
 	return true
 }

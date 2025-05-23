@@ -10,8 +10,10 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 )
 
-const totalLayers = 6
-const overflowTiles = references2.Coordinate(10)
+const (
+	totalLayers   = 6
+	overflowTiles = references2.Coordinate(10)
+)
 
 const (
 	MapLayer LayerType = iota
@@ -57,7 +59,8 @@ func newLayeredMap(xMax references2.Coordinate,
 	tileRefs *references2.Tiles,
 	xVisibleTiles int,
 	yVisibleTiles int,
-	bWrappingMap bool) *LayeredMap { //nolint:exhaustruct
+	bWrappingMap bool,
+) *LayeredMap { //nolint:exhaustruct
 
 	layeredMap := LayeredMap{ //nolint:exhaustruct
 		xVisibleTiles:   xVisibleTiles,

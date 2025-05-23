@@ -10,7 +10,7 @@ import (
 )
 
 func getArrowKeyPressed() *ebiten.Key {
-	var keyPressed = ebiten.KeyF24
+	keyPressed := ebiten.KeyF24
 	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
 		keyPressed = ebiten.KeyLeft
 	}
@@ -62,7 +62,6 @@ func (g *GameScene) moveToNewPositionByDirection(direction references2.Direction
 		g.gameState.PartyVehicle.SetPos(g.gameState.MapState.PlayerLocation.Position)
 		g.gameState.PartyVehicle.NPCReference.Schedule.OverrideAllPositions(byte(g.gameState.MapState.PlayerLocation.Position.X), byte(g.gameState.MapState.PlayerLocation.Position.Y))
 	}
-
 }
 
 func (g *GameScene) checkAndAutoKlimbStairs(position *references2.Position) bool {
@@ -126,5 +125,4 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 	if g.gameState.MapState.PlayerLocation.Location.GetMapType() == references2.SmallMapType {
 		g.checkAndAutoKlimbStairs(newPosition)
 	}
-
 }

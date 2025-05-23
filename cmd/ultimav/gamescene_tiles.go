@@ -222,7 +222,7 @@ func (g *GameScene) refreshAllMapLayerTiles() {
 	var avatarDo ebiten.DrawImageOptions
 
 	var x, y references2.Coordinate
-	var pos = &references2.Position{}
+	pos := &references2.Position{}
 
 	for x = 0; x < xTilesVisibleOnGameScreen; x++ {
 		for y = 0; y < yTilesVisibleOnGameScreen; y++ {

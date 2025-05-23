@@ -49,13 +49,11 @@ func (m *MapUnits) GetVehicleAtPositionOrNil(pos references2.Position) *NPCFrien
 		if friendly.NPCReference.GetNPCType() == references2.Vehicle {
 			return friendly
 		}
-
 	}
 	return nil
 }
 
 func (m *MapUnits) AddVehicle(vehicle NPCFriendly) bool {
-
 	index := m.getNextAvailableNPCIndexNumber()
 	if index == -1 {
 		return false

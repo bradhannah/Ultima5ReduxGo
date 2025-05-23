@@ -47,7 +47,6 @@ func (g *GameState) JimmyDoor(direction references2.Direction, player *party_sta
 	default:
 		return JimmyNotADoor
 	}
-
 }
 
 func (g *GameState) isJimmySuccessful(player *party_state.PlayerCharacter) bool {

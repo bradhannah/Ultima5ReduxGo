@@ -63,7 +63,6 @@ func (e *EnemyReference) GetEraWeight(era datetime.Era) int {
 }
 
 func (e *EnemyReference) CanSpawnToTile(tile *Tile) bool {
-
 	if !e.isMonsterSpawnableOnTile(tile) {
 		return false
 	}
@@ -81,7 +80,6 @@ func (e *EnemyReference) CanSpawnToTile(tile *Tile) bool {
 }
 
 func (e *EnemyReference) CanMoveToTile(tile *Tile) bool {
-
 	if !e.isMonsterSpawnableOnTile(tile) {
 		return false
 	}
@@ -105,7 +103,6 @@ func (e *EnemyReference) CanMoveToTile(tile *Tile) bool {
 	}
 
 	return bCanMoveToTile
-
 }
 
 func (e *EnemyReference) isMonsterSpawnableOnTile(tile *Tile) bool {

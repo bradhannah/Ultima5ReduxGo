@@ -22,8 +22,8 @@ type SmallLocationReference struct {
 func NewSingleSmallMapReference(
 	location Location,
 	npcRefs *[]NPCReference,
-	dataOvl *DataOvl) *SmallLocationReference {
-
+	dataOvl *DataOvl,
+) *SmallLocationReference {
 	smr := &SmallLocationReference{}
 	smr.Location = location
 	smr.rawData = make(map[int]*[XSmallMapTiles][YSmallMapTiles]byte)

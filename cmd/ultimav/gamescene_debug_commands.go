@@ -38,7 +38,8 @@ func (d *DebugConsole) createRemoveAllMonsters() *grammar.TextCommand {
 			Str:           "mon-delall",
 			Description:   "Delete all monsters",
 			CaseSensitive: false,
-		}},
+		},
+	},
 		func(s string, command *grammar.TextCommand) {
 			d.gameScene.gameState.CurrentNPCAIController.RemoveAllEnemies()
 			d.dumpQuickState("Removed all enemies")
@@ -51,7 +52,8 @@ func (d *DebugConsole) createToggleMonsterGen() *grammar.TextCommand {
 			Str:           "mon-toggle-gen",
 			Description:   "Toggle monster generation",
 			CaseSensitive: false,
-		}},
+		},
+	},
 		func(s string, command *grammar.TextCommand) {
 			d.gameScene.gameState.DebugOptions.MonsterGen = !d.gameScene.gameState.DebugOptions.MonsterGen
 			d.dumpQuickState(fmt.Sprintf("MonsterGen = %t", d.gameScene.gameState.DebugOptions.MonsterGen))
@@ -132,7 +134,8 @@ func (d *DebugConsole) createFloorUpCommand() *grammar.TextCommand {
 			Str:           "fu",
 			Description:   "Teleport a floor up if one exists",
 			CaseSensitive: false,
-		}},
+		},
+	},
 		func(s string, command *grammar.TextCommand) {
 			res := d.gameScene.DebugFloorUp()
 			d.dumpQuickState(fmt.Sprintf("FloorUp Status=%t", res))
@@ -146,7 +149,8 @@ func (d *DebugConsole) createFloorDownCommand() *grammar.TextCommand {
 			Str:           "fd",
 			Description:   "Teleport a floor down if one exists",
 			CaseSensitive: false,
-		}},
+		},
+	},
 		func(s string, command *grammar.TextCommand) {
 			res := d.gameScene.DebugFloorDown()
 			d.dumpQuickState(fmt.Sprintf("FloorDown Status=%t", res))
@@ -159,7 +163,8 @@ func (d *DebugConsole) createFreeMoveCommand() *grammar.TextCommand {
 			Str:           "freemove",
 			Description:   "Ignore boundaries when moving",
 			CaseSensitive: false,
-		}},
+		},
+	},
 		func(s string, command *grammar.TextCommand) {
 			d.gameScene.gameState.DebugOptions.FreeMove = !d.gameScene.gameState.DebugOptions.FreeMove
 			d.dumpQuickState(fmt.Sprintf("FreeMove = %t", d.gameScene.gameState.DebugOptions.FreeMove))
@@ -215,6 +220,7 @@ func (d *DebugConsole) createQuickTime() *grammar.TextCommand {
 			d.dumpQuickState(fmt.Sprintf("thing: %s", outputStr))
 		})
 }
+
 func (d *DebugConsole) createGoSmall() *grammar.TextCommand {
 	return grammar.NewTextCommand([]grammar.Match{
 		grammar.MatchString{
@@ -296,7 +302,6 @@ func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
 			if !bAddedVehicle {
 				d.dumpQuickState("Unable to add vehicle.")
 			}
-
 		})
 }
 
@@ -307,7 +312,8 @@ func (d *DebugConsole) createResolutionUp() *grammar.TextCommand {
 			Str:           "ru",
 			Description:   "Increase the resolution",
 			CaseSensitive: false,
-		}},
+		},
+	},
 		func(s string, command *grammar.TextCommand) {
 			d.gameScene.gameConfig.IncrementHigherResolution()
 			res := d.gameScene.gameConfig.GetCurrentTrackedWindowResolution()
@@ -321,7 +327,8 @@ func (d *DebugConsole) createResolutionDown() *grammar.TextCommand {
 			Str:           "rd",
 			Description:   "Shrink the resolution",
 			CaseSensitive: false,
-		}},
+		},
+	},
 		func(s string, command *grammar.TextCommand) {
 			d.gameScene.gameConfig.DecrementLowerResolution()
 			res := d.gameScene.gameConfig.GetCurrentTrackedWindowResolution()
@@ -335,7 +342,8 @@ func (d *DebugConsole) createFullScreenToggle() *grammar.TextCommand {
 			Str:           "fs",
 			Description:   "Fullscreen Toggle",
 			CaseSensitive: false,
-		}},
+		},
+	},
 		func(s string, command *grammar.TextCommand) {
 			d.gameScene.gameConfig.SetFullScreen(!d.gameScene.gameConfig.SavedConfigData.FullScreen)
 		})

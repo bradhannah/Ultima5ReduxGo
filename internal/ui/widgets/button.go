@@ -29,8 +29,10 @@ const (
 	LargeButtonFontPoint  = 30
 )
 
-var mediumButtonPercentHeight = 0.065
-var mediumButtonPercentWidth = 0.2
+var (
+	mediumButtonPercentHeight = 0.065
+	mediumButtonPercentWidth  = 0.2
+)
 
 const (
 	SmallButtonLineSpacing  = SmallButtonFontPoint
@@ -147,7 +149,6 @@ func (b *Button) GetWidthPercent() float64 {
 }
 
 func GetButtonWidthPercent(size ButtonSize) float64 {
-
 	switch size {
 	case SmallButton:
 		return 0

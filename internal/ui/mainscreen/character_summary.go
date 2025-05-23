@@ -19,10 +19,12 @@ type CharacterSummary struct {
 	characterSpriteDop *ebiten.DrawImageOptions
 }
 
-const lineHeightPercent = .075
-const perCharacterSummaryWidth = 16 * 6
-const perCharacterSummaryHeight = 9 * 6
-const maxCharsPerLine = 16
+const (
+	lineHeightPercent         = .075
+	perCharacterSummaryWidth  = 16 * 6
+	perCharacterSummaryHeight = 9 * 6
+	maxCharsPerLine           = 16
+)
 
 func NewCharacterSummary(spriteSheet *sprites.SpriteSheet) *CharacterSummary {
 	characterSummary := &CharacterSummary{}
@@ -46,7 +48,6 @@ func NewCharacterSummary(spriteSheet *sprites.SpriteSheet) *CharacterSummary {
 }
 
 func (c *CharacterSummary) Draw(partyState *party_state.PartyState, screen *ebiten.Image) {
-
 	for i := 0; i < len(c.characterSummaryImage); i++ {
 		// draw onto single summary
 		character := partyState.Characters[i]
@@ -87,7 +88,6 @@ func (c *CharacterSummary) Draw(partyState *party_state.PartyState, screen *ebit
 		rightTextOutput := fmt.Sprintf("%s\n%dMP", party_state.CharacterStatuses.GetById(character.Status).FriendlyName, character.CurrentMp)
 		c.output.DrawTextRightToLeft(screen, rightTextOutput, &rightTextDop)
 	}
-
 }
 
 // func (c *CharacterSummary) drawSingleSummary(summaryImage *ebiten.Image, gameState *game_state.GameState) {

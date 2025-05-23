@@ -120,8 +120,8 @@ func (m *Map) InitializeByLayeredMapWithLimit(
 	bWrap bool,
 	centerPos references.Position,
 	nMaxRadius int,
-	maxX, maxY references.Coordinate) {
-
+	maxX, maxY references.Coordinate,
+) {
 	m.mapUnit = mapUnit
 	m.bWrap = bWrap
 	m.maxX, m.maxY = maxX, maxY

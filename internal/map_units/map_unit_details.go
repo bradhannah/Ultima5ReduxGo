@@ -56,6 +56,7 @@ func (mu *MapUnitDetails) DequeueNextPosition() references2.Position {
 func (mu *MapUnitDetails) HasAPathAlreadyCalculated() bool {
 	return mu.CurrentPath != nil && len(mu.CurrentPath) > 0
 }
+
 func (mu *MapUnitDetails) SetCurrentPath(path []references2.Position) {
 	mu.CurrentPath = path
 }

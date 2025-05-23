@@ -38,10 +38,8 @@ const (
 	percentIntoBorder        = 0.02
 )
 
-var (
-	//go:embed assets/ultima-v-warriors-of-destiny/ultima-v-warriors-of-destiny.ttf
-	rawUltimaTTF []byte
-)
+//go:embed assets/ultima-v-warriors-of-destiny/ultima-v-warriors-of-destiny.ttf
+var rawUltimaTTF []byte
 
 type TextInputColors struct {
 	DefaultColor          color.Color
@@ -93,8 +91,8 @@ func NewTextInput(
 	maxCharsPerLine int,
 	textCommands *grammar.TextCommands,
 	callbacks TextInputCallbacks,
-	keyboard *input.Keyboard) *TextInput {
-
+	keyboard *input.Keyboard,
+) *TextInput {
 	textInput := &TextInput{}
 	textInput.maxCharsPerLine = maxCharsPerLine
 	textInput.keyboard = keyboard
@@ -151,7 +149,7 @@ func (t *TextInput) Draw(screen *ebiten.Image) {
 }
 
 func (t *TextInput) createCursorPlacement() sprites.PercentBasedPlacement {
-	var cursorPlacement = sprites.PercentBasedPlacement{
+	cursorPlacement := sprites.PercentBasedPlacement{
 		StartPercentX: t.mainTextPlacement.StartPercentX,         // 0 + debugPercentOffEdge
 		EndPercentX:   t.mainTextPlacement.EndPercentY,           // .75 + .01 - percentIntoBorder,
 		StartPercentY: t.mainTextPlacement.StartPercentY - 0.003, // .955 - .952,
@@ -168,7 +166,7 @@ func (t *TextInput) drawCursor(screen *ebiten.Image) {
 		}
 	}
 
-	var cursorPlacement = t.createCursorPlacement()
+	cursorPlacement := t.createCursorPlacement()
 	textRect := sprites.GetRectangleFromPercents(cursorPlacement)
 	width := t.CalculateTextWidth(t.output.GetOutputStr(false))
 	vector.DrawFilledRect(screen,
@@ -191,7 +189,6 @@ func (t *TextInput) getTextColor() color.Color {
 	} else {
 		return t.inputColors.NoMatchesColor
 	}
-
 }
 
 func (t *TextInput) GetText() string {

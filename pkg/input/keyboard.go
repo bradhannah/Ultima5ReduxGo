@@ -51,7 +51,6 @@ func (k *Keyboard) GetBoundKeyPressed(boundKeys *[]ebiten.Key) *ebiten.Key {
 		}
 	}
 	return nil
-
 }
 
 func (k *Keyboard) IsBoundKeyPressed(boundKeys *[]ebiten.Key) bool {

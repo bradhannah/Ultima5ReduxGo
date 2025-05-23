@@ -9,10 +9,8 @@ import (
 	"golang.org/x/text/language"
 )
 
-var (
-	//go:embed assets/ultima-v-warriors-of-destiny/ultima-v-warriors-of-destiny.ttf
-	rawUltimaTTF []byte
-)
+//go:embed assets/ultima-v-warriors-of-destiny/ultima-v-warriors-of-destiny.ttf
+var rawUltimaTTF []byte
 
 type UltimaFont struct {
 	rawUltimaTTF     *[]byte

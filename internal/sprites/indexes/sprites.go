@@ -230,5 +230,4 @@ func (s SpriteIndex) IsPartOfAnimation(keyFrameIndex SpriteIndex) bool {
 		return true
 	}
 	return false
-
 }

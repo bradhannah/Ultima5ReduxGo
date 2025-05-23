@@ -5,7 +5,6 @@ import (
 )
 
 func (g *GameState) FinishTurn() {
-
 	switch g.MapState.PlayerLocation.Location.GetMapType() {
 	case references.SmallMapType:
 		g.smallMapProcessEndOfTurn()

@@ -12,12 +12,14 @@ import (
 
 const savedGamFileSize = 4192
 
-type StartingMemoryAddressUb uint16
-type StartingMemoryAddressU16 uint16
+type (
+	StartingMemoryAddressUb  uint16
+	StartingMemoryAddressU16 uint16
+)
 
 func (g *GameState) getLegacySavedGamRaw(savedGamFilePath string) ([]byte, error) {
 	// Open the file in read-only mode and as binary
-	file, err := os.OpenFile(savedGamFilePath, os.O_RDONLY, 0666)
+	file, err := os.OpenFile(savedGamFilePath, os.O_RDONLY, 0o666)
 	if err != nil {
 		return nil, err
 	}

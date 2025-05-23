@@ -43,14 +43,17 @@ func OneInXOdds(odds int) bool {
 	return rand.Intn(odds) == 0
 }
 
-func HappenedByPercentLikely(likelyhoodToSucceedPercent int) bool {
-	if likelyhoodToSucceedPercent >= 100 {
+// HappenedByPercentLikely returns true if the event has happened by the given likelihood.
+// 0% likelihood means it will never happen.
+// 100% likelihood means it will always happen.
+func HappenedByPercentLikely(likelihoodToSucceedPercent int) bool {
+	if likelihoodToSucceedPercent >= 100 {
 		return true
 	}
-	if likelyhoodToSucceedPercent <= 0 {
+	if likelihoodToSucceedPercent <= 0 {
 		return false
 	}
-	return RandomIntInRange(0, 100) < likelyhoodToSucceedPercent
+	return RandomIntInRange(0, 100) < likelihoodToSucceedPercent
 }
 
 func RandomIntInRange(min, max int) int {
@@ -68,14 +71,16 @@ func PickOneOf[T any](a, b T) T {
 }
 
 func FilterFromSlice[T any](s []T, keep func(T) bool) []T {
-	n := 0                // next write position
+	nIndex := 0 // next write position
+
 	for _, v := range s { // read position
 		if keep(v) {
-			s[n] = v // overwrite; OK even when n==read index
-			n++
+			s[nIndex] = v // overwrite; OK even when nIndex==read index
+			nIndex++
 		}
 	}
-	return s[:n] // truncate tail
+
+	return s[:nIndex] // truncate tail
 }
 
 func RoundUp(f float32) int {

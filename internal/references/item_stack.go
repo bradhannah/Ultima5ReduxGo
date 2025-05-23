@@ -24,12 +24,11 @@ const (
 )
 
 func getLordBritishItems(total int) ItemStack {
-	var items = make(ItemStacks, 0, total)
+	items := make(ItemStacks, 0, total)
 
 	const oneInXOddsOfGettingProvision = 3
 
 	for i := 0; i < total; i++ {
-
 		if helpers.OneInXOdds(oneInXOddsOfGettingProvision) {
 			items = append(items, createRandomProvision())
 		} else {

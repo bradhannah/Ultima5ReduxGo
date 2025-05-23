@@ -18,7 +18,7 @@ func (m MatchStringList) GetDescription() string {
 }
 
 func (m MatchStringList) GetPartialMatches(s string) ([]string, error) {
-	var matches = make([]string, 0)
+	matches := make([]string, 0)
 	if !m.CaseSensitive {
 		s = strings.ToUpper(s)
 	}

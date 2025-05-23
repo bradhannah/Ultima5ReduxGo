@@ -109,7 +109,6 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	// 	YTilesVisibleOnGameScreen: yTilesVisibleOnGameScreen,
 	// }
 	err = gameScene.gameState.LoadLegacySaveGame(path.Join(gameScene.gameConfig.SavedConfigData.DataFilePath, "SAVED.GAM"), gameScene.gameReferences)
-
 	if err != nil {
 		log.Fatal(err)
 	}

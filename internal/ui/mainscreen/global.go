@@ -1,4 +1,6 @@
 package mainscreen
 
-const lineSpacing = 35
-const fontPoint = 22
+const (
+	lineSpacing = 35
+	fontPoint   = 22
+)

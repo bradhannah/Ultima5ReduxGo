@@ -9,10 +9,8 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 )
 
-var (
-	//go:embed data/TileData.json
-	tileDataRaw []byte
-)
+//go:embed data/TileData.json
+var tileDataRaw []byte
 
 type Tiles map[indexes.SpriteIndex]*Tile
 

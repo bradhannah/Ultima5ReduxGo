@@ -76,7 +76,6 @@ func (m *NPCAIControllerLargeMap) placeNPCsOnLayeredMap() {
 }
 
 func (m *NPCAIControllerLargeMap) AdvanceNextTurnCalcAndMoveNPCs() {
-
 	m.positionOccupiedChance = m.mapUnits.CreateFreshXyOccupiedMap()
 
 	m.mapState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
@@ -147,14 +146,13 @@ func (m *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePoint(
 		m.setBestNextPositionToMoveTowardsWalkablePointDumb(mapUnit)
 		return
 	}
-
 }
 
 func (m *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePointDumb(mapUnit map_units.MapUnit) {
 	allDirections := mapUnit.PosPtr().GetFourDirectionsWrapped(references2.XLargeMapTiles, references2.YLargeMapTiles)
 	// getting the current distance to the player will make sure they never move further away
-	var fCurrentShortestDistance = mapUnit.PosPtr().GetWrappedDistanceBetweenWrapped(&m.mapState.PlayerLocation.Position, references2.XLargeMapTiles, references2.YLargeMapTiles)
-	var bestPos = *mapUnit.PosPtr()
+	fCurrentShortestDistance := mapUnit.PosPtr().GetWrappedDistanceBetweenWrapped(&m.mapState.PlayerLocation.Position, references2.XLargeMapTiles, references2.YLargeMapTiles)
+	bestPos := *mapUnit.PosPtr()
 	bFound := false
 	for _, newPos := range allDirections {
 		fNewDistance := newPos.GetWrappedDistanceBetweenWrapped(&m.mapState.PlayerLocation.Position, references2.XLargeMapTiles, references2.YLargeMapTiles)

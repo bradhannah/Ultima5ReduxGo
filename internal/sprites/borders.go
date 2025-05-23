@@ -10,10 +10,8 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 )
 
-var (
-	//go:embed assets/VeryPixelatedRoundedBlueWhite.png
-	veryPixelatedRoundedBlueWhite []byte
-)
+//go:embed assets/VeryPixelatedRoundedBlueWhite.png
+var veryPixelatedRoundedBlueWhite []byte
 
 type BorderSprites struct {
 	// the default border. It is
@@ -143,7 +141,6 @@ func (sb *ReferenceBorder) createBorderImage(idealWidthForScaling, width, height
 	img.DrawImage(sb.referenceBorderBits.bottomRight, &ebiten.DrawImageOptions{GeoM: bottomRightOp})
 
 	return img
-
 }
 
 func (sb *ReferenceBorder) createBorderBits() *borderBits {
@@ -163,7 +160,6 @@ func (sb *ReferenceBorder) createBorderBits() *borderBits {
 }
 
 func (sb *ReferenceBorder) CreateSizedAndScaledBorderSprite(idealWidthForScaling int, placement PercentBasedPlacement) (*ebiten.Image, *ebiten.DrawImageOptions) {
-
 	// get the corners and copies before we scale it
 	sb.referenceBorderDimensions = getCornersOfReferenceBorder(sb.border.Bounds().Dx(), sb.border.Bounds().Dy())
 
@@ -174,10 +170,10 @@ func (sb *ReferenceBorder) CreateSizedAndScaledBorderSprite(idealWidthForScaling
 	screenRes := config.GetWindowResolutionFromEbiten()
 
 	// get the x start and end values based on the percent
-	var xLeft = float64(screenRes.X) * placement.StartPercentX
-	var xRight = float64(screenRes.X) * placement.EndPercentX
-	var yTop = float64(screenRes.Y) * placement.StartPercentY
-	var yBottom = float64(screenRes.Y) * placement.EndPercentY
+	xLeft := float64(screenRes.X) * placement.StartPercentX
+	xRight := float64(screenRes.X) * placement.EndPercentX
+	yTop := float64(screenRes.Y) * placement.StartPercentY
+	yBottom := float64(screenRes.Y) * placement.EndPercentY
 
 	targetWidth := xRight - xLeft
 	targetHeight := yBottom - yTop

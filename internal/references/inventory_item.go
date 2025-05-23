@@ -22,10 +22,8 @@ const (
 	ItemTypeProvisionStr   ItemTypeStringIndex = "Provision"
 )
 
-var (
-	//go:embed data/InventoryDetails.json
-	inventoryDetails []byte
-)
+//go:embed data/InventoryDetails.json
+var inventoryDetails []byte
 
 type inventoryItemsMap map[ItemTypeStringIndex][]InventoryItem
 

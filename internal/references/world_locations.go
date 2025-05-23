@@ -2,9 +2,11 @@ package references
 
 import "github.com/bradhannah/Ultima5ReduxGo/internal/config"
 
-const xCoordsOffset = 0x1e9a
-const yCoordsOffset = 0x1ec2
-const TotalLocations = 40
+const (
+	xCoordsOffset  = 0x1e9a
+	yCoordsOffset  = 0x1ec2
+	TotalLocations = 40
+)
 
 type WorldLocations struct {
 	largeMapLocationPositions map[Location]WorldLocation
@@ -17,7 +19,6 @@ type WorldLocation struct {
 }
 
 func NewWorldLocations(gameConfig *config.UltimaVConfiguration) *WorldLocations {
-
 	wl := &WorldLocations{}
 	wl.largeMapLocationPositions = make(map[Location]WorldLocation)
 

@@ -5,13 +5,16 @@ import (
 )
 
 const (
-	WeightImpassable = -1
-	WeightIdealPath  = 1
-	WeightPath       = 2
-	WeightGrass      = 3
-	WeightDefault    = 10
+	weightImpassable = -1
+	weightIdealPath  = 1
+	weightPath       = 2
+	weightGrass      = 3
+	weightDefault    = 10
 )
 
+// Tile represents a single tile and it's properties.
+//
+//nolint:tagliatelle
 type Tile struct {
 	Index                     indexes.SpriteIndex
 	Name                      string `json:"Name"`
@@ -62,15 +65,22 @@ func (t *Tile) IsPassable(vehicle VehicleType) bool {
 	case NPC:
 		return t.IsLandEnemyPassable
 	}
+
 	return false
 }
 
 func (t *Tile) IsChair() bool {
-	return t.Index == indexes.ChairFacingDown || t.Index == indexes.ChairFacingUp || t.Index == indexes.ChairFacingRight || t.Index == indexes.ChairFacingLeft
+	return t.Index == indexes.ChairFacingDown ||
+		t.Index == indexes.ChairFacingUp ||
+		t.Index == indexes.ChairFacingRight ||
+		t.Index == indexes.ChairFacingLeft
 }
 
 func (t *Tile) IsCannon() bool {
-	return t.Index == indexes.CannonFacingLeft || t.Index == indexes.CannonFacingRight || t.Index == indexes.CannonFacingUp || t.Index == indexes.CannonFacingDown
+	return t.Index == indexes.CannonFacingLeft ||
+		t.Index == indexes.CannonFacingRight ||
+		t.Index == indexes.CannonFacingUp ||
+		t.Index == indexes.CannonFacingDown
 }
 
 func (t *Tile) IsPath() bool {
@@ -94,21 +104,21 @@ func (t *Tile) isNPCNoPenaltyWalkable() bool {
 
 func (t *Tile) GetWalkableWeight() int {
 	if t.Index.IsUnlockedDoor() {
-		return WeightIdealPath
+		return weightIdealPath
 	}
 	if !t.IsWalkingPassable {
-		return WeightImpassable
+		return weightImpassable
 	}
 	if t.isNPCNoPenaltyWalkable() {
-		return WeightIdealPath
+		return weightIdealPath
 	}
 	if t.IsPath() {
-		return WeightPath
+		return weightPath
 	}
 	if t.Index == indexes.Grass {
-		return WeightGrass
+		return weightGrass
 	}
-	return WeightDefault
+	return weightDefault
 }
 
 func (t *Tile) IsWalkableDuringWander() bool {

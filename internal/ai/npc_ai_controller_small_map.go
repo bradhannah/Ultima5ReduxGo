@@ -128,7 +128,6 @@ func (n *NPCAIControllerSmallMap) updateAllNPCAiTypes() {
 		switch npc := mu.(type) {
 		case *map_units.NPCFriendly:
 			indiv = npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(*n.dateTime)
-
 		}
 
 		mu.MapUnitDetails().AiType = indiv.Ai
@@ -389,7 +388,6 @@ func (n *NPCAIControllerSmallMap) createFreshPathToScheduledLocation(friendly *m
 }
 
 func (n *NPCAIControllerSmallMap) wanderOneTileWithinN(muDetails *map_units.MapUnitDetails, anchorPos references2.Position, withinN int) bool {
-
 	rand.Seed(uint64(time.Now().UnixNano())) // Seed the random number generator
 
 	// Define possible moves: up, down, left, right

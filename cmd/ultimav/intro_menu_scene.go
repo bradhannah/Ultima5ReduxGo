@@ -24,7 +24,6 @@ type IntroMenuScene struct {
 }
 
 func (m *IntroMenuScene) InvalidateResolution() {
-
 }
 
 func CreateIntroMenuScene() *IntroMenuScene {

@@ -4,9 +4,11 @@ import (
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
-const smallMapStartingPositionX = 15
-const smallMapStartingPositionY = 30
-const smallMapStartingPositionFloor = 0
+const (
+	smallMapStartingPositionX     = 15
+	smallMapStartingPositionY     = 30
+	smallMapStartingPositionFloor = 0
+)
 
 func (g *GameState) EnterBuilding(slr *references2.SmallLocationReference) {
 	if slr.Location != references2.EmptyLocation {

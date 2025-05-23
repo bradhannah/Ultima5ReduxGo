@@ -87,7 +87,6 @@ func (o *Output) DrawTextRightToLeft(screen *ebiten.Image, textStr string, op *e
 }
 
 func (o *Output) AddRowStr(outputStr string) {
-
 	// Process the string line-by-line, splitting by '\n'
 	lines := splitByNewline(outputStr)
 

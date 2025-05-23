@@ -28,7 +28,6 @@ func NewTextArea(text string, placement sprites.PercentBasedPlacement) *TextArea
 }
 
 func (t *TextArea) Draw(screen *ebiten.Image) {
-
 }
 
 func (t *TextArea) SetText(text string) {

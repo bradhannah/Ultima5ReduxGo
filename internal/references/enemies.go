@@ -7,11 +7,14 @@ import (
 
 type EnemyReferences []EnemyReference
 
-const nFirstEnemyTileReferenceIndex = 320 // Sea horse
-const nFramesPerEnemy = 4
+const (
+	nFirstEnemyTileReferenceIndex = 320 // Sea horse
+	nFramesPerEnemy               = 4
+)
 
 func NewAllEnemyReferences(gameConfig *config.UltimaVConfiguration,
-	tiles *Tiles) *EnemyReferences {
+	tiles *Tiles,
+) *EnemyReferences {
 	rawEnemyReferences := newRawEnemyReferences(gameConfig)
 
 	// enemyRefs := EnemyReferences{}

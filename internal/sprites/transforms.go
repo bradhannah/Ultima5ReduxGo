@@ -47,10 +47,10 @@ func GetRectangleFromPercents(placement PercentBasedPlacement) *image.Rectangle 
 	screenRes := config.GetWindowResolutionFromEbiten()
 
 	// get the x start and end values based on the percent
-	var xLeft = float64(screenRes.X) * placement.StartPercentX
-	var xRight = float64(screenRes.X) * placement.EndPercentX
-	var yTop = float64(screenRes.Y) * placement.StartPercentY
-	var yBottom = float64(screenRes.Y) * placement.EndPercentY
+	xLeft := float64(screenRes.X) * placement.StartPercentX
+	xRight := float64(screenRes.X) * placement.EndPercentX
+	yTop := float64(screenRes.Y) * placement.StartPercentY
+	yBottom := float64(screenRes.Y) * placement.EndPercentY
 
 	return &image.Rectangle{
 		Min: image.Point{X: int(xLeft), Y: int(yTop)},
@@ -64,10 +64,10 @@ func GetDrawOptionsFromPercentsForWholeScreen(origImage *ebiten.Image, placement
 	op := &ebiten.DrawImageOptions{}
 
 	// get the x start and end values based on the percent
-	var xLeft = float64(screenRes.X) * placement.StartPercentX
-	var xRight = float64(screenRes.X) * placement.EndPercentX
-	var yTop = float64(screenRes.Y) * placement.StartPercentY
-	var yBottom = float64(screenRes.Y) * placement.EndPercentY
+	xLeft := float64(screenRes.X) * placement.StartPercentX
+	xRight := float64(screenRes.X) * placement.EndPercentX
+	yTop := float64(screenRes.Y) * placement.StartPercentY
+	yBottom := float64(screenRes.Y) * placement.EndPercentY
 
 	targetWidth := xRight - xLeft
 	originalImgWidth := origImage.Bounds().Dx()
@@ -89,9 +89,9 @@ func GetXSpriteWithPercents(rect image.Rectangle, placement PercentXBasedPlaceme
 	op := &ebiten.DrawImageOptions{}
 
 	// get the x start and end values based on the percent
-	var xLeft = float64(screenResolution.X) * placement.StartPercentX
-	var xRight = float64(screenResolution.X) * placement.EndPercentX
-	var yTop = float64(screenResolution.Y) * placement.StartPercentY
+	xLeft := float64(screenResolution.X) * placement.StartPercentX
+	xRight := float64(screenResolution.X) * placement.EndPercentX
+	yTop := float64(screenResolution.Y) * placement.StartPercentY
 
 	targetWidth := xRight - xLeft
 	originalImgWidth := rect.Bounds().Dx()
@@ -117,8 +117,8 @@ func GetYSpriteWithPercents(rect image.Rectangle, placement PercentYBasedPlaceme
 	op := &ebiten.DrawImageOptions{}
 
 	// get the x start and end values based on the percent
-	var yTop = float64(screenResolution.Y) * placement.StartPercentY
-	var yBottom = float64(screenResolution.Y) * placement.EndPercentY
+	yTop := float64(screenResolution.Y) * placement.StartPercentY
+	yBottom := float64(screenResolution.Y) * placement.EndPercentY
 
 	targetHeight := yBottom - yTop
 	originalImgHeight := rect.Bounds().Dy()
@@ -136,7 +136,6 @@ func GetYSpriteWithPercents(rect image.Rectangle, placement PercentYBasedPlaceme
 		X: int(topLeftX),
 		Y: int(yTop),
 	}
-
 }
 
 // GetTranslateXYByPercent
@@ -146,7 +145,7 @@ func GetTranslateXYByPercent(pbcp PercentBasedCenterPoint) (float64, float64) {
 	screenResolution := config.GetWindowResolutionFromEbiten()
 
 	// get the x start and end values based on the percent
-	var xLeft = float64(screenResolution.X) * pbcp.X
-	var yTop = float64(screenResolution.Y) * pbcp.Y
+	xLeft := float64(screenResolution.X) * pbcp.X
+	yTop := float64(screenResolution.Y) * pbcp.Y
 	return xLeft, yTop
 }

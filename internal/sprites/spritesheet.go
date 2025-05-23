@@ -49,7 +49,6 @@ func (s *SpriteSheet) getSpriteImageRectangle(spriteIndex indexes.SpriteIndex) i
 }
 
 func (s *SpriteSheet) GetSprite(nSprite indexes.SpriteIndex) *ebiten.Image {
-
 	if s.spriteImageCache[nSprite] == nil {
 		sprite := ebiten.NewImageFromImage(s.SpriteImage.SubImage(s.getSpriteImageRectangle(nSprite)))
 		s.spriteImageCache[nSprite] = sprite

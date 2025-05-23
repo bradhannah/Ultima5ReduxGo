@@ -14,8 +14,10 @@ const (
 	HoursPerDay    = 24
 )
 
-const hourOfSunrise = 5
-const hourOfSunset = 20
+const (
+	hourOfSunrise = 5
+	hourOfSunset  = 20
+)
 
 type TimeOfDay int
 

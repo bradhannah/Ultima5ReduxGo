@@ -13,14 +13,18 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 )
 
-const buttonListModalStartYPercent = 0.35
-const buttonSize = MediumButton
-const buttonSpacingPercent = 1.15
+const (
+	buttonListModalStartYPercent = 0.35
+	buttonSize                   = MediumButton
+	buttonSpacingPercent         = 1.15
+)
 
-const borderStartYPercent = buttonListModalStartYPercent - 0.1
-const titleStartYPercent = borderStartYPercent + 0.0455
-const fontPoint = 22
-const borderPercentEachSide = 0.125
+const (
+	borderStartYPercent   = buttonListModalStartYPercent - 0.1
+	titleStartYPercent    = borderStartYPercent + 0.0455
+	fontPoint             = 22
+	borderPercentEachSide = 0.125
+)
 
 // const buttonHeight = 0.05
 

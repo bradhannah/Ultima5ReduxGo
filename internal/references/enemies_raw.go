@@ -21,10 +21,8 @@ const (
 	nTotalEnemies = 48
 )
 
-var (
-	//go:embed data/AdditionalEnemyFlags.json
-	additionalEnemyFlagsRaw []byte
-)
+//go:embed data/AdditionalEnemyFlags.json
+var additionalEnemyFlagsRaw []byte
 
 type AdditionalEnemyFlags struct {
 	ActivelyAttacks      bool        `json:"ActivelyAttacks"`

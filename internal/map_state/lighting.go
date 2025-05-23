@@ -7,8 +7,10 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 )
 
-const TorchTileDistance = 3
-const DefaultNumberOfTurnsUntilTorchExtinguishes = 100
+const (
+	TorchTileDistance                          = 3
+	DefaultNumberOfTurnsUntilTorchExtinguishes = 100
+)
 
 type Lighting struct {
 	turnsToExtinguishTorch int
@@ -59,7 +61,8 @@ func (l *Lighting) BuildLightSourceDistanceMap(
 	lightSources LightSources,
 	visibleFlags VisibilityCoords,
 	avatarIgnitedTorch bool,
-	centerPos references.Position) DistanceMap {
+	centerPos references.Position,
+) DistanceMap {
 	distanceMaskMap := make(DistanceMap)
 
 	if avatarIgnitedTorch {
@@ -73,7 +76,6 @@ func (l *Lighting) BuildLightSourceDistanceMap(
 	}
 
 	return distanceMaskMap
-
 }
 
 func (l *Lighting) applyLightSource(

@@ -20,7 +20,6 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func main() {
-
 	go func() {
 		log.Println(http.ListenAndServe("localhost:6060", nil)) // Exposes pprof at /debug/pprof
 	}()

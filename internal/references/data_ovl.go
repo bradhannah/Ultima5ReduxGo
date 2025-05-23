@@ -6,8 +6,10 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 )
 
-const nLocationNameOffset = 0xa4d
-const nSecondOffset = 0xac1
+const (
+	nLocationNameOffset = 0xa4d
+	nSecondOffset       = 0xac1
+)
 
 type DataOvl struct {
 	LocationNames []string
@@ -50,7 +52,6 @@ func NewDataOvl(config *config.UltimaVConfiguration) *DataOvl {
 	dataOvl.LocationNames = append(dataOvl.LocationNames, secondHalf...)
 	if err != nil {
 		panic(err)
-
 	}
 	return &dataOvl
 }
