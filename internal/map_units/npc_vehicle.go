@@ -39,8 +39,12 @@ func (v *VehicleDetails) SetPartyVehicleDirection(direction references2.Directio
 	v.currentDirection = direction
 }
 
-func (v *VehicleDetails) GetSpriteIndex() indexes.SpriteIndex {
-	return v.VehicleType.GetSpriteByDirection(v.previousDirection, v.currentDirection)
+func (v *VehicleDetails) GetBoardedSpriteIndex() indexes.SpriteIndex {
+	return v.VehicleType.GetBoardedSpriteByDirection(v.previousDirection, v.currentDirection)
+}
+
+func (v *VehicleDetails) GetUnBoardedSpriteIndex() indexes.SpriteIndex {
+	return v.VehicleType.GetUnBoardedSpriteByDirection(v.currentDirection)
 }
 
 func (v *VehicleDetails) DoesMoveResultInMovement(newDirection references2.Direction) bool {

@@ -18,7 +18,22 @@ const (
 	NPC
 )
 
-func (v VehicleType) GetSpriteByDirection(previousDirection, direction Direction) indexes.SpriteIndex {
+func (v VehicleType) GetUnBoardedSpriteByDirection(direction Direction) indexes.SpriteIndex {
+	switch v {
+	case CarpetVehicle:
+		return indexes.Carpet2_MagicCarpet
+	case HorseVehicle:
+		if direction == Left || direction == Up {
+			return indexes.HorseLeft
+		}
+
+		return indexes.HorseRight
+	}
+
+	return v.GetBoardedSpriteByDirection(direction, direction)
+}
+
+func (v VehicleType) GetBoardedSpriteByDirection(previousDirection, direction Direction) indexes.SpriteIndex {
 	switch v {
 	case CarpetVehicle:
 		// note previousDirection exists only for horses and carpet because they do not have vertical

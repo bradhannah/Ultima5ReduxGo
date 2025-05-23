@@ -5,8 +5,10 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 )
 
-type MapUnits []MapUnit
-type XyOccupiedMap map[int]map[int]bool
+type (
+	MapUnits      []MapUnit
+	XyOccupiedMap map[int]map[int]bool
+)
 
 const MaximumNpcsPerMap = 32
 
@@ -66,8 +68,10 @@ func (m *MapUnits) AddVehicle(vehicle NPCFriendly) bool {
 	}
 
 	vehicle.mapUnitDetails.NPCNum = index
-	vehicle.SetPos(references2.Position{X: references2.Coordinate(vehicle.NPCReference.Schedule.X[0]),
-		Y: references2.Coordinate(vehicle.NPCReference.Schedule.Y[0])})
+	vehicle.SetPos(references2.Position{
+		X: references2.Coordinate(vehicle.NPCReference.Schedule.X[0]),
+		Y: references2.Coordinate(vehicle.NPCReference.Schedule.Y[0]),
+	})
 
 	vehicle.SetVisible(true)
 

@@ -19,19 +19,22 @@ func move(val, mapSize Coordinate, decrease, bWrap bool) Coordinate {
 		if val == 0 {
 			if bWrap {
 				return mapSize - 1
-			} else {
-				return 0
 			}
+
+			return 0
 		}
+
 		return val - 1
 	}
+
 	if val+1 >= mapSize {
 		if bWrap {
 			return 0
-		} else {
-			return val
 		}
+
+		return val
 	}
+
 	return val + 1
 }
 
@@ -114,15 +117,17 @@ func (p *Position) Equals(position *Position) bool {
 
 func (p *Position) GetWrapped(maxX, maxY Coordinate) *Position {
 	if p.X < 0 {
-		p.X = p.X + maxX
+		p.X += maxX
 	} else if p.X >= maxX {
-		p.X = p.X % maxX
+		p.X %= maxX
 	}
+
 	if p.Y < 0 {
-		p.Y = p.Y + maxY
+		p.Y += maxY
 	} else if p.Y >= maxY {
-		p.Y = p.Y % maxY
+		p.Y %= maxY
 	}
+
 	return p
 }
 
@@ -167,6 +172,7 @@ func (p *Position) IsLineOfSightClear(to Position, getTileFromPosition GetTileFr
 	if dx < 0 {
 		stepX, dx = -1, -dx
 	}
+
 	if dy < 0 {
 		stepY, dy = -1, -dy
 	}
@@ -176,12 +182,14 @@ func (p *Position) IsLineOfSightClear(to Position, getTileFromPosition GetTileFr
 	tx, ty := int(to.X), int(to.Y)
 
 	var tile *Tile
+
 	for !(x == tx && y == ty) {
 		e2 := 2 * err
 		if e2 > -dy {
 			err -= dy
 			x += stepX
 		}
+
 		if e2 < dx {
 			err += dx
 			y += stepY
@@ -190,17 +198,41 @@ func (p *Position) IsLineOfSightClear(to Position, getTileFromPosition GetTileFr
 		if x == tx && y == ty {
 			break // reached destination; we don't mind if it’s opaque
 		}
+
 		toPos := Position{
 			X: Coordinate(x),
 			Y: Coordinate(y),
 		}
 		tile = getTileFromPosition(&toPos)
+
 		if tile == nil {
 			return false
 		}
+
 		if tile.IsWindow || tile.IsWall() {
 			return false
 		}
 	}
 	return true
+}
+
+// GetDominateDirection determines the dominant directional axis (horizontal or vertical) from the
+// current position to another.
+func (p *Position) GetDominateDirection(to Position) Direction {
+	dx := int(to.X - p.X)
+	dy := int(to.Y - p.Y)
+
+	if helpers.AbsInt(dx) > helpers.AbsInt(dy) {
+		if dx < 0 {
+			return Left
+		}
+
+		return Right
+	}
+
+	if dy < 0 {
+		return Up
+	}
+
+	return Down
 }

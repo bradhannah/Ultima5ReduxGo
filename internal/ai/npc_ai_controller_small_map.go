@@ -143,6 +143,7 @@ func (n *NPCAIControllerSmallMap) placeNPCsOnLayeredMap() {
 			if !npc.IsVisible() {
 				continue
 			}
+
 			if n.mapState.PlayerLocation.Floor == mu.Floor() {
 				lm.SetTileByLayer(map_state.MapUnitLayer, mu.PosPtr(), npc.NPCReference.GetSpriteIndex())
 			}
@@ -173,10 +174,12 @@ func (n *NPCAIControllerSmallMap) calculateNextNPCPosition(friendly *map_units.N
 		}
 		// the NPC is on another floor and needs to come to ours
 		n.performAiMovementFromDifferentFloorToOurFloor(friendly)
-	} else {
-		if n.performAiMovementNotOnAssignedPosition(friendly) {
-			return
-		}
+
+		return
+	}
+
+	if n.performAiMovementNotOnAssignedPosition(friendly) {
+		return
 	}
 }
 
@@ -238,10 +241,10 @@ func (n *NPCAIControllerSmallMap) performAiMovementOnAssignedPosition(friendly *
 	switch friendly.MapUnitDetails().AiType {
 	case references2.BlackthornGuardFixed, references2.Fixed:
 	case references2.MerchantBuyingSellingCustom, references2.MerchantBuyingSellingWander, references2.Wander:
-		n.wanderOneTileWithinN(muDetails, npcSched.Position, nWanderDistance)
+		n.wanderOneTileWithinN(friendly, npcSched.Position, nWanderDistance)
 		return true
 	case references2.BigWander, references2.BlackthornGuardWander:
-		n.wanderOneTileWithinN(muDetails, npcSched.Position, nWanderDistance)
+		n.wanderOneTileWithinN(friendly, npcSched.Position, nWanderDistance)
 		return true
 	case references2.ChildRunAway:
 		return true
@@ -256,7 +259,8 @@ func (n *NPCAIControllerSmallMap) performAiMovementOnAssignedPosition(friendly *
 		return true
 	case references2.HorseWander:
 		if helpers.OneInXOdds(4) {
-			return n.wanderOneTileWithinN(muDetails, npcSched.Position, nWanderDistance)
+			//			friendly.SetDirectionBasedOnNewPos(newPos)
+			return n.wanderOneTileWithinN(friendly, npcSched.Position, nWanderDistance)
 		}
 	case references2.StoneGargoyleTrigger:
 		// if they are within 4 then change their AI to Drudgeworth (follow)
@@ -278,7 +282,7 @@ func (n *NPCAIControllerSmallMap) performAiMovementOnAssignedPosition(friendly *
 
 func (n *NPCAIControllerSmallMap) performAiMovementNotOnAssignedPosition(friendly *map_units.NPCFriendly) bool {
 	npcSched := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(*n.dateTime)
-	muDetails := friendly.MapUnitDetails()
+	// muDetails := friendly.MapUnitDetails()
 	nWanderDistance := n.getWanderDistanceByAiType(friendly.MapUnitDetails().AiType)
 
 	if n.moveNPCOnCalculatedPath(friendly) {
@@ -292,16 +296,25 @@ func (n *NPCAIControllerSmallMap) performAiMovementNotOnAssignedPosition(friendl
 			return true
 		}
 		return false
-	case references2.BigWander, references2.BlackthornGuardWander, references2.MerchantBuyingSellingCustom, references2.MerchantBuyingSellingWander, references2.Wander, references2.HorseWander:
+	case references2.BigWander,
+		references2.BlackthornGuardWander,
+		references2.MerchantBuyingSellingCustom,
+		references2.MerchantBuyingSellingWander,
+		references2.Wander,
+		references2.HorseWander:
 		if helpers.OneInXOdds(2) {
 			if !npcSched.Position.IsWithinN(friendly.PosPtr(), nWanderDistance) {
 				if n.createFreshPathToScheduledLocation(friendly) {
-					friendly.SetPos(friendly.MapUnitDetails().DequeueNextPosition())
+					newPos := friendly.MapUnitDetails().DequeueNextPosition()
+					friendly.SetPos(newPos)
+
 					return true
 				}
+
 				return false
 			}
-			return n.wanderOneTileWithinN(muDetails, npcSched.Position, nWanderDistance)
+
+			return n.wanderOneTileWithinN(friendly, npcSched.Position, nWanderDistance)
 		}
 	case references2.ChildRunAway:
 		// run away
@@ -331,7 +344,7 @@ func (n *NPCAIControllerSmallMap) performAiMovementNotOnAssignedPosition(friendl
 			return false
 		}
 		if helpers.OneInXOdds(3) {
-			return n.wanderOneTileWithinN(muDetails, npcSched.Position, nWanderDistance)
+			return n.wanderOneTileWithinN(friendly, npcSched.Position, nWanderDistance)
 		}
 		return false
 	default:
@@ -387,7 +400,7 @@ func (n *NPCAIControllerSmallMap) createFreshPathToScheduledLocation(friendly *m
 	return muDetails.HasAPathAlreadyCalculated()
 }
 
-func (n *NPCAIControllerSmallMap) wanderOneTileWithinN(muDetails *map_units.MapUnitDetails, anchorPos references2.Position, withinN int) bool {
+func (n *NPCAIControllerSmallMap) wanderOneTileWithinN(friendly *map_units.NPCFriendly, anchorPos references2.Position, withinN int) bool {
 	rand.Seed(uint64(time.Now().UnixNano())) // Seed the random number generator
 
 	// Define possible moves: up, down, left, right
@@ -402,6 +415,8 @@ func (n *NPCAIControllerSmallMap) wanderOneTileWithinN(muDetails *map_units.MapU
 	rand.Shuffle(len(directions), func(i, j int) {
 		directions[i], directions[j] = directions[j], directions[i]
 	})
+
+	muDetails := friendly.MapUnitDetails()
 
 	// Try each direction to find a valid move
 	for _, move := range directions {
@@ -425,9 +440,12 @@ func (n *NPCAIControllerSmallMap) wanderOneTileWithinN(muDetails *map_units.MapU
 		}
 
 		// Check if the new position is within N tiles of the anchorPos
-		if helpers.AbsInt(int(newPos.X-anchorPos.X)) <= withinN && helpers.AbsInt(int(newPos.Y-anchorPos.Y)) <= withinN && n.mapState.IsNPCPassable(&newPos) {
-			muDetails.Position.X = newPos.X
-			muDetails.Position.Y = newPos.Y
+		if helpers.AbsInt(int(newPos.X-anchorPos.X)) <= withinN &&
+			helpers.AbsInt(int(newPos.Y-anchorPos.Y)) <= withinN && n.mapState.IsNPCPassable(&newPos) {
+			friendly.SetPos(newPos)
+			// muDetails.Position.X = newPos.X
+			// muDetails.Position.Y = newPos.Y
+
 			return true
 		}
 	}

@@ -19,7 +19,7 @@ const (
 
 func (g *GameScene) getSmallCalculatedAvatarTileIndex(ogSpriteIndex indexes.SpriteIndex) indexes.SpriteIndex {
 	if g.gameState.PartyVehicle.GetVehicleDetails().VehicleType != references2.NoPartyVehicle {
-		return g.gameState.PartyVehicle.GetVehicleDetails().GetSpriteIndex()
+		return g.gameState.PartyVehicle.GetVehicleDetails().GetBoardedSpriteIndex()
 	}
 	return g.getCalculatedNPCTileIndex(ogSpriteIndex, indexes.Avatar_KeyIndex, g.gameState.MapState.PlayerLocation.Position)
 }
@@ -176,7 +176,7 @@ func (g *GameScene) refreshMapUnitMapTiles(pos *references2.Position, layer *map
 		// vehicles have a special direction that should be accounted for
 		vehicle := g.gameState.CurrentNPCAIController.GetNpcs().GetVehicleAtPositionOrNil(*pos)
 		if vehicle != nil {
-			tileIndex = vehicle.GetVehicleDetails().GetSpriteIndex()
+			tileIndex = vehicle.GetVehicleDetails().GetUnBoardedSpriteIndex()
 		} else {
 			tileIndex = g.getCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, *pos)
 			tileIndex = g.getCalculatedTileIndex(tileIndex, pos)

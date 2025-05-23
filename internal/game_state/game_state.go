@@ -126,7 +126,7 @@ const (
 )
 
 func (g *GameState) BoardVehicle(vehicle map_units.NPCFriendly) BoardVehicleResult {
-	var result = BoardVehicleResultSuccess
+	result := BoardVehicleResultSuccess
 
 	if vehicle.GetVehicleDetails().VehicleType == references2.FrigateVehicle {
 		if g.PartyVehicle.GetVehicleDetails().VehicleType == references2.SkiffVehicle {
