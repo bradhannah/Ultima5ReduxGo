@@ -14,7 +14,7 @@ type Position struct {
 	X, Y Coordinate
 }
 
-func move(val, mapSize Coordinate, decrease bool, bWrap bool) Coordinate {
+func move(val, mapSize Coordinate, decrease, bWrap bool) Coordinate {
 	if decrease {
 		if val == 0 {
 			if bWrap {
@@ -112,7 +112,7 @@ func (p *Position) Equals(position *Position) bool {
 	return p.X == position.X && p.Y == position.Y
 }
 
-func (p *Position) GetWrapped(maxX Coordinate, maxY Coordinate) *Position {
+func (p *Position) GetWrapped(maxX, maxY Coordinate) *Position {
 	if p.X < 0 {
 		p.X = p.X + maxX
 	} else if p.X >= maxX {

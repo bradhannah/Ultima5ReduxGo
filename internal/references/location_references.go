@@ -43,7 +43,7 @@ func newSingleMapReferences(config *config.UltimaVConfiguration, dataOvl *DataOv
 	return smr
 }
 
-func (s *LocationReferences) addLocation(location Location, bHasBasement bool, nFloors int, nOffset int) int {
+func (s *LocationReferences) addLocation(location Location, bHasBasement bool, nFloors, nOffset int) int {
 	maps := make(map[int]*SmallLocationReference)
 	// get the file
 	mapFileAndPath := path.Join(s.config.SavedConfigData.DataFilePath, getSmallMapFile(getMapMasterFromLocation(location)))

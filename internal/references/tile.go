@@ -106,18 +106,23 @@ func (t *Tile) GetWalkableWeight() int {
 	if t.Index.IsUnlockedDoor() {
 		return weightIdealPath
 	}
+
 	if !t.IsWalkingPassable {
 		return weightImpassable
 	}
+
 	if t.isNPCNoPenaltyWalkable() {
 		return weightIdealPath
 	}
+
 	if t.IsPath() {
 		return weightPath
 	}
+
 	if t.Index == indexes.Grass {
 		return weightGrass
 	}
+
 	return weightDefault
 }
 

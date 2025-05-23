@@ -17,13 +17,15 @@ const (
 	LadderOrStairDown
 )
 
-func GetLadderOfStairsType(currentFloor FloorNumber, targetFloor FloorNumber) LadderOrStairType {
+func GetLadderOfStairsType(currentFloor, targetFloor FloorNumber) LadderOrStairType {
 	if currentFloor == targetFloor {
 		return NotLadderOrStair
 	}
+
 	if targetFloor > currentFloor {
 		return LadderOrStairUp
 	}
+
 	return LadderOrStairDown
 }
 

@@ -24,7 +24,7 @@ type Output struct {
 	maxCharsPerLine int
 }
 
-func NewOutput(font *UltimaFont, lineSpacing float64, maxLines int, maxCharsPerLine int) *Output {
+func NewOutput(font *UltimaFont, lineSpacing float64, maxLines, maxCharsPerLine int) *Output {
 	output := &Output{}
 	output.Font = font
 	output.lineSpacing = lineSpacing
@@ -152,7 +152,7 @@ func (o *Output) DrawRightSideOutput(screen *ebiten.Image) {
 	o.DrawText(screen, o.GetOutputStr(true), op)
 }
 
-func (o *Output) DrawContinuousOutputTexOnXy(screen *ebiten.Image, point image.Point, bShowEmptyNewLines bool, horizAlign text.Align, vertAlign text.Align) {
+func (o *Output) DrawContinuousOutputTexOnXy(screen *ebiten.Image, point image.Point, bShowEmptyNewLines bool, horizAlign, vertAlign text.Align) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(float64(point.X), float64(point.Y))
 

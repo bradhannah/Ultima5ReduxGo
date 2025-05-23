@@ -275,7 +275,7 @@ func (l *LayeredMap) GetTileByLayer(layer LayerType, position *references2.Posit
 	return l.tileRefs.GetTile(l.layers[layer][position.X][position.Y])
 }
 
-func (l *LayeredMap) SwapTiles(pos1 *references2.Position, pos2 *references2.Position) {
+func (l *LayeredMap) SwapTiles(pos1, pos2 *references2.Position) {
 	tile1 := l.GetTileTopMapOnlyTile(pos1)
 	tile2 := l.GetTileTopMapOnlyTile(pos2)
 	l.SetTileByLayer(MapLayer, pos1, tile2.Index)

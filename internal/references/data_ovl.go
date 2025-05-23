@@ -15,7 +15,7 @@ type DataOvl struct {
 	LocationNames []string
 }
 
-func readNullTerminatedStrings(data *[]byte, offset int, n int) ([]string, error) {
+func readNullTerminatedStrings(data *[]byte, offset, n int) ([]string, error) {
 	var result []string
 	start := offset
 	for i := 0; i < n; i++ {

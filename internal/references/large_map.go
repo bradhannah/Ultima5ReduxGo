@@ -48,7 +48,7 @@ func NewLargeMapReference(gameConfig *config.UltimaVConfiguration, world World) 
 	}
 }
 
-func (m *LargeMapReference) GetSpriteIndex(x Coordinate, y Coordinate) indexes.SpriteIndex {
+func (m *LargeMapReference) GetSpriteIndex(x, y Coordinate) indexes.SpriteIndex {
 	pos := Position{X: x, Y: y}
 	wrappedPos := pos.GetWrapped(XLargeMapTiles, YLargeMapTiles)
 

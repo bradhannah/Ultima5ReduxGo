@@ -24,7 +24,7 @@ func (g *GameScene) getSmallCalculatedAvatarTileIndex(ogSpriteIndex indexes.Spri
 	return g.getSmallCalculatedNPCTileIndex(ogSpriteIndex, indexes.Avatar_KeyIndex, g.gameState.MapState.PlayerLocation.Position)
 }
 
-func (g *GameScene) getSmallCalculatedNPCTileIndex(ogSpriteIndex indexes.SpriteIndex, npcIndex indexes.SpriteIndex, spritePosition references2.Position) indexes.SpriteIndex {
+func (g *GameScene) getSmallCalculatedNPCTileIndex(ogSpriteIndex, npcIndex indexes.SpriteIndex, spritePosition references2.Position) indexes.SpriteIndex {
 	switch ogSpriteIndex {
 	case indexes.LeftBed:
 		return indexes.AvatarSleepingInBed

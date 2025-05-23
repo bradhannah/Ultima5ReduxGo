@@ -14,7 +14,7 @@ func (v *VisibilityCoords) ResetVisibilityCoords(bDefault bool) {
 	}
 }
 
-func (v *VisibilityCoords) SetVisibilityCoordsRectangle(topLeft *references.Position, bottomRight *references.Position, xMax references.Coordinate, yMax references.Coordinate, bWrap bool) {
+func (v *VisibilityCoords) SetVisibilityCoordsRectangle(topLeft, bottomRight *references.Position, xMax, yMax references.Coordinate, bWrap bool) {
 	for x := topLeft.X; x < bottomRight.X; x++ {
 		for y := topLeft.Y; y < bottomRight.Y; y++ {
 			if bWrap {

@@ -18,7 +18,7 @@ const (
 	NPC
 )
 
-func (v VehicleType) GetSpriteByDirection(previousDirection Direction, direction Direction) indexes.SpriteIndex {
+func (v VehicleType) GetSpriteByDirection(previousDirection, direction Direction) indexes.SpriteIndex {
 	switch v {
 	case CarpetVehicle:
 		// note previousDirection exists only for horses and carpet because they do not have vertical
@@ -63,7 +63,7 @@ func (v VehicleType) GetSpriteByDirection(previousDirection Direction, direction
 	}
 }
 
-func (v VehicleType) RequiresNewSprite(currentDirection Direction, newDirection Direction) bool {
+func (v VehicleType) RequiresNewSprite(currentDirection, newDirection Direction) bool {
 	switch v {
 	case CarpetVehicle, HorseVehicle:
 		if currentDirection == Up || currentDirection == Down || currentDirection == newDirection {

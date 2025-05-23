@@ -141,7 +141,7 @@ func (g *GameState) LoadLegacySaveGame(savedGamFilePath string, gameRefs *refere
 	return nil
 }
 
-func getBytesAsUint16(data0 byte, data1 byte) uint16 {
+func getBytesAsUint16(data0, data1 byte) uint16 {
 	res := uint16(data0) | (uint16(data1) << 8)
 	return res
 }

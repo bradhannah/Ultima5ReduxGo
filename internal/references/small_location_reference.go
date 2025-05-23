@@ -161,7 +161,7 @@ func (s *SmallLocationReference) GetNPCReferences() *[]NPCReference {
 	return s.npcRefs
 }
 
-func (s *SmallLocationReference) GetClosestLadder(npcCurrentPosition Position, nCurrentFloor FloorNumber, nTargetFloor FloorNumber) Position {
+func (s *SmallLocationReference) GetClosestLadder(npcCurrentPosition Position, nCurrentFloor, nTargetFloor FloorNumber) Position {
 	ladderOrStairType := LadderOrStairDown
 	if nCurrentFloor < nTargetFloor {
 		ladderOrStairType = LadderOrStairUp

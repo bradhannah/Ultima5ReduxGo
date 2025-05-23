@@ -32,7 +32,7 @@ func AbsInt(a int) int {
 	return a
 }
 
-func IsOfTypeInterface(inst interface{}, iface interface{}) bool {
+func IsOfTypeInterface(inst, iface interface{}) bool {
 	instType := reflect.TypeOf(inst)
 	ifaceType := reflect.TypeOf(&iface).Elem() // .Elem() to get the interface type
 

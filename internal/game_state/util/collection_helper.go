@@ -9,7 +9,7 @@ func FindIndexFromSliceT[T comparable](arr []T, target T) int {
 	return -1
 }
 
-func FindKeyByValueT[K comparable, V comparable](data map[K]V, value V) (K, bool) {
+func FindKeyByValueT[K, V comparable](data map[K]V, value V) (K, bool) {
 	for key, v := range data {
 		if v == value {
 			return key, true

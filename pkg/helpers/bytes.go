@@ -1,6 +1,6 @@
 package helpers
 
-func GetAsBitmapBoolList(data []byte, start int, length int) []bool {
+func GetAsBitmapBoolList(data []byte, start, length int) []bool {
 	const bitsPerByte = 8
 	boolList := make([]bool, 0, length*bitsPerByte)
 
