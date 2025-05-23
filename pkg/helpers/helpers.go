@@ -86,3 +86,7 @@ func FilterFromSlice[T any](s []T, keep func(T) bool) []T {
 func RoundUp(f float32) int {
 	return int(f + 0.5)
 }
+
+func Delete[T any](s []T, i int) []T {
+	return append(s[:i], s[i+1:]...)
+}

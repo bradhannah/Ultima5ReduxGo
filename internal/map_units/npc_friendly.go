@@ -4,6 +4,8 @@ import (
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
+// NPCFriendly is a friendly NPC that is not a player character
+// It is used to represent NPCS who are either inanimate objects (ex. carpet) or non-combative NPCS
 type NPCFriendly struct {
 	NPCReference   references2.NPCReference
 	mapUnitDetails MapUnitDetails
@@ -12,7 +14,8 @@ type NPCFriendly struct {
 }
 
 func NewNPCFriendly(npcReference references2.NPCReference, npcNum int) *NPCFriendly {
-	friendly := NPCFriendly{}
+	var friendly NPCFriendly
+	// friendly := NPCFriendly{}
 	friendly.NPCReference = npcReference
 	friendly.mapUnitDetails.NPCNum = npcNum
 
@@ -27,15 +30,9 @@ func NewNPCFriendly(npcReference references2.NPCReference, npcNum int) *NPCFrien
 }
 
 func NewNPCFriendlyVehicle(vehicleType references2.VehicleType, npcRef references2.NPCReference) *NPCFriendly {
-	// npcReference := references.NewNPCReferenceForVehicle(vehicleType, references.Position{X: 15, Y: 15}, 0)
 	friendly := NewNPCFriendly(npcRef, int(npcRef.DialogNumber))
 
-	friendly.vehicleDetails = VehicleDetails{
-		currentDirection:  references2.NoneDirection,
-		previousDirection: references2.NoneDirection,
-		VehicleType:       vehicleType,
-		SkiffQuantity:     0,
-	}
+	friendly.vehicleDetails = NewVehicleDetails(vehicleType)
 	friendly.SetFloor(references2.FloorNumber(npcRef.Schedule.Floor[0]))
 	friendly.SetVisible(true)
 
@@ -44,6 +41,7 @@ func NewNPCFriendlyVehicle(vehicleType references2.VehicleType, npcRef reference
 
 func NewNPCFriendlyVehiceNewRef(vehicletype references2.VehicleType, pos references2.Position, floor references2.FloorNumber) *NPCFriendly {
 	npcRef := references2.NewNPCReferenceForVehicle(vehicletype, pos, floor)
+
 	return NewNPCFriendlyVehicle(vehicletype, *npcRef)
 }
 

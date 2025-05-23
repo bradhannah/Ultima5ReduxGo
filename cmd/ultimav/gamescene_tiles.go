@@ -21,10 +21,10 @@ func (g *GameScene) getSmallCalculatedAvatarTileIndex(ogSpriteIndex indexes.Spri
 	if g.gameState.PartyVehicle.GetVehicleDetails().VehicleType != references2.NoPartyVehicle {
 		return g.gameState.PartyVehicle.GetVehicleDetails().GetSpriteIndex()
 	}
-	return g.getSmallCalculatedNPCTileIndex(ogSpriteIndex, indexes.Avatar_KeyIndex, g.gameState.MapState.PlayerLocation.Position)
+	return g.getCalculatedNPCTileIndex(ogSpriteIndex, indexes.Avatar_KeyIndex, g.gameState.MapState.PlayerLocation.Position)
 }
 
-func (g *GameScene) getSmallCalculatedNPCTileIndex(ogSpriteIndex, npcIndex indexes.SpriteIndex, spritePosition references2.Position) indexes.SpriteIndex {
+func (g *GameScene) getCalculatedNPCTileIndex(ogSpriteIndex, npcIndex indexes.SpriteIndex, spritePosition references2.Position) indexes.SpriteIndex {
 	switch ogSpriteIndex {
 	case indexes.LeftBed:
 		return indexes.AvatarSleepingInBed
@@ -40,7 +40,7 @@ func (g *GameScene) getSmallCalculatedNPCTileIndex(ogSpriteIndex, npcIndex index
 	return npcIndex
 }
 
-func (g *GameScene) getSmallCalculatedTileIndex(ogSpriteIndex indexes.SpriteIndex, pos *references2.Position) indexes.SpriteIndex {
+func (g *GameScene) getCalculatedTileIndex(ogSpriteIndex indexes.SpriteIndex, pos *references2.Position) indexes.SpriteIndex {
 	switch ogSpriteIndex {
 	case indexes.Mirror:
 		// is avatar in front of it
@@ -136,6 +136,7 @@ func (g *GameScene) refreshProvisionsAndEquipmentMapTiles(pos *references2.Posit
 	if item == nil {
 		log.Fatal("Unexpected: item should exist since we checked ahead of it")
 	}
+
 	tileIndex := g.gameReferences.InventoryItemReferences.GetReferenceByItem(item.Item).ItemSprite
 
 	layer.SetTileByLayer(map_state.EquipmentAndProvisionsLayer, pos, tileIndex)
@@ -155,22 +156,36 @@ func (g *GameScene) getTileVisibilityIndexByPosition(pos *references2.Position) 
 func (g *GameScene) refreshMapUnitMapTiles(pos *references2.Position, layer *map_state.LayeredMap, do *ebiten.DrawImageOptions) {
 	mapUnitTile := layer.GetTileByLayer(map_state.MapUnitLayer, pos)
 	underTile := layer.GetTileTopMapOnlyTile(pos)
+
 	if mapUnitTile == nil || mapUnitTile.Index == 0 {
 		mapUnitTile = layer.GetTileByLayer(map_state.EquipmentAndProvisionsLayer, pos)
 		if mapUnitTile != nil && mapUnitTile.Index >= 512 {
 			log.Fatalf("Unepexted tile index for map unit = %d", mapUnitTile.Index)
 		}
+
 		if mapUnitTile == nil || mapUnitTile.Index == indexes.NoSprites {
 			return
 		}
 	}
+
 	var tileIndex indexes.SpriteIndex
-	if layer.IsPositionVisible(pos, g.gameState.DateTime, g.gameState.MapState.PlayerLocation.Floor < 0) && g.getTileVisibilityIndexByPosition(pos) > 0 {
-		tileIndex = g.getSmallCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, *pos)
-		tileIndex = g.getSmallCalculatedTileIndex(tileIndex, pos)
+
+	if layer.IsPositionVisible(pos, g.gameState.DateTime, g.gameState.MapState.PlayerLocation.Floor < 0) &&
+		g.getTileVisibilityIndexByPosition(pos) > 0 {
+
+		// vehicles have a special direction that should be accounted for
+		vehicle := g.gameState.CurrentNPCAIController.GetNpcs().GetVehicleAtPositionOrNil(*pos)
+		if vehicle != nil {
+			tileIndex = vehicle.GetVehicleDetails().GetSpriteIndex()
+		} else {
+			tileIndex = g.getCalculatedNPCTileIndex(underTile.Index, mapUnitTile.Index, *pos)
+			tileIndex = g.getCalculatedTileIndex(tileIndex, pos)
+		}
+
 		if mapUnitTile != nil && mapUnitTile.Index >= 512 {
 			log.Fatalf("Unexpected map unit index = %d", mapUnitTile.Index)
 		}
+
 		if tileIndex != indexes.NoSprites {
 			g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(tileIndex), do)
 		}
@@ -199,7 +214,7 @@ func (g *GameScene) refreshStaticMapTiles(pos *references2.Position, mapLayer *m
 	}
 
 	// get from the reference
-	spriteIndex = g.getSmallCalculatedTileIndex(spriteIndex, pos)
+	spriteIndex = g.getCalculatedTileIndex(spriteIndex, pos)
 
 	g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(spriteIndex), do)
 }
@@ -228,6 +243,7 @@ func (g *GameScene) refreshAllMapLayerTiles() {
 		for y = 0; y < yTilesVisibleOnGameScreen; y++ {
 			pos.X = x + g.gameState.MapState.PlayerLocation.Position.X - xCenter
 			pos.Y = y + g.gameState.MapState.PlayerLocation.Position.Y - yCenter
+
 			if mapType == references2.LargeMapType {
 				pos = pos.GetWrapped(references2.XLargeMapTiles, references2.YLargeMapTiles)
 			}
@@ -236,12 +252,14 @@ func (g *GameScene) refreshAllMapLayerTiles() {
 			g.refreshSpecialTileOverrideExceptions(pos, layer)
 			g.refreshProvisionsAndEquipmentMapTiles(pos, layer)
 			g.refreshStaticMapTiles(pos, layer, &do)
+
 			if g.gameState.MapState.PlayerLocation.Position.Equals(pos) {
 				avatarPos = *pos
 
 				avatarDo = ebiten.DrawImageOptions{}
 				avatarDo.GeoM.Translate(float64(x*sprites.TileSize), float64(y*sprites.TileSize))
 			}
+
 			g.refreshMapUnitMapTiles(pos, layer, &do)
 			do.GeoM.Reset()
 		}

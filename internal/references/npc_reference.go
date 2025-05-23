@@ -117,7 +117,7 @@ func NewNPCReferenceForVehicle(vehicle VehicleType, position Position, floorNumb
 	npcRef := &NPCReference{}
 	npcRef.Position = position
 	npcRef.npcType = Vehicle
-	npcRef.SetKeyIndex(vehicle.GetSpriteByDirection(NoneDirection, NoneDirection))
+	npcRef.SetKeyIndex(vehicle.GetSpriteByDirection(Right, Right))
 	npcRef.Schedule = CreateNPCScheduledFixedOneLocation(position, floorNumber)
 	return npcRef
 }

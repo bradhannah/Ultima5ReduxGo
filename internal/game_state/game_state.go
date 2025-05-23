@@ -117,14 +117,33 @@ func (g *GameState) GetDrawBridgeWaterByTime(origIndex indexes.SpriteIndex) inde
 	return origIndex
 }
 
-func (g *GameState) BoardVehicle(vehicle map_units.NPCFriendly) bool {
+type BoardVehicleResult int
+
+const (
+	BoardVehicleResultSuccess BoardVehicleResult = iota
+	BoardVehicleResultNoVehicle
+	BoardVehicleResultNoSkiffs
+)
+
+func (g *GameState) BoardVehicle(vehicle map_units.NPCFriendly) BoardVehicleResult {
+	var result = BoardVehicleResultSuccess
+
+	if vehicle.GetVehicleDetails().VehicleType == references2.FrigateVehicle {
+		if g.PartyVehicle.GetVehicleDetails().VehicleType == references2.SkiffVehicle {
+			vehicle.GetVehicleDetails().IncrementSkiffQuantity()
+		} else {
+			result = BoardVehicleResultNoSkiffs
+		}
+	}
+
 	g.PartyVehicle = vehicle
 
 	if !g.CurrentNPCAIController.GetNpcs().RemoveNPCAtPosition(g.MapState.PlayerLocation.Position) {
-		log.Fatalf("Unexpected - tried to remove NPC at position X=%d,Y=%d but failed", g.MapState.PlayerLocation.Position.X, g.MapState.PlayerLocation.Position.Y)
+		log.Fatalf("Unexpected - tried to remove NPC at position X=%d,Y=%d but failed",
+			g.MapState.PlayerLocation.Position.X, g.MapState.PlayerLocation.Position.Y)
 	}
 
-	return true
+	return result
 }
 
 func (g *GameState) GetTilesVisibleOnScreen() (int, int) {

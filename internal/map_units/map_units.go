@@ -2,9 +2,11 @@ package map_units
 
 import (
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 )
 
 type MapUnits []MapUnit
+type XyOccupiedMap map[int]map[int]bool
 
 const MaximumNpcsPerMap = 32
 
@@ -17,15 +19,17 @@ func (m *MapUnits) getNextAvailableNPCIndexNumber() int {
 }
 
 func (m *MapUnits) RemoveNPCAtPosition(position references2.Position) bool {
-	// TODO: this doesn't really remove them correctly... I think we don't have to care too much
-	// about their position in the slice as long as we have the index recorded at the time of
-	// reading in the NPC reference data
-	for _, mu := range *m {
+	// NOTE: the deletion could cause indexing issues - but shouldn't
+	for i, mu := range *m {
 		if mu.Pos() == position {
 			mu.SetVisible(false)
+
+			*m = helpers.Delete(*m, i)
+
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -35,6 +39,7 @@ func (m *MapUnits) GetMapUnitAtPositionOrNil(pos references2.Position) *MapUnit 
 			return &mu
 		}
 	}
+
 	return nil
 }
 
@@ -50,6 +55,7 @@ func (m *MapUnits) GetVehicleAtPositionOrNil(pos references2.Position) *NPCFrien
 			return friendly
 		}
 	}
+
 	return nil
 }
 
@@ -60,7 +66,8 @@ func (m *MapUnits) AddVehicle(vehicle NPCFriendly) bool {
 	}
 
 	vehicle.mapUnitDetails.NPCNum = index
-	vehicle.SetPos(references2.Position{X: references2.Coordinate(vehicle.NPCReference.Schedule.X[0]), Y: references2.Coordinate(vehicle.NPCReference.Schedule.Y[0])})
+	vehicle.SetPos(references2.Position{X: references2.Coordinate(vehicle.NPCReference.Schedule.X[0]),
+		Y: references2.Coordinate(vehicle.NPCReference.Schedule.Y[0])})
 
 	vehicle.SetVisible(true)
 
@@ -84,13 +91,3 @@ func (m *MapUnits) CreateFreshXyOccupiedMap() *XyOccupiedMap {
 	}
 	return &xy
 }
-
-// func As[T interface{ IsEmptyMapUnit() bool }](mu MapUnit) (T, bool) {
-// 	if v, ok := mu.(T); ok && !v.IsEmptyMapUnit() {
-// 		return v, true
-// 	}
-// 	var zero T
-// 	return zero, false
-// }
-
-type XyOccupiedMap map[int]map[int]bool

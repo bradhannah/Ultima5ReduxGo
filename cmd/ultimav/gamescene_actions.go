@@ -1,36 +1,29 @@
 package main
 
 import (
-	"log"
-
+	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 func (g *GameScene) actionBoard() {
-	vehicle := g.gameState.CurrentNPCAIController.GetNpcs().GetVehicleAtPositionOrNil(g.gameState.MapState.PlayerLocation.Position)
+	vehicle := g.gameState.CurrentNPCAIController.GetNpcs().GetVehicleAtPositionOrNil(
+		g.gameState.MapState.PlayerLocation.Position)
+
 	if vehicle == nil {
 		g.output.AddRowStr("Board what?")
+
 		return
 	}
 
-	// if frigate under, in skiff, add to skiff, board ship, delete skiff
-
-	if !g.gameState.CurrentNPCAIController.GetNpcs().RemoveNPCAtPosition(g.gameState.MapState.PlayerLocation.Position) {
-		log.Fatalf("Unexpected - tried to remove NPC at position X=%d,Y=%d but failed", g.gameState.MapState.PlayerLocation.Position.X, g.gameState.MapState.PlayerLocation.Position.Y)
+	switch g.gameState.BoardVehicle(*vehicle) {
+	case game_state.BoardVehicleResultSuccess:
+		g.output.AddRowStr(vehicle.GetVehicleDetails().VehicleType.GetBoardString())
+	case game_state.BoardVehicleResultNoVehicle:
+		g.output.AddRowStr("Board what?")
+	case game_state.BoardVehicleResultNoSkiffs:
+		g.output.AddRowStr(vehicle.GetVehicleDetails().VehicleType.GetBoardString())
+		g.output.AddRowStr("WARNING: NO SKIFFS ON BOARD!")
 	}
-	// have you already boarded something else?
-	// I think it shouldn't matter because you shouldn't be allowed on a tile if you have boarded something
-	// unless you are a skiff on a frigate
-
-	if !g.gameState.BoardVehicle(*vehicle) {
-		return
-	}
-
-	g.output.AddRowStr(vehicle.GetVehicleDetails().VehicleType.GetBoardString())
-
-	// we are boarded...
-	return
-	// return vehicle
 }
 
 func (g *GameScene) actionExit() {
@@ -38,6 +31,7 @@ func (g *GameScene) actionExit() {
 
 	if exittedVehicle == nil || exittedVehicle.GetVehicleDetails().VehicleType == references.NoPartyVehicle {
 		g.output.AddRowStr("X-it what?")
+
 		return
 	}
 

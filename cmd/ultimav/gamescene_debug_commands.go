@@ -247,6 +247,7 @@ func (d *DebugConsole) createGoSmall() *grammar.TextCommand {
 func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
 	docks := references2.GetListOfAllLocationsWithDocksAsString()
 	docks = append(docks, "avatar")
+
 	return grammar.NewTextCommand([]grammar.Match{
 		grammar.MatchString{
 			Str:           "buyboat",
@@ -254,23 +255,27 @@ func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
 			CaseSensitive: false,
 		},
 		grammar.MatchStringList{
-			Strings:       []string{"frigate", "skiff"},
-			Description:   "Type of boat",
-			CaseSensitive: false,
+			Strings:              []string{"frigate", "skiff"},
+			Description:          "Type of boat",
+			CaseSensitive:        false,
+			SingleCharacterInput: false,
 		},
 		grammar.MatchStringList{
-			Strings:       docks,
-			Description:   "Small map locations with docks",
-			CaseSensitive: false,
+			Strings:              docks,
+			Description:          "Small map locations with docks",
+			CaseSensitive:        false,
+			SingleCharacterInput: false,
 		},
 	},
-		func(s string, command *grammar.TextCommand) {
+		func(_ string, command *grammar.TextCommand) {
+			var dockPos references2.Position
+			var dockFloor references2.FloorNumber //nolint:wsl
+
 			outputStr := strings.ToLower(d.TextInput.GetText())
 			boatType := command.GetIndexAsString(1, outputStr)
 			locationStr := command.GetIndexAsString(2, outputStr)
 			slr := d.gameScene.gameReferences.LocationReferences.GetSmallLocationReference(locationStr)
-			var dockPos references2.Position
-			var dockFloor references2.FloorNumber
+
 			if slr == nil {
 				d.dumpQuickState("avatar")
 				dockPos = d.gameScene.gameState.MapState.PlayerLocation.Position
@@ -295,9 +300,12 @@ func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
 					dockFloor,
 				))
 			}
+
 			boat.NPCReference.Schedule.OverrideAllPositions(byte(dockPos.X), byte(dockPos.Y))
+			boat.GetVehicleDetails().SetSkiffQuantity(1)
 
 			bAddedVehicle := d.gameScene.gameState.LargeMapNPCAIController[references2.OVERWORLD].GetNpcs().AddVehicle(boat)
+			d.gameScene.gameState.FinishTurn()
 
 			if !bAddedVehicle {
 				d.dumpQuickState("Unable to add vehicle.")
@@ -314,7 +322,7 @@ func (d *DebugConsole) createResolutionUp() *grammar.TextCommand {
 			CaseSensitive: false,
 		},
 	},
-		func(s string, command *grammar.TextCommand) {
+		func(_ string, _ *grammar.TextCommand) {
 			d.gameScene.gameConfig.IncrementHigherResolution()
 			res := d.gameScene.gameConfig.GetCurrentTrackedWindowResolution()
 			d.dumpQuickState(fmt.Sprintf("New Resolution: %dx%d", res.X, res.Y))
