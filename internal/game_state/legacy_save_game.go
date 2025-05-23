@@ -82,6 +82,7 @@ func (g *GameState) LoadLegacySaveGameFromBytes(rawSaveData []byte) error {
 	const lbGems = 0x207
 	const lbTorches = 0x208
 	const lbSkullKeys = 0x20B
+
 	g.PartyState.Inventory.Provisions.Food = getUint16(&rawSaveData, lsFood)
 	g.PartyState.Inventory.Provisions.Gems = rawSaveData[lbGems]
 	g.PartyState.Inventory.Provisions.Torches = rawSaveData[lbTorches]
@@ -131,19 +132,8 @@ func (g *GameState) LoadLegacySaveGameFromBytes(rawSaveData []byte) error {
 		MonsterGen: true,
 	}
 
-	// g.Lighting = map_state.NewLighting(g)
-
 	return nil
 }
-
-//func (g *GameState) LoadLegacySaveGame(savedGamFilePath string) error {
-//	// Open the file in read-only mode and as binary
-//	rawSaveGameBytesFromDisk, err := g.getLegacySavedGamRaw(savedGamFilePath)
-//	if err != nil {
-//		return err
-//	}
-//	return g.LoadLegacySaveGameFromBytes(rawSaveGameBytesFromDisk)
-//}
 
 func getBytesAsUint16(data0, data1 byte) uint16 {
 	res := uint16(data0) | (uint16(data1) << 8)

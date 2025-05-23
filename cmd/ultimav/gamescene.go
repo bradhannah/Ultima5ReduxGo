@@ -88,6 +88,7 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	// load the files man
 	var err error
 	gameScene.gameReferences, err = references2.NewGameReferences(gameConfig)
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -115,6 +116,7 @@ func (g *GameScene) initializeResizeableVisualElements() {
 
 	g.initializeBorders()
 	g.ultimaFont = text.NewUltimaFont(text.GetScaledNumberToResolution(defaultOutputFontPoint))
+
 	if g.output == nil {
 		g.output = text.NewOutput(
 			g.ultimaFont,
@@ -159,9 +161,12 @@ func (g *GameScene) IsDebugDialogOpen() bool {
 func (g *GameScene) ToggleDebug() {
 	if !g.IsDebugDialogOpen() {
 		g.dialogStack.PushModalDialog(g.debugConsole)
+
 		return
 	}
+
 	nIndex := g.dialogStack.GetIndexOfDialogType((*DebugConsole)(nil))
+
 	if nIndex == -1 {
 		log.Fatal("Unexpected - should find debug dialog index")
 	}

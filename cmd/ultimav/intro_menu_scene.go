@@ -65,9 +65,11 @@ func (m *IntroMenuScene) Update(game *Game) error {
 	if pressedKey == nil {
 		return nil
 	}
+
 	if !m.keyboard.TryToRegisterKeyPress(*pressedKey) {
 		return nil
 	}
+
 	if ebiten.IsKeyPressed(ebiten.KeyEnter) {
 		// Replace this with code to switch to the game scene
 		fmt.Println("Switching to Game Scene")
