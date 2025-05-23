@@ -34,6 +34,7 @@ type GameDimensions interface {
 	IsWrappedMap() bool
 }
 
+// LayeredMap represents a map broken into separate layers. These layers are essentially "floors"
 type LayeredMap struct {
 	layers [totalLayers]Layer
 
@@ -41,7 +42,6 @@ type LayeredMap struct {
 	testForVisibilityMap    VisibilityCoords
 	primaryDistanceMaskMap  DistanceMap
 	lightSourcesDistanceMap DistanceMap
-	// lighting *Lighting
 
 	tileRefs *references2.Tiles
 
@@ -52,14 +52,21 @@ type LayeredMap struct {
 	bWrappingMap bool
 }
 
-func newLayeredMap(xMax references2.Coordinate, yMax references2.Coordinate, tileRefs *references2.Tiles, xVisibleTiles int, yVisibleTiles int, bWrappingMap bool) *LayeredMap {
-	layeredMap := LayeredMap{}
-	layeredMap.xVisibleTiles = xVisibleTiles
-	layeredMap.yVisibleTiles = yVisibleTiles
-	layeredMap.XMaxTilesPerMap = xMax
-	layeredMap.YMaxTilesPerMap = yMax
-	layeredMap.bWrappingMap = bWrappingMap
-	layeredMap.tileRefs = tileRefs
+func newLayeredMap(xMax references2.Coordinate,
+	yMax references2.Coordinate,
+	tileRefs *references2.Tiles,
+	xVisibleTiles int,
+	yVisibleTiles int,
+	bWrappingMap bool) *LayeredMap { //nolint:exhaustruct
+
+	layeredMap := LayeredMap{ //nolint:exhaustruct
+		xVisibleTiles:   xVisibleTiles,
+		yVisibleTiles:   yVisibleTiles,
+		XMaxTilesPerMap: xMax,
+		YMaxTilesPerMap: yMax,
+		bWrappingMap:    bWrappingMap,
+		tileRefs:        tileRefs,
+	}
 
 	for mapLayer := range layeredMap.layers {
 		layeredMap.visibleFlags = make(map[references2.Coordinate]map[references2.Coordinate]bool)
@@ -87,7 +94,13 @@ func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references2.Position, lig
 
 	// TODO: it's lazy to make both of these calls since it could do in one pass
 	l.testForVisibilityMap.ResetVisibilityCoords(false)
-	l.testForVisibilityMap.SetVisibilityCoordsRectangle(&l.TopLeft, &l.BottomRight, l.XMaxTilesPerMap, l.YMaxTilesPerMap, l.bWrappingMap)
+	l.testForVisibilityMap.SetVisibilityCoordsRectangle(
+		&l.TopLeft,
+		&l.BottomRight,
+		l.XMaxTilesPerMap,
+		l.YMaxTilesPerMap,
+		l.bWrappingMap,
+	)
 	l.visibleFlags.ResetVisibilityCoords(false)
 
 	l.SetVisible(true, &avatarPos)
@@ -100,10 +113,10 @@ func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references2.Position, lig
 	l.floodFillIfInside(avatarPos.GetPositionDown(), true)
 	l.floodFillIfInside(avatarPos.GetPositionUp(), true)
 
-	// get full game screen lighting map
+	// get a full game screen lighting map
 	l.primaryDistanceMaskMap = lighting.BuildGameScreenDistanceMap(avatarPos)
 
-	// get lighting sources and overlay them of light map
+	// get lighting sources and overlay them of a light map
 	lightSources := l.getAllLightSourcesInRange(avatarPos)
 	l.lightSourcesDistanceMap = lighting.BuildLightSourceDistanceMap(lightSources,
 		l.visibleFlags,
@@ -112,31 +125,28 @@ func (l *LayeredMap) RecalculateVisibleTiles(avatarPos references2.Position, lig
 	)
 }
 
-type LightSource struct {
-	Tile *references2.Tile
-	Pos  references2.Position
-}
-type LightSources []LightSource
-
 func (l *LayeredMap) getAllLightSourcesInRange(centerPosition references2.Position) LightSources {
-	ls := make(LightSources, 0)
+	lightSources := make(LightSources, 0)
 
 	for dX := -l.XMaxTilesPerMap; dX < l.XMaxTilesPerMap; dX++ {
 		for dY := -l.YMaxTilesPerMap; dY < l.YMaxTilesPerMap; dY++ {
 			pos := references2.Position{X: centerPosition.X + dX, Y: centerPosition.Y + dY}
+
 			tile := l.GetTileTopMapOnlyTile(&pos)
 			if tile == nil {
 				continue
 			}
+
 			if tile.LightEmission > 0 {
-				ls = append(ls, LightSource{
+				lightSources = append(lightSources, lightSource{
 					Tile: tile,
 					Pos:  pos,
 				})
 			}
 		}
 	}
-	return ls
+
+	return lightSources
 }
 
 func (l *LayeredMap) floodFillIfInside(pos *references2.Position, bForce bool) {
@@ -155,7 +165,7 @@ func (l *LayeredMap) floodFillIfInside(pos *references2.Position, bForce bool) {
 	tile := l.GetTileTopMapOnlyTile(pos)
 
 	// basically - if they are next to a window, then they can see through - otherwise we treat
-	// the window as opaque and nothing passes through
+	// the window as opaque, and nothing passes through
 	if tile != nil {
 		if tile.IsWindow && bForce {
 		} else if tile.BlocksLight || tile.IsWindow {
@@ -184,22 +194,26 @@ func (l *LayeredMap) setTilesAroundPositionVisible(pos *references2.Position) {
 	l.SetVisible(true, pos.GetPositionDown().GetPositionToRight())
 }
 
+// SetVisible sets the visibility of a tile to true or false.
 func (l *LayeredMap) SetVisible(bVisible bool, pos *references2.Position) {
 	l.visibleFlags[pos.X][pos.Y] = bVisible
 }
 
+// IsPositionVisible returns true if the position is visible based on the time of day.
 func (l *LayeredMap) IsPositionVisible(pos *references2.Position, timeOfDay datetime.UltimaDate, bIsBasement bool) bool {
-	// note: some of this may feel like overkill - but it is setting up for an eventual alpha or gradient
+	// note: some of this may feel like overkill - but it is setting up for an eventual alpha- or gradient-
 	// based lighting that degrades as it gets further away
 
-	// first check to see if line of sight allows it to be seen
+	// first check to see if the line of sight allows it to be seen
 	if !l.visibleFlags[pos.X][pos.Y] {
 		return false
 	}
 
 	// next focus on checking the primary lighting
 	xUp := l.xVisibleTiles/2 + 1
+
 	var nToShow int
+
 	if bIsBasement {
 		nToShow = 1 // helpers.RoundUp(float32(xUp) * timeOfDay.GetVisibilityFactorWithoutTorch(0.1))
 	} else {
@@ -216,12 +230,9 @@ func (l *LayeredMap) IsPositionVisible(pos *references2.Position, timeOfDay date
 
 	if _, ok := l.lightSourcesDistanceMap[*pos]; !ok {
 		return false
-	} else {
-		bShow = true // <= int(2)
-		// _ = x
 	}
 
-	return bShow
+	return true
 }
 
 func (l *LayeredMap) GetTopTile(position *references2.Position) *references2.Tile {

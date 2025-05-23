@@ -85,7 +85,7 @@ func (m *NPCAIControllerLargeMap) AdvanceNextTurnCalcAndMoveNPCs() {
 	// path computing
 	m.mapUnits = helpers.FilterFromSlice(m.mapUnits,
 		func(v map_units.MapUnit) bool {
-			bRemove := v.IsEmptyMapUnit() || v.PosPtr().HeuristicTileDistance(m.mapState.PlayerLocation.Position) > map_state.MaxTileDistanceBeforeCleanup
+			bRemove := v.IsEmptyMapUnit() || v.PosPtr().HeuristicTileDistance(m.mapState.PlayerLocation.Position) > MaxTileDistanceBeforeCleanup
 			return !bRemove
 		})
 

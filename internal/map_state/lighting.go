@@ -17,6 +17,12 @@ type Lighting struct {
 	baselineRadius         int
 }
 
+type lightSource struct {
+	Tile *references.Tile
+	Pos  references.Position
+}
+type LightSources []lightSource
+
 type DistanceMap map[references.Position]int
 
 func NewLighting(gameDimensions GameDimensions) Lighting {

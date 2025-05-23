@@ -11,3 +11,5 @@ type NPCAIController interface {
 	GetNpcs() *map_units.MapUnits
 	RemoveAllEnemies()
 }
+
+const MaxTileDistanceBeforeCleanup = 22

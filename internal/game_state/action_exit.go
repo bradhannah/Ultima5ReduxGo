@@ -13,7 +13,7 @@ func (g *GameState) DebugQuickExitSmallMap() {
 	g.MapState.UpdateLargeMap()
 }
 
-// ExitVehicle
+// ExitVehicle - exits the vehicle the player is currently in
 // returns the previously boarded vehicle - or nil if none was found
 func (g *GameState) ExitVehicle() *map_units.NPCFriendly {
 	vehicleType := g.PartyVehicle.GetVehicleDetails().VehicleType

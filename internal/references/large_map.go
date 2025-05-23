@@ -13,18 +13,26 @@ import (
 )
 
 const (
-	YLargeMapTiles        = Coordinate(256) // Total map height in tiles
-	XLargeMapTiles        = Coordinate(256) // Total map width in tiles
-	TotalChunks           = 256             // Number of chunks in the map
-	TilesPerChunkX        = 16              // Tiles per chunk on the x-axis
-	TilesPerChunkY        = 16              // Tiles per chunk on the y-axis
-	DatOverlayBritMap int = 0x3886          // Offset for overlay data (adjust as needed)
+	// YLargeMapTiles Total map height in tiles
+	YLargeMapTiles = Coordinate(256)
+	// XLargeMapTiles Total map width in tiles
+	XLargeMapTiles = Coordinate(256)
 )
 
+const (
+	totalChunks           = 256    // Number of chunks in the map
+	tilesPerChunkX        = 16     // Tiles per chunk on the x-axis
+	tilesPerChunkY        = 16     // Tiles per chunk on the y-axis
+	datOverlayBritMap int = 0x3886 // Offset for overlay data (adjust as needed)
+)
+
+// LargeMapReference A reference to a large map. This is a 256x256 map with 16x16 tiles.
+// The map is stored in a 256x256 array of bytes, with each byte representing a tile.
 type LargeMapReference struct {
 	rawData [XLargeMapTiles][YLargeMapTiles]byte
 }
 
+// World represents the world of the map. Overworld or Underworld.
 type World int
 
 const (
@@ -43,6 +51,7 @@ func NewLargeMapReference(gameConfig *config.UltimaVConfiguration, world World) 
 func (m *LargeMapReference) GetSpriteIndex(x Coordinate, y Coordinate) indexes.SpriteIndex {
 	pos := Position{X: x, Y: y}
 	wrappedPos := pos.GetWrapped(XLargeMapTiles, YLargeMapTiles)
+
 	return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.SpriteIndex(m.rawData[wrappedPos.X][wrappedPos.Y]), 0)
 }
 
@@ -54,8 +63,6 @@ func loadLargeMapFromFile(world World, gameConfig *config.UltimaVConfiguration) 
 		dataOvlFileAndPath = ""
 	}
 
-	ignoreOverlay := dataOvlFileAndPath == ""
-
 	theChunksSerial, err := os.ReadFile(mapFileAndPath)
 	if err != nil {
 		return nil, err
@@ -63,9 +70,11 @@ func loadLargeMapFromFile(world World, gameConfig *config.UltimaVConfiguration) 
 	// defer file.Close() // Ensure the file is closed when done
 
 	// Create a buffer for data overlay chunks
-	dataOvlChunks := make([]byte, TotalChunks)
+	dataOvlChunks := make([]byte, totalChunks)
 
 	var dataOvl *os.File
+
+	ignoreOverlay := dataOvlFileAndPath == ""
 	if !ignoreOverlay {
 		// Open the overlay file for reading (case-insensitive path)
 		var err error
@@ -76,7 +85,7 @@ func loadLargeMapFromFile(world World, gameConfig *config.UltimaVConfiguration) 
 		defer dataOvl.Close()
 
 		// Seek to the overlay data offset
-		_, err = dataOvl.Seek(int64(DatOverlayBritMap), os.SEEK_SET)
+		_, err = dataOvl.Seek(int64(datOverlayBritMap), os.SEEK_SET)
 		if err != nil {
 			return nil, err
 		}
@@ -91,10 +100,10 @@ func loadLargeMapFromFile(world World, gameConfig *config.UltimaVConfiguration) 
 	chunkCount := 0
 
 	// Process each chunk
-	for chunk := 0; chunk < TotalChunks; chunk++ {
+	for chunk := 0; chunk < totalChunks; chunk++ {
 		// Calculate the chunk column and row
-		col := chunk % TilesPerChunkX
-		row := chunk / TilesPerChunkY
+		col := chunk % tilesPerChunkX
+		row := chunk / tilesPerChunkY
 
 		// Read overlay chunk value (or set to 0 if ignoring overlay)
 		if ignoreOverlay {
@@ -104,10 +113,11 @@ func loadLargeMapFromFile(world World, gameConfig *config.UltimaVConfiguration) 
 		}
 
 		// Process each row (horizon) in the chunk
-		for curRow := row * TilesPerChunkY; curRow < (row*TilesPerChunkY)+TilesPerChunkY; curRow++ {
-			for curCol := col * TilesPerChunkX; curCol < (col*TilesPerChunkX)+TilesPerChunkX; curCol++ {
+		for curRow := row * tilesPerChunkY; curRow < (row*tilesPerChunkY)+tilesPerChunkY; curRow++ {
+			for curCol := col * tilesPerChunkX; curCol < (col*tilesPerChunkX)+tilesPerChunkX; curCol++ {
 				// Check if it's a water tile (0xFF in overlay means water)
-				if dataOvlChunks[chunkCount] == 0xFF {
+				const waterTile = 0xFF
+				if dataOvlChunks[chunkCount] == waterTile {
 					mapRef.rawData[curCol][curRow] = 0x01 // Water1 tile
 				} else {
 					// Land tile, read from brit.dat

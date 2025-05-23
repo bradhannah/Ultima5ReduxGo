@@ -4,6 +4,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 )
 
+// NPCType general type of NPC.
 type NPCType byte
 
 const (
@@ -19,7 +20,7 @@ const (
 	Guard       NPCType = 0xFE
 	WishingWell NPCType = 0xFD
 	Vehicle     NPCType = 0x1F
-	// unknowns may be crown and sandlewood box
+	// unknowns may be crown and sandlewood box.
 )
 
 type NPCReference struct {
@@ -31,27 +32,31 @@ type NPCReference struct {
 	// script TalkScript
 }
 
+const secondHalfSpriteTableIndex = 0x100
+
 func (n *NPCReference) GetSpriteIndex() indexes.SpriteIndex {
-	return indexes.SpriteIndex(int(n.npcType) + 0x100)
+	return indexes.SpriteIndex(int(n.npcType) + secondHalfSpriteTableIndex)
 }
 
 func (n *NPCReference) SetKeyIndex(index indexes.SpriteIndex) {
-	n.npcType = NPCType(index - 0x100)
+	n.npcType = NPCType(index - secondHalfSpriteTableIndex)
 }
 
 func (n *NPCReference) GetVehicleType() VehicleType {
-	if n.GetSpriteIndex().IsSkiff() {
+	spriteIndex := n.GetSpriteIndex()
+	if spriteIndex.IsSkiff() {
 		return SkiffVehicle
 	}
-	if n.GetSpriteIndex().IsHorseUnBoarded() {
+	if spriteIndex.IsHorseUnBoarded() {
 		return HorseVehicle
 	}
-	if n.GetSpriteIndex().IsFrigateFurled() {
+	if spriteIndex.IsFrigateFurled() {
 		return FrigateVehicle
 	}
-	if n.GetSpriteIndex().IsMagicCarpetUnboarded() {
+	if spriteIndex.IsMagicCarpetUnboarded() {
 		return CarpetVehicle
 	}
+
 	return NoPartyVehicle
 }
 
