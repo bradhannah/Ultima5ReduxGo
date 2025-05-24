@@ -46,15 +46,6 @@ func (m *IntroMenuScene) GetUltimaConfiguration() *config.UltimaVConfiguration {
 	return m.config
 }
 
-// type screenDimensions struct {
-// 	x int
-// 	y int
-// }
-
-// var ScreenDimension = screenDimensions{x: 800, y: 600}
-
-// var ScreenDimension = screenDimensions{x: config.WindowWidth, y: config.WindowHeight}
-
 var boundKeysIntro = []ebiten.Key{ebiten.KeyDown, ebiten.KeyUp, ebiten.KeyEnter}
 
 // Update method for the IntroMenuScene
@@ -97,7 +88,10 @@ func (m *IntroMenuScene) drawStaticGraphics(screen *ebiten.Image) {
 
 	// Fire animation
 	const fireStartX = 0.1
+
 	fireSprite := m.introSprites.FlameAnimation.GetCurrentImage()
+
+	//nolint:mnd
 	opFire := sprites.GetXSpriteWithPercents(fireSprite.Bounds(),
 		sprites.PercentXBasedPlacement{
 			StartPercentX: fireStartX,
@@ -109,6 +103,7 @@ func (m *IntroMenuScene) drawStaticGraphics(screen *ebiten.Image) {
 
 	// Redux overlay
 	const reduxStartX = .3
+	//nolint:mnd
 	opRedux := sprites.GetXSpriteWithPercents(m.introSprites.Ultima16Logo.Bounds(),
 		sprites.PercentXBasedPlacement{
 			StartPercentX: reduxStartX,
@@ -118,6 +113,7 @@ func (m *IntroMenuScene) drawStaticGraphics(screen *ebiten.Image) {
 
 	screen.DrawImage(m.introSprites.ReduxLogo, opRedux)
 
+	//nolint:mnd
 	menuBorder, menuBorderOp := m.borderSprites.VeryPixelatedRoundedBlueWhite.CreateSizedAndScaledBorderSprite(
 		400,
 		sprites.PercentBasedPlacement{

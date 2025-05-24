@@ -1,4 +1,4 @@
-package testdata
+package testdata_test
 
 import (
 	"sync"
@@ -20,12 +20,11 @@ const (
 //go:embed britain2_SAVED.GAM
 var saveFile []byte
 
-// shared across tests
+//nolint:gochecknoglobals
 var (
 	//	baseState   *game_state.GameState
 	baseGameReferences *references.GameReferences
 	loadOnce           sync.Once
-	baseInitErr        error
 )
 
 func getBaseGameReferences() *references.GameReferences {
@@ -36,24 +35,28 @@ func getBaseGameReferences() *references.GameReferences {
 		baseGameReferences, err = references.NewGameReferences(cfg)
 
 		if err != nil {
-			baseInitErr = err
 			return
 		}
 	})
+
 	return baseGameReferences
 }
 
 func getBritain2GameState() *game_state.GameState {
 	getBaseGameReferences()
+
 	cfg := config.NewUltimaVConfiguration()
 	baseState := game_state.NewGameStateFromLegacySaveBytes(
 		saveFile, cfg, baseGameReferences,
 		xTilesVisibleOnGameScreen, yTilesVisibleOnGameScreen,
 	)
+
 	return baseState
 }
 
 func Test_BasicLoad(t *testing.T) {
+	t.Parallel()
+
 	baseState := getBritain2GameState()
 
 	assert.Equal(t,
@@ -64,5 +67,20 @@ func Test_BasicLoad(t *testing.T) {
 		references.Position{X: 84, Y: 108},
 		baseState.MapState.PlayerLocation.Position,
 	)
+}
 
+// Test_IgniteTorchAndExtinguish make sure torch extinguishes itself
+func Test_IgniteTorchAndExtinguish(t *testing.T) {
+	t.Parallel()
+
+	baseState := getBritain2GameState()
+
+	baseState.IgniteTorch()
+
+	for i := range 100 {
+		assert.True(t, baseState.MapState.Lighting.HasTorchLit(), "Iteration %d", i)
+		baseState.FinishTurn()
+	}
+
+	assert.False(t, baseState.MapState.Lighting.HasTorchLit())
 }
