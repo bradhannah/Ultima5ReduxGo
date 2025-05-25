@@ -7,9 +7,11 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/files"
 )
 
+type TalkDataForSmallMapType map[SmallMapMasterTypes]TalkBytesForSmallMapType
+
 type TalkReferences struct {
 	WordDict                *WordDict
-	talkDataForSmallMapType map[SmallMapMasterTypes]TalkBytesForSmallMapType
+	talkDataForSmallMapType TalkDataForSmallMapType
 }
 
 func NewTalkReferences(config *config.UltimaVConfiguration, dataOvl *DataOvl) *TalkReferences {
@@ -17,7 +19,21 @@ func NewTalkReferences(config *config.UltimaVConfiguration, dataOvl *DataOvl) *T
 	talkReferences.talkDataForSmallMapType = make(map[SmallMapMasterTypes]TalkBytesForSmallMapType)
 
 	talkReferences.WordDict = NewWordDict(dataOvl.CompressedWords)
+	talkReferences.talkDataForSmallMapType = createTalkDataForSmallMapType(config)
+	script, err := ParseNPCBlob(talkReferences.talkDataForSmallMapType[Castle][1], talkReferences.WordDict)
 
+	if err != nil {
+		log.Fatalf("error parsing talk data for castle: %v", err)
+	}
+
+	_ = script
+
+	return talkReferences
+}
+
+func createTalkDataForSmallMapType(config *config.UltimaVConfiguration) TalkDataForSmallMapType {
+	var talkByMap TalkDataForSmallMapType
+	talkByMap = make(TalkDataForSmallMapType)
 	for smallMapMasterType := Castle; smallMapMasterType <= Keep; smallMapMasterType++ {
 		var talkFile string
 
@@ -37,12 +53,11 @@ func NewTalkReferences(config *config.UltimaVConfiguration, dataOvl *DataOvl) *T
 		talkFile = config.GetFileWithFullPath(talkFile)
 
 		var err error
-		talkReferences.talkDataForSmallMapType[smallMapMasterType], err = LoadFile(talkFile)
+		talkByMap[smallMapMasterType], err = LoadFile(talkFile)
 
 		if err != nil {
 			log.Fatalf("error loading talk file %s: %v", talkFile, err)
 		}
 	}
-
-	return talkReferences
+	return talkByMap
 }

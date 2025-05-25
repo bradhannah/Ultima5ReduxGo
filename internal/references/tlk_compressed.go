@@ -20,31 +20,43 @@ type WordDict struct {
 //
 // The original C# code had many “gap” rules. We replicate them once during
 // construction and then pay O(1) per lookup later.
-func NewWordDict(rawWords []string) *WordDict {
-
+func NewWordDict(raw []string) *WordDict {
 	d := &WordDict{
-		words:       rawWords,
-		byteToIndex: make(map[byte]int, len(rawWords)),
+		words:       raw,
+		byteToIndex: make(map[byte]int, len(raw)),
 	}
 
-	// Build the same gap table the C# ctor had.
-	i := -1
-	d.addRange(1, 7, &i)
-	d.addRange(9, 27, &i)
-	d.addRange(29, 49, &i)
-	d.addRange(51, 64, &i)
-	d.addRange(66, 66, &i)
-	d.addRange(68, 69, &i)
-	d.addRange(71, 71, &i)
-	i -= 4
-	d.addRange(76, 129, &i)
+	off := 0
+	off-- // -1
+	d.addRange(1, 7, off)
+
+	off-- // -2
+	d.addRange(9, 27, off)
+
+	off-- // -3
+	d.addRange(29, 49, off)
+
+	off-- // -4
+	d.addRange(51, 64, off)
+
+	off-- // -5
+	d.addRange(66, 66, off)
+
+	off-- // -6
+	d.addRange(68, 69, off)
+
+	off-- // -7
+	d.addRange(71, 71, off)
+
+	off -= 4 // -11  (C# did “i -= 4” here)
+	d.addRange(76, 129, off)
 
 	return d
 }
 
-func (d *WordDict) addRange(start, stop int, offset *int) {
+func (d *WordDict) addRange(start, stop, offset int) {
 	for b := start; b <= stop; b++ {
-		d.byteToIndex[byte(b)] = b + *offset
+		d.byteToIndex[byte(b)] = b + offset
 	}
 }
 
