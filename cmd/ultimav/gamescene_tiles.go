@@ -7,7 +7,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
-	references "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 )
@@ -263,6 +263,3 @@ func (g *GameScene) refreshAllMapLayerTiles() {
 
 	g.unscaledMapImage.DrawImage(g.spriteSheet.GetSprite(avatarSpriteIndex), &avatarDo)
 }
-
-/
-//

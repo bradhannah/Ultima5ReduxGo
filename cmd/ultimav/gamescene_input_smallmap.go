@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
 	"github.com/hajimehoshi/ebiten/v2"
 
 	gamestate "github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
@@ -28,7 +29,7 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		g.addRowStr("Pass")
 		// g.gameState.FinishTurn()
 	case ebiten.KeyBackquote:
-		g.ToggleDebug()
+		g.toggleDebug()
 		return
 	case ebiten.KeyEnter:
 		g.addRowStr("Enter")
@@ -76,6 +77,11 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		if !g.gameState.IgniteTorch() {
 			g.addRowStr("None owned!")
 		}
+	case ebiten.KeyT:
+		g.debugMessage = "Talk to..."
+		g.addRowStr("Talk-")
+		g.secondaryKeyState = TalkDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
 	default:
 		return
 	}
@@ -128,6 +134,15 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 			g.commonMapLookSecondary(getCurrentPressedArrowKeyAsDirection())
 			g.secondaryKeyState = PrimaryInput
 		}
+	case TalkDirectionInput:
+		if g.isDirectionKeyValidAndOutput() {
+			talk := g.smallMapTalkSecondary(getCurrentPressedArrowKeyAsDirection())
+			if !talk {
+				g.addRowStr("No-one to talk to!")
+			}
+
+			g.secondaryKeyState = PrimaryInput
+		}
 	default:
 		panic("unhandled default case")
 	}
@@ -138,7 +153,11 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 }
 
 func (g *GameScene) smallMapKlimb() {
-	currentTile := g.gameState.MapState.LayeredMaps.GetTileRefByPosition(references2.SmallMapType, map_state.MapLayer, &g.gameState.MapState.PlayerLocation.Position, g.gameState.MapState.PlayerLocation.Floor)
+	currentTile := g.gameState.MapState.LayeredMaps.GetTileRefByPosition(
+		references2.SmallMapType,
+		map_state.MapLayer,
+		&g.gameState.MapState.PlayerLocation.Position,
+		g.gameState.MapState.PlayerLocation.Floor)
 
 	switch currentTile.Index {
 	case indexes.AvatarOnLadderDown, indexes.LadderDown, indexes.Grate:
@@ -146,6 +165,7 @@ func (g *GameScene) smallMapKlimb() {
 			g.gameState.MapState.PlayerLocation.Floor--
 			g.gameState.UpdateSmallMap(g.gameReferences.TileReferences, g.gameReferences.LocationReferences)
 			g.output.AddRowStr("Klimb-Down!")
+
 			return
 		} else {
 			log.Fatal("Can't go lower my dude")
@@ -156,6 +176,7 @@ func (g *GameScene) smallMapKlimb() {
 			g.gameState.MapState.PlayerLocation.Floor++
 			g.gameState.UpdateSmallMap(g.gameReferences.TileReferences, g.gameReferences.LocationReferences)
 			g.output.AddRowStr("Klimb-Up!")
+
 			return
 		} else {
 			log.Fatal("Can't go higher my dude")
@@ -174,7 +195,6 @@ func (g *GameScene) smallMapKlimbSecondary(direction references2.Direction) {
 func (g *GameScene) smallMapPushSecondary(direction references2.Direction) {
 	pushThingPos := direction.GetNewPositionInDirection(&g.gameState.MapState.PlayerLocation.Position)
 
-	// pushThingTile := g.gameState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references.SmallMapType, pushThingPos, g.gameState.Floor)
 	pushThingTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(pushThingPos)
 
 	if !pushThingTile.IsPushable {
@@ -300,5 +320,22 @@ func (g *GameScene) getFoodFromTable(direction references2.Direction) bool {
 	}
 
 	mapLayers.SetTileByLayer(map_state.MapLayer, getThingPos, newTileIndex)
+	return true
+}
+
+func (g *GameScene) smallMapTalkSecondary(direction references2.Direction) bool {
+	talkThingPos := direction.GetNewPositionInDirection(&g.gameState.MapState.PlayerLocation.Position)
+	npc := g.gameState.CurrentNPCAIController.GetNpcs().GetMapUnitAtPositionOrNil(*talkThingPos)
+
+	if npc == nil {
+		return false
+	}
+
+	if friendly, ok := (*npc).(*map_units.NPCFriendly); ok {
+		talkDialog := NewTalkDialog(g, friendly)
+		talkDialog.AddTestTest()
+		g.dialogStack.PushModalDialog(talkDialog)
+	}
+
 	return true
 }

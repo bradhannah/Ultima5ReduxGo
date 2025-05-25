@@ -6,7 +6,7 @@ import (
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
-	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 )
 
@@ -98,9 +98,9 @@ func (d *DebugConsole) createTeleportCommand(gameScene *GameScene) *grammar.Text
 		grammar.MatchInt{IntMin: 0, IntMax: 255},
 	}, func(s string, command *grammar.TextCommand) {
 		outputStr := d.TextInput.GetText()
-		gameScene.DebugMoveOnMap(references2.Position{
-			X: references2.Coordinate(command.GetIndexAsInt(1, outputStr)),
-			Y: references2.Coordinate(command.GetIndexAsInt(2, outputStr)),
+		gameScene.debugMoveOnMap(references.Position{
+			X: references.Coordinate(command.GetIndexAsInt(1, outputStr)),
+			Y: references.Coordinate(command.GetIndexAsInt(2, outputStr)),
 		})
 		d.dumpQuickState(fmt.Sprintf("Teleported to X=%d,Y=%d",
 			int16(command.GetIndexAsInt(1, outputStr)),
@@ -122,7 +122,7 @@ func (d *DebugConsole) createFloorYCommand() *grammar.TextCommand {
 		func(s string, command *grammar.TextCommand) {
 			outputStr := d.TextInput.GetText()
 
-			res := d.gameScene.DebugFloorY(references2.FloorNumber(command.GetIndexAsInt(1, outputStr)))
+			res := d.gameScene.debugFloorY(references.FloorNumber(command.GetIndexAsInt(1, outputStr)))
 			d.dumpQuickState(fmt.Sprintf("FloorTeleport Status=%t", res))
 		})
 }
@@ -137,7 +137,7 @@ func (d *DebugConsole) createFloorUpCommand() *grammar.TextCommand {
 		},
 	},
 		func(s string, command *grammar.TextCommand) {
-			res := d.gameScene.DebugFloorUp()
+			res := d.gameScene.debugFloorUp()
 			d.dumpQuickState(fmt.Sprintf("FloorUp Status=%t", res))
 		})
 }
@@ -152,7 +152,7 @@ func (d *DebugConsole) createFloorDownCommand() *grammar.TextCommand {
 		},
 	},
 		func(s string, command *grammar.TextCommand) {
-			res := d.gameScene.DebugFloorDown()
+			res := d.gameScene.debugFloorDown()
 			d.dumpQuickState(fmt.Sprintf("FloorDown Status=%t", res))
 		})
 }
@@ -229,7 +229,7 @@ func (d *DebugConsole) createGoSmall() *grammar.TextCommand {
 			CaseSensitive: false,
 		},
 		grammar.MatchStringList{
-			Strings:       references2.GetListOfAllSmallMaps(),
+			Strings:       references.GetListOfAllSmallMaps(),
 			Description:   "Small map locations",
 			CaseSensitive: false,
 		},
@@ -245,7 +245,7 @@ func (d *DebugConsole) createGoSmall() *grammar.TextCommand {
 }
 
 func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
-	docks := references2.GetListOfAllLocationsWithDocksAsString()
+	docks := references.GetListOfAllLocationsWithDocksAsString()
 	docks = append(docks, "avatar")
 
 	return grammar.NewTextCommand([]grammar.Match{
@@ -268,8 +268,8 @@ func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
 		},
 	},
 		func(_ string, command *grammar.TextCommand) {
-			var dockPos references2.Position
-			var dockFloor references2.FloorNumber //nolint:wsl
+			var dockPos references.Position
+			var dockFloor references.FloorNumber //nolint:wsl
 
 			outputStr := strings.ToLower(d.TextInput.GetText())
 			boatType := command.GetIndexAsString(1, outputStr)
@@ -288,14 +288,14 @@ func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
 
 			var boat map_units.NPCFriendly
 			if strings.ToLower(boatType) == "frigate" {
-				boat = *map_units.NewNPCFriendlyVehicle(references2.FrigateVehicle, *references2.NewNPCReferenceForVehicle(
-					references2.FrigateVehicle,
+				boat = *map_units.NewNPCFriendlyVehicle(references.FrigateVehicle, *references.NewNPCReferenceForVehicle(
+					references.FrigateVehicle,
 					dockPos,
 					dockFloor,
 				))
 			} else {
-				boat = *map_units.NewNPCFriendlyVehicle(references2.SkiffVehicle, *references2.NewNPCReferenceForVehicle(
-					references2.SkiffVehicle,
+				boat = *map_units.NewNPCFriendlyVehicle(references.SkiffVehicle, *references.NewNPCReferenceForVehicle(
+					references.SkiffVehicle,
 					dockPos,
 					dockFloor,
 				))
@@ -304,7 +304,7 @@ func (d *DebugConsole) createBuyBoat() *grammar.TextCommand {
 			boat.NPCReference.Schedule.OverrideAllPositions(byte(dockPos.X), byte(dockPos.Y))
 			boat.GetVehicleDetails().SetSkiffQuantity(1)
 
-			bAddedVehicle := d.gameScene.gameState.LargeMapNPCAIController[references2.OVERWORLD].GetNpcs().AddVehicle(boat)
+			bAddedVehicle := d.gameScene.gameState.LargeMapNPCAIController[references.OVERWORLD].GetNpcs().AddVehicle(boat)
 			d.gameScene.gameState.FinishTurn()
 
 			if !bAddedVehicle {

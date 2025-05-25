@@ -25,9 +25,7 @@ func (g *GameScene) createTextCommandExitBuilding() *grammar.TextCommand {
 			if outputStr == "yes" {
 				g.gameState.DebugQuickExitSmallMap()
 				g.dialogStack.PopModalDialog()
-
 			} else if outputStr == "no" {
-				// we just go back to what we were doing
 				g.dialogStack.PopModalDialog()
 			}
 			g.keyboard.SetForceWaitAnyKey(500)

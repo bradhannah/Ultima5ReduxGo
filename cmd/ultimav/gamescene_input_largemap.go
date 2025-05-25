@@ -19,13 +19,13 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 	switch key {
 	case ebiten.KeyEscape:
 		g.DoEscapeMenu()
+
 		return
 	case ebiten.KeySpace:
 		g.addRowStr("Pass")
 		// g.gameState.FinishTurn()
 	case ebiten.KeyBackquote:
-		// g.bShowDebugConsole = !g.bShowDebugConsole
-		g.ToggleDebug()
+		g.toggleDebug()
 		return
 	case ebiten.KeyEnter:
 		g.addRowStr("Enter")
@@ -53,7 +53,8 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 		g.secondaryKeyState = LookDirectionInput
 	case ebiten.KeyE:
 		g.debugMessage = "Enter a place"
-		newLocation := g.gameReferences.LocationReferences.WorldLocations.GetLocationByPosition(g.gameState.MapState.PlayerLocation.Position)
+		newLocation := g.gameReferences.LocationReferences.WorldLocations.GetLocationByPosition(
+			g.gameState.MapState.PlayerLocation.Position)
 
 		if newLocation != references2.EmptyLocation {
 			slr := g.gameReferences.LocationReferences.GetLocationReference(newLocation)
@@ -72,9 +73,12 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyI:
 		g.debugMessage = "Ignite Torch"
 		g.addRowStr("Ignite Torch!")
+
 		if !g.gameState.IgniteTorch() {
 			g.addRowStr("None owned!")
 		}
+	case ebiten.KeyT:
+		g.addRowStr("Talk to who?")
 	default:
 		return
 	}

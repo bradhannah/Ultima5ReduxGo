@@ -116,6 +116,10 @@ func NewTextInput(
 	return textInput
 }
 
+func (t *TextInput) SetInputColors(inputColors TextInputColors) {
+	t.inputColors = inputColors
+}
+
 func (t *TextInput) SetFontPoint(fontPointSize float64) {
 	t.ultimaFont = text.NewUltimaFont(fontPointSize)
 	t.getAndSetTtf(fontPointSize)

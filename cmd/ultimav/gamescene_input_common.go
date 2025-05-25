@@ -14,10 +14,13 @@ func (g *GameScene) isDirectionKeyValidAndOutput() bool {
 	if !bIsArrowKeyPressed {
 		return false
 	}
+
 	if !g.keyboard.TryToRegisterKeyPress(*arrowKey) {
 		return false
 	}
+
 	g.appendDirectionToOutput()
+
 	return true
 }
 

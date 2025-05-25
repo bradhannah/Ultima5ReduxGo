@@ -4,11 +4,11 @@ import (
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
-func (g *GameScene) DebugMoveOnMap(position references2.Position) {
+func (g *GameScene) debugMoveOnMap(position references2.Position) {
 	g.gameState.MapState.PlayerLocation.Position = position
 }
 
-func (g *GameScene) DebugFloorUp() bool {
+func (g *GameScene) debugFloorUp() bool {
 	if g.gameState.MapState.PlayerLocation.Location == references2.Britannia_Underworld {
 		if g.gameState.MapState.PlayerLocation.Floor == -1 {
 			g.gameState.MapState.PlayerLocation.Floor = 0
@@ -29,7 +29,7 @@ func (g *GameScene) DebugFloorUp() bool {
 	return true
 }
 
-func (g *GameScene) DebugFloorDown() bool {
+func (g *GameScene) debugFloorDown() bool {
 	if g.gameState.MapState.PlayerLocation.Location == references2.Britannia_Underworld {
 		if g.gameState.MapState.PlayerLocation.Floor == 0 {
 			g.gameState.MapState.PlayerLocation.Floor = -1
@@ -48,7 +48,7 @@ func (g *GameScene) DebugFloorDown() bool {
 	return true
 }
 
-func (g *GameScene) DebugFloorY(nFloor references2.FloorNumber) bool {
+func (g *GameScene) debugFloorY(nFloor references2.FloorNumber) bool {
 	if g.gameState.MapState.PlayerLocation.Location == references2.Britannia_Underworld {
 		if nFloor < -1 {
 			g.gameState.MapState.PlayerLocation.Floor = -1

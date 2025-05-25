@@ -40,6 +40,7 @@ const (
 	PushDirectionInput
 	GetDirectionInput
 	LookDirectionInput
+	TalkDirectionInput
 )
 
 // GameScene is another scene (e.g., the actual game)
@@ -88,7 +89,6 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	// load the files man
 	var err error
 	gameScene.gameReferences, err = references2.NewGameReferences(gameConfig)
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -158,7 +158,7 @@ func (g *GameScene) IsDebugDialogOpen() bool {
 	return g.dialogStack.GetIndexOfDialogType((*DebugConsole)(nil)) != -1
 }
 
-func (g *GameScene) ToggleDebug() {
+func (g *GameScene) toggleDebug() {
 	if !g.IsDebugDialogOpen() {
 		g.dialogStack.PushModalDialog(g.debugConsole)
 

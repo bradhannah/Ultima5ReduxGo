@@ -25,20 +25,17 @@ func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences
 
 	var err error
 	gameRefs.OverworldLargeMapReference, err = NewLargeMapReference(gameConfig, OVERWORLD)
-
 	if err != nil {
 		return nil, err
 	}
 
 	gameRefs.UnderworldLargeMapReference, err = NewLargeMapReference(gameConfig, UNDERWORLD)
-
 	if err != nil {
 		return nil, err
 	}
 
 	gameRefs.DataOvl = NewDataOvl(gameConfig)
 	gameRefs.LocationReferences, err = NewSmallMapReferences(gameConfig, gameRefs.DataOvl)
-
 	if err != nil {
 		log.Fatalf("Error when loading locations %e", err)
 	}

@@ -113,6 +113,7 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 		g.debugConsole.Output.AddRowStr(fmt.Sprintf("X: %d, Y: %d", newPosition.X, newPosition.Y))
 		avatarTopTile := g.gameState.GetCurrentLayeredMapAvatarTopTile()
 		extraMovementStr := avatarTopTile.GetExtraMovementString()
+
 		if extraMovementStr != "" {
 			g.output.AddRowStr(extraMovementStr)
 		}

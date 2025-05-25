@@ -42,7 +42,6 @@ func getLegacySavedGamRaw(savedGamFilePath string) ([]byte, error) {
 }
 
 func (g *GameState) LoadLegacySaveGameFromBytes(rawSaveData []byte) error {
-
 	// var saveGame = GameState{}
 	g.RawSave = [savedGamFileSize]byte(rawSaveData)
 

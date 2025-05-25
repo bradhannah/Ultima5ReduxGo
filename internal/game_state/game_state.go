@@ -52,7 +52,8 @@ type GameState struct {
 
 func initBlankGameState(gameConfig *config.UltimaVConfiguration,
 	gameReferences *references.GameReferences,
-	xTilesVisibleOnGameScreen, yTilesVisibleOnGameScreen int) *GameState {
+	xTilesVisibleOnGameScreen, yTilesVisibleOnGameScreen int,
+) *GameState {
 	gameState := &GameState{} //nolint:exhaustruct
 
 	gameState.GameReferences = gameReferences
@@ -70,7 +71,8 @@ func initBlankGameState(gameConfig *config.UltimaVConfiguration,
 func NewGameStateFromLegacySaveFile(savedGamFilePath string,
 	gameConfig *config.UltimaVConfiguration,
 	gameReferences *references.GameReferences,
-	xTilesVisibleOnGameScreen, yTilesVisibleOnGameScreen int) *GameState {
+	xTilesVisibleOnGameScreen, yTilesVisibleOnGameScreen int,
+) *GameState {
 	rawSaveData, err := getLegacySavedGamRaw(savedGamFilePath)
 	if err != nil {
 		log.Fatalf("Error loading saved gam raw data: %v", err)
@@ -87,8 +89,8 @@ func NewGameStateFromLegacySaveFile(savedGamFilePath string,
 func NewGameStateFromLegacySaveBytes(rawSaveData []byte,
 	gameConfig *config.UltimaVConfiguration,
 	gameReferences *references.GameReferences,
-	xTilesVisibleOnGameScreen, yTilesVisibleOnGameScreen int) *GameState {
-
+	xTilesVisibleOnGameScreen, yTilesVisibleOnGameScreen int,
+) *GameState {
 	gameState := initBlankGameState(gameConfig, gameReferences, xTilesVisibleOnGameScreen, yTilesVisibleOnGameScreen)
 	err := gameState.LoadLegacySaveGameFromBytes(rawSaveData)
 	if err != nil {
