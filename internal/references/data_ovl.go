@@ -2,17 +2,28 @@ package references
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 )
 
+//_compressedWords = dataRef.GetDataChunk(DataOvlReference.DataChunkName.TALK_COMPRESSED_WORDS).GetChunkAsStringList();
+//_dataChunks.AddDataChunk(DataChunk.DataFormatType.StringList,
+//	"Compressed words used in the conversation files", 0x104c, 0x24e, 0,
+//	DataChunkName.TALK_COMPRESSED_WORDS);
+
 const (
-	nLocationNameOffset = 0xa4d
-	nSecondOffset       = 0xac1
+	nLocationNameOffset  = 0xa4d
+	nLocationNameOffset2 = 0xac1
+)
+const (
+	nTalkCompressedWordsOffset = 0x104c
+	nTalkCompressedWordsLength = 0x24e
 )
 
 type DataOvl struct {
-	LocationNames []string
+	LocationNames   []string
+	CompressedWords []string
 }
 
 func readNullTerminatedStrings(data *[]byte, offset, n int) ([]string, error) {
@@ -48,8 +59,16 @@ func NewDataOvl(config *config.UltimaVConfiguration) *DataOvl {
 	dataOvl.LocationNames = append([]string{""}, dataOvl.LocationNames...)
 	dataOvl.LocationNames = append(dataOvl.LocationNames,
 		[]string{"SUTEK'S HUT", "SIN VRAAL'S HUT", "GRENDAL'S HUT", "LORD BRITISH'S CASTLE", "PALACE OF BLACKTHORN"}...)
-	secondHalf, _ := readNullTerminatedStrings(&config.RawDataOvl, nSecondOffset, 27-int(Iolos_Hut))
+	secondHalf, _ := readNullTerminatedStrings(&config.RawDataOvl, nLocationNameOffset2, 27-int(Iolos_Hut))
 	dataOvl.LocationNames = append(dataOvl.LocationNames, secondHalf...)
+
+	dataOvl.CompressedWords, err = readNullTerminatedStrings(
+		&config.RawDataOvl, nTalkCompressedWordsOffset, nTalkCompressedWordsLength)
+
+	if err != nil {
+		log.Fatalf("error reading compressed words: %v", err)
+	}
+
 	if err != nil {
 		panic(err)
 	}

@@ -126,11 +126,23 @@ func (uc *UltimaVConfiguration) UpdateSaveFile() {
 	_ = viper.WriteConfig()
 }
 
+func (uc *UltimaVConfiguration) GetFileWithFullPath(fileName string) string {
+	return path.Join(uc.SavedConfigData.DataFilePath, fileName)
+}
+
 func (uc *UltimaVConfiguration) GetAllNpcFilePaths() []string {
 	return []string{
-		path.Join(uc.SavedConfigData.DataFilePath, files.TOWNE_NPC),
-		path.Join(uc.SavedConfigData.DataFilePath, files.DWELLING_NPC),
-		path.Join(uc.SavedConfigData.DataFilePath, files.CASTLE_NPC),
-		path.Join(uc.SavedConfigData.DataFilePath, files.KEEP_NPC),
+		uc.GetFileWithFullPath(files.TOWNE_NPC),
+		uc.GetFileWithFullPath(files.DWELLING_NPC),
+		uc.GetFileWithFullPath(files.CASTLE_NPC),
+		uc.GetFileWithFullPath(files.KEEP_NPC),
 	}
 }
+
+//func (uc *UltimaVConfiguration) GetAllTalkFilePaths() []string {
+//	return []string{
+//		path.Join(uc.SavedConfigData.DataFilePath, files.TOWNE_TLK),
+//		path.Join(uc.SavedConfigData.DataFilePath, files.DWELLING_TLK),
+//		path.Join(uc.SavedConfigData.DataFilePath, files.CASTLE_TLK),
+//		path.Join(uc.SavedConfigData.DataFilePath, files.KEEP_TLK)}
+//}

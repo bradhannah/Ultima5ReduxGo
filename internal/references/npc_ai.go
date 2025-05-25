@@ -15,7 +15,7 @@ const (
 	// ChildRunAway children are playful and run away from you
 	ChildRunAway = 3
 
-	// CustomAi special conversation for merchants
+	// CustomAi special tlk for merchants
 	CustomAi = 4
 
 	// ExtortOrAttackOrFollow you better pay the guard, or they will attack!
