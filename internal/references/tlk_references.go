@@ -7,11 +7,12 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/files"
 )
 
-type TalkDataForSmallMapType map[SmallMapMasterTypes]TalkBytesForSmallMapType
+type talkDataForSmallMapType map[SmallMapMasterTypes]TalkBytesForSmallMapType
 
 type TalkReferences struct {
 	WordDict                *WordDict
-	talkDataForSmallMapType TalkDataForSmallMapType
+	talkDataForSmallMapType talkDataForSmallMapType
+	talkScripts             map[SmallMapMasterTypes][]*TalkScript
 }
 
 func NewTalkReferences(config *config.UltimaVConfiguration, dataOvl *DataOvl) *TalkReferences {
@@ -20,20 +21,31 @@ func NewTalkReferences(config *config.UltimaVConfiguration, dataOvl *DataOvl) *T
 
 	talkReferences.WordDict = NewWordDict(dataOvl.CompressedWords)
 	talkReferences.talkDataForSmallMapType = createTalkDataForSmallMapType(config)
-	script, err := ParseNPCBlob(talkReferences.talkDataForSmallMapType[Castle][1], talkReferences.WordDict)
 
-	if err != nil {
-		log.Fatalf("error parsing talk data for castle: %v", err)
+	//var oof map[SmallMapMasterTypes][]*TalkScript
+	talkScripts := make(map[SmallMapMasterTypes][]*TalkScript)
+
+	for _, smt := range getTalkLocationByFiles() {
+		for _, oof := range talkReferences.talkDataForSmallMapType[smt] {
+			specificSmallMapTalkData := oof
+			script, err := ParseNPCBlob(specificSmallMapTalkData, talkReferences.WordDict)
+
+			if err != nil {
+				log.Fatalf("error parsing talk data for %v: %v", smt, err)
+			}
+
+			talkScripts[smt] = append(talkScripts[smt], script)
+		}
 	}
 
-	_ = script
+	talkReferences.talkScripts = talkScripts
 
 	return talkReferences
 }
 
-func createTalkDataForSmallMapType(config *config.UltimaVConfiguration) TalkDataForSmallMapType {
-	var talkByMap TalkDataForSmallMapType
-	talkByMap = make(TalkDataForSmallMapType)
+func createTalkDataForSmallMapType(config *config.UltimaVConfiguration) talkDataForSmallMapType {
+	talkByMap := make(talkDataForSmallMapType)
+
 	for smallMapMasterType := Castle; smallMapMasterType <= Keep; smallMapMasterType++ {
 		var talkFile string
 
@@ -59,5 +71,10 @@ func createTalkDataForSmallMapType(config *config.UltimaVConfiguration) TalkData
 			log.Fatalf("error loading talk file %s: %v", talkFile, err)
 		}
 	}
+
 	return talkByMap
+}
+
+func getTalkLocationByFiles() []SmallMapMasterTypes {
+	return []SmallMapMasterTypes{Castle, Keep, Towne, Dwelling}
 }

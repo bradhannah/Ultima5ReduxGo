@@ -21,6 +21,8 @@ type LocationReferences struct {
 	npcRefs *NPCReferences
 }
 
+const MapsPerLocationFile = 8
+
 func (s *LocationReferences) GetLocationReference(location Location) *SmallLocationReference {
 	return s.maps[location]
 }
@@ -63,21 +65,101 @@ func (s *LocationReferences) addLocation(location Location, bHasBasement bool, n
 		location,
 		s.npcRefs.GetNPCReferencesByLocation(location),
 		s.dataOvl)
-	for i := 0; i < nFloors; i++ {
-		actualFloor := i + floorModifier
+
+	for floor := range nFloors {
+		actualFloor := floor + floorModifier
 		smr.addBlankFloor(actualFloor)
-		var x, y int
-		for x = 0; x < int(XSmallMapTiles); x++ {
-			for y = 0; y < int(YSmallMapTiles); y++ {
-				byteIndex := nOffset + (i * smallMapSizeInBytes) + x + (y * int(YSmallMapTiles))
-				smr.rawData[i+floorModifier][x][y] = theChunksSerial[byteIndex]
+
+		for x := range int(XSmallMapTiles) {
+			for y := range int(YSmallMapTiles) {
+				byteIndex := nOffset + (floor * smallMapSizeInBytes) + x + (y * int(YSmallMapTiles))
+				smr.rawData[floor+floorModifier][x][y] = theChunksSerial[byteIndex]
 			}
 		}
+
 		maps[actualFloor] = smr
 	}
 
 	// returns the next offset - a handy way of keeping count
 	s.maps[location] = smr
 	s.mapsByStr[strings.ToLower(location.String())] = smr
+
 	return nFloors*smallMapSizeInBytes + nOffset
+}
+
+func GetLocationBySmallMapAndIndex(smallMap SmallMapMasterTypes, index int) Location {
+	var nMultiplier int
+
+	switch smallMap {
+	case Towne:
+		nMultiplier = 0
+	case Dwelling:
+		nMultiplier = 1
+	case Castle:
+		nMultiplier = 2
+	case Keep:
+		nMultiplier = 3
+	default:
+		log.Fatalf("Unhandled small map type: %v", smallMap)
+	}
+
+	return Location((MapsPerLocationFile * nMultiplier) + index)
+
+	//{
+	//switch (location)
+	//{
+	//case Location.Lord_Britishs_Castle:
+	//case Location.Palace_of_Blackthorn:
+	//case Location.East_Britanny:
+	//case Location.West_Britanny:
+	//case Location.North_Britanny:
+	//case Location.Paws:
+	//case Location.Cove:
+	//case Location.Buccaneers_Den:
+	//return SmallMapMasterFiles.Castle;
+	//case Location.Moonglow:
+	//case Location.Britain:
+	//case Location.Jhelom:
+	//case Location.Yew:
+	//case Location.Minoc:
+	//case Location.Trinsic:
+	//case Location.Skara_Brae:
+	//case Location.New_Magincia:
+	//return SmallMapMasterFiles.Towne;
+	//case Location.Fogsbane:
+	//case Location.Stormcrow:
+	//case Location.Waveguide:
+	//case Location.Greyhaven:
+	//case Location.Iolos_Hut:
+	////case _location.spektran
+	//case Location.Suteks_Hut:
+	//case Location.SinVraals_Hut:
+	//case Location.Grendels_Hut:
+	//return SmallMapMasterFiles.Dwelling;
+	//case Location.Ararat:
+	//case Location.Bordermarch:
+	//case Location.Farthing:
+	//case Location.Windemere:
+	//case Location.Stonegate:
+	//case Location.Lycaeum:
+	//case Location.Empath_Abbey:
+	//case Location.Serpents_Hold:
+	//return SmallMapMasterFiles.Keep;
+	//case Location.Deceit:
+	//case Location.Despise:
+	//case Location.Destard:
+	//case Location.Wrong:
+	//case Location.Covetous:
+	//case Location.Shame:
+	//case Location.Hythloth:
+	//case Location.Doom:
+	//return SmallMapMasterFiles.Dungeon;
+	//case Location.Combat_resting_shrine:
+	//return SmallMapMasterFiles.CutOrIntroScene;
+	//case Location.Britannia_Underworld:
+	//return SmallMapMasterFiles.None;
+	//default:
+	//throw new Ultima5ReduxException("EH?");
+	//}
+	//}
 }
