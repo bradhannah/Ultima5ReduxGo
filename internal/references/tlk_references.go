@@ -22,7 +22,6 @@ func NewTalkReferences(config *config.UltimaVConfiguration, dataOvl *DataOvl) *T
 	talkReferences.WordDict = NewWordDict(dataOvl.CompressedWords)
 	talkReferences.talkDataForSmallMapType = createTalkDataForSmallMapType(config)
 
-	//var oof map[SmallMapMasterTypes][]*TalkScript
 	talkScripts := make(map[SmallMapMasterTypes][]*TalkScript)
 
 	for _, smt := range getTalkLocationByFiles() {
