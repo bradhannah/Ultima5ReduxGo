@@ -77,3 +77,7 @@ func createTalkDataForSmallMapType(config *config.UltimaVConfiguration) talkData
 func getTalkLocationByFiles() []SmallMapMasterTypes {
 	return []SmallMapMasterTypes{Castle, Keep, Towne, Dwelling}
 }
+
+func (t *TalkReferences) GetTalkScript(smallMapType SmallMapMasterTypes) []*TalkScript {
+	return t.talkScripts[smallMapType]
+}

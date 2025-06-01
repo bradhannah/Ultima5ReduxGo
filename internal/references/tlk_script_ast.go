@@ -1,46 +1,78 @@
-// script_ast.go
-// Package references – dialogue abstract‑syntax tree (AST) types.
-//
-// These structs are intentionally minimal and have no behaviour other than
-// a few helper methods.  All parsing / game‑logic will live in other files so
-// these remain a clean data model that can round‑trip with encoding/json.
 package references
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
-// ---------------------------------------------------------------------------
-// 1. TalkCommand – every opcode that can appear in a TLK script
-// ---------------------------------------------------------------------------
+/* =========================================================================
+   TalkScript AST – updated opcode names per latest spec
+   -------------------------------------------------------------------------
+   The user requested specific labels for the most common commands. Those
+   names have been adopted below while the remaining op‑codes from Ultima V
+   are preserved under their original identifiers.  Update or extend as you
+   encounter additional bytes in the TLK data.
+   =========================================================================*/
 
 type TalkCommand byte
 
-// NOTE: Only a subset is listed here.  Add the rest as you implement later
-// phases of the parser.  Keep them contiguous (or document gaps) so loops
-// over ranges are possible without allocation.
 const (
-	PlainString      TalkCommand = 0x00 // printable text
-	AvatarsName      TalkCommand = 0x81
-	EndConversation              = 0x82
-	Pause                        = 0x83
-	JoinParty                    = 0x84
-	GoldPrompt                   = 0x85
-	Change                       = 0x86
-	OrBranch                     = 0x87
-	AskName                      = 0x88
-	NewLine                      = 0x8D
-	StartLabelDef                = 0x90
-	EndScript                    = 0x9F
-	StartNewSection              = 0xA2
-	GotoLabel                    = 0xFD
-	DefineLabel                  = 0xFE
-	DoNothingSection             = 0xFF
+	/* --- Basic printable & prompts ------------------------------------ */
+	PlainString TalkCommand = 0x00
+
+	UserInputNotRecognized         = 0x7E
+	PromptUserForInputUserInterest = 0x7F
+	PromptUserForInputNpcQuestion  = 0x80
+
+	/* --- Substitutions & flow (renamed per request) ------------------- */
+	AvatarsName     = 0x81
+	EndConversation = 0x82
+	Pause           = 0x83
+	JoinParty       = 0x84
+	GoldPrompt      = 0x85 // was Gold
+	Change          = 0x86
+	OrBranch        = 0x87 // was Or
+	AskName         = 0x88
+	KarmaPlusOne    = 0x89
+	KarmaMinusOne   = 0x8A
+	CallGuards      = 0x8B
+	IfElseKnowsName = 0x8C
+	NewLine         = 0x8D
+	Rune            = 0x8E
+	KeyWait         = 0x8F
+
+	StartLabelDef TalkCommand = 0x90 // renamed, was StartLabelDefinition
+	// label bytes 0x91‑0x9B represent data (labels 0‑9)
+
+	EndScript       = 0x9F
+	StartNewSection = 0xA2
+
+	/* --- Engine‑internal payload codes -------------------------------- */
+	ExtortionAmount      = 0xE0
+	GoToJail             = 0xE1
+	PayGenericExtortion  = 0xE2
+	PayHalfGoldExtortion = 0xE3
+	MakeAHorse           = 0xE4
+
+	/* --- Branch / label ops ------------------------------------------ */
+	GotoLabel                       = 0xFD
+	DefineLabel                     = 0xFE
+	DoNothingSection                = 0xFF
+	PromptUserForInput_NPCQuestion  = 0x80
+	PromptUserForInput_UserInterest = 0x7F
 )
 
-// String lets fmt.Printf print a mnemonic instead of a raw number.
-func (c TalkCommand) String() string {
-	switch c {
+// String returns a mnemonic for debugging.
+func (tc TalkCommand) String() string {
+	switch tc {
 	case PlainString:
 		return "PlainString"
+	case UserInputNotRecognized:
+		return "UserInputNotRecognized"
+	case PromptUserForInputUserInterest:
+		return "PromptUserForInputUserInterest"
+	case PromptUserForInputNpcQuestion:
+		return "PromptUserForInputNpcQuestion"
 	case AvatarsName:
 		return "AvatarsName"
 	case EndConversation:
@@ -50,21 +82,43 @@ func (c TalkCommand) String() string {
 	case JoinParty:
 		return "JoinParty"
 	case GoldPrompt:
-		return "Gold"
+		return "GoldPrompt"
 	case Change:
 		return "Change"
 	case OrBranch:
-		return "Or"
+		return "OrBranch"
 	case AskName:
 		return "AskName"
+	case KarmaPlusOne:
+		return "KarmaPlusOne"
+	case KarmaMinusOne:
+		return "KarmaMinusOne"
+	case CallGuards:
+		return "CallGuards"
+	case IfElseKnowsName:
+		return "IfElseKnowsName"
 	case NewLine:
 		return "NewLine"
+	case Rune:
+		return "Rune"
+	case KeyWait:
+		return "KeyWait"
 	case StartLabelDef:
 		return "StartLabelDef"
 	case EndScript:
 		return "EndScript"
 	case StartNewSection:
 		return "StartNewSection"
+	case ExtortionAmount:
+		return "ExtortionAmount"
+	case GoToJail:
+		return "GoToJail"
+	case PayGenericExtortion:
+		return "PayGenericExtortion"
+	case PayHalfGoldExtortion:
+		return "PayHalfGoldExtortion"
+	case MakeAHorse:
+		return "MakeAHorse"
 	case GotoLabel:
 		return "GotoLabel"
 	case DefineLabel:
@@ -72,59 +126,57 @@ func (c TalkCommand) String() string {
 	case DoNothingSection:
 		return "DoNothingSection"
 	default:
-		return fmt.Sprintf("TalkCommand(0x%02X)", byte(c))
+		return fmt.Sprintf("TalkCommand(0x%02X)", byte(tc))
 	}
 }
 
-// ---------------------------------------------------------------------------
-// 2. Leaf node – ScriptItem
-// ---------------------------------------------------------------------------
+/* --------------------------- AST nodes ----------------------------------- */
 
-// ScriptItem represents a single opcode (and its payload) inside a line.
 type ScriptItem struct {
-	Cmd TalkCommand
-	Str string // for PlainString, %,$, etc.
-	Num int    // label #, gold amount, item # etc.
+	Cmd                TalkCommand
+	Str                string // valid when Cmd == PlainString
+	Num                int    // generic numeric payload
+	ItemAdditionalData int    // specialised payload for Change / Gold / etc.
 }
-
-// ---------------------------------------------------------------------------
-// 3. Mid‑level nodes
-// ---------------------------------------------------------------------------
 
 type ScriptLine []ScriptItem
 
 type ScriptQuestionAnswer struct {
-	Questions []string   // lower‑case trigger words
-	Answer    ScriptLine // NPC response
+	Questions []string
+	Answer    ScriptLine
 }
 
 type ScriptTalkLabel struct {
-	Num            int          // 0‑9
-	Initial        ScriptLine   // always printed when jumping here
-	DefaultAnswers []ScriptLine // fallback if no QA matched
+	Num            int
+	Initial        ScriptLine
+	DefaultAnswers []ScriptLine
 	QA             []ScriptQuestionAnswer
 }
 
-// ---------------------------------------------------------------------------
-// 4. Root node – TalkScript
-// ---------------------------------------------------------------------------
-
-// TalkScript is the fully‑parsed dialogue tree for one NPC.
 type TalkScript struct {
-	Lines     []ScriptLine // all raw lines in original order
+	Lines     []ScriptLine
 	Questions map[string]*ScriptQuestionAnswer
 	Labels    map[int]*ScriptTalkLabel
 }
 
-// Ask provides an ultra‑simple lookup for Phase‑1 testing.
-// Later you’ll enhance it (handle labels, karma, etc.).
+// Ask – simple lowercase lookup.
 func (ts *TalkScript) Ask(q string) (ScriptLine, bool) {
 	if ts.Questions == nil {
 		return nil, false
 	}
-	qa, ok := ts.Questions[q]
+	qa, ok := ts.Questions[strings.ToLower(q)]
 	if !ok {
 		return nil, false
 	}
 	return qa.Answer, true
 }
+
+/* ----------------- Convenience constants (fixed line indices) ------------ */
+
+const (
+	TalkScriptConstantsName        = 0
+	TalkScriptConstantsDescription = 1
+	TalkScriptConstantsGreeting    = 2
+	TalkScriptConstantsJob         = 3
+	TalkScriptConstantsBye         = 4
+)

@@ -2,7 +2,15 @@
 package references
 
 import (
+	"errors"
+	"fmt"
 	"strings"
+)
+
+const (
+	minLabelByte = 0x91 // first label byte in a .tlk file
+	maxLabelByte = 0x9B // last  (exclusive)
+	totalLabels  = 0x0A // ⇐ here – exactly 10 labels (0‑9)
 )
 
 // ParseNPCBlob converts the raw TLK byte slice for a single NPC into
@@ -74,4 +82,300 @@ func ParseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
 		Questions: map[string]*ScriptQuestionAnswer{},
 		Labels:    map[int]*ScriptTalkLabel{},
 	}, nil
+}
+
+// GetScriptLine returns the raw ScriptLine at idx (false if OOB)
+func (ts *TalkScript) GetScriptLine(idx int) (ScriptLine, bool) {
+	if idx < 0 || idx >= len(ts.Lines) {
+		return nil, false
+	}
+	return ts.Lines[idx], true
+}
+
+// GetScriptLineLabelIndex scans for the <StartLabelDef><DefineLabel X>
+// pair and returns its line index (false if not found)
+func (ts *TalkScript) GetScriptLineLabelIndex(labelNum int) (int, bool) {
+	if labelNum < 0 || labelNum >= totalLabels {
+		return 0, false
+	}
+	for idx, line := range ts.Lines {
+		if len(line) >= 2 &&
+			line[0].Cmd == StartLabelDef &&
+			line[1].Cmd == DefineLabel &&
+			line[1].Num == labelNum {
+			return idx, true
+		}
+	}
+	return 0, false
+}
+
+// BuildIndices transforms the raw Lines slice (produced by ParseNPCBlob)
+// into fast lookup collections for questions and label jumps.
+func (ts *TalkScript) BuildIndices() error {
+	if ts == nil {
+		return errors.New("nil TalkScript")
+	}
+	// guard against double‑build
+	if ts.Questions != nil && ts.Labels != nil {
+		return nil
+	}
+
+	ts.Questions = map[string]*ScriptQuestionAnswer{}
+	ts.Labels = map[int]*ScriptTalkLabel{}
+
+	// 1) default hard‑wired Q&A lines -----------------------------
+	ensure := func(keys []string, lineIdx int) {
+		if lineIdx >= len(ts.Lines) {
+			return
+		}
+		sqa := &ScriptQuestionAnswer{Questions: keys, Answer: ts.Lines[lineIdx]}
+		for _, k := range keys {
+			ts.Questions[k] = sqa
+		}
+	}
+	ensure([]string{"name"}, TalkScriptConstantsName)
+	ensure([]string{"job", "work"}, TalkScriptConstantsJob)
+	ensure([]string{"bye"}, TalkScriptConstantsBye)
+
+	// Bye always ends the conversation so append explicit opcode
+	if TalkScriptConstantsBye < len(ts.Lines) {
+		bye := &ts.Lines[TalkScriptConstantsBye]
+		*bye = append(*bye, ScriptItem{Cmd: EndConversation})
+	}
+
+	/* ------------------------------------------------------------
+	   2) dynamic Q&A section until the first StartLabelDef
+	   ----------------------------------------------------------*/
+	idx := TalkScriptConstantsBye + 1
+	for idx < len(ts.Lines) {
+		line := ts.Lines[idx]
+		if len(line) == 0 {
+			idx++
+			continue
+		}
+		if line[0].Cmd == StartLabelDef {
+			break // jump to label processing
+		}
+
+		qStrings := []string{toKey(line[0].Str)}
+		// gather chained <OrBranch>
+		for idx+1 < len(ts.Lines) && ts.Lines[idx+1].Contains(OrBranch) {
+			idx += 2
+			qStrings = append(qStrings, toKey(ts.Lines[idx][0].Str))
+		}
+
+		if idx+1 >= len(ts.Lines) {
+			return fmt.Errorf("question without answer at line %d", idx)
+		}
+		answer := ts.Lines[idx+1]
+		sqa := &ScriptQuestionAnswer{Questions: qStrings, Answer: answer}
+		for _, k := range qStrings {
+			if _, exists := ts.Questions[k]; !exists {
+				ts.Questions[k] = sqa
+			}
+		}
+		idx += 2
+	}
+
+	/* ------------------------------------------------------------
+	   3) label section
+	   ----------------------------------------------------------*/
+	for idx < len(ts.Lines) {
+		start := ts.Lines[idx]
+		if len(start) < 2 ||
+			start[0].Cmd != StartLabelDef ||
+			start[1].Cmd != DefineLabel {
+			return fmt.Errorf("malformed label start at line %d", idx)
+		}
+		labelNum := start[1].Num
+		label := &ScriptTalkLabel{Num: labelNum, Initial: start}
+		ts.Labels[labelNum] = label
+		idx++
+
+		/* ----- gather lines until next StartLabelDef / EndScript ----*/
+		for idx < len(ts.Lines) {
+			l := ts.Lines[idx]
+			if len(l) == 0 {
+				idx++
+				continue
+			}
+			if l[0].Cmd == StartLabelDef {
+				break
+			}
+			if l.Contains(OrBranch) || l[0].IsQuestion() {
+				// Q&A block
+				qs := []string{toKey(l[0].Str)}
+				for idx+1 < len(ts.Lines) && ts.Lines[idx+1].Contains(OrBranch) {
+					idx += 2
+					qs = append(qs, toKey(ts.Lines[idx][0].Str))
+				}
+				if idx+1 >= len(ts.Lines) {
+					return fmt.Errorf("label %d: question without answer", labelNum)
+				}
+				ans := ts.Lines[idx+1]
+				label.QA = append(label.QA,
+					ScriptQuestionAnswer{Questions: qs, Answer: ans})
+				idx += 2
+			} else {
+				// default line
+				label.DefaultAnswers = append(label.DefaultAnswers, l)
+				idx++
+			}
+		}
+	}
+
+	return nil
+}
+
+func toKey(s string) string { return strings.ToLower(strings.TrimSpace(s)) }
+
+type SplitScriptLine = ScriptLine
+
+// IsQuestion heuristic – 1‑6 chars, no spaces.
+func (si ScriptItem) IsQuestion() bool {
+	if si.Cmd != PlainString {
+		return false
+	}
+	trimmed := strings.TrimSpace(si.Str)
+	return len(trimmed) >= 1 && len(trimmed) <= 6 && !strings.Contains(trimmed, " ")
+}
+
+// Contains returns true if the line includes the given opcode.
+func (sl ScriptLine) Contains(cmd TalkCommand) bool {
+	for _, it := range sl {
+		if it.Cmd == cmd {
+			return true
+		}
+	}
+	return false
+}
+
+// String implements fmt.Stringer for debugging.
+func (sl ScriptLine) String() string {
+	var b strings.Builder
+	for _, it := range sl {
+		switch it.Cmd {
+		case PlainString:
+			b.WriteString(it.Str)
+		case DefineLabel, GotoLabel:
+			b.WriteString(fmt.Sprintf("<%s%d>", it.Cmd, it.Num))
+		default:
+			b.WriteString("<")
+			b.WriteString(it.Cmd.String())
+			b.WriteString(">")
+		}
+	}
+	return b.String()
+}
+
+// SplitIntoSections replicates the intricate splitting logic from the C#
+// implementation.  It walks the op‑codes in the line and divides them into
+// logical blocks separated by <A2>, label definitions, If/Else branches,
+// Change/Gold opcode payloads, etc.  The resulting slice always contains at
+// least one entry.
+func (sl ScriptLine) SplitIntoSections() []SplitScriptLine {
+	// early‑out for the common case: a plain string with no structural
+	// op‑codes – just return a single section containing the full line.
+	simple := true
+	for _, it := range sl {
+		switch it.Cmd {
+		case PlainString:
+			// still simple
+		case StartNewSection, IfElseKnowsName, DoNothingSection, DefineLabel,
+			Change, GoldPrompt, StartLabelDef:
+			simple = false
+			break
+		default:
+			// op‑codes that don’t affect sectioning – ignore
+		}
+	}
+	if simple {
+		return []SplitScriptLine{sl}
+	}
+
+	var (
+		sections       []SplitScriptLine
+		nSection       = -1
+		first          = true
+		forceSplitNext = false
+		ensureSection  = func() {
+			if nSection < 0 || nSection >= len(sections) {
+				sections = append(sections, SplitScriptLine{})
+			}
+		}
+		startNew = func() {
+			sections = append(sections, SplitScriptLine{})
+			nSection++
+		}
+	)
+
+	// guarantee at least one section so indices are valid
+	startNew()
+
+	for i := 0; i < len(sl); i++ {
+		item := sl[i]
+
+		switch item.Cmd {
+		case StartNewSection:
+			// <A2> – begin new section
+			startNew()
+
+		case IfElseKnowsName, DoNothingSection, DefineLabel:
+			// stand‑alone section containing only the control opcode
+			startNew()
+			sections[nSection] = append(sections[nSection], item)
+			forceSplitNext = true
+
+		case Change:
+			// CHANGE is followed by an item id (as an opcode). We keep them
+			// together in their own section so that the caller can inspect
+			// item.ItemAdditionalData later if desired.
+			startNew()
+			if i+1 < len(sl) {
+				item.ItemAdditionalData = int(sl[i+1].Cmd)
+			}
+			sections[nSection] = append(sections[nSection], item)
+			i++ // skip payload byte
+			forceSplitNext = true
+
+		case GoldPrompt:
+			// GOLD is followed by a 3‑char number encoded as PlainString.
+			startNew()
+			if i+1 < len(sl) && len(sl[i+1].Str) >= 3 {
+				digits := sl[i+1].Str[:3]
+				var amt int
+				fmt.Sscanf(digits, "%d", &amt)
+				item.ItemAdditionalData = amt
+			}
+			sections[nSection] = append(sections[nSection], item)
+			i++ // skip payload
+			forceSplitNext = true
+
+		case StartLabelDef:
+			// must be followed by DefineLabel – keep both together
+			startNew()
+			sections[nSection] = append(sections[nSection], item)
+			if i+1 < len(sl) {
+				sections[nSection] = append(sections[nSection], sl[i+1])
+				i++ // skip DefineLabel
+			}
+			forceSplitNext = true
+
+		default:
+			if first {
+				// first real opcode goes in section 0
+				nSection = 0
+			}
+			if forceSplitNext {
+				forceSplitNext = false
+				startNew()
+			}
+			ensureSection()
+			sections[nSection] = append(sections[nSection], item)
+		}
+
+		first = false
+	}
+
+	return sections
 }
