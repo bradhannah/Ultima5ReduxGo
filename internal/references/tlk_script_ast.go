@@ -20,46 +20,57 @@ const (
 	/* --- Basic printable & prompts ------------------------------------ */
 	PlainString TalkCommand = 0x00
 
-	UserInputNotRecognized         = 0x7E
-	PromptUserForInputUserInterest = 0x7F
-	PromptUserForInputNpcQuestion  = 0x80
+	UserInputNotRecognized         TalkCommand = 0x7E
+	PromptUserForInputUserInterest TalkCommand = 0x7F
+	PromptUserForInputNpcQuestion  TalkCommand = 0x80
 
 	/* --- Substitutions & flow (renamed per request) ------------------- */
-	AvatarsName     = 0x81
-	EndConversation = 0x82
-	Pause           = 0x83
-	JoinParty       = 0x84
-	GoldPrompt      = 0x85 // was Gold
-	Change          = 0x86
-	OrBranch        = 0x87 // was Or
-	AskName         = 0x88
-	KarmaPlusOne    = 0x89
-	KarmaMinusOne   = 0x8A
-	CallGuards      = 0x8B
-	IfElseKnowsName = 0x8C
-	NewLine         = 0x8D
-	Rune            = 0x8E
-	KeyWait         = 0x8F
+	AvatarsName     TalkCommand = 0x81
+	EndConversation TalkCommand = 0x82
+	Pause           TalkCommand = 0x83
+	JoinParty       TalkCommand = 0x84
+	GoldPrompt      TalkCommand = 0x85 // was Gold
+	Change          TalkCommand = 0x86
+	OrBranch        TalkCommand = 0x87 // was Or
+	AskName         TalkCommand = 0x88
+	KarmaPlusOne    TalkCommand = 0x89
+	KarmaMinusOne   TalkCommand = 0x8A
+	CallGuards      TalkCommand = 0x8B
+	IfElseKnowsName TalkCommand = 0x8C
+	NewLine         TalkCommand = 0x8D
+	Rune            TalkCommand = 0x8E
+	KeyWait         TalkCommand = 0x8F
 
 	StartLabelDef TalkCommand = 0x90 // renamed, was StartLabelDefinition
 	// label bytes 0x91‑0x9B represent data (labels 0‑9)
 
-	EndScript       = 0x9F
-	StartNewSection = 0xA2
+	Label1  TalkCommand = 0x91
+	Label2  TalkCommand = 0x92
+	Label3  TalkCommand = 0x93
+	Label4  TalkCommand = 0x94
+	Label5  TalkCommand = 0x95
+	Label6  TalkCommand = 0x96
+	Label7  TalkCommand = 0x97
+	Label8  TalkCommand = 0x98
+	Label9  TalkCommand = 0x99
+	Label10 TalkCommand = 0x9A
+
+	EndScript       TalkCommand = 0x9F
+	StartNewSection TalkCommand = 0xA2
 
 	/* --- Engine‑internal payload codes -------------------------------- */
-	ExtortionAmount      = 0xE0
-	GoToJail             = 0xE1
-	PayGenericExtortion  = 0xE2
-	PayHalfGoldExtortion = 0xE3
-	MakeAHorse           = 0xE4
+	ExtortionAmount      TalkCommand = 0xE0
+	GoToJail             TalkCommand = 0xE1
+	PayGenericExtortion  TalkCommand = 0xE2
+	PayHalfGoldExtortion TalkCommand = 0xE3
+	MakeAHorse           TalkCommand = 0xE4
 
 	/* --- Branch / label ops ------------------------------------------ */
-	GotoLabel                       = 0xFD
-	DefineLabel                     = 0xFE
-	DoNothingSection                = 0xFF
-	PromptUserForInput_NPCQuestion  = 0x80
-	PromptUserForInput_UserInterest = 0x7F
+	GotoLabel                       TalkCommand = 0xFD
+	DefineLabel                     TalkCommand = 0xFE
+	DoNothingSection                TalkCommand = 0xFF
+	PromptUserForInput_NPCQuestion  TalkCommand = 0x80
+	PromptUserForInput_UserInterest TalkCommand = 0x7F
 )
 
 // String returns a mnemonic for debugging.
@@ -180,3 +191,25 @@ const (
 	TalkScriptConstantsJob         = 3
 	TalkScriptConstantsBye         = 4
 )
+
+//func (sl ScriptLine) IsEndOfLabelSection() bool {
+//	return sl[0].Cmd != StartLabelDef ||
+//		sl[1].Cmd != EndScript
+//}
+//
+//func (sl ScriptLine) IsLabelDefinition() bool {
+//	return sl[0].Cmd != StartLabelDef ||
+//		sl[1].Cmd != DefineLabel
+//}
+
+func (sl ScriptLine) IsEndOfLabelSection() bool {
+	return len(sl) >= 2 &&
+		sl[0].Cmd == StartLabelDef &&
+		sl[1].Cmd == EndScript
+}
+
+func (sl ScriptLine) IsLabelDefinition() bool {
+	return len(sl) >= 2 &&
+		sl[0].Cmd == StartLabelDef &&
+		sl[1].Cmd == DefineLabel
+}

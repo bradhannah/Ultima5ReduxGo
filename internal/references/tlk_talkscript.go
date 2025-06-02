@@ -41,8 +41,23 @@ func ParseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
 		}
 	)
 
-	for _, b := range blob {
+	//for _, b := range blob {
+	for i := 0; i < len(blob); i++ {
+		b := blob[i]
 		switch {
+		case b == byte(DefineLabel):
+			addPlain()
+			// next byte is the label number (0‑9); consume it
+			// guard against running past EOF
+			if i+1 >= len(blob) {
+				return nil, fmt.Errorf("truncated DefineLabel at end of blob")
+			}
+			labelNum := int(blob[i+1])
+			i++ // skip the payload byte
+			currLine = append(currLine, ScriptItem{
+				Cmd: DefineLabel,
+				Num: labelNum,
+			})
 		case b == eol:
 			flushLine()
 
@@ -77,11 +92,22 @@ func ParseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
 	}
 	flushLine() // final line, if any
 
-	return &TalkScript{
+	// error {
+	//	if err != nil {
+	//	log.Fatalf("error parsing talk data for %v: %v", smt, err)
+	//}
+
+	ts := TalkScript{
 		Lines:     lines,
-		Questions: map[string]*ScriptQuestionAnswer{},
-		Labels:    map[int]*ScriptTalkLabel{},
-	}, nil
+		Questions: nil, //map[string]*ScriptQuestionAnswer{},
+		Labels:    nil, //map[int]*ScriptTalkLabel{},
+	}
+	err := ts.BuildIndices()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ts, nil
 }
 
 // GetScriptLine returns the raw ScriptLine at idx (false if OOB)
@@ -92,21 +118,13 @@ func (ts *TalkScript) GetScriptLine(idx int) (ScriptLine, bool) {
 	return ts.Lines[idx], true
 }
 
-// GetScriptLineLabelIndex scans for the <StartLabelDef><DefineLabel X>
-// pair and returns its line index (false if not found)
-func (ts *TalkScript) GetScriptLineLabelIndex(labelNum int) (int, bool) {
-	if labelNum < 0 || labelNum >= totalLabels {
-		return 0, false
-	}
+func (ts *TalkScript) GetScriptLineLabelIndex(labelNum int) int {
 	for idx, line := range ts.Lines {
-		if len(line) >= 2 &&
-			line[0].Cmd == StartLabelDef &&
-			line[1].Cmd == DefineLabel &&
-			line[1].Num == labelNum {
-			return idx, true
+		if line.IsLabelDefinition() && line[1].Num == labelNum {
+			return idx
 		}
 	}
-	return 0, false
+	return -1
 }
 
 // BuildIndices transforms the raw Lines slice (produced by ParseNPCBlob)
@@ -182,11 +200,14 @@ func (ts *TalkScript) BuildIndices() error {
 	   ----------------------------------------------------------*/
 	for idx < len(ts.Lines) {
 		start := ts.Lines[idx]
-		if len(start) < 2 ||
-			start[0].Cmd != StartLabelDef ||
-			start[1].Cmd != DefineLabel {
-			return fmt.Errorf("malformed label start at line %d", idx)
+
+		if start.IsEndOfLabelSection() {
+			break // no labels – done
 		}
+		if !start.IsLabelDefinition() {
+			//return fmt.Errorf("malformed label start at line %d", idx)
+		}
+
 		labelNum := start[1].Num
 		label := &ScriptTalkLabel{Num: labelNum, Initial: start}
 		ts.Labels[labelNum] = label

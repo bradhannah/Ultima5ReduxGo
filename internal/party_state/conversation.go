@@ -3,7 +3,7 @@ package party_state
 import (
 	"context"
 	"fmt"
-	"log"
+	//"log"
 	"strings"
 	"time"
 
@@ -195,11 +195,15 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 
 		case references.DefineLabel:
 			tgt := itm.Num
-			tgtIdx, ok := c.ts.GetScriptLineLabelIndex(tgt)
-			if !ok {
-				log.Fatalf("Label %d not found", tgt)
+			//tgtIdx, ok := c.ts.GetScriptLineLabelIndex(tgt)
+			//if !ok {
+			//	log.Fatalf("Label %d not found", tgt)
+			//}
+			idx := c.ts.GetScriptLineLabelIndex(tgt)
+			if idx != -1 {
+				c.convoOrder = append(c.convoOrder, idx)
 			}
-			c.convoOrder = append(c.convoOrder, tgtIdx)
+			c.convoOrder = append(c.convoOrder, idx)
 			c.currentSkip = skipToLabel
 			return nil
 
