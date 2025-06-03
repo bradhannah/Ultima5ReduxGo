@@ -184,7 +184,9 @@ func main() {
 	//
 	//// 2) wire GameState + NPCState
 	//gs := &GameState{AvatarsName: "Avatar", Karma: 0}
-	talkScript := baseState.GameReferences.TalkReferences.GetTalkScript(references.Castle)[0]
+	talkScripts := baseState.GameReferences.TalkReferences.GetTalkScript(references.Castle)
+	talkScript := talkScripts[1]
+
 	ns := &NPCState{HasMetAvatar: false, Script: talkScript}
 
 	// 3) start Conversation
