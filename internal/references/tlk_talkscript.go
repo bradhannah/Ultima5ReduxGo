@@ -23,8 +23,12 @@ func ParseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
 		lines    []ScriptLine
 		currLine ScriptLine
 		addPlain = func() {
-			if buf.Len() == 0 {
+			// sometimes there is zero bytes like Stephen from LB Castle Greeting - but we must add it
+			// to maintain index positions
+			if buf.Len() == 0 && len(lines) != TalkScriptConstantsGreeting {
 				return
+				//runtime.Breakpoint()
+				//return
 			}
 			currLine = append(currLine, ScriptItem{
 				Cmd: PlainString,

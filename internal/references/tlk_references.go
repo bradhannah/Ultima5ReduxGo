@@ -26,7 +26,7 @@ func NewTalkReferences(config *config.UltimaVConfiguration, dataOvl *DataOvl) *T
 
 	for _, smt := range getTalkLocationByFiles() {
 		// required to make an assumption it starts at 1, and they are all in order - which they are
-		for nTalk := 1; nTalk <= len(talkReferences.talkDataForSmallMapType); nTalk++ {
+		for nTalk := 1; nTalk <= len(talkReferences.talkDataForSmallMapType[smt]); nTalk++ {
 			specificSmallMapTalkData := talkReferences.talkDataForSmallMapType[smt][nTalk]
 			script, err := ParseNPCBlob(specificSmallMapTalkData, talkReferences.WordDict)
 
