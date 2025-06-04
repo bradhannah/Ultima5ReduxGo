@@ -44,10 +44,10 @@ func ParseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
 			}
 		}
 	)
-
-	//for _, b := range blob {
+	const upperHalfHighNunmberSubtractor = 0x80
 	for i := 0; i < len(blob); i++ {
 		b := blob[i]
+
 		switch {
 		case b == byte(DefineLabel):
 			addPlain()
@@ -65,25 +65,27 @@ func ParseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
 		case b == eol:
 			flushLine()
 
-			// 1) ASCII + 0x80 letters -----------------------------
+		// 1) ASCII 0x80 letters -----------------------------
 		case (b >= 0xA5 && b <= 0xDA) ||
 			(b >= 0xE1 && b <= 0xFA) ||
 			(b >= 0xA0 && b <= 0xA1):
-			buf.WriteByte(b - 0x80)
+			buf.WriteByte(b - upperHalfHighNunmberSubtractor)
 
-			// 2) **real opcodes** --------------------------------
+		// 2) **real opcodes** --------------------------------
 		case b == byte(AvatarsName) ||
 			b == byte(EndConversation) ||
 			b == byte(Pause) /* …add any others you’ve defined… */ :
 			addPlain()
 			currLine = append(currLine, ScriptItem{Cmd: TalkCommand(b)})
 
-			// 3) compressed‑word bytes ----------------------------
+		// 3) compressed‑word bytes ----------------------------
 		case dict.IsWordByte(b):
 			word, _ := dict.Word(b)
+
 			if buf.Len() > 0 && buf.String()[buf.Len()-1] != ' ' {
 				buf.WriteByte(' ')
 			}
+
 			buf.WriteString(word)
 			buf.WriteByte(' ')
 
@@ -121,7 +123,7 @@ func (ts *TalkScript) GetScriptLine(idx int) (ScriptLine, bool) {
 
 func (ts *TalkScript) GetScriptLineLabelIndex(labelNum int) int {
 	for idx, line := range ts.Lines {
-		if line.IsLabelDefinition() && line[1].Num == labelNum {
+		if line.isLabelDefinition() && line[1].Num == labelNum {
 			return idx
 		}
 	}
@@ -139,15 +141,15 @@ func (ts *TalkScript) BuildIndices() error {
 		return nil
 	}
 
-	ts.Questions = map[string]*ScriptQuestionAnswer{}
-	ts.Labels = map[int]*ScriptTalkLabel{}
+	ts.Questions = map[string]*scriptQuestionAnswer{}
+	ts.Labels = map[int]*scriptTalkLabel{}
 
 	// 1) default hard‑wired Q&A lines -----------------------------
 	ensure := func(keys []string, lineIdx int) {
 		if lineIdx >= len(ts.Lines) {
 			return
 		}
-		sqa := &ScriptQuestionAnswer{Questions: keys, Answer: ts.Lines[lineIdx]}
+		sqa := &scriptQuestionAnswer{Questions: keys, Answer: ts.Lines[lineIdx]}
 		for _, k := range keys {
 			ts.Questions[k] = sqa
 		}
@@ -188,7 +190,7 @@ func (ts *TalkScript) BuildIndices() error {
 		}
 
 		answer := ts.Lines[idx+1]
-		sqa := &ScriptQuestionAnswer{Questions: qStrings, Answer: answer}
+		sqa := &scriptQuestionAnswer{Questions: qStrings, Answer: answer}
 
 		for _, k := range qStrings {
 			if _, exists := ts.Questions[k]; !exists {
@@ -205,15 +207,15 @@ func (ts *TalkScript) BuildIndices() error {
 	for idx < len(ts.Lines) {
 		start := ts.Lines[idx]
 
-		if start.IsEndOfLabelSection() {
+		if start.isEndOfLabelSection() {
 			break // no labels – done
 		}
-		if !start.IsLabelDefinition() {
+		if !start.isLabelDefinition() {
 			//return fmt.Errorf("malformed label start at line %d", idx)
 		}
 
 		labelNum := start[1].Num
-		label := &ScriptTalkLabel{Num: labelNum, Initial: start}
+		label := &scriptTalkLabel{Num: labelNum, Initial: start}
 		ts.Labels[labelNum] = label
 		idx++
 
@@ -239,7 +241,7 @@ func (ts *TalkScript) BuildIndices() error {
 				}
 				ans := ts.Lines[idx+1]
 				label.QA = append(label.QA,
-					ScriptQuestionAnswer{Questions: qs, Answer: ans})
+					scriptQuestionAnswer{Questions: qs, Answer: ans})
 				idx += 2
 			} else {
 				// default line

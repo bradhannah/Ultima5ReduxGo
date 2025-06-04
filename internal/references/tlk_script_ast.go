@@ -2,7 +2,6 @@ package references
 
 import (
 	"fmt"
-	"strings"
 )
 
 /* =========================================================================
@@ -152,35 +151,35 @@ type ScriptItem struct {
 
 type ScriptLine []ScriptItem
 
-type ScriptQuestionAnswer struct {
+type scriptQuestionAnswer struct {
 	Questions []string
 	Answer    ScriptLine
 }
 
-type ScriptTalkLabel struct {
+type scriptTalkLabel struct {
 	Num            int
 	Initial        ScriptLine
 	DefaultAnswers []ScriptLine
-	QA             []ScriptQuestionAnswer
+	QA             []scriptQuestionAnswer
 }
 
 type TalkScript struct {
 	Lines     []ScriptLine
-	Questions map[string]*ScriptQuestionAnswer
-	Labels    map[int]*ScriptTalkLabel
+	Questions map[string]*scriptQuestionAnswer
+	Labels    map[int]*scriptTalkLabel
 }
 
 // Ask – simple lowercase lookup.
-func (ts *TalkScript) Ask(q string) (ScriptLine, bool) {
-	if ts.Questions == nil {
-		return nil, false
-	}
-	qa, ok := ts.Questions[strings.ToLower(q)]
-	if !ok {
-		return nil, false
-	}
-	return qa.Answer, true
-}
+//func (ts *TalkScript) Ask(q string) (ScriptLine, bool) {
+//	if ts.Questions == nil {
+//		return nil, false
+//	}
+//	qa, ok := ts.Questions[strings.ToLower(q)]
+//	if !ok {
+//		return nil, false
+//	}
+//	return qa.Answer, true
+//}
 
 /* ----------------- Convenience constants (fixed line indices) ------------ */
 
@@ -192,13 +191,13 @@ const (
 	TalkScriptConstantsBye         = 4
 )
 
-func (sl ScriptLine) IsEndOfLabelSection() bool {
+func (sl ScriptLine) isEndOfLabelSection() bool {
 	return len(sl) >= 2 &&
 		sl[0].Cmd == StartLabelDef &&
 		sl[1].Cmd == EndScript
 }
 
-func (sl ScriptLine) IsLabelDefinition() bool {
+func (sl ScriptLine) isLabelDefinition() bool {
 	return len(sl) >= 2 &&
 		sl[0].Cmd == StartLabelDef &&
 		sl[1].Cmd == DefineLabel
