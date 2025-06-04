@@ -73,6 +73,7 @@ func (d *WordDict) Word(b byte) (string, error) {
 	if !ok || idx < 0 || idx >= len(d.words) {
 		return "", errors.New("no compressed word for code byte")
 	}
+
 	return d.words[idx], nil
 }
 

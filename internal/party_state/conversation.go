@@ -3,7 +3,6 @@ package party_state
 import (
 	"context"
 	"fmt"
-	//"log"
 	"strings"
 	"time"
 
@@ -21,15 +20,7 @@ import (
    ● Skip‑state and label stack implemented exactly like the C# enum & lists.
    ---------------------------------------------------------------------*/
 
-// ----------------------- public constructor ----------------------------
-
-//type AvatarAPI interface {
-//	Name() string
-//	SetMet(npcID int)
-//	HasMet(npcID int) bool
-//	//Inventory() *party_state.Inventory
-//	Party() *PartyState
-//}
+const pauseInMs = 400
 
 type Conversation struct {
 	npcID int
@@ -96,26 +87,32 @@ func (c *Conversation) loop() {
 		if idxConv >= len(c.convoOrder) {
 			// Ask a question
 			c.enqueueFmt("\n> ")
-			user := c.readLine()
-			if user == "" {
-				user = "bye"
+			userInput := c.readLine()
+
+			if userInput == "" {
+				userInput = "bye"
 			}
 
-			if qa, ok := c.ts.Questions[strings.ToLower(user)]; ok {
+			if qa, ok := c.ts.Questions[strings.ToLower(userInput)]; ok {
 				_ = c.processMultiLines(qa.Answer.SplitIntoSections(), -1)
+
 				continue
 			}
 			// unrecognised
 			c.enqueueStr("I cannot help thee.\n")
+
 			continue
 		}
 
 		lineIdx := c.convoOrder[idxConv]
 		line, ok := c.ts.GetScriptLine(lineIdx)
+
 		if !ok {
 			c.enqueueFmt("[missing script line %d]\n", lineIdx)
+
 			return
 		}
+
 		split := line.SplitIntoSections()
 		_ = c.processMultiLines(split, lineIdx)
 
@@ -157,6 +154,8 @@ func (c *Conversation) processMultiLines(sections []references.SplitScriptLine, 
 	return nil
 }
 
+//nolint:cyclop
+//nolint:funlen
 func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx int) error {
 	// special: description pre‑amble "You see xxx "
 	if talkIdx == references.TalkScriptConstantsDescription && splitIdx == 0 {
@@ -171,6 +170,7 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 
 	for n := 0; n < len(line); n++ {
 		itm := line[n]
+
 		switch itm.Cmd {
 		case references.IfElseKnowsName:
 			if c.party.HasMet(c.npcID) {
@@ -178,6 +178,7 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 			} else {
 				c.currentSkip = skipNext
 			}
+
 			return nil
 
 		case references.AvatarsName:
@@ -186,6 +187,7 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 		case references.AskName:
 			c.enqueueStr("What is thy name? ")
 			name := c.readLine()
+
 			if strings.EqualFold(name, c.party.AvatarName()) {
 				c.party.SetMet(c.npcID)
 				c.enqueueFmt("A pleasure, %s.\n", c.party.AvatarName())
@@ -195,16 +197,15 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 
 		case references.DefineLabel:
 			tgt := itm.Num
-			//tgtIdx, ok := c.ts.GetScriptLineLabelIndex(tgt)
-			//if !ok {
-			//	log.Fatalf("Label %d not found", tgt)
-			//}
+
 			idx := c.ts.GetScriptLineLabelIndex(tgt)
 			if idx != -1 {
 				c.convoOrder = append(c.convoOrder, idx)
 			}
+
 			c.convoOrder = append(c.convoOrder, idx)
 			c.currentSkip = skipToLabel
+
 			return nil
 
 		case references.JoinParty:
@@ -216,11 +217,13 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 				c.enqueueFmt("%s has joined thee!\n", itm.Str)
 			}
 			c.conversationEnded = true
+
 			return nil
 
 		case references.EndConversation:
 			c.enqueueStr("Farewell.\n")
 			c.conversationEnded = true
+
 			return nil
 
 		case references.PlainString:
@@ -230,7 +233,7 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 		case references.Rune:
 			c.runeMode = !c.runeMode
 		case references.Pause:
-			time.Sleep(400 * time.Millisecond)
+			time.Sleep(pauseInMs * time.Millisecond)
 
 		case references.OrBranch, references.StartNewSection, references.DoNothingSection:
 			// never appears in split sections – sanity only

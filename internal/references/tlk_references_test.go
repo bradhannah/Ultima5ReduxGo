@@ -17,14 +17,8 @@ var (
 func getBaseTalkReferences() *TalkReferences {
 	loadOnce.Do(func() {
 		cfg := config.NewUltimaVConfiguration()
-
 		dataOvl := NewDataOvl(cfg)
-		var err error
 		talkReferences = NewTalkReferences(cfg, dataOvl)
-
-		if err != nil {
-			return
-		}
 	})
 
 	return talkReferences

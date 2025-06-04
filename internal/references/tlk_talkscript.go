@@ -94,19 +94,16 @@ func ParseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
 		}
 
 	}
-	flushLine() // final line, if any
 
-	// error {
-	//	if err != nil {
-	//	log.Fatalf("error parsing talk data for %v: %v", smt, err)
-	//}
+	flushLine() // final line, if any
 
 	ts := TalkScript{
 		Lines:     lines,
-		Questions: nil, //map[string]*ScriptQuestionAnswer{},
-		Labels:    nil, //map[int]*ScriptTalkLabel{},
+		Questions: nil,
+		Labels:    nil,
 	}
 	err := ts.BuildIndices()
+
 	if err != nil {
 		return nil, err
 	}
@@ -189,13 +186,16 @@ func (ts *TalkScript) BuildIndices() error {
 		if idx+1 >= len(ts.Lines) {
 			return fmt.Errorf("question without answer at line %d", idx)
 		}
+
 		answer := ts.Lines[idx+1]
 		sqa := &ScriptQuestionAnswer{Questions: qStrings, Answer: answer}
+
 		for _, k := range qStrings {
 			if _, exists := ts.Questions[k]; !exists {
 				ts.Questions[k] = sqa
 			}
 		}
+
 		idx += 2
 	}
 

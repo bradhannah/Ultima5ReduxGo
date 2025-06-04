@@ -192,16 +192,6 @@ const (
 	TalkScriptConstantsBye         = 4
 )
 
-//func (sl ScriptLine) IsEndOfLabelSection() bool {
-//	return sl[0].Cmd != StartLabelDef ||
-//		sl[1].Cmd != EndScript
-//}
-//
-//func (sl ScriptLine) IsLabelDefinition() bool {
-//	return sl[0].Cmd != StartLabelDef ||
-//		sl[1].Cmd != DefineLabel
-//}
-
 func (sl ScriptLine) IsEndOfLabelSection() bool {
 	return len(sl) >= 2 &&
 		sl[0].Cmd == StartLabelDef &&
