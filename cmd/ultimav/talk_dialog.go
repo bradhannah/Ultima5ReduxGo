@@ -4,6 +4,8 @@ import (
 	"image"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/text"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/ui/widgets"
@@ -19,7 +21,8 @@ const (
 	talkFontPoint       = 20
 	talkFontLineSpacing = talkFontPoint + 6
 	talkMaxLines        = 11
-	talkMaxCharsInput   = 15
+	talkMaxCharsInput   = 45
+	//talkMaxCharsInput   = 15
 )
 
 type TalkDialog struct {
@@ -32,13 +35,17 @@ type TalkDialog struct {
 
 	gameScene *GameScene
 
-	friendly *map_units.NPCFriendly
+	friendly     *map_units.NPCFriendly
+	conversation *party_state.Conversation
 }
 
 func NewTalkDialog(gameScene *GameScene, friendly *map_units.NPCFriendly) *TalkDialog {
 	talkDialog := TalkDialog{}
 	talkDialog.gameScene = gameScene
 	talkDialog.friendly = friendly
+	talk := gameScene.gameState.GameReferences.TalkReferences.GetTalkScriptByNpcIndex(references.Castle, 0)
+	talkDialog.conversation = party_state.NewConversation(1, &gameScene.gameState.PartyState, talk)
+	talkDialog.conversation.Start()
 	talkDialog.initializeResizeableVisualElements()
 
 	return &talkDialog
@@ -97,6 +104,7 @@ func (d *TalkDialog) initializeResizeableVisualElements() {
 			text.GetScaledNumberToResolution(talkFontLineSpacing),
 		)
 	}
+
 	if d.TextInput == nil {
 		d.TextInput = widgets.NewTextInput(
 			sprites.PercentBasedPlacement{
@@ -112,6 +120,7 @@ func (d *TalkDialog) initializeResizeableVisualElements() {
 				AmbiguousAutoComplete: func(message string) {
 					d.Output.AddRowStr(message)
 				},
+				OnEnter: d.onEnter,
 			},
 			d.gameScene.keyboard)
 		d.TextInput.SetInputColors(widgets.TextInputColors{
@@ -125,15 +134,30 @@ func (d *TalkDialog) initializeResizeableVisualElements() {
 	}
 }
 
-func (d *TalkDialog) Update() {
-	if ebiten.IsKeyPressed(ebiten.KeyBackquote) || ebiten.IsKeyPressed(ebiten.KeyEscape) {
-		if !d.gameScene.keyboard.TryToRegisterKeyPress(ebiten.KeyBackquote) {
-			return
-		}
-		d.gameScene.dialogStack.PopModalDialog()
-	} else {
-		d.TextInput.Update()
+var emptyLastTime = false
+
+func (d *TalkDialog) onEnter() {
+	str := d.TextInput.GetText()
+	select {
+	case d.conversation.In() <- str: // succeeds only if ch has room
+		emptyLastTime = false
+	default: // immediately chosen if ch is full
 	}
+	d.TextInput.ClearText()
+}
+
+func (d *TalkDialog) Update() {
+	select {
+	case v := <-d.conversation.Out(): // succeeds only if ch has a value
+		d.Output.AppendToCurrentRowStr(v.Str)
+	default: // immediately chosen if ch is empty
+		if !emptyLastTime {
+			emptyLastTime = true
+			d.Output.AddRowStr(" \n")
+		}
+	}
+
+	d.TextInput.Update()
 }
 
 func (d *TalkDialog) Draw(screen *ebiten.Image) {
@@ -164,5 +188,5 @@ func (d *TalkDialog) createTalkFunctions(gameScene *GameScene) *grammar.TextComm
 }
 
 func (d *TalkDialog) AddTestTest() {
-	d.Output.AddRowStr("dsdsadsadsadsadsa\ndsdsadsadsadsadsa\ndsdsadsadsadsadsa\ndsdsadsadsadsadsa\ndsdsadsa\ndsadsadsadsadsadsadsadsa\nsdsadsadsadsa\ntesting 123\nand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some more...")
+	//d.Output.AddRowStr("dsdsadsadsadsadsa\ndsdsadsadsadsadsa\ndsdsadsadsadsadsa\ndsdsadsadsadsadsa\ndsdsadsa\ndsadsadsadsadsadsadsadsa\nsdsadsadsadsa\ntesting 123\nand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some more...")
 }

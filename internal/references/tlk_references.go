@@ -82,3 +82,7 @@ func getTalkLocationByFiles() []SmallMapMasterTypes {
 func (t *TalkReferences) GetTalkScript(smallMapType SmallMapMasterTypes) []*TalkScript {
 	return t.talkScripts[smallMapType]
 }
+
+func (t *TalkReferences) GetTalkScriptByNpcIndex(smallMapType SmallMapMasterTypes, npcIndex int) *TalkScript {
+	return t.talkScripts[smallMapType][npcIndex]
+}

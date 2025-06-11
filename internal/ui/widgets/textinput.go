@@ -31,7 +31,7 @@ import (
 // /tplace/ ,
 
 const (
-	keyPressDelay            = 165
+	keyPressDelay            = 300
 	cursorWidth              = 10
 	cursorBlinkRateInMs      = 1000
 	pauseBlinkKeyPressedInMs = 750
@@ -50,6 +50,7 @@ type TextInputColors struct {
 
 type TextInputCallbacks struct {
 	AmbiguousAutoComplete func(string)
+	OnEnter               func()
 }
 
 type TextInput struct {
@@ -199,6 +200,10 @@ func (t *TextInput) GetText() string {
 	return t.output.GetOutputStr(false)
 }
 
+func (t *TextInput) ClearText() {
+	t.output.Clear()
+}
+
 func (t *TextInput) addCharacter(keyStr string) {
 	if t.output.GetLengthOfCurrentRowStr() < t.maxCharsPerLine {
 		t.output.AppendToCurrentRowStr(keyStr)
@@ -219,12 +224,17 @@ func (t *TextInput) isPerfectMatchWithAutoFillFirstCharacter() bool {
 	return false
 }
 
+func (t *TextInput) ForceWaitForNextKeyPress() {
+	t.keyboard.SetLastKeyPressedNowPlusMs(500)
+	t.keyboard.ForceLastKeyPressed(ebiten.KeyEnter)
+}
+
 func (t *TextInput) Update() {
 	if ebiten.IsKeyPressed(ebiten.KeyControl) {
 		if ebiten.IsKeyPressed(ebiten.KeyU) {
 			t.output.Clear()
-			t.keyboard.SetLastKeyPressedNowPlusMs(500)
-			t.keyboard.ForceLastKeyPressed(ebiten.KeyU)
+			t.keyboard.SetForceWaitAnyKey(500)
+			//t.keyboard.ForceLastKeyPressed(ebiten.KeyU)
 		}
 		return
 	}
@@ -261,13 +271,14 @@ func (t *TextInput) Update() {
 		}
 	}
 
-	switch *boundKey {
+	switch *boundKey { //nolint:exhaustive
 	case ebiten.KeyMinus:
 		t.output.AppendToCurrentRowStr("-")
 	case ebiten.KeyEnter:
 		// check if it has single full match
 		command := t.output.GetOutputStr(false)
 		matches := t.textCommands.GetAllPerfectMatches(command)
+
 		if len(*matches) == 1 {
 			// call the callback function
 			firstMatch := (*matches)[0]
@@ -275,9 +286,14 @@ func (t *TextInput) Update() {
 				return
 			}
 			firstMatch.ExecuteCommand(command, &firstMatch)
-			t.keyboard.SetLastKeyPressedNowPlusMs(200)
+			t.keyboard.SetLastKeyPressedNowPlusMs(keyPressDelay)
 		}
 		// if it does then run execute
+
+		if t.TextInputCallbacks.OnEnter != nil {
+			t.TextInputCallbacks.OnEnter()
+		}
+
 		return
 	case ebiten.KeySpace, ebiten.KeyTab:
 		t.tryToAutoComplete(true)
@@ -295,7 +311,9 @@ func (t *TextInput) tryToAutoComplete(bAddSpaceAtEndIfPerfectMatch bool) {
 	outputStr := t.output.GetOutputStr(false)
 
 	if outputStr == "" {
-		t.TextInputCallbacks.AmbiguousAutoComplete(fmt.Sprintf("Available Commands: %s", t.textCommands.GetFriendlyListOfAllCommands()))
+		t.TextInputCallbacks.AmbiguousAutoComplete(fmt.Sprintf("Available Commands: %s",
+			t.textCommands.GetFriendlyListOfAllCommands()))
+
 		return
 	}
 
@@ -307,6 +325,7 @@ func (t *TextInput) tryToAutoComplete(bAddSpaceAtEndIfPerfectMatch bool) {
 	if nPrimaryCommandMatch == 1 && len(splitCommandStrings) > (*primaryCommandMatches)[0].GetNumberOfParameters() {
 		return
 	}
+
 	if nPrimaryCommandMatch == 0 {
 		return
 	}
@@ -317,6 +336,7 @@ func (t *TextInput) tryToAutoComplete(bAddSpaceAtEndIfPerfectMatch bool) {
 		if len(autoCompleteMatches) > 0 {
 			t.TextInputCallbacks.AmbiguousAutoComplete(fmt.Sprintf("Ambigious - %s", strings.Join(autoCompleteMatches, ", ")))
 		}
+
 		return
 	}
 

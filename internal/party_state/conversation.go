@@ -86,7 +86,7 @@ func (c *Conversation) loop() {
 		// need more dialogue? prompt player
 		if idxConv >= len(c.convoOrder) {
 			// Ask a question
-			c.enqueueFmt("\n> ")
+			//c.enqueueFmt("\n> ")
 			userInput := c.readLine()
 
 			if userInput == "" {
