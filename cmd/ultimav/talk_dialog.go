@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"image"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
@@ -43,8 +44,8 @@ func NewTalkDialog(gameScene *GameScene, friendly *map_units.NPCFriendly) *TalkD
 	talkDialog := TalkDialog{}
 	talkDialog.gameScene = gameScene
 	talkDialog.friendly = friendly
-	talk := gameScene.gameState.GameReferences.TalkReferences.GetTalkScriptByNpcIndex(references.Castle, 0)
-	talkDialog.conversation = party_state.NewConversation(1, &gameScene.gameState.PartyState, talk)
+	talk := gameScene.gameState.GameReferences.TalkReferences.GetTalkScriptByNpcIndex(references.Castle, 2)
+	talkDialog.conversation = party_state.NewConversation(2, &gameScene.gameState.PartyState, talk)
 	talkDialog.conversation.Start()
 	talkDialog.initializeResizeableVisualElements()
 
@@ -118,7 +119,7 @@ func (d *TalkDialog) initializeResizeableVisualElements() {
 			d.createTalkFunctions(d.gameScene),
 			widgets.TextInputCallbacks{
 				AmbiguousAutoComplete: func(message string) {
-					d.Output.AddRowStr(message)
+					d.Output.AddRowStr(message, false)
 				},
 				OnEnter: d.onEnter,
 			},
@@ -141,22 +142,36 @@ func (d *TalkDialog) onEnter() {
 	select {
 	case d.conversation.In() <- str: // succeeds only if ch has room
 		emptyLastTime = false
+		d.Output.AddRowStr(fmt.Sprintf("--- %s\n", str), false)
 	default: // immediately chosen if ch is full
 	}
+
 	d.TextInput.ClearText()
 }
 
-func (d *TalkDialog) Update() {
+func (d *TalkDialog) handleConversationOut() bool {
 	select {
 	case v := <-d.conversation.Out(): // succeeds only if ch has a value
+		switch v.Cmd {
+		case references.AvatarsName:
+			break
+		case references.EndConversation:
+			d.conversation.Stop()
+
+			d.gameScene.dialogStack.PopModalDialog()
+		}
 		d.Output.AppendToCurrentRowStr(v.Str)
 	default: // immediately chosen if ch is empty
 		if !emptyLastTime {
 			emptyLastTime = true
-			d.Output.AddRowStr(" \n")
+			//d.Output.AddRowStr("\n", false)
 		}
 	}
+	return true
+}
 
+func (d *TalkDialog) Update() {
+	d.handleConversationOut()
 	d.TextInput.Update()
 }
 
@@ -188,5 +203,5 @@ func (d *TalkDialog) createTalkFunctions(gameScene *GameScene) *grammar.TextComm
 }
 
 func (d *TalkDialog) AddTestTest() {
-	//d.Output.AddRowStr("dsdsadsadsadsadsa\ndsdsadsadsadsadsa\ndsdsadsadsadsadsa\ndsdsadsadsadsadsa\ndsdsadsa\ndsadsadsadsadsadsadsadsa\nsdsadsadsadsa\ntesting 123\nand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some more...")
+	//d.Output.AddRowStrWithTrim("dsdsadsadsadsadsa\ndsdsadsadsadsadsa\ndsdsadsadsadsadsa\ndsdsadsadsadsadsa\ndsdsadsa\ndsadsadsadsadsadsadsadsa\nsdsadsadsadsa\ntesting 123\nand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some more...")
 }

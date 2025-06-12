@@ -46,7 +46,7 @@ func main() {
 	)
 	npcId := 3
 
-	talkScript := baseState.GameReferences.TalkReferences.GetTalkScriptByNpcIndex(references.Castle, 0)
+	talkScript := baseState.GameReferences.TalkReferences.GetTalkScriptByNpcIndex(references.Castle, 2)
 	//talkScript := talkScripts[npcId]
 
 	ns := &NPCState{HasMetAvatar: false, Script: talkScript}

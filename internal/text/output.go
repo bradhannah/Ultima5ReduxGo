@@ -86,11 +86,15 @@ func (o *Output) DrawTextRightToLeft(screen *ebiten.Image, textStr string, op *e
 	text.Draw(screen, textStr, o.Font.TextFace, &dop)
 }
 
-func (o *Output) AddRowStr(outputStr string) {
+func (o *Output) AddRowStr(outputStr string, bTrim bool) {
 	// Process the string line-by-line, splitting by '\n'
 	lines := splitByNewline(outputStr)
 
 	for _, line := range lines {
+		if len(line) == 0 && !bTrim {
+			line = "\n"
+		}
+
 		// Process each line, splitting by 16 characters or nearest space
 		for len(line) > 0 {
 			// Find the position to split the string, favoring a space before 16 characters
@@ -115,7 +119,9 @@ func (o *Output) AddRowStr(outputStr string) {
 			// Extract the chunk and remove leading spaces from the remaining line
 			chunk := line[:splitAt]
 			line = line[splitAt:]
-			line = trimLeadingSpaces(line) // Helper function to remove leading spaces
+			if bTrim {
+				line = trimLeadingSpaces(line) // Helper function to remove leading spaces
+			}
 
 			// Add hyphen if the chunk has the maximum length and there is more to process
 			if splitAt == o.maxCharsPerLine && len(line) > 0 {
@@ -127,6 +133,10 @@ func (o *Output) AddRowStr(outputStr string) {
 			o.nextLineToIndex = (o.nextLineToIndex + 1) % o.maxLines
 		}
 	}
+}
+
+func (o *Output) AddRowStrWithTrim(outputStr string) {
+	o.AddRowStr(outputStr, true)
 }
 
 // Helper function to split the input string by '\n' while keeping track of empty lines.
@@ -192,7 +202,7 @@ func (o *Output) AppendToCurrentRowStr(outputStr string) {
 	currentStr := o.lines[lastLineAdded]
 
 	o.nextLineToIndex = lastLineAdded
-	o.AddRowStr(currentStr + outputStr)
+	o.AddRowStrWithTrim(currentStr + outputStr)
 }
 
 func (o *Output) getCurrentRow() int {

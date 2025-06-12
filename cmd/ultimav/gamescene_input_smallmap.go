@@ -62,7 +62,7 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		g.secondaryKeyState = PushDirectionInput
 		g.keyboard.SetAllowKeyPressImmediately()
 	case ebiten.KeyO:
-		g.debugConsole.Output.AddRowStr("Open")
+		g.debugConsole.Output.AddRowStrWithTrim("Open")
 		g.addRowStr("Open-")
 		g.secondaryKeyState = OpenDirectionInput
 		g.keyboard.SetAllowKeyPressImmediately()
@@ -164,7 +164,7 @@ func (g *GameScene) smallMapKlimb() {
 		if g.GetCurrentLocationReference().CanGoDownOneFloor(g.gameState.MapState.PlayerLocation.Floor) {
 			g.gameState.MapState.PlayerLocation.Floor--
 			g.gameState.UpdateSmallMap(g.gameReferences.TileReferences, g.gameReferences.LocationReferences)
-			g.output.AddRowStr("Klimb-Down!")
+			g.output.AddRowStrWithTrim("Klimb-Down!")
 
 			return
 		} else {
@@ -175,20 +175,20 @@ func (g *GameScene) smallMapKlimb() {
 		if g.GetCurrentLocationReference().CanGoUpOneFloor(g.gameState.MapState.PlayerLocation.Floor) {
 			g.gameState.MapState.PlayerLocation.Floor++
 			g.gameState.UpdateSmallMap(g.gameReferences.TileReferences, g.gameReferences.LocationReferences)
-			g.output.AddRowStr("Klimb-Up!")
+			g.output.AddRowStrWithTrim("Klimb-Up!")
 
 			return
 		} else {
 			log.Fatal("Can't go higher my dude")
 		}
 	}
-	g.output.AddRowStr("Klimb-")
+	g.output.AddRowStrWithTrim("Klimb-")
 	g.secondaryKeyState = KlimbDirectionInput
 }
 
 func (g *GameScene) smallMapKlimbSecondary(direction references2.Direction) {
 	if !g.gameState.ActionKlimbSmallMap(direction) {
-		g.output.AddRowStr("What?")
+		g.output.AddRowStrWithTrim("What?")
 	}
 }
 
@@ -198,7 +198,7 @@ func (g *GameScene) smallMapPushSecondary(direction references2.Direction) {
 	pushThingTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(pushThingPos)
 
 	if !pushThingTile.IsPushable {
-		g.output.AddRowStr("Won't budge!")
+		g.output.AddRowStrWithTrim("Won't budge!")
 		return
 	}
 
@@ -233,8 +233,8 @@ func (g *GameScene) smallMapOpenSecondary(direction references2.Direction) {
 	if openThingTopTile.Index == indexes.Chest {
 		if g.gameState.MapState.PlayerLocation.Location == references2.Lord_Britishs_Castle && g.gameState.MapState.PlayerLocation.Floor == references2.Basement {
 			itemStack := references2.CreateNewItemStack(references2.LordBritishTreasure)
-			g.output.AddRowStr("Found:")
-			g.output.AddRowStr(g.gameReferences.InventoryItemReferences.GetListOfItems(&itemStack))
+			g.output.AddRowStrWithTrim("Found:")
+			g.output.AddRowStrWithTrim(g.gameReferences.InventoryItemReferences.GetListOfItems(&itemStack))
 			g.gameState.ItemStacksMap.Push(openThingPos, &itemStack)
 			g.gameState.CurrentNPCAIController.GetNpcs().RemoveNPCAtPosition(*openThingPos)
 			g.gameState.CurrentNPCAIController.FreshenExistingNPCsOnMap()

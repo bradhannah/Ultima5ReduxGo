@@ -13,9 +13,9 @@ const (
 	totalLabels  = 0x0A // ⇐ here – exactly 10 labels (0‑9)
 )
 
-// ParseNPCBlob converts the raw TLK byte slice for a single NPC into
+// parseNPCBlob converts the raw TLK byte slice for a single NPC into
 // a TalkScript that currently contains only plain strings.
-func ParseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
+func parseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
 	const eol = 0x00
 
 	var (
@@ -130,7 +130,20 @@ func (ts *TalkScript) GetScriptLineLabelIndex(labelNum int) int {
 	return -1
 }
 
-// BuildIndices transforms the raw Lines slice (produced by ParseNPCBlob)
+func (ts *TalkScript) ensure(keys []string, lineIdx int) {
+	if lineIdx >= len(ts.Lines) {
+		return
+	}
+	sqa := &scriptQuestionAnswer{Questions: keys, Answer: ts.Lines[lineIdx]}
+	for _, k := range keys {
+		ts.Questions[k] = sqa
+	}
+	if lineIdx == TalkScriptConstantsName {
+		sqa.Answer[0].Str = fmt.Sprintf("My name is %s", sqa.Answer[0].Str)
+	}
+}
+
+// BuildIndices transforms the raw Lines slice (produced by parseNPCBlob)
 // into fast lookup collections for questions and label jumps.
 func (ts *TalkScript) BuildIndices() error {
 	if ts == nil {
@@ -145,29 +158,82 @@ func (ts *TalkScript) BuildIndices() error {
 	ts.Labels = map[int]*scriptTalkLabel{}
 
 	// 1) default hard‑wired Q&A lines -----------------------------
-	ensure := func(keys []string, lineIdx int) {
-		if lineIdx >= len(ts.Lines) {
-			return
-		}
-		sqa := &scriptQuestionAnswer{Questions: keys, Answer: ts.Lines[lineIdx]}
-		for _, k := range keys {
-			ts.Questions[k] = sqa
-		}
-	}
-	ensure([]string{"name"}, TalkScriptConstantsName)
-	ensure([]string{"job", "work"}, TalkScriptConstantsJob)
-	ensure([]string{"bye"}, TalkScriptConstantsBye)
 
 	// Bye always ends the conversation so append explicit opcode
 	if TalkScriptConstantsBye < len(ts.Lines) {
 		bye := &ts.Lines[TalkScriptConstantsBye]
 		*bye = append(*bye, ScriptItem{Cmd: EndConversation})
+		_ = ""
 	}
+
+	ts.ensure([]string{"name"}, TalkScriptConstantsName)
+	ts.ensure([]string{"job", "work"}, TalkScriptConstantsJob)
+	ts.ensure([]string{"bye"}, TalkScriptConstantsBye)
 
 	/* ------------------------------------------------------------
 	   2) dynamic Q&A section until the first StartLabelDef
 	   ----------------------------------------------------------*/
-	idx := TalkScriptConstantsBye + 1
+	nIndex := TalkScriptConstantsBye + 1
+	nIndex, err := ts.buildQuestions(nIndex)
+
+	if err != nil {
+		return err
+	}
+
+	/* ------------------------------------------------------------
+	   3) label section
+	   ----------------------------------------------------------*/
+	for nIndex < len(ts.Lines) {
+		start := ts.Lines[nIndex]
+
+		if start.isEndOfLabelSection() {
+			break // no labels – done
+		}
+		if !start.isLabelDefinition() {
+			return fmt.Errorf("malformed label start at line %d", nIndex)
+		}
+
+		labelNum := start[1].Num
+		label := &scriptTalkLabel{Num: labelNum, Initial: start}
+		ts.Labels[labelNum] = label
+		nIndex++
+
+		/* ----- gather lines until next StartLabelDef / EndScript ----*/
+		for nIndex < len(ts.Lines) {
+			l := ts.Lines[nIndex]
+			if len(l) == 0 {
+				nIndex++
+				continue
+			}
+			if l[0].Cmd == StartLabelDef {
+				break
+			}
+			if l.Contains(OrBranch) || l[0].IsQuestion() { //nolint:wsl
+				// Q&A block
+				qs := []string{toKey(l[0].Str)}
+				for nIndex+1 < len(ts.Lines) && ts.Lines[nIndex+1].Contains(OrBranch) {
+					nIndex += 2
+					qs = append(qs, toKey(ts.Lines[nIndex][0].Str))
+				}
+				if nIndex+1 >= len(ts.Lines) {
+					return fmt.Errorf("label %d: question without answer", labelNum)
+				}
+				ans := ts.Lines[nIndex+1]
+				label.QA = append(label.QA,
+					scriptQuestionAnswer{Questions: qs, Answer: ans})
+				nIndex += 2
+			} else {
+				// default line
+				label.DefaultAnswers = append(label.DefaultAnswers, l)
+				nIndex++
+			}
+		}
+	}
+
+	return nil
+}
+
+func (ts *TalkScript) buildQuestions(idx int) (int, error) {
 	for idx < len(ts.Lines) {
 		line := ts.Lines[idx]
 		if len(line) == 0 {
@@ -186,7 +252,7 @@ func (ts *TalkScript) BuildIndices() error {
 		}
 
 		if idx+1 >= len(ts.Lines) {
-			return fmt.Errorf("question without answer at line %d", idx)
+			return 0, fmt.Errorf("question without answer at line %d", idx)
 		}
 
 		answer := ts.Lines[idx+1]
@@ -200,58 +266,7 @@ func (ts *TalkScript) BuildIndices() error {
 
 		idx += 2
 	}
-
-	/* ------------------------------------------------------------
-	   3) label section
-	   ----------------------------------------------------------*/
-	for idx < len(ts.Lines) {
-		start := ts.Lines[idx]
-
-		if start.isEndOfLabelSection() {
-			break // no labels – done
-		}
-		if !start.isLabelDefinition() {
-			//return fmt.Errorf("malformed label start at line %d", idx)
-		}
-
-		labelNum := start[1].Num
-		label := &scriptTalkLabel{Num: labelNum, Initial: start}
-		ts.Labels[labelNum] = label
-		idx++
-
-		/* ----- gather lines until next StartLabelDef / EndScript ----*/
-		for idx < len(ts.Lines) {
-			l := ts.Lines[idx]
-			if len(l) == 0 {
-				idx++
-				continue
-			}
-			if l[0].Cmd == StartLabelDef {
-				break
-			}
-			if l.Contains(OrBranch) || l[0].IsQuestion() {
-				// Q&A block
-				qs := []string{toKey(l[0].Str)}
-				for idx+1 < len(ts.Lines) && ts.Lines[idx+1].Contains(OrBranch) {
-					idx += 2
-					qs = append(qs, toKey(ts.Lines[idx][0].Str))
-				}
-				if idx+1 >= len(ts.Lines) {
-					return fmt.Errorf("label %d: question without answer", labelNum)
-				}
-				ans := ts.Lines[idx+1]
-				label.QA = append(label.QA,
-					scriptQuestionAnswer{Questions: qs, Answer: ans})
-				idx += 2
-			} else {
-				// default line
-				label.DefaultAnswers = append(label.DefaultAnswers, l)
-				idx++
-			}
-		}
-	}
-
-	return nil
+	return idx, nil
 }
 
 func toKey(s string) string { return strings.ToLower(strings.TrimSpace(s)) }
@@ -278,32 +293,35 @@ func (sl ScriptLine) Contains(cmd TalkCommand) bool {
 }
 
 // String implements fmt.Stringer for debugging.
-func (sl ScriptLine) String() string {
-	var b strings.Builder
-	for _, it := range sl {
-		switch it.Cmd {
-		case PlainString:
-			b.WriteString(it.Str)
-		case DefineLabel, GotoLabel:
-			b.WriteString(fmt.Sprintf("<%s%d>", it.Cmd, it.Num))
-		default:
-			b.WriteString("<")
-			b.WriteString(it.Cmd.String())
-			b.WriteString(">")
-		}
-	}
-	return b.String()
-}
+//func (sl ScriptLine) String() string {
+//	var b strings.Builder
+//	for _, it := range sl {
+//		switch it.Cmd {
+//		case PlainString:
+//			b.WriteString(it.Str)
+//		case DefineLabel, GotoLabel:
+//			b.WriteString(fmt.Sprintf("<%s%d>", it.Cmd, it.Num))
+//		default:
+//			b.WriteString("<")
+//			b.WriteString(it.Cmd.String())
+//			b.WriteString(">")
+//		}
+//	}
+//	return b.String()
+//}
 
 // SplitIntoSections replicates the intricate splitting logic from the C#
 // implementation.  It walks the op‑codes in the line and divides them into
 // logical blocks separated by <A2>, label definitions, If/Else branches,
 // Change/Gold opcode payloads, etc.  The resulting slice always contains at
 // least one entry.
+//
+//nolint:cyclop
 func (sl ScriptLine) SplitIntoSections() []SplitScriptLine {
 	// early‑out for the common case: a plain string with no structural
 	// op‑codes – just return a single section containing the full line.
 	simple := true
+
 	for _, it := range sl {
 		switch it.Cmd {
 		case PlainString:

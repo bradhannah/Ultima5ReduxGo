@@ -200,5 +200,5 @@ func (sl ScriptLine) isEndOfLabelSection() bool {
 func (sl ScriptLine) isLabelDefinition() bool {
 	return len(sl) >= 2 &&
 		sl[0].Cmd == StartLabelDef &&
-		sl[1].Cmd == DefineLabel
+		(sl[1].Cmd >= Label1 && sl[1].Cmd <= Label10)
 }

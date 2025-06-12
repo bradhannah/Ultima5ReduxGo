@@ -237,6 +237,9 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 
 		case references.OrBranch, references.StartNewSection, references.DoNothingSection:
 			// never appears in split sections – sanity only
+		case references.Label1, references.Label2, references.Label3, references.Label4, references.Label5,
+			references.Label6, references.Label7, references.Label8, references.Label9:
+			c.enqueueStr(itm.Str)
 		default:
 			// pass‑through unimplemented opcodes for now
 			c.enqueueStr("<" + itm.Cmd.String() + ">")

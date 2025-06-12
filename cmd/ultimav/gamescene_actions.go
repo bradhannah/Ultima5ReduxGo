@@ -10,19 +10,19 @@ func (g *GameScene) actionBoard() {
 		g.gameState.MapState.PlayerLocation.Position)
 
 	if vehicle == nil {
-		g.output.AddRowStr("Board what?")
+		g.output.AddRowStrWithTrim("Board what?")
 
 		return
 	}
 
 	switch g.gameState.BoardVehicle(*vehicle) {
 	case game_state.BoardVehicleResultSuccess:
-		g.output.AddRowStr(vehicle.GetVehicleDetails().VehicleType.GetBoardString())
+		g.output.AddRowStrWithTrim(vehicle.GetVehicleDetails().VehicleType.GetBoardString())
 	case game_state.BoardVehicleResultNoVehicle:
-		g.output.AddRowStr("Board what?")
+		g.output.AddRowStrWithTrim("Board what?")
 	case game_state.BoardVehicleResultNoSkiffs:
-		g.output.AddRowStr(vehicle.GetVehicleDetails().VehicleType.GetBoardString())
-		g.output.AddRowStr("WARNING: NO SKIFFS ON BOARD!")
+		g.output.AddRowStrWithTrim(vehicle.GetVehicleDetails().VehicleType.GetBoardString())
+		g.output.AddRowStrWithTrim("WARNING: NO SKIFFS ON BOARD!")
 	}
 }
 
@@ -30,10 +30,10 @@ func (g *GameScene) actionExit() {
 	exittedVehicle := g.gameState.ExitVehicle()
 
 	if exittedVehicle == nil || exittedVehicle.GetVehicleDetails().VehicleType == references.NoPartyVehicle {
-		g.output.AddRowStr("X-it what?")
+		g.output.AddRowStrWithTrim("X-it what?")
 
 		return
 	}
 
-	g.output.AddRowStr(exittedVehicle.GetVehicleDetails().VehicleType.GetExitString())
+	g.output.AddRowStrWithTrim(exittedVehicle.GetVehicleDetails().VehicleType.GetExitString())
 }

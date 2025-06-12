@@ -79,7 +79,7 @@ func (d *DebugConsole) createMonsterGenerationOdds() *grammar.TextCommand {
 }
 
 func (d *DebugConsole) dumpQuickState(prefix string) {
-	d.Output.AddRowStr(fmt.Sprintf("> %s\n  X=%d,Y=%d,Floor=%d",
+	d.Output.AddRowStrWithTrim(fmt.Sprintf("> %s\n  X=%d,Y=%d,Floor=%d",
 		prefix,
 		d.gameScene.gameState.MapState.PlayerLocation.Position.X,
 		d.gameScene.gameState.MapState.PlayerLocation.Position.Y,

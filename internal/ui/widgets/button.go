@@ -84,7 +84,7 @@ func NewButton(
 		text.GetScaledNumberToResolution(MediumButtonLineSpacing),
 	)
 
-	button.Output.AddRowStr(buttonText)
+	button.Output.AddRowStrWithTrim(buttonText)
 	return button
 }
 

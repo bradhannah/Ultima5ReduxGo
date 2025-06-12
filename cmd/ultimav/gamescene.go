@@ -146,8 +146,8 @@ func (g *GameScene) appendToCurrentRowStr(str string) {
 }
 
 func (g *GameScene) addRowStr(str string) {
-	g.output.AddRowStr(str)
-	g.debugConsole.Output.AddRowStr(str)
+	g.output.AddRowStrWithTrim(str)
+	g.debugConsole.Output.AddRowStrWithTrim(str)
 }
 
 func (g *GameScene) GetCurrentLocationReference() *references2.SmallLocationReference {

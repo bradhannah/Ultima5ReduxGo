@@ -105,7 +105,7 @@ func NewTextInput(
 	textInput.output = text.NewOutput(textInput.ultimaFont, 0, 1, maxCharsPerLine)
 	textInput.SetFontPoint(fontPointSize)
 
-	textInput.output.AddRowStr("")
+	textInput.output.AddRowStrWithTrim("")
 
 	textInput.inputColors = TextInputColors{
 		DefaultColor:          color.White,

@@ -89,7 +89,7 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 	if mapType == references2.LargeMapType {
 		if g.gameState.PartyVehicle.GetVehicleDetails().VehicleType == references2.FrigateVehicle && !g.gameState.PartyVehicle.GetVehicleDetails().DoesMoveResultInMovement(direction) {
 			g.gameState.PartyVehicle.GetVehicleDetails().SetPartyVehicleDirection(direction)
-			g.output.AddRowStr(fmt.Sprintf("Head %s", direction.GetDirectionCompassName()))
+			g.output.AddRowStrWithTrim(fmt.Sprintf("Head %s", direction.GetDirectionCompassName()))
 			return
 		}
 
@@ -110,15 +110,15 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 
 	if g.gameState.IsPassable(newPosition) || g.gameState.DebugOptions.FreeMove {
 		g.moveToNewPositionByDirection(direction)
-		g.debugConsole.Output.AddRowStr(fmt.Sprintf("X: %d, Y: %d", newPosition.X, newPosition.Y))
+		g.debugConsole.Output.AddRowStrWithTrim(fmt.Sprintf("X: %d, Y: %d", newPosition.X, newPosition.Y))
 		avatarTopTile := g.gameState.GetCurrentLayeredMapAvatarTopTile()
 		extraMovementStr := avatarTopTile.GetExtraMovementString()
 
 		if extraMovementStr != "" {
-			g.output.AddRowStr(extraMovementStr)
+			g.output.AddRowStrWithTrim(extraMovementStr)
 		}
 
-		g.output.AddRowStr(fmt.Sprintf("X: %d, Y: %d", newPosition.X, newPosition.Y))
+		g.output.AddRowStrWithTrim(fmt.Sprintf("X: %d, Y: %d", newPosition.X, newPosition.Y))
 	} else {
 		g.addRowStr("Blocked!")
 	}

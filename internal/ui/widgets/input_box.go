@@ -62,7 +62,7 @@ func NewInputBox(question string, textCommand *grammar.TextCommand, keyboard *in
 		EndPercentY:   inputBoxStartPercentY + .05 + 0.05,
 	}
 
-	inputBox.textQuestion.AddRowStr(inputBox.Question)
+	inputBox.textQuestion.AddRowStrWithTrim(inputBox.Question)
 	questionStr := inputBox.textQuestion.GetOutputStr(false)
 	nQuestionRows := strings.Count(questionStr, "\n") + 1
 

@@ -84,7 +84,7 @@ func (d *DebugConsole) initializeResizeableVisualElements() {
 			d.createDebugFunctions(d.gameScene),
 			widgets.TextInputCallbacks{
 				AmbiguousAutoComplete: func(message string) {
-					d.Output.AddRowStr(message)
+					d.Output.AddRowStrWithTrim(message)
 				},
 			},
 			d.gameScene.keyboard)

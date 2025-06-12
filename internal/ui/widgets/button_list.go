@@ -72,7 +72,7 @@ func NewButtonListModal(
 		Y: textRect.Min.Y,
 	}
 	buttonListModal.titleText = titleText
-	buttonListModal.titleTextOutput.AddRowStr(buttonListModal.titleText)
+	buttonListModal.titleTextOutput.AddRowStrWithTrim(buttonListModal.titleText)
 
 	buttonListModal.currentSelectionIndex = -1
 
