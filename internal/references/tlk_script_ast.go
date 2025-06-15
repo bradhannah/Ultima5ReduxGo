@@ -2,6 +2,7 @@ package references
 
 import (
 	"fmt"
+	"strings"
 )
 
 /* =========================================================================
@@ -160,7 +161,8 @@ type scriptTalkLabel struct {
 	Num            int
 	Initial        ScriptLine
 	DefaultAnswers []ScriptLine
-	QA             []scriptQuestionAnswer
+	//	QA             []scriptQuestionAnswer
+	QA map[string]*scriptQuestionAnswer
 }
 
 type TalkScript struct {
@@ -201,4 +203,23 @@ func (sl ScriptLine) isLabelDefinition() bool {
 	return len(sl) >= 2 &&
 		sl[0].Cmd == StartLabelDef &&
 		(sl[1].Cmd >= Label1 && sl[1].Cmd <= Label10)
+}
+
+// String implements fmt.Stringer for debugging.
+func (sl ScriptLine) String() string {
+	var b strings.Builder
+	for _, it := range sl {
+
+		switch it.Cmd {
+		case PlainString:
+			b.WriteString(it.Str)
+		case DefineLabel, GotoLabel:
+			b.WriteString(fmt.Sprintf("<%s%d>", it.Cmd, it.Num))
+		default:
+			b.WriteString("<")
+			b.WriteString(it.Cmd.String())
+			b.WriteString(">")
+		}
+	}
+	return b.String()
 }

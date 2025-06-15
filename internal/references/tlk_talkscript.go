@@ -4,6 +4,7 @@ package references
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 )
 
@@ -49,14 +50,18 @@ func parseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
 		b := blob[i]
 
 		switch {
+		//StartLabelDefinition
+		//StartLabelDef
 		case b == byte(DefineLabel):
+			//case b == byte(StartLabelDef):
 			addPlain()
 			// next byte is the label number (0‑9); consume it
 			// guard against running past EOF
 			if i+1 >= len(blob) {
 				return nil, fmt.Errorf("truncated DefineLabel at end of blob")
 			}
-			labelNum := int(blob[i+1])
+			labelNum := int(blob[i+1]) - minLabelByte
+			labelNum = 0
 			i++ // skip the payload byte
 			currLine = append(currLine, ScriptItem{
 				Cmd: DefineLabel,
@@ -174,72 +179,88 @@ func (ts *TalkScript) BuildIndices() error {
 	   2) dynamic Q&A section until the first StartLabelDef
 	   ----------------------------------------------------------*/
 	nIndex := TalkScriptConstantsBye + 1
-	nIndex, err := ts.buildQuestions(nIndex)
-
-	if err != nil {
-		return err
-	}
+	ts.Questions, nIndex = ts.buildQuestions(nIndex)
 
 	/* ------------------------------------------------------------
 	   3) label section
 	   ----------------------------------------------------------*/
 	for nIndex < len(ts.Lines) {
-		start := ts.Lines[nIndex]
+		startLine := ts.Lines[nIndex]
 
-		if start.isEndOfLabelSection() {
+		if startLine.isEndOfLabelSection() {
+			if nIndex != (len(ts.Lines) - 1) {
+				log.Fatalf("Unexpected end of label section")
+			}
 			break // no labels – done
 		}
-		if !start.isLabelDefinition() {
+
+		if !startLine.isLabelDefinition() {
 			return fmt.Errorf("malformed label start at line %d", nIndex)
 		}
 
-		labelNum := start[1].Num
-		label := &scriptTalkLabel{Num: labelNum, Initial: start}
-		ts.Labels[labelNum] = label
-		nIndex++
-
 		/* ----- gather lines until next StartLabelDef / EndScript ----*/
 		for nIndex < len(ts.Lines) {
-			l := ts.Lines[nIndex]
-			if len(l) == 0 {
+			line := ts.Lines[nIndex]
+
+			if line[1].Cmd == EndScript {
+				// we don't actually save the end of the script
+				// I think...
+				break
+			}
+
+			labelNum := int(line[1].Cmd) - minLabelByte
+
+			label := &scriptTalkLabel{Num: labelNum, Initial: line}
+			ts.Labels[labelNum] = label
+
+			// it's a single line only, so we skip this tom foolery below
+			if (nIndex+1) >= len(ts.Lines) || ts.Lines[nIndex+1][0].Cmd == StartLabelDef {
+				// do nothing - the ScriptTalkLabel will simply have no DefaultAnswer indicating that only the primary
+				// label line is read
+
+				// The first example of this happening is Treanna (https://wiki.ultimacodex.com/wiki/Ultima_V_transcript#Treanna)
+				// in Label #4 there is no default answer
 				nIndex++
 				continue
 			}
-			if l[0].Cmd == StartLabelDef {
+
+			if line.isEndOfLabelSection() {
+				fmt.Sprint("oof")
 				break
 			}
-			if l.Contains(OrBranch) || l[0].IsQuestion() { //nolint:wsl
-				// Q&A block
-				qs := []string{toKey(l[0].Str)}
-				for nIndex+1 < len(ts.Lines) && ts.Lines[nIndex+1].Contains(OrBranch) {
-					nIndex += 2
-					qs = append(qs, toKey(ts.Lines[nIndex][0].Str))
-				}
-				if nIndex+1 >= len(ts.Lines) {
-					return fmt.Errorf("label %d: question without answer", labelNum)
-				}
-				ans := ts.Lines[nIndex+1]
-				label.QA = append(label.QA,
-					scriptQuestionAnswer{Questions: qs, Answer: ans})
-				nIndex += 2
-			} else {
-				// default line
-				label.DefaultAnswers = append(label.DefaultAnswers, l)
-				nIndex++
+
+			label.DefaultAnswers = append(label.DefaultAnswers, ts.Lines[nIndex+1])
+			// Advance the Index past the Initial Definition (+0)
+			// and past DefaultAnswers (+1).
+			// Since we are in this section we are confident that there is more data to consume
+			// because we would have exitted the loop above otherwise
+			// So we expect question and answers sections
+			nIndex += 2
+
+			if label.QA == nil {
+				label.QA = make(map[string]*scriptQuestionAnswer)
 			}
+			var qa map[string]*scriptQuestionAnswer
+			qa, nIndex = ts.buildQuestions(nIndex)
+			MergeMaps(label.QA, qa)
+
+			fmt.Sprint("oof")
 		}
 	}
 
 	return nil
 }
 
-func (ts *TalkScript) buildQuestions(idx int) (int, error) {
+func (ts *TalkScript) buildQuestions(idx int) (map[string]*scriptQuestionAnswer, int) {
+	sqaMap := make(map[string]*scriptQuestionAnswer, 0)
 	for idx < len(ts.Lines) {
 		line := ts.Lines[idx]
 		if len(line) == 0 {
 			idx++
+
 			continue
 		}
+
 		if line[0].Cmd == StartLabelDef {
 			break // jump to label processing
 		}
@@ -252,21 +273,22 @@ func (ts *TalkScript) buildQuestions(idx int) (int, error) {
 		}
 
 		if idx+1 >= len(ts.Lines) {
-			return 0, fmt.Errorf("question without answer at line %d", idx)
+			log.Fatalf("question without answer at line %d", idx)
 		}
 
 		answer := ts.Lines[idx+1]
 		sqa := &scriptQuestionAnswer{Questions: qStrings, Answer: answer}
 
 		for _, k := range qStrings {
-			if _, exists := ts.Questions[k]; !exists {
-				ts.Questions[k] = sqa
-			}
+			//if _, exists := ts.Questions[k]; !exists {
+			sqaMap[k] = sqa
+			//}
 		}
 
 		idx += 2
 	}
-	return idx, nil
+
+	return sqaMap, idx
 }
 
 func toKey(s string) string { return strings.ToLower(strings.TrimSpace(s)) }
@@ -291,24 +313,6 @@ func (sl ScriptLine) Contains(cmd TalkCommand) bool {
 	}
 	return false
 }
-
-// String implements fmt.Stringer for debugging.
-//func (sl ScriptLine) String() string {
-//	var b strings.Builder
-//	for _, it := range sl {
-//		switch it.Cmd {
-//		case PlainString:
-//			b.WriteString(it.Str)
-//		case DefineLabel, GotoLabel:
-//			b.WriteString(fmt.Sprintf("<%s%d>", it.Cmd, it.Num))
-//		default:
-//			b.WriteString("<")
-//			b.WriteString(it.Cmd.String())
-//			b.WriteString(">")
-//		}
-//	}
-//	return b.String()
-//}
 
 // SplitIntoSections replicates the intricate splitting logic from the C#
 // implementation.  It walks the op‑codes in the line and divides them into
@@ -423,4 +427,10 @@ func (sl ScriptLine) SplitIntoSections() []SplitScriptLine {
 	}
 
 	return sections
+}
+
+func MergeMaps[K comparable, V any](dst, src map[K]V) {
+	for k, v := range src {
+		dst[k] = v
+	}
 }
