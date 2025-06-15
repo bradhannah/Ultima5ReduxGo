@@ -62,7 +62,7 @@ func (c *Conversation) Stop()                             { c.cancel() }
 type skipInstr int
 
 const (
-	skipNone skipInstr = iota
+	doNotSkip skipInstr = iota
 	skipNext
 	skipAfterNext
 	skipToLabel
@@ -125,66 +125,87 @@ func (c *Conversation) loop() {
 
 func (c *Conversation) processMultiLines(sections []references.SplitScriptLine, talkIdx int) error {
 	skipCounter := -1
-	for i, sec := range sections {
+	for i, section := range sections {
+		// if skipCounter hits zero, we know we are at the point we need
+		// to skip the next record
 		if skipCounter == 0 {
 			skipCounter--
 			continue
 		}
 
-		if sec.Contains(references.AvatarsName) && !c.party.HasMet(c.npcID) {
+		if section.Contains(references.AvatarsName) && !c.party.HasMet(c.npcID) {
+			// move directly to next section
 			continue // they don't know me yet
 		}
 
-		if len(sec) == 0 {
+		if len(section) == 0 {
+			//log.Fatalf("Unexpected that length of sections is zero\n")
 			continue
 		}
-		if err := c.processLine(sec, talkIdx, i); err != nil {
+
+		if err := c.processLine(section, talkIdx, i); err != nil {
 			return err
+		}
+
+		if skipCounter == -1 {
+			skipCounter--
 		}
 
 		switch c.currentSkip {
 		case skipToLabel:
-			return nil
+			{
+				return nil
+			}
 		case skipAfterNext:
-			skipCounter = 1
+			{
+				skipCounter = 1
+			}
 		case skipNext:
-			skipCounter = 0
+			{
+				i++
+			}
+		case doNotSkip:
+			{
+				break
+			}
 		}
 	}
-	c.currentSkip = skipNone
+	//c.currentSkip = skipNone
+	//log.Fatalf("Unexpected that length of sections is zero\n")
 	return nil
 }
 
 //nolint:cyclop
 //nolint:funlen
 func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx int) error {
+	// AskName optimisation
+	if line.Contains(references.AskName) && c.party.HasMet(c.npcID) {
+		c.currentSkip = doNotSkip
+		return nil
+	}
+
 	// special: description pre‑amble "You see xxx "
 	if talkIdx == references.TalkScriptConstantsDescription && splitIdx == 0 {
 		c.enqueueStr("You see ")
 	}
 
-	// AskName optimisation
-	if line.Contains(references.AskName) && c.party.HasMet(c.npcID) {
-		c.currentSkip = skipNone
-		return nil
-	}
-
 	for n := 0; n < len(line); n++ {
-		itm := line[n]
+		scriptItem := line[n]
 
-		switch itm.Cmd {
+		switch scriptItem.Cmd {
+
 		case references.IfElseKnowsName:
-			if c.party.HasMet(c.npcID) {
-				c.currentSkip = skipAfterNext
-			} else {
-				c.currentSkip = skipNext
+			{
+				if c.party.HasMet(c.npcID) {
+					c.currentSkip = skipAfterNext
+				} else {
+					c.currentSkip = skipNext
+				}
+
+				return nil
 			}
-
-			return nil
-
 		case references.AvatarsName:
 			c.enqueueStr(c.party.AvatarName())
-
 		case references.AskName:
 			c.enqueueStr("What is thy name? ")
 			name := c.readLine()
@@ -195,60 +216,96 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 			} else {
 				c.enqueueStr("If thou sayest so…\n")
 			}
-
+		case references.CallGuards:
+			c.enqueueFmt("PLACEHOLDER")
+		case references.Change:
+			c.enqueueFmt("PLACEHOLDER")
 		case references.DefineLabel:
-			tgt := itm.Num
+			{
+				// maybe ok?
+				tgt := scriptItem.Num
 
-			idx := c.ts.GetScriptLineLabelIndex(tgt)
-			if idx != -1 {
+				idx := c.ts.GetScriptLineLabelIndex(tgt)
+				if idx != -1 {
+					c.convoOrder = append(c.convoOrder, idx)
+				}
+
 				c.convoOrder = append(c.convoOrder, idx)
+				c.currentSkip = skipToLabel
+
+				return nil
 			}
-
-			c.convoOrder = append(c.convoOrder, idx)
-			c.currentSkip = skipToLabel
-
+		case references.DoNothingSection:
+			break
+		case references.EndConversation:
+			c.enqueueStr("PLACEHOLDER")
+			c.conversationEnded = true
 			return nil
-
+		case references.EndScript:
+			c.enqueueStr("PLACEHOLDER")
+		case references.ExtortionAmount:
+			{
+				c.enqueueFmt("PLACEHOLDER")
+			}
+		case references.GoldPrompt:
+			c.enqueueStr("PLACEHOLDER")
+		case references.GotoLabel:
+			break
+		case references.GoToJail:
+			c.enqueueStr("PLACEHOLDER")
 		case references.JoinParty:
 			if !c.party.HasRoom() {
 				c.enqueueStr("My party is full.\n")
 			} else if err := c.party.JoinNPC(c.npcID); err != nil {
 				c.enqueueFmt("%v\n", err)
 			} else {
-				c.enqueueFmt("%s has joined thee!\n", itm.Str)
+				c.enqueueFmt("%s has joined thee!\n", scriptItem.Str)
 			}
+			c.enqueueFmt("PLACEHOLDER")
 			c.conversationEnded = true
 
 			return nil
-
-		case references.EndConversation:
-			c.enqueueStr("Farewell.\n")
-			c.conversationEnded = true
-
-			return nil
-
-		case references.PlainString:
-			c.enqueueStr(itm.Str)
-		case references.NewLine:
-			c.enqueueStr("\n")
-		case references.Rune:
-			c.runeMode = !c.runeMode
-		case references.Pause:
-			time.Sleep(pauseInMs * time.Millisecond)
-
-		case references.OrBranch, references.StartNewSection, references.DoNothingSection:
-			// never appears in split sections – sanity only
-			log.Fatalf("Unexpected OR, StartNewSection or DoNothingSection in script: %v", itm.Cmd)
+		case references.KarmaMinusOne:
+			c.enqueueStr("PLACEHOLDER")
+		case references.KarmaPlusOne:
+			c.enqueueStr("PLACEHOLDER")
+		case references.KeyWait:
+			c.enqueueStr("PLACEHOLDER")
 		case references.Label1, references.Label2, references.Label3, references.Label4, references.Label5,
 			references.Label6, references.Label7, references.Label8, references.Label9:
-			c.enqueueStr(itm.Str)
+			c.enqueueStr(scriptItem.Str)
+		case references.MakeAHorse:
+			c.enqueueStr("PLACEHOLDER")
+		case references.NewLine:
+			c.enqueueStr("\n")
+		case references.PayGenericExtortion:
+			c.enqueueStr("PLACEHOLDER")
+		case references.PayHalfGoldExtortion:
+			c.enqueueStr("PLACEHOLDER")
+		case references.PlainString:
+			c.enqueueStr(scriptItem.Str)
+		case references.Pause:
+			time.Sleep(pauseInMs * time.Millisecond)
+		case references.PromptUserForInput_NPCQuestion:
+			break
+		case references.PromptUserForInput_UserInterest:
+			break
+		case references.Rune:
+			c.runeMode = !c.runeMode
+		case references.StartLabelDef:
+			c.enqueueFmt("PLACEHOLDER - nItem++")
+		case references.OrBranch, references.StartNewSection:
+			// never appears in split sections – sanity only
+			log.Fatalf("Unexpected OR, StartNewSection or DoNothingSection in script: %v", scriptItem.Cmd)
+		case references.UserInputNotRecognized:
+			c.enqueueStr("Cannot help.")
 		default:
 			// pass‑through unimplemented opcodes for now
-			c.enqueueStr("<" + itm.Cmd.String() + ">")
+			c.enqueueStr("<" + scriptItem.Cmd.String() + ">")
 		}
 	}
 
-	c.currentSkip = skipNone
+	c.currentSkip = doNotSkip
 	return nil
 }
 
