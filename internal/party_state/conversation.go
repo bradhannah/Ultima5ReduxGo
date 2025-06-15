@@ -3,6 +3,7 @@ package party_state
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -237,6 +238,7 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 
 		case references.OrBranch, references.StartNewSection, references.DoNothingSection:
 			// never appears in split sections – sanity only
+			log.Fatalf("Unexpected OR, StartNewSection or DoNothingSection in script: %v", itm.Cmd)
 		case references.Label1, references.Label2, references.Label3, references.Label4, references.Label5,
 			references.Label6, references.Label7, references.Label8, references.Label9:
 			c.enqueueStr(itm.Str)
@@ -260,10 +262,13 @@ func (c *Conversation) enqueueFmt(f string, a ...interface{}) {
 }
 
 func (c *Conversation) readLine() string {
+	//begin:
 	select {
 	case <-c.ctx.Done():
 		return ""
 	case s := <-c.in:
 		return strings.TrimSpace(s)
+		//default:
+		//	goto begin
 	}
 }

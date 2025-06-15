@@ -179,7 +179,9 @@ func (ts *TalkScript) BuildIndices() error {
 	   2) dynamic Q&A section until the first StartLabelDef
 	   ----------------------------------------------------------*/
 	nIndex := TalkScriptConstantsBye + 1
-	ts.Questions, nIndex = ts.buildQuestions(nIndex)
+	simpleQuestions, nIndex := ts.buildQuestions(nIndex)
+	MergeMaps(ts.Questions, simpleQuestions)
+	//ts.Questions, nIndex = ts.buildQuestions(nIndex)
 
 	/* ------------------------------------------------------------
 	   3) label section

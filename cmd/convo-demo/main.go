@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
+	"time"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
@@ -57,15 +57,42 @@ func main() {
 	)
 
 	convo.Start()
+	time.Sleep(10)
+	scanCh := make(chan string)
+	go func() {
+		scanner := bufio.NewScanner(os.Stdin)
+		for scanner.Scan() {
+			scanCh <- scanner.Text() // blocks, but that’s fine in this goroutine
+		}
+		close(scanCh) // on EOF / error
+	}()
 
-	scan := bufio.NewScanner(os.Stdin)
-	for item := range convo.Out() {
-		fmt.Print(item.Str)
-		if strings.HasSuffix(item.Str, "> ") { // our engine prompts with "> "
-			if scan.Scan() {
-				convo.In() <- scan.Text()
+	//scan := bufio.NewScanner(os.Stdin)
+
+	for {
+		select {
+		case v := <-convo.Out():
+			{
+				fmt.Print(v.Str)
 			}
+		case line, ok := <-scanCh:
+			//default:
+			if !ok {
+				continue
+			}
+			//if scan.Scan() {
+			convo.In() <- line //scan.Text()
+			//}
 		}
 	}
+
+	//for item := range convo.Out() {
+	//	fmt.Print(item.Str)
+	//	if strings.HasSuffix(item.Str, "> ") { // our engine prompts with "> "
+	//		if scan.Scan() {
+	//			convo.In() <- scan.Text()
+	//		}
+	//	}
+	//}
 
 }
