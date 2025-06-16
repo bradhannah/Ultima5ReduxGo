@@ -46,7 +46,7 @@ func (g *GameState) LoadLegacySaveGameFromBytes(rawSaveData []byte) error {
 	g.RawSave = [savedGamFileSize]byte(rawSaveData)
 
 	// Overlay player characters over memory rawSaveData to easily consume data
-	g.PartyState.LoadFromRaw(g.RawSave)
+	g.PartyState = *party_state.LoadFromRaw(g.RawSave)
 
 	// world and position
 	const lbLocation = 0x2ED

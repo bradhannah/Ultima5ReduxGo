@@ -24,7 +24,8 @@ import (
 const pauseInMs = 400
 
 type Conversation struct {
-	npcID int
+	//npcID int
+	npcReference references.NPCReference
 	//	api   AvatarAPI
 	party *PartyState
 	ts    *references.TalkScript
@@ -43,12 +44,16 @@ type Conversation struct {
 	conversationEnded bool
 }
 
-func NewConversation(npcID int, party *PartyState, ts *references.TalkScript) *Conversation {
+func NewConversation(npcReference references.NPCReference, party *PartyState, ts *references.TalkScript) *Conversation {
 	ctx, cancel := context.WithCancel(context.Background())
 	return &Conversation{
-		npcID: npcID, party: party, ts: ts,
-		out: make(chan references.ScriptItem), in: make(chan string),
-		ctx: ctx, cancel: cancel,
+		npcReference: npcReference,
+		party:        party,
+		ts:           ts,
+		out:          make(chan references.ScriptItem),
+		in:           make(chan string),
+		ctx:          ctx,
+		cancel:       cancel,
 	}
 }
 
@@ -133,7 +138,7 @@ func (c *Conversation) processMultiLines(sections []references.SplitScriptLine, 
 			continue
 		}
 
-		if section.Contains(references.AvatarsName) && !c.party.HasMet(c.npcID) {
+		if section.Contains(references.AvatarsName) && !c.party.HasMet(c.npcReference.DialogNumber) {
 			// move directly to next section
 			continue // they don't know me yet
 		}
@@ -179,7 +184,7 @@ func (c *Conversation) processMultiLines(sections []references.SplitScriptLine, 
 //nolint:funlen
 func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx int) error {
 	// AskName optimisation
-	if line.Contains(references.AskName) && c.party.HasMet(c.npcID) {
+	if line.Contains(references.AskName) && c.party.HasMet(c.npcReference.DialogNumber) {
 		c.currentSkip = doNotSkip
 		return nil
 	}
@@ -189,14 +194,15 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 		c.enqueueStr("You see ")
 	}
 
-	for n := 0; n < len(line); n++ {
-		scriptItem := line[n]
+	//for n := 0; n < len(line); n++ {
+	for _, scriptItem := range line {
+		//scriptItem := line[n]
 
 		switch scriptItem.Cmd {
 
 		case references.IfElseKnowsName:
 			{
-				if c.party.HasMet(c.npcID) {
+				if c.party.HasMet(c.npcReference.DialogNumber) {
 					c.currentSkip = skipAfterNext
 				} else {
 					c.currentSkip = skipNext
@@ -211,10 +217,10 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 			name := c.readLine()
 
 			if strings.EqualFold(name, c.party.AvatarName()) {
-				c.party.SetMet(c.npcID)
+				c.party.SetMet(c.npcReference.Location, int(c.npcReference.DialogNumber))
 				c.enqueueFmt("A pleasure, %s.\n", c.party.AvatarName())
 			} else {
-				c.enqueueStr("If thou sayest so…\n")
+				c.enqueueStr("If thou sayest so...\n")
 			}
 		case references.CallGuards:
 			c.enqueueFmt("PLACEHOLDER")
@@ -256,7 +262,7 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 		case references.JoinParty:
 			if !c.party.HasRoom() {
 				c.enqueueStr("My party is full.\n")
-			} else if err := c.party.JoinNPC(c.npcID); err != nil {
+			} else if err := c.party.JoinNPC(c.npcReference); err != nil {
 				c.enqueueFmt("%v\n", err)
 			} else {
 				c.enqueueFmt("%s has joined thee!\n", scriptItem.Str)

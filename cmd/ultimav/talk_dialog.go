@@ -44,8 +44,12 @@ func NewTalkDialog(gameScene *GameScene, friendly *map_units.NPCFriendly) *TalkD
 	talkDialog := TalkDialog{}
 	talkDialog.gameScene = gameScene
 	talkDialog.friendly = friendly
-	talk := gameScene.gameState.GameReferences.TalkReferences.GetTalkScriptByNpcIndex(references.Castle, 2)
-	talkDialog.conversation = party_state.NewConversation(2, &gameScene.gameState.PartyState, talk)
+
+	talk := gameScene.gameState.GameReferences.TalkReferences.
+		GetTalkScriptByNpcIndex(references.Castle, int(friendly.NPCReference.DialogNumber)-1)
+	talkDialog.conversation =
+		party_state.NewConversation(friendly.NPCReference, &gameScene.gameState.PartyState, talk)
+
 	talkDialog.conversation.Start()
 	talkDialog.initializeResizeableVisualElements()
 
