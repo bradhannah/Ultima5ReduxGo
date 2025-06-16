@@ -29,7 +29,37 @@ func (d *DebugConsole) createDebugFunctions(gameScene *GameScene) *grammar.TextC
 	textCommands = append(textCommands, *d.createToggleMonsterGen())
 	textCommands = append(textCommands, *d.createMonsterGenerationOdds())
 	textCommands = append(textCommands, *d.createRemoveAllMonsters())
+	textCommands = append(textCommands, *d.talkWithNpc())
 	return &textCommands
+}
+
+func (d *DebugConsole) talkWithNpc() *grammar.TextCommand {
+	return grammar.NewTextCommand([]grammar.Match{
+		grammar.MatchString{
+			Str:           "talk",
+			Description:   "Talk with an NPC by number and location",
+			CaseSensitive: false,
+		},
+		grammar.MatchStringList{
+			Strings:       references.GetListOfAllSmallMaps(),
+			Description:   "Small map locations",
+			CaseSensitive: false,
+		},
+		grammar.MatchInt{IntMin: 0, IntMax: 1000, Description: "NPC Dialog Number"},
+	},
+		func(s string, command *grammar.TextCommand) {
+			outputStr := strings.ToLower(d.TextInput.GetText())
+			locationStr := command.GetIndexAsString(1, outputStr)
+			npcDialogNumber := command.GetIndexAsInt(2, outputStr)
+			slr := d.gameScene.gameReferences.LocationReferences.GetSmallLocationReference(locationStr)
+
+			npcRefs := d.gameScene.gameReferences.NPCReferences.GetNPCReferencesByLocation(slr.Location)
+			npcRef := (*npcRefs)[npcDialogNumber]
+
+			talkDialog := NewTalkDialog(d.gameScene, npcRef)
+			d.gameScene.dialogStack.PushModalDialog(talkDialog)
+		})
+
 }
 
 func (d *DebugConsole) createRemoveAllMonsters() *grammar.TextCommand {

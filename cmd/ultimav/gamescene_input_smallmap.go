@@ -332,7 +332,7 @@ func (g *GameScene) smallMapTalkSecondary(direction references2.Direction) bool 
 	}
 
 	if friendly, ok := (*npc).(*map_units.NPCFriendly); ok {
-		talkDialog := NewTalkDialog(g, friendly)
+		talkDialog := NewTalkDialog(g, friendly.NPCReference)
 		talkDialog.AddTestTest()
 		g.dialogStack.PushModalDialog(talkDialog)
 	}
