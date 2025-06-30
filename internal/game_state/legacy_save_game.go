@@ -72,8 +72,8 @@ func (g *GameState) LoadLegacySaveGameFromBytes(rawSaveData []byte) error {
 	// Various Things
 	const lbKarma = 0x2e2
 	const lsGold = 0x204
-	g.PartyState.Karma = party_state.Karma(rawSaveData[lbKarma])
-	g.PartyState.Inventory.Gold = getUint16(&rawSaveData, lsGold)
+	g.PartyState.Karma = party_state.NewKarma(rawSaveData[lbKarma])
+	g.PartyState.Inventory.Gold.Set(getUint16(&rawSaveData, lsGold))
 
 	// ProvisionsQuantity
 	const lsFood = 0x202
@@ -82,11 +82,11 @@ func (g *GameState) LoadLegacySaveGameFromBytes(rawSaveData []byte) error {
 	const lbTorches = 0x208
 	const lbSkullKeys = 0x20B
 
-	g.PartyState.Inventory.Provisions.Food = getUint16(&rawSaveData, lsFood)
-	g.PartyState.Inventory.Provisions.Gems = rawSaveData[lbGems]
-	g.PartyState.Inventory.Provisions.Torches = rawSaveData[lbTorches]
-	g.PartyState.Inventory.Provisions.Keys = rawSaveData[lbKeys]
-	g.PartyState.Inventory.Provisions.SkullKeys = rawSaveData[lbSkullKeys]
+	g.PartyState.Inventory.Provisions.Food.Set(getUint16(&rawSaveData, lsFood))
+	g.PartyState.Inventory.Provisions.Gems.Set(uint16(rawSaveData[lbGems]))
+	g.PartyState.Inventory.Provisions.Torches.Set(uint16(rawSaveData[lbTorches]))
+	g.PartyState.Inventory.Provisions.Keys.Set(uint16(rawSaveData[lbKeys]))
+	g.PartyState.Inventory.Provisions.SkullKeys.Set(uint16(rawSaveData[lbSkullKeys]))
 
 	g.MapState.LayeredMaps = *map_state.NewLayeredMaps(g.GameReferences.TileReferences,
 		g.GameReferences.OverworldLargeMapReference,

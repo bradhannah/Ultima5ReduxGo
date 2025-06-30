@@ -1,11 +1,31 @@
 package party_state
 
-import (
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
-)
+const maxKarma = 99
 
-type Karma byte
+type Karma struct {
+	Value int
+}
 
-func (k Karma) GetDecreasedKarma(dec Karma) Karma {
-	return helpers.Max(k-dec, 0)
+func NewKarma(karma byte) Karma {
+	k := Karma{
+		Value: int(karma),
+	}
+	return k
+}
+
+func (k *Karma) DecreaseKarma(decreaseBy int) {
+	k.AddDiff(decreaseBy)
+}
+
+func (k *Karma) IncreaseKarma(increaseBy int) {
+	k.AddDiff(increaseBy)
+}
+
+func (k *Karma) AddDiff(nDiff int) {
+	k.Value = k.Value + nDiff
+	if k.Value < 0 {
+		k.Value = 0
+	} else if k.Value > maxKarma {
+		k.Value = maxKarma
+	}
 }

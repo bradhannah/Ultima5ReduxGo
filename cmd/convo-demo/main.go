@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/conversation"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
-	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
@@ -51,7 +51,7 @@ func main() {
 	ns := &NPCState{HasMetAvatar: false, Script: talkScript}
 
 	// 3) start Conversation
-	convo := party_state.NewConversation(npcId,
+	convo := conversation.NewConversation(npcId,
 		&baseState.PartyState,
 		ns.Script,
 	)

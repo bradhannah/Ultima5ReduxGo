@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"image"
 
-	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/conversation"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/text"
@@ -37,7 +37,7 @@ type TalkDialog struct {
 
 	//friendly     *map_units.NPCFriendly
 	npcReference references.NPCReference
-	conversation *party_state.Conversation
+	conversation *conversation.Conversation
 }
 
 func NewTalkDialog(gameScene *GameScene, npcRef references.NPCReference) *TalkDialog {
@@ -49,7 +49,13 @@ func NewTalkDialog(gameScene *GameScene, npcRef references.NPCReference) *TalkDi
 	talk := gameScene.gameState.GameReferences.TalkReferences.
 		GetTalkScriptByNpcIndex(references.Castle, int(npcRef.DialogNumber)-1)
 	talkDialog.conversation =
-		party_state.NewConversation(npcRef, &gameScene.gameState.PartyState, talk)
+		conversation.NewConversation(npcRef,
+			gameScene.gameState,
+			talk,
+			//conversation.ConversationCallbacks{
+			//	Karma: &gameScene.gameState.PartyState.Karma,
+			//})
+		)
 
 	talkDialog.conversation.Start()
 	talkDialog.initializeResizeableVisualElements()

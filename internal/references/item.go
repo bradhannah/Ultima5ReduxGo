@@ -10,14 +10,14 @@ type Item interface {
 type ItemType int
 
 const (
-	ItemTypeReagent ItemType = iota
-	ItemTypeEquipment
-	ItemTypeSpell
-	ItemTypeSpecialItem
-	ItemTypeScroll
-	ItemTypePotion
-	ItemTypeShard
-	ItemTypeQuestItem
-	ItemTypeMoonstone
-	ItemTypeProvision
+	ItemTypeReagent     ItemType = 0
+	ItemTypeEquipment            = 1
+	ItemTypeSpell                = 2
+	ItemTypeSpecialItem          = 3
+	ItemTypeScroll               = 4
+	ItemTypePotion               = 5
+	ItemTypeShard                = 6
+	ItemTypeQuestItem            = 7
+	ItemTypeMoonstone            = 8
+	ItemTypeProvision            = 9
 )

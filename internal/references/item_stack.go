@@ -7,7 +7,7 @@ import (
 )
 
 type ItemAndQuantity struct {
-	Quantity int
+	Quantity uint16
 	Item     Item
 }
 
@@ -62,10 +62,10 @@ func createRandomProvision() ItemAndQuantity {
 	item.Item = provision
 	// item.Equipment = NoEquipment
 	if provision == Gold {
-		const minGold, maxGold = 10, 60
-		item.Quantity = helpers.RandomIntInRange(minGold, maxGold)
+		const minGold, maxGold = uint16(10), uint16(60)
+		item.Quantity = helpers.RandomUInt16InRange(minGold, maxGold)
 	} else {
-		item.Quantity = helpers.RandomIntInRange(1, 2)
+		item.Quantity = helpers.RandomUInt16InRange(1, 2)
 	}
 	return item
 }

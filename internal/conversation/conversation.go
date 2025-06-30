@@ -1,4 +1,4 @@
-package party_state
+package conversation
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
@@ -21,14 +22,25 @@ import (
    ● Skip‑state and label stack implemented exactly like the C# enum & lists.
    ---------------------------------------------------------------------*/
 
+const bExtraTextDebug = true
+
 const pauseInMs = 400
 
+//type ConversationCallbacks struct {
+//	//Karma *party_state.Karma
+//	//GameState *game_state.GameState
+//	PartyState *party_state.PartyState
+//}
+
 type Conversation struct {
+	//conversationCallbacks ConversationCallbacks
+
 	//npcID int
 	npcReference references.NPCReference
 	//	api   AvatarAPI
-	party *PartyState
-	ts    *references.TalkScript
+	//party *party_state.PartyState
+	gameState *game_state.GameState
+	ts        *references.TalkScript
 
 	// channels
 	out chan references.ScriptItem
@@ -44,16 +56,22 @@ type Conversation struct {
 	conversationEnded bool
 }
 
-func NewConversation(npcReference references.NPCReference, party *PartyState, ts *references.TalkScript) *Conversation {
+func NewConversation(npcReference references.NPCReference,
+	//party *party_state.PartyState,
+	gameState *game_state.GameState,
+	ts *references.TalkScript,
+	// conversationCallbacks ConversationCallbacks
+) *Conversation {
 	ctx, cancel := context.WithCancel(context.Background())
 	return &Conversation{
 		npcReference: npcReference,
-		party:        party,
+		gameState:    gameState,
 		ts:           ts,
 		out:          make(chan references.ScriptItem),
 		in:           make(chan string),
 		ctx:          ctx,
 		cancel:       cancel,
+		//conversationCallbacks: conversationCallbacks,
 	}
 }
 
@@ -138,7 +156,7 @@ func (c *Conversation) processMultiLines(sections []references.SplitScriptLine, 
 			continue
 		}
 
-		if section.Contains(references.AvatarsName) && !c.party.HasMet(c.npcReference.DialogNumber) {
+		if section.Contains(references.AvatarsName) && !c.gameState.PartyState.HasMet(c.npcReference.DialogNumber) {
 			// move directly to next section
 			continue // they don't know me yet
 		}
@@ -180,11 +198,29 @@ func (c *Conversation) processMultiLines(sections []references.SplitScriptLine, 
 	return nil
 }
 
+func (c *Conversation) giveIncrement(rawToGiveIndex int) {
+	itemIndex := rawToGiveIndex - 0x41
+	switch itemIndex {
+	case 0:
+		c.gameState.PartyState.Inventory.Provisions.Food.IncrementByOne()
+	case 1:
+		c.gameState.PartyState.Inventory.Gold.IncrementByOne()
+	case 2:
+		c.gameState.PartyState.Inventory.Provisions.Keys.IncrementByOne()
+	case 3:
+		c.gameState.PartyState.Inventory.Provisions.Gems.IncrementByOne()
+	case 4:
+		c.gameState.PartyState.Inventory.Provisions.Torches.IncrementByOne()
+		//case 5:
+		//c.gameState.PartyState.Inventory.
+	}
+}
+
 //nolint:cyclop
 //nolint:funlen
 func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx int) error {
 	// AskName optimisation
-	if line.Contains(references.AskName) && c.party.HasMet(c.npcReference.DialogNumber) {
+	if line.Contains(references.AskName) && c.gameState.PartyState.HasMet(c.npcReference.DialogNumber) {
 		c.currentSkip = doNotSkip
 		return nil
 	}
@@ -194,15 +230,12 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 		c.enqueueStr("You see ")
 	}
 
-	//for n := 0; n < len(line); n++ {
 	for _, scriptItem := range line {
-		//scriptItem := line[n]
-
 		switch scriptItem.Cmd {
 
 		case references.IfElseKnowsName:
 			{
-				if c.party.HasMet(c.npcReference.DialogNumber) {
+				if c.gameState.PartyState.HasMet(c.npcReference.DialogNumber) {
 					c.currentSkip = skipAfterNext
 				} else {
 					c.currentSkip = skipNext
@@ -211,14 +244,14 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 				return nil
 			}
 		case references.AvatarsName:
-			c.enqueueStr(c.party.AvatarName())
+			c.enqueueStr(c.gameState.PartyState.AvatarName())
 		case references.AskName:
 			c.enqueueStr("What is thy name? ")
 			name := c.readLine()
 
-			if strings.EqualFold(name, c.party.AvatarName()) {
-				c.party.SetMet(c.npcReference.Location, int(c.npcReference.DialogNumber))
-				c.enqueueFmt("A pleasure, %s.\n", c.party.AvatarName())
+			if strings.EqualFold(name, c.gameState.PartyState.AvatarName()) {
+				c.gameState.PartyState.SetMet(c.npcReference.Location, int(c.npcReference.DialogNumber))
+				c.enqueueFmt("A pleasure, %s.\n", c.gameState.PartyState.AvatarName())
 			} else {
 				c.enqueueStr("If thou sayest so...\n")
 			}
@@ -226,6 +259,7 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 			c.enqueueFmt("PLACEHOLDER")
 		case references.Change:
 			c.enqueueFmt("PLACEHOLDER")
+
 		case references.DefineLabel:
 			{
 				// maybe ok?
@@ -260,9 +294,9 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 		case references.GoToJail:
 			c.enqueueStr("PLACEHOLDER")
 		case references.JoinParty:
-			if !c.party.HasRoom() {
+			if !c.gameState.PartyState.HasRoom() {
 				c.enqueueStr("My party is full.\n")
-			} else if err := c.party.JoinNPC(c.npcReference); err != nil {
+			} else if err := c.gameState.PartyState.JoinNPC(c.npcReference); err != nil {
 				c.enqueueFmt("%v\n", err)
 			} else {
 				c.enqueueFmt("%s has joined thee!\n", scriptItem.Str)
@@ -272,13 +306,19 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 
 			return nil
 		case references.KarmaMinusOne:
-			c.enqueueStr("PLACEHOLDER")
+			c.gameState.PartyState.Karma.DecreaseKarma(1)
+			if bExtraTextDebug {
+				c.enqueueStr("KARMA_DEC_ONE")
+			}
 		case references.KarmaPlusOne:
-			c.enqueueStr("PLACEHOLDER")
+			c.gameState.PartyState.Karma.IncreaseKarma(1)
+			if bExtraTextDebug {
+				c.enqueueStr("KARMA_PLUS_ONE")
+			}
 		case references.KeyWait:
 			c.enqueueStr("PLACEHOLDER")
 		case references.Label1, references.Label2, references.Label3, references.Label4, references.Label5,
-			references.Label6, references.Label7, references.Label8, references.Label9:
+			references.Label6, references.Label7, references.Label8, references.Label9, references.Label10:
 			c.enqueueStr(scriptItem.Str)
 		case references.MakeAHorse:
 			c.enqueueStr("PLACEHOLDER")

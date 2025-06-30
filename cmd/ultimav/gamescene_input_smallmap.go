@@ -98,7 +98,7 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 
 	switch g.secondaryKeyState {
 	case JimmyDoorDirectionInput:
-		if g.gameState.PartyState.Inventory.Provisions.Keys <= 0 {
+		if !g.gameState.PartyState.Inventory.Provisions.Keys.HasSome() {
 			g.addRowStr("No Keys!")
 			g.secondaryKeyState = PrimaryInput
 			g.keyboard.SetLastKeyPressedNow()
@@ -276,16 +276,16 @@ func (g *GameScene) smallMapGetSecondary(direction references2.Direction) {
 	case indexes.WheatInField:
 		g.addRowStr("Crops picked! Those aren't yours Avatar!")
 		mapLayers.SetTileByLayer(map_state.MapLayer, getThingPos, indexes.PlowedField)
-		g.gameState.PartyState.Karma = g.gameState.PartyState.Karma.GetDecreasedKarma(1)
+		g.gameState.PartyState.Karma.DecreaseKarma(1)
 	case indexes.RightSconce, indexes.LeftScone:
 		g.addRowStr("Borrowed!")
-		g.gameState.PartyState.Inventory.Provisions.Torches++
+		g.gameState.PartyState.Inventory.Provisions.Torches.IncrementByOne()
 		mapLayers.SetTileByLayer(map_state.MapLayer, getThingPos, indexes.BrickFloor)
 	case indexes.TableFoodBoth, indexes.TableFoodBottom, indexes.TableFoodTop:
 		if g.getFoodFromTable(direction) {
 			g.addRowStr("Mmmmm...! But that food isn't yours!")
-			g.gameState.PartyState.Inventory.Provisions.Food++
-			g.gameState.PartyState.Karma = g.gameState.PartyState.Karma.GetDecreasedKarma(1)
+			g.gameState.PartyState.Inventory.Provisions.Food.IncrementByOne()
+			g.gameState.PartyState.Karma.DecreaseKarma(1)
 		}
 	case indexes.Carpet2_MagicCarpet:
 	}

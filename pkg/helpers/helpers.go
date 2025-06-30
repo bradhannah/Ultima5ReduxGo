@@ -63,6 +63,13 @@ func RandomIntInRange(min, max int) int {
 	return rand.Intn(max-min+1) + min
 }
 
+func RandomUInt16InRange(min, max uint16) uint16 {
+	if min > max {
+		panic("min cannot be greater than max")
+	}
+	return min + uint16(rand.Intn(int(max-min+1)))
+}
+
 func PickOneOf[T any](a, b T) T {
 	if OneInXOdds(2) {
 		return a

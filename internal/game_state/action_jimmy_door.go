@@ -1,13 +1,14 @@
 package game_state
 
 import (
+	"log"
+
 	"golang.org/x/exp/rand"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
-	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 )
 
 type JimmyDoorState int
@@ -42,7 +43,9 @@ func (g *GameState) JimmyDoor(direction references2.Direction, player *party_sta
 			return JimmyBrokenPick
 		}
 	case indexes.MagicLockDoor, indexes.MagicLockDoorWithView:
-		g.PartyState.Inventory.Provisions.Keys = helpers.Max(g.PartyState.Inventory.Provisions.Keys-1, 0)
+		if g.PartyState.Inventory.Provisions.Keys.DecrementByOne() {
+			log.Fatalf("Unexpected decrement of keys: %v", g.PartyState.Inventory.Provisions.Keys)
+		}
 		return JimmyLockedMagical
 	default:
 		return JimmyNotADoor
