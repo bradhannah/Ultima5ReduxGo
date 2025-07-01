@@ -201,7 +201,7 @@ func (c *Conversation) processMultiLines(sections []references.SplitScriptLine, 
 func (c *Conversation) giveIncrement(rawToGiveIndex int) {
 
 	if rawToGiveIndex < 0x40 { // 64
-
+		(*c.gameState.PartyState.Inventory.Equipment.GetQuantity(references.Equipment(rawToGiveIndex))).IncrementByOne()
 		//c.gameState.PartyState.Inventory.Provisions
 	}
 
