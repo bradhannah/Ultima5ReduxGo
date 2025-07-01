@@ -30,3 +30,35 @@ func (iq *InventoryQuantities[TK, TV]) GetQuantity(itemType TK) *TV {
 
 	return itemQuantity
 }
+
+func (iq *InventoryQuantities[TK, TV]) IncrementByOne(itemType TK) {
+	(*iq.GetQuantity(itemType)).IncrementByOne()
+}
+
+func (iq *InventoryQuantities[TK, TV]) DecrementByOne(itemType TK) bool {
+	return (*iq.GetQuantity(itemType)).DecrementByOne()
+}
+
+func (iq *InventoryQuantities[TK, TV]) IncrementBy(itemType TK, incBy uint16) {
+	(*iq.GetQuantity(itemType)).IncrementBy(incBy)
+}
+
+func (iq *InventoryQuantities[TK, TV]) DecrementBy(itemType TK, decBy uint16) bool {
+	return (*iq.GetQuantity(itemType)).DecrementBy(decBy)
+}
+
+func (iq *InventoryQuantities[TK, TV]) Set(itemType TK, quantity uint16) {
+	(*iq.GetQuantity(itemType)).Set(quantity)
+}
+
+func (iq *InventoryQuantities[TK, TV]) Get(itemType TK) uint16 {
+	return (*iq.GetQuantity(itemType)).Get()
+}
+
+func (iq *InventoryQuantities[TK, TV]) HasSome(itemType TK) bool {
+	return (*iq.GetQuantity(itemType)).HasSome()
+}
+
+func (iq *InventoryQuantities[TK, TV]) SetHasOne(itemType TK) {
+	(*iq.GetQuantity(itemType)).SetHasOne()
+}

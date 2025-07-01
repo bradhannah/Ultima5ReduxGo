@@ -198,45 +198,45 @@ func (c *Conversation) processMultiLines(sections []references.SplitScriptLine, 
 	return nil
 }
 
-func (c *Conversation) giveIncrement(rawToGiveIndex int) {
+func (c *Conversation) giveIncrement(rawToGiveIndex uint16) {
+	const nonEquipmentIndexCutoff = 0x40
 
-	if rawToGiveIndex < 0x40 { // 64
-		(*c.gameState.PartyState.Inventory.Equipment.GetQuantity(references.Equipment(rawToGiveIndex))).IncrementByOne()
-		//c.gameState.PartyState.Inventory.Provisions
+	if rawToGiveIndex < nonEquipmentIndexCutoff {
+		c.gameState.PartyState.Inventory.Equipment.IncrementByOne(references.Equipment(rawToGiveIndex))
 	}
 
-	itemIndex := rawToGiveIndex - 0x41
+	itemIndex := rawToGiveIndex - (nonEquipmentIndexCutoff + 1)
+	//nolint:mnd
 	switch itemIndex {
 	case 0:
 		c.gameState.PartyState.Inventory.Provisions.Food.IncrementByOne()
 	case 1:
 		c.gameState.PartyState.Inventory.Gold.IncrementByOne()
-	case 2:
+	case 2: //nolint:mnd
 		c.gameState.PartyState.Inventory.Provisions.Keys.IncrementByOne()
 	case 3:
 		c.gameState.PartyState.Inventory.Provisions.Gems.IncrementByOne()
 	case 4:
 		c.gameState.PartyState.Inventory.Provisions.Torches.IncrementByOne()
 	case 5:
-		c.gameState.PartyState.Inventory.Grapple.IncrementByOne()
+		c.gameState.PartyState.Inventory.SpecialItems.IncrementByOne(references.Grapple)
 	case 6:
-		c.gameState.PartyState.Inventory.Carpet.IncrementByOne()
+		c.gameState.PartyState.Inventory.SpecialItems.IncrementByOne(references.Carpet)
 	case 7:
-		c.gameState.PartyState.Inventory.Sextant.SetHasOne()
+		c.gameState.PartyState.Inventory.SpecialItems.SetHasOne(references.Sextant)
 	case 8:
-		c.gameState.PartyState.Inventory.Spyglass.SetHasOne()
+		c.gameState.PartyState.Inventory.SpecialItems.SetHasOne(references.Spyglass)
 	case 9:
-		c.gameState.PartyState.Inventory.Badge.SetHasOne()
+		c.gameState.PartyState.Inventory.SpecialItems.SetHasOne(references.BlackBadge)
 	case 10:
 		c.gameState.PartyState.Inventory.Provisions.SkullKeys.IncrementByOne()
-
-		//case 5:
-		//c.gameState.PartyState.Inventory.
+	default:
+		log.Fatalf("Unknown item index %d", itemIndex)
 	}
 }
 
+//nolint:gocyclo
 //nolint:cyclop
-//nolint:funlen
 func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx int) error {
 	// AskName optimisation
 	if line.Contains(references.AskName) && c.gameState.PartyState.HasMet(c.npcReference.DialogNumber) {
@@ -253,15 +253,13 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 		switch scriptItem.Cmd {
 
 		case references.IfElseKnowsName:
-			{
-				if c.gameState.PartyState.HasMet(c.npcReference.DialogNumber) {
-					c.currentSkip = skipAfterNext
-				} else {
-					c.currentSkip = skipNext
-				}
-
-				return nil
+			if c.gameState.PartyState.HasMet(c.npcReference.DialogNumber) {
+				c.currentSkip = skipAfterNext
+			} else {
+				c.currentSkip = skipNext
 			}
+
+			return nil
 		case references.AvatarsName:
 			c.enqueueStr(c.gameState.PartyState.AvatarName())
 		case references.AskName:
@@ -276,9 +274,10 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 			}
 		case references.CallGuards:
 			c.enqueueFmt("PLACEHOLDER")
+			// TODO: add flag for AI controller
 		case references.Change:
 			c.enqueueFmt("PLACEHOLDER")
-
+			c.giveIncrement(scriptItem.ItemAdditionalData)
 		case references.DefineLabel:
 			{
 				// maybe ok?
@@ -308,10 +307,12 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 			}
 		case references.GoldPrompt:
 			c.enqueueStr("PLACEHOLDER")
+			c.gameState.PartyState.Inventory.Gold.DecrementBy(uint16(scriptItem.ItemAdditionalData))
 		case references.GotoLabel:
 			break
 		case references.GoToJail:
 			c.enqueueStr("PLACEHOLDER")
+			// TODO: send Avatar and party to jail
 		case references.JoinParty:
 			if !c.gameState.PartyState.HasRoom() {
 				c.enqueueStr("My party is full.\n")

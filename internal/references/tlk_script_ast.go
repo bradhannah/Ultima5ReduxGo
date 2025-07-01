@@ -147,7 +147,7 @@ type ScriptItem struct {
 	Cmd                TalkCommand
 	Str                string // valid when Cmd == PlainString
 	Num                int    // generic numeric payload
-	ItemAdditionalData int    // specialised payload for Change / Gold / etc.
+	ItemAdditionalData uint16 // specialised payload for Change / Gold / etc.
 }
 
 type ScriptLine []ScriptItem

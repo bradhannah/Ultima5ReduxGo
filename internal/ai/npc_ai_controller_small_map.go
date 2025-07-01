@@ -10,15 +10,14 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
-	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 )
 
 type NPCAIControllerSmallMap struct {
-	tileRefs *references2.Tiles
-	slr      *references2.SmallLocationReference
+	tileRefs *references.Tiles
+	slr      *references.SmallLocationReference
 	dateTime *datetime.UltimaDate
-	// gameState *game_state.GameState
 	mapState *map_state.MapState
 	mapUnits map_units.MapUnits
 
@@ -26,18 +25,17 @@ type NPCAIControllerSmallMap struct {
 }
 
 func NewNPCAIControllerSmallMap(
-	slr *references2.SmallLocationReference,
-	tileRefs *references2.Tiles,
+	slr *references.SmallLocationReference,
+	tileRefs *references.Tiles,
 	mapState *map_state.MapState,
 	dateTime *datetime.UltimaDate,
-	// gameState *game_state.GameState,
 ) *NPCAIControllerSmallMap {
 	npcsAiCont := &NPCAIControllerSmallMap{}
 	npcsAiCont.dateTime = dateTime
 	npcsAiCont.tileRefs = tileRefs
 	npcsAiCont.slr = slr
 	npcsAiCont.mapState = mapState
-	// npcsAiCont.gameState = gameState
+	//npcsAiCont.guardsWantToArrest = false
 
 	xy := make(map_units.XyOccupiedMap)
 	npcsAiCont.positionOccupiedChance = &xy
@@ -64,7 +62,7 @@ func (n *NPCAIControllerSmallMap) PopulateMapFirstLoad() {
 		case *map_units.NPCFriendly:
 			if n.mapState.PlayerLocation.Floor == npc.Floor() {
 				indiv := mapUnit.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(*n.dateTime)
-				mapUnit.SetIndividualNPCBehaviour(indiv)
+				mapUnit.SetPositionByIndividualNPCBehaviour(indiv)
 			}
 		case *map_units.NPCEnemy:
 			// do not support NPC Enemy on small map
@@ -74,9 +72,20 @@ func (n *NPCAIControllerSmallMap) PopulateMapFirstLoad() {
 	n.placeNPCsOnLayeredMap()
 }
 
+func (n *NPCAIControllerSmallMap) SetAttackAvatar() {
+	for _, mu := range n.mapUnits {
+		switch npc := mu.(type) {
+		case *map_units.NPCFriendly:
+			if npc.NPCReference.WantsToAttackAvatarWhenBadStuffGoesDown() {
+				mu.MapUnitDetails().SetOverriddenAiType(references.ExtortOrAttackOrFollow)
+			}
+		}
+	}
+}
+
 func (n *NPCAIControllerSmallMap) AdvanceNextTurnCalcAndMoveNPCs() {
 	n.mapState.GetLayeredMapByCurrentLocation().ClearMapUnitTiles()
-	n.updateAllNPCAiTypes()
+	//n.updateAllNPCAiTypes()
 	n.positionOccupiedChance = n.mapUnits.CreateFreshXyOccupiedMap()
 
 	for _, mu := range n.mapUnits {
@@ -108,7 +117,7 @@ func (n *NPCAIControllerSmallMap) generateNPCs() {
 		npcType := npcRef.GetNPCType()
 
 		_ = npcType
-		if npcRef.GetNPCType() == references2.Vehicle {
+		if npcRef.GetNPCType() == references.Vehicle {
 			vehicle := map_units.NewNPCFriendlyVehicle(
 				npcRef.GetVehicleType(), npcRef)
 			npcs = append(npcs, vehicle)
@@ -122,17 +131,20 @@ func (n *NPCAIControllerSmallMap) generateNPCs() {
 	n.mapUnits = npcs
 }
 
-func (n *NPCAIControllerSmallMap) updateAllNPCAiTypes() {
-	for _, mu := range n.mapUnits {
-		var indiv references2.IndividualNPCBehaviour
-		switch npc := mu.(type) {
-		case *map_units.NPCFriendly:
-			indiv = npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(*n.dateTime)
-		}
-
-		mu.MapUnitDetails().AiType = indiv.Ai
-	}
-}
+//func (n *NPCAIControllerSmallMap) updateAllNPCAiTypes() {
+//	for _, mu := range n.mapUnits {
+//		var individualBehaviour references.IndividualNPCBehaviour
+//
+//		switch npc := mu.(type) {
+//		case *map_units.NPCFriendly:
+//
+//			individualBehaviour = npc.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(*n.dateTime)
+//		}
+//
+//
+//		mu.MapUnitDetails().aiType = individualBehaviour.Ai
+//	}
+//}
 
 func (n *NPCAIControllerSmallMap) placeNPCsOnLayeredMap() {
 	lm := n.mapState.GetLayeredMapByCurrentLocation()
@@ -152,9 +164,10 @@ func (n *NPCAIControllerSmallMap) placeNPCsOnLayeredMap() {
 }
 
 func (n *NPCAIControllerSmallMap) calculateNextNPCPosition(friendly *map_units.NPCFriendly) {
-	refBehaviour := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(*n.dateTime)
+	//refBehaviour := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(*n.dateTime)
+	refBehaviour := friendly.GetIndividualBehaviourByUltimaData(*n.dateTime)
 
-	if friendly.GetVehicleDetails().VehicleType == references2.CarpetVehicle {
+	if friendly.GetVehicleDetails().VehicleType == references.CarpetVehicle {
 		_ = "a"
 	}
 
@@ -183,10 +196,11 @@ func (n *NPCAIControllerSmallMap) calculateNextNPCPosition(friendly *map_units.N
 	}
 }
 
-// performAiMovementFromCurrentFloorToDifferentFloor From DIFFERENT floor to OUR floor
+// performAiMovementFromCurrentFloorToDifferentFloor From a DIFFERENT floor to OUR floor
 func (n *NPCAIControllerSmallMap) performAiMovementFromDifferentFloorToOurFloor(friendly *map_units.NPCFriendly) bool {
 	// called if the NPC is currently on a different floor then the current floor
-	refBehaviour := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(*n.dateTime)
+	//refBehaviour := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(*n.dateTime)
+	refBehaviour := friendly.GetIndividualBehaviourByUltimaData(*n.dateTime)
 
 	// current floor matters - if they are coming to your floor - then teleport them
 	closestLadderPos := n.slr.GetClosestLadder(refBehaviour.Position, friendly.Floor(), n.mapState.PlayerLocation.Floor)
@@ -206,11 +220,12 @@ func (n *NPCAIControllerSmallMap) performAiMovementFromDifferentFloorToOurFloor(
 // performAiMovementFromCurrentFloorToDifferentFloor From OUR floor to DIFFERENT floor
 func (n *NPCAIControllerSmallMap) performAiMovementFromCurrentFloorToDifferentFloor(friendly *map_units.NPCFriendly) bool {
 	// called if the NPC is currently on a different floor then the current floor
-	refBehaviour := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(*n.dateTime)
+	//refBehaviour := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(*n.dateTime)
+	refBehaviour := friendly.GetIndividualBehaviourByUltimaData(*n.dateTime)
 
 	currentNpcMapTile := n.mapState.GetLayeredMapByCurrentLocation().GetTileTopMapOnlyTile(friendly.PosPtr())
-	if references2.IsSpecificLadderOrStairs(currentNpcMapTile.Index,
-		references2.GetLadderOfStairsType(friendly.Floor(), refBehaviour.Floor)) {
+	if references.IsSpecificLadderOrStairs(currentNpcMapTile.Index,
+		references.GetLadderOfStairsType(friendly.Floor(), refBehaviour.Floor)) {
 		// we have arrived at the ladder, so we will change their position as well
 		// to make sure they "come down from" the correct spot as well
 		friendly.SetFloor(refBehaviour.Floor)
@@ -234,76 +249,80 @@ func (n *NPCAIControllerSmallMap) performAiMovementFromCurrentFloorToDifferentFl
 }
 
 func (n *NPCAIControllerSmallMap) performAiMovementOnAssignedPosition(friendly *map_units.NPCFriendly) bool {
-	npcSched := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(*n.dateTime)
-	muDetails := friendly.MapUnitDetails()
-	nWanderDistance := n.getWanderDistanceByAiType(muDetails.AiType)
+	//npcSched := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(*n.dateTime)
+	refBehaviour := friendly.GetIndividualBehaviourByUltimaData(*n.dateTime)
 
-	switch friendly.MapUnitDetails().AiType {
-	case references2.BlackthornGuardFixed, references2.Fixed:
-	case references2.MerchantBuyingSellingCustom, references2.MerchantBuyingSellingWander, references2.Wander:
-		n.wanderOneTileWithinN(friendly, npcSched.Position, nWanderDistance)
+	//muDetails := friendly.MapUnitDetails()
+	nWanderDistance := n.getWanderDistanceByAiType(refBehaviour.Ai)
+
+	switch refBehaviour.Ai {
+	case references.BlackthornGuardFixed, references.Fixed:
+	case references.MerchantBuyingSellingCustom, references.MerchantBuyingSellingWander, references.Wander:
+		n.wanderOneTileWithinN(friendly, refBehaviour.Position, nWanderDistance)
 		return true
-	case references2.BigWander, references2.BlackthornGuardWander:
-		n.wanderOneTileWithinN(friendly, npcSched.Position, nWanderDistance)
+	case references.BigWander, references.BlackthornGuardWander:
+		n.wanderOneTileWithinN(friendly, refBehaviour.Position, nWanderDistance)
 		return true
-	case references2.ChildRunAway:
+	case references.ChildRunAway:
 		return true
-	case references2.CustomAi, references2.MerchantBuyingSelling:
+	case references.CustomAi, references.MerchantBuyingSelling:
 		// don't think they move....?
 		return true
-	case references2.DrudgeWorthThing:
+	case references.DrudgeWorthThing:
 		// try to approach avatar
 		return true
-	case references2.ExtortOrAttackOrFollow:
+	case references.ExtortOrAttackOrFollow:
 		// set location of Avatar as way point, but only set the first movement from the list if within N of Avatar
 		return true
-	case references2.HorseWander:
+	case references.HorseWander:
 		if helpers.OneInXOdds(4) {
 			//			friendly.SetDirectionBasedOnNewPos(newPos)
-			return n.wanderOneTileWithinN(friendly, npcSched.Position, nWanderDistance)
+			return n.wanderOneTileWithinN(friendly, refBehaviour.Position, nWanderDistance)
 		}
-	case references2.StoneGargoyleTrigger:
+	case references.StoneGargoyleTrigger:
 		// if they are within 4 then change their AI to Drudgeworth (follow)
-	case references2.FixedExceptAttackWhenIsWantedByThePoPo:
+	case references.FixedExceptAttackWhenIsWantedByThePoPo:
 		// if avatar is a wanted man/woman - then follow and get close
-	case references2.Begging, references2.GenericExtortingGuard, references2.HalfYourGoldExtortingGuard, references2.SmallWanderWantsToChat:
+	case references.Begging, references.GenericExtortingGuard, references.HalfYourGoldExtortingGuard, references.SmallWanderWantsToChat:
 		// let's have them try to hang out with the avatar most of the time, but not everytime
 		// for a little randomness
 		return true
-	case references2.FollowAroundAndBeAnnoyingThenNeverSeeAgain:
+	case references.FollowAroundAndBeAnnoyingThenNeverSeeAgain:
 		// let's have them try to hang out with the avatar most of the time, but not everytime
 		// for a little randomness
 		return true
 	default:
-		log.Fatal("Unknown AiType")
+		log.Fatal("Unknown aiType")
 	}
 	return false
 }
 
 func (n *NPCAIControllerSmallMap) performAiMovementNotOnAssignedPosition(friendly *map_units.NPCFriendly) bool {
-	npcSched := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(*n.dateTime)
+	//npcSched := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(*n.dateTime)
+	refBehaviour := friendly.GetIndividualBehaviourByUltimaData(*n.dateTime)
+
 	// muDetails := friendly.MapUnitDetails()
-	nWanderDistance := n.getWanderDistanceByAiType(friendly.MapUnitDetails().AiType)
+	nWanderDistance := n.getWanderDistanceByAiType(refBehaviour.Ai)
 
 	if n.moveNPCOnCalculatedPath(friendly) {
 		return true
 	}
 
-	switch friendly.MapUnitDetails().AiType {
-	case references2.BlackthornGuardFixed, references2.Fixed, references2.CustomAi, references2.MerchantBuyingSelling:
+	switch refBehaviour.Ai {
+	case references.BlackthornGuardFixed, references.Fixed, references.CustomAi, references.MerchantBuyingSelling:
 		if n.createFreshPathToScheduledLocation(friendly) {
 			friendly.SetPos(friendly.MapUnitDetails().DequeueNextPosition())
 			return true
 		}
 		return false
-	case references2.BigWander,
-		references2.BlackthornGuardWander,
-		references2.MerchantBuyingSellingCustom,
-		references2.MerchantBuyingSellingWander,
-		references2.Wander,
-		references2.HorseWander:
+	case references.BigWander,
+		references.BlackthornGuardWander,
+		references.MerchantBuyingSellingCustom,
+		references.MerchantBuyingSellingWander,
+		references.Wander,
+		references.HorseWander:
 		if helpers.OneInXOdds(2) {
-			if !npcSched.Position.IsWithinN(friendly.PosPtr(), nWanderDistance) {
+			if !refBehaviour.Position.IsWithinN(friendly.PosPtr(), nWanderDistance) {
 				if n.createFreshPathToScheduledLocation(friendly) {
 					newPos := friendly.MapUnitDetails().DequeueNextPosition()
 					friendly.SetPos(newPos)
@@ -314,29 +333,29 @@ func (n *NPCAIControllerSmallMap) performAiMovementNotOnAssignedPosition(friendl
 				return false
 			}
 
-			return n.wanderOneTileWithinN(friendly, npcSched.Position, nWanderDistance)
+			return n.wanderOneTileWithinN(friendly, refBehaviour.Position, nWanderDistance)
 		}
-	case references2.ChildRunAway:
+	case references.ChildRunAway:
 		// run away
 		return true
-	case references2.DrudgeWorthThing:
+	case references.DrudgeWorthThing:
 		// try to approach avatar
 		return true
-	case references2.ExtortOrAttackOrFollow:
+	case references.ExtortOrAttackOrFollow:
 		// set location of Avatar as way point, but only set the first movement from the list if within N of Avatar
 		return true
-	case references2.FixedExceptAttackWhenIsWantedByThePoPo:
+	case references.FixedExceptAttackWhenIsWantedByThePoPo:
 		// if avatar is a wanted man/woman - then follow and get close
 		return true
-	case references2.StoneGargoyleTrigger:
+	case references.StoneGargoyleTrigger:
 		return true
-	case references2.FollowAroundAndBeAnnoyingThenNeverSeeAgain:
+	case references.FollowAroundAndBeAnnoyingThenNeverSeeAgain:
 		return true
-	case references2.Begging,
-		references2.GenericExtortingGuard,
-		references2.HalfYourGoldExtortingGuard,
-		references2.SmallWanderWantsToChat:
-		if !npcSched.Position.IsWithinN(friendly.PosPtr(), nWanderDistance) {
+	case references.Begging,
+		references.GenericExtortingGuard,
+		references.HalfYourGoldExtortingGuard,
+		references.SmallWanderWantsToChat:
+		if !refBehaviour.Position.IsWithinN(friendly.PosPtr(), nWanderDistance) {
 			if n.createFreshPathToScheduledLocation(friendly) {
 				friendly.SetPos(friendly.MapUnitDetails().DequeueNextPosition())
 				return true
@@ -344,11 +363,11 @@ func (n *NPCAIControllerSmallMap) performAiMovementNotOnAssignedPosition(friendl
 			return false
 		}
 		if helpers.OneInXOdds(3) {
-			return n.wanderOneTileWithinN(friendly, npcSched.Position, nWanderDistance)
+			return n.wanderOneTileWithinN(friendly, refBehaviour.Position, nWanderDistance)
 		}
 		return false
 	default:
-		log.Fatal("Unknown AiType")
+		log.Fatal("Unknown aiType")
 	}
 	return false
 }
@@ -372,21 +391,19 @@ func (n *NPCAIControllerSmallMap) createFreshPathToScheduledLocation(friendly *m
 	// set up all the walkable and non-walkable tiles plus the weights
 	muDetails := friendly.MapUnitDetails()
 	aStarMap := astar.NewAStarMap()
-	// muDetails.AStarMap.InitializeByLayeredMap(
 	aStarMap.InitializeByLayeredMap(
 		friendly,
 		n.mapState.GetLayeredMapByCurrentLocation(),
-		[]references2.Position{n.mapState.PlayerLocation.Position},
+		[]references.Position{n.mapState.PlayerLocation.Position},
 	)
 
 	npcBehaviour := friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(*n.dateTime)
 
-	var path []references2.Position
+	var path []references.Position
 	if npcBehaviour.Floor != friendly.Floor() {
 		// we prefer to find the best ladder or stairs
 		closestFloorChangePosition := n.slr.GetClosestLadder(friendly.Pos(), friendly.Floor(), npcBehaviour.Floor)
 		path = aStarMap.AStar(closestFloorChangePosition)
-		// path = muDetails.AStarMap.AStar(closestFloorChangePosition)
 	} else {
 		path = aStarMap.AStar(npcBehaviour.Position)
 	}
@@ -400,11 +417,11 @@ func (n *NPCAIControllerSmallMap) createFreshPathToScheduledLocation(friendly *m
 	return muDetails.HasAPathAlreadyCalculated()
 }
 
-func (n *NPCAIControllerSmallMap) wanderOneTileWithinN(friendly *map_units.NPCFriendly, anchorPos references2.Position, withinN int) bool {
+func (n *NPCAIControllerSmallMap) wanderOneTileWithinN(friendly *map_units.NPCFriendly, anchorPos references.Position, withinN int) bool {
 	rand.Seed(uint64(time.Now().UnixNano())) // Seed the random number generator
 
 	// Define possible moves: up, down, left, right
-	directions := []references2.Position{
+	directions := []references.Position{
 		{X: 0, Y: -1}, // Up
 		{X: 0, Y: 1},  // Down
 		{X: -1, Y: 0}, // Left
@@ -421,11 +438,11 @@ func (n *NPCAIControllerSmallMap) wanderOneTileWithinN(friendly *map_units.NPCFr
 	// Try each direction to find a valid move
 	for _, move := range directions {
 
-		newPos := references2.Position{
+		newPos := references.Position{
 			X: muDetails.Position.X + move.X,
 			Y: muDetails.Position.Y + move.Y,
 		}
-		if newPos.X < 0 || newPos.Y < 0 || newPos.X >= references2.XSmallMapTiles || newPos.Y >= references2.YSmallMapTiles {
+		if newPos.X < 0 || newPos.Y < 0 || newPos.X >= references.XSmallMapTiles || newPos.Y >= references.YSmallMapTiles {
 			// we don't look outside of boundaries
 			continue
 		}
@@ -443,8 +460,6 @@ func (n *NPCAIControllerSmallMap) wanderOneTileWithinN(friendly *map_units.NPCFr
 		if helpers.AbsInt(int(newPos.X-anchorPos.X)) <= withinN &&
 			helpers.AbsInt(int(newPos.Y-anchorPos.Y)) <= withinN && n.mapState.IsNPCPassable(&newPos) {
 			friendly.SetPos(newPos)
-			// muDetails.Position.X = newPos.X
-			// muDetails.Position.Y = newPos.Y
 
 			return true
 		}
@@ -453,13 +468,13 @@ func (n *NPCAIControllerSmallMap) wanderOneTileWithinN(friendly *map_units.NPCFr
 	return false
 }
 
-func (n *NPCAIControllerSmallMap) getWanderDistanceByAiType(aiType references2.AiType) int {
+func (n *NPCAIControllerSmallMap) getWanderDistanceByAiType(aiType references.AiType) int {
 	switch aiType {
-	case references2.HorseWander:
+	case references.HorseWander:
 		return 4
-	case references2.Wander:
+	case references.Wander:
 		return 2
-	case references2.BigWander, references2.BlackthornGuardWander, references2.MerchantBuyingSellingCustom, references2.MerchantBuyingSellingWander:
+	case references.BigWander, references.BlackthornGuardWander, references.MerchantBuyingSellingCustom, references.MerchantBuyingSellingWander:
 		return 4
 	}
 	return 0

@@ -3,26 +3,26 @@ package map_units
 import (
 	"log"
 
-	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 type MapUnitType int
 
 const (
-	NonPlayerCharacter MapUnitType = iota
-	Enemy
-	Vehicle
+	NonPlayerCharacter MapUnitType = 0
+	Enemy                          = 1
+	Vehicle                        = 2
 )
 
 type MapUnit interface {
 	GetMapUnitType() MapUnitType
 
-	Pos() references2.Position
-	PosPtr() *references2.Position
-	Floor() references2.FloorNumber
+	Pos() references.Position
+	PosPtr() *references.Position
+	Floor() references.FloorNumber
 
-	SetPos(position references2.Position)
-	SetFloor(floor references2.FloorNumber)
+	SetPos(position references.Position)
+	SetFloor(floor references.FloorNumber)
 
 	MapUnitDetails() *MapUnitDetails
 	SetVisible(visible bool)
@@ -31,9 +31,11 @@ type MapUnit interface {
 }
 
 type MapUnitDetails struct {
-	Position references2.Position
-	Floor    references2.FloorNumber
-	AiType   references2.AiType
+	Position references.Position
+	Floor    references.FloorNumber
+	//aiType   references.AiType
+
+	overriddenAiType references.AiType
 
 	Visible bool
 
@@ -41,10 +43,14 @@ type MapUnitDetails struct {
 
 	// AStarMap *map_state.AStarMap
 
-	CurrentPath []references2.Position
+	CurrentPath []references.Position
 }
 
-func (mu *MapUnitDetails) DequeueNextPosition() references2.Position {
+func (mu *MapUnitDetails) SetOverriddenAiType(oAiType references.AiType) {
+	mu.overriddenAiType = oAiType
+}
+
+func (mu *MapUnitDetails) DequeueNextPosition() references.Position {
 	if !mu.HasAPathAlreadyCalculated() {
 		log.Fatal("NPC has no path calculated")
 	}
@@ -61,6 +67,6 @@ func (mu *MapUnitDetails) HasAPathAlreadyCalculated() bool {
 	return len(mu.CurrentPath) > 0
 }
 
-func (mu *MapUnitDetails) SetCurrentPath(path []references2.Position) {
+func (mu *MapUnitDetails) SetCurrentPath(path []references.Position) {
 	mu.CurrentPath = path
 }

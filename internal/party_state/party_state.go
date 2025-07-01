@@ -20,6 +20,7 @@ func newPartyState() *PartyState {
 	ps := new(PartyState)
 	ps.metNpcs = make(map[references.Location][]bool)
 	ps.deadNpcs = make(map[references.Location][]bool)
+	ps.Inventory = *NewInventory()
 
 	for i := 0; i < int(references.Serpents_Hold); i++ {
 		ps.metNpcs[references.Location(i)] = make([]bool, 0)

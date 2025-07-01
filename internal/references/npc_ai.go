@@ -3,6 +3,9 @@ package references
 type AiType int
 
 const (
+	// Unset not currently set - used for overriding AI
+	Unset AiType = -1
+
 	// Fixed stay put
 	Fixed AiType = 0
 

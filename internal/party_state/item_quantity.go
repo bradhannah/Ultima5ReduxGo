@@ -11,10 +11,15 @@ type ItemQuantity interface {
 	Set(quantity uint16)
 	Get() uint16
 	HasSome() bool
+	SetHasOne()
 }
 
 type ItemQuantityLarge struct {
 	quantity uint16
+}
+
+func (l *ItemQuantityLarge) SetHasOne() {
+	l.quantity = 1
 }
 
 func (l *ItemQuantityLarge) HasSome() bool {
@@ -25,17 +30,21 @@ type ItemQuantitySmall struct {
 	quantity uint16
 }
 
+func (s *ItemQuantitySmall) SetHasOne() {
+	s.quantity = 1
+}
+
 type ItemQuantitySingle struct {
 	have bool
 }
 
-func (i *ItemQuantitySingle) SetHasOne() {
-	i.have = true
-}
-
-func (i *ItemQuantitySingle) HasOne() bool {
-	return i.have
-}
+//func (i *ItemQuantitySingle) SetHasOne() {
+//	i.have = true
+//}
+//
+//func (i *ItemQuantitySingle) HasOne() bool {
+//	return i.have
+//}
 
 func (s *ItemQuantitySmall) HasSome() bool {
 	return s.Get() > 0

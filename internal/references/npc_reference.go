@@ -34,6 +34,34 @@ type NPCReference struct {
 
 const secondHalfSpriteTableIndex = 0x100
 
+func isValidType(nType int) bool {
+	switch NPCType(nType) {
+	case Blacksmith:
+	case Barkeeper:
+	case HorseSeller:
+	case Shipwright:
+	case Healer:
+	case InnKeeper:
+	case MagicSeller:
+	case GuildMaster:
+	case NoStatedNpc:
+	case Guard:
+	case WishingWell:
+	case Vehicle:
+		return true
+	}
+	return false
+}
+
+func NewNPCReferenceForVehicle(vehicle VehicleType, position Position, floorNumber FloorNumber) *NPCReference {
+	npcRef := &NPCReference{}
+	npcRef.Position = position
+	npcRef.npcType = Vehicle
+	npcRef.SetKeyIndex(vehicle.GetBoardedSpriteByDirection(Right, Right))
+	npcRef.Schedule = CreateNPCScheduledFixedOneLocation(position, floorNumber)
+	return npcRef
+}
+
 func (n *NPCReference) GetSpriteIndex() indexes.SpriteIndex {
 	return indexes.SpriteIndex(int(n.npcType) + secondHalfSpriteTableIndex)
 }
@@ -94,30 +122,10 @@ func (n *NPCReference) GetNPCType() NPCType {
 	return NoStatedNpc
 }
 
-func isValidType(nType int) bool {
-	switch NPCType(nType) {
-	case Blacksmith:
-	case Barkeeper:
-	case HorseSeller:
-	case Shipwright:
-	case Healer:
-	case InnKeeper:
-	case MagicSeller:
-	case GuildMaster:
-	case NoStatedNpc:
-	case Guard:
-	case WishingWell:
-	case Vehicle:
-		return true
-	}
-	return false
-}
+func (n *NPCReference) WantsToAttackAvatarWhenBadStuffGoesDown() bool {
+	spriteIndex := n.GetSpriteIndex()
 
-func NewNPCReferenceForVehicle(vehicle VehicleType, position Position, floorNumber FloorNumber) *NPCReference {
-	npcRef := &NPCReference{}
-	npcRef.Position = position
-	npcRef.npcType = Vehicle
-	npcRef.SetKeyIndex(vehicle.GetBoardedSpriteByDirection(Right, Right))
-	npcRef.Schedule = CreateNPCScheduledFixedOneLocation(position, floorNumber)
-	return npcRef
+	return spriteIndex.IsPartOfAnimation(indexes.Guard_KeyIndex) ||
+		spriteIndex.IsPartOfAnimation(indexes.Daemon1_KeyIndex) ||
+		spriteIndex.IsPartOfAnimation(indexes.ShadowLord_KeyIndex)
 }

@@ -383,7 +383,7 @@ func (sl ScriptLine) SplitIntoSections() []SplitScriptLine {
 			// item.ItemAdditionalData later if desired.
 			startNew()
 			if i+1 < len(sl) {
-				item.ItemAdditionalData = int(sl[i+1].Cmd)
+				item.ItemAdditionalData = uint16(sl[i+1].Cmd)
 			}
 			sections[nSection] = append(sections[nSection], item)
 			i++ // skip payload byte
@@ -394,7 +394,7 @@ func (sl ScriptLine) SplitIntoSections() []SplitScriptLine {
 			startNew()
 			if i+1 < len(sl) && len(sl[i+1].Str) >= 3 {
 				digits := sl[i+1].Str[:3]
-				var amt int
+				var amt uint16
 				fmt.Sscanf(digits, "%d", &amt)
 				item.ItemAdditionalData = amt
 			}

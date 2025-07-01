@@ -15,11 +15,6 @@ type ProvisionsQuantity struct {
 type Inventory struct {
 	Provisions ProvisionsQuantity
 	Gold       ItemQuantityLarge
-	Grapple    ItemQuantitySmall
-	Carpet     ItemQuantitySmall
-	Sextant    ItemQuantitySingle
-	Spyglass   ItemQuantitySingle
-	Badge      ItemQuantitySingle
 
 	Equipment    InventoryQuantities[references2.Equipment, *ItemQuantitySmall]
 	Spells       InventoryQuantities[references2.Spell, *ItemQuantitySmall]
@@ -29,11 +24,6 @@ type Inventory struct {
 	Shards       InventoryQuantities[references2.Shard, *ItemQuantitySmall]
 	Reagent      InventoryQuantities[references2.Reagent, *ItemQuantitySmall]
 }
-
-// type InventoryItemType interface {
-//	references.Equipment | references.Spell | references.Scroll | references.SpecialItem |
-//		references.QuestItem | references.Shard | references.Potion | references.Reagent
-//}
 
 func NewInventory() *Inventory {
 	inv := &Inventory{}

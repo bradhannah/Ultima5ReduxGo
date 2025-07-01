@@ -1,6 +1,7 @@
 package map_units
 
 import (
+	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
@@ -15,11 +16,10 @@ type NPCFriendly struct {
 
 func NewNPCFriendly(npcReference references.NPCReference, npcNum int) *NPCFriendly {
 	var friendly NPCFriendly
-	// friendly := NPCFriendly{}
 	friendly.NPCReference = npcReference
 	friendly.mapUnitDetails.NPCNum = npcNum
+	friendly.mapUnitDetails.overriddenAiType = references.Unset
 
-	// friendly.mapUnitDetails.AStarMap = map_state.NewAStarMap()
 	friendly.mapUnitDetails.CurrentPath = nil
 
 	if !friendly.IsEmptyMapUnit() {
@@ -81,10 +81,10 @@ func (friendly *NPCFriendly) PosPtr() *references.Position {
 	return &friendly.mapUnitDetails.Position
 }
 
-func (friendly *NPCFriendly) SetIndividualNPCBehaviour(indiv references.IndividualNPCBehaviour) {
+func (friendly *NPCFriendly) SetPositionByIndividualNPCBehaviour(indiv references.IndividualNPCBehaviour) {
 	friendly.mapUnitDetails.Position = indiv.Position
 	friendly.mapUnitDetails.Floor = indiv.Floor
-	friendly.mapUnitDetails.AiType = indiv.Ai
+	//friendly.mapUnitDetails.aiType = indiv.Ai
 }
 
 func (friendly *NPCFriendly) SetDirectionBasedOnNewPos(position references.Position) {
@@ -113,4 +113,14 @@ func (friendly *NPCFriendly) GetVehicleDetails() *VehicleDetails {
 	}
 	// log.Fatal("Wrong type, not a vehicle")
 	return &VehicleDetails{}
+}
+
+func (friendly *NPCFriendly) GetIndividualBehaviourByUltimaData(ultimaData datetime.UltimaDate) references.IndividualNPCBehaviour {
+	if friendly.MapUnitDetails().overriddenAiType != references.Unset {
+		return references.IndividualNPCBehaviour{
+			Ai: friendly.MapUnitDetails().overriddenAiType,
+		}
+	}
+
+	return friendly.NPCReference.Schedule.GetIndividualNPCBehaviourByUltimaDate(ultimaData)
 }
