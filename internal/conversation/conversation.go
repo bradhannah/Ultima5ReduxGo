@@ -199,6 +199,12 @@ func (c *Conversation) processMultiLines(sections []references.SplitScriptLine, 
 }
 
 func (c *Conversation) giveIncrement(rawToGiveIndex int) {
+
+	if rawToGiveIndex < 0x40 { // 64
+
+		//c.gameState.PartyState.Inventory.Provisions
+	}
+
 	itemIndex := rawToGiveIndex - 0x41
 	switch itemIndex {
 	case 0:
@@ -211,6 +217,19 @@ func (c *Conversation) giveIncrement(rawToGiveIndex int) {
 		c.gameState.PartyState.Inventory.Provisions.Gems.IncrementByOne()
 	case 4:
 		c.gameState.PartyState.Inventory.Provisions.Torches.IncrementByOne()
+	case 5:
+		c.gameState.PartyState.Inventory.Grapple.IncrementByOne()
+	case 6:
+		c.gameState.PartyState.Inventory.Carpet.IncrementByOne()
+	case 7:
+		c.gameState.PartyState.Inventory.Sextant.SetHasOne()
+	case 8:
+		c.gameState.PartyState.Inventory.Spyglass.SetHasOne()
+	case 9:
+		c.gameState.PartyState.Inventory.Badge.SetHasOne()
+	case 10:
+		c.gameState.PartyState.Inventory.Provisions.SkullKeys.IncrementByOne()
+
 		//case 5:
 		//c.gameState.PartyState.Inventory.
 	}

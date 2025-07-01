@@ -15,33 +15,56 @@ type ProvisionsQuantity struct {
 type Inventory struct {
 	Provisions ProvisionsQuantity
 	Gold       ItemQuantityLarge
+	Grapple    ItemQuantitySmall
+	Carpet     ItemQuantitySmall
+	Sextant    ItemQuantitySingle
+	Spyglass   ItemQuantitySingle
+	Badge      ItemQuantitySingle
+
+	Equipment    InventoryQuantities[references2.Equipment, *ItemQuantitySmall]
+	Spells       InventoryQuantities[references2.Spell, *ItemQuantitySmall]
+	Scrolls      InventoryQuantities[references2.Scroll, *ItemQuantityLarge]
+	SpecialItems InventoryQuantities[references2.SpecialItem, *ItemQuantitySmall]
+	QuestItems   InventoryQuantities[references2.QuestItem, *ItemQuantitySmall]
+	Shards       InventoryQuantities[references2.Shard, *ItemQuantitySmall]
+	Reagent      InventoryQuantities[references2.Reagent, *ItemQuantitySmall]
 }
 
-//const (
-//	MaxGold               = 9999
-//	MaxProvisionFood      = 9999
-//	MaxProvisionGems      = 99
-//	MaxProvisionTorches   = 99
-//	MaxProvisionKey       = 99
-//	MaxProvisionSkullKeys = 99
-//)
+// type InventoryItemType interface {
+//	references.Equipment | references.Spell | references.Scroll | references.SpecialItem |
+//		references.QuestItem | references.Shard | references.Potion | references.Reagent
+//}
+
+func NewInventory() *Inventory {
+	inv := &Inventory{}
+	inv.Equipment = NewInventoryQuantities[references2.Equipment, *ItemQuantitySmall]()
+	inv.Spells = NewInventoryQuantities[references2.Spell, *ItemQuantitySmall]()
+	inv.Scrolls = NewInventoryQuantities[references2.Scroll, *ItemQuantityLarge]()
+	inv.SpecialItems = NewInventoryQuantities[references2.SpecialItem, *ItemQuantitySmall]()
+	inv.QuestItems = NewInventoryQuantities[references2.QuestItem, *ItemQuantitySmall]()
+	inv.Shards = NewInventoryQuantities[references2.Shard, *ItemQuantitySmall]()
+	inv.Reagent = NewInventoryQuantities[references2.Reagent, *ItemQuantitySmall]()
+
+	return inv
+}
 
 func (i *Inventory) PutItemInInventory(item *references2.ItemAndQuantity) {
 	if item.Item.Type() == references2.ItemTypeProvision {
 		switch references2.Provision(item.Item.ID()) {
 		case references2.Food:
-			i.Provisions.Food.IncrementBy(uint16(item.Quantity))
+			i.Provisions.Food.IncrementBy(item.Quantity)
 		case references2.Key:
-			i.Provisions.Keys.IncrementBy(uint16(item.Quantity))
+			i.Provisions.Keys.IncrementBy(item.Quantity)
 		case references2.Gem:
-			i.Provisions.Gems.IncrementBy(uint16(item.Quantity))
+			i.Provisions.Gems.IncrementBy(item.Quantity)
 		case references2.Torches:
-			i.Provisions.Torches.IncrementBy(uint16(item.Quantity))
+			i.Provisions.Torches.IncrementBy(item.Quantity)
 		case references2.SkullKeys:
-			i.Provisions.SkullKeys.IncrementBy(uint16(item.Quantity))
+			i.Provisions.SkullKeys.IncrementBy(item.Quantity)
 		case references2.Gold:
-			i.Gold.IncrementBy(uint16(item.Quantity))
-			// = helpers.Min(i.Gold+uint16(item.Quantity), MaxGold)
+			i.Gold.IncrementBy(item.Quantity)
+		case references2.NoProvision:
+			panic("unhandled default case with NoProvision")
 		default:
 			panic("unhandled default case for PutItemInInventory")
 		}

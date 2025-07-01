@@ -1,5 +1,18 @@
 package party_state
 
+const itemQuantityLargeMax uint16 = 9999
+const itemQuantitySmallMax uint16 = 99
+
+type ItemQuantity interface {
+	IncrementByOne()
+	DecrementByOne() bool
+	IncrementBy(incBy uint16)
+	DecrementBy(incBy uint16) bool
+	Set(quantity uint16)
+	Get() uint16
+	HasSome() bool
+}
+
 type ItemQuantityLarge struct {
 	quantity uint16
 }
@@ -10,6 +23,18 @@ func (l *ItemQuantityLarge) HasSome() bool {
 
 type ItemQuantitySmall struct {
 	quantity uint16
+}
+
+type ItemQuantitySingle struct {
+	have bool
+}
+
+func (i *ItemQuantitySingle) SetHasOne() {
+	i.have = true
+}
+
+func (i *ItemQuantitySingle) HasOne() bool {
+	return i.have
 }
 
 func (s *ItemQuantitySmall) HasSome() bool {
@@ -30,19 +55,6 @@ func (s *ItemQuantitySmall) Get() uint16 {
 
 func (s *ItemQuantitySmall) Set(quantity uint16) {
 	s.quantity = min(quantity, itemQuantitySmallMax)
-}
-
-const itemQuantityLargeMax uint16 = 9999
-const itemQuantitySmallMax uint16 = 99
-
-type ItemQuantity interface {
-	IncrementByOne()
-	DecrementByOne() bool
-	IncrementBy(incBy uint16)
-	DecrementBy(incBy uint16) bool
-	Set(quantity uint16)
-	Get() uint16
-	HasSome() bool
 }
 
 func incBy(currentQuantity uint16, incBy uint16, maxQuantity uint16) uint16 {
