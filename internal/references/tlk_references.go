@@ -28,7 +28,7 @@ func NewTalkReferences(config *config.UltimaVConfiguration, dataOvl *DataOvl) *T
 		// required to make an assumption it starts at 1, and they are all in order - which they are
 		for nTalk := 1; nTalk <= len(talkReferences.talkDataForSmallMapType[smt]); nTalk++ {
 			specificSmallMapTalkData := talkReferences.talkDataForSmallMapType[smt][nTalk]
-			script, err := parseNPCBlob(specificSmallMapTalkData, talkReferences.WordDict)
+			script, err := ParseNPCBlob(specificSmallMapTalkData, talkReferences.WordDict)
 
 			if err != nil {
 				log.Fatalf("error parsing talk data for %v: %v", smt, err)

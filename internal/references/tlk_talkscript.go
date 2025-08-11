@@ -16,7 +16,7 @@ const (
 
 // parseNPCBlob converts the raw TLK byte slice for a single NPC into
 // a TalkScript that currently contains only plain strings.
-func parseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
+func ParseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
 	const eol = 0x00
 
 	var (
