@@ -7,6 +7,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/clock"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
@@ -68,6 +69,8 @@ type GameScene struct {
 
 	gameState *game_state.GameState
 
+	clk *clock.GameClock
+
 	secondaryKeyState InputState
 
 	borders gameBorders
@@ -107,6 +110,8 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 
 	// ebiten.SetTPS(120)
 	ebiten.SetTPS(60)
+
+	gameScene.clk = clock.NewGameClock(16) // ~60 fixed updates per second
 
 	return &gameScene
 }

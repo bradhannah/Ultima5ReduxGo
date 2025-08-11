@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/clock"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
@@ -35,6 +36,15 @@ var boundKeysGame = []ebiten.Key{
 
 // Update method for the GameScene
 func (g *GameScene) Update(_ *Game) error {
+	// Advance clock and run fixed-step logic first
+	if g.clk == nil {
+		g.clk = clock.NewGameClock(16) // ~60 fixed updates/sec
+	}
+	steps := g.clk.Advance()
+	for i := 0; i < steps; i++ {
+		g.updateFixed()
+	}
+
 	mapType := g.gameState.MapState.PlayerLocation.Location.GetMapType()
 
 	if g.updateDialogs() {

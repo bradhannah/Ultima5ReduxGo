@@ -49,7 +49,7 @@ func (g *GameScene) getCalculatedTileIndex(ogSpriteIndex indexes.SpriteIndex, po
 			return indexes.MirrorAvatar
 		}
 	}
-	return sprites.GetSpriteIndexWithAnimationBySpriteIndex(ogSpriteIndex, pos.GetHash())
+	return sprites.GetSpriteIndexWithAnimationBySpriteIndexTick(ogSpriteIndex, pos.GetHash(), g.clk.ElapsedMs())
 }
 
 func (g *GameScene) getCorrectAvatarOnChairTile(spriteIndex indexes.SpriteIndex, position *references.Position) indexes.SpriteIndex {
@@ -85,14 +85,14 @@ func (g *GameScene) getCorrectAvatarEatingInChairTile(avatarChairTileIndex index
 		downPos := pos.GetPositionDown()
 		downPosTile := g.gameState.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.MapState.PlayerLocation.Floor).GetTopTile(downPos)
 		if downPosTile.Index == indexes.TableFoodBoth || downPosTile.Index == indexes.TableFoodTop {
-			return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.AvatarSittingAndEatingFacingDown, 0)
+			return sprites.GetSpriteIndexWithAnimationBySpriteIndexTick(indexes.AvatarSittingAndEatingFacingDown, 0, g.clk.ElapsedMs())
 		}
 		return indexes.AvatarSittingFacingDown
 	case indexes.ChairFacingUp:
 		upPos := pos.GetPositionUp()
 		upPosTile := g.gameState.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.gameState.MapState.PlayerLocation.Floor).GetTopTile(upPos)
 		if upPosTile.Index == indexes.TableFoodBoth || upPosTile.Index == indexes.TableFoodBottom {
-			return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.AvatarSittingAndEatingFacingUp, 0)
+			return sprites.GetSpriteIndexWithAnimationBySpriteIndexTick(indexes.AvatarSittingAndEatingFacingUp, 0, g.clk.ElapsedMs())
 		}
 		return indexes.AvatarSittingFacingUp
 	}
