@@ -144,31 +144,31 @@ func (tc TalkCommand) String() string {
 /* --------------------------- AST nodes ----------------------------------- */
 
 type ScriptItem struct {
-	Cmd                TalkCommand
-	Str                string // valid when Cmd == PlainString
-	Num                int    // generic numeric payload
-	ItemAdditionalData uint16 // specialised payload for Change / Gold / etc.
+	Cmd                TalkCommand `json:"Cmd"`
+	FriendlyCmd        string      `json:"FriendlyCmd" yaml:"FriendlyCmd"`
+	Str                string      `json:"Str,omitempty" yaml:"Str,omitempty"`
+	Num                int         `json:"Num,omitempty" yaml:"Num,omitempty"`
+	ItemAdditionalData uint16      `json:"ItemAdditionalData,omitempty" yaml:"ItemAdditionalData,omitempty"`
 }
 
 type ScriptLine []ScriptItem
 
 type scriptQuestionAnswer struct {
-	Questions []string
-	Answer    ScriptLine
+	Questions []string   `json:"Questions"`
+	Answer    ScriptLine `json:"Answer"`
 }
 
 type scriptTalkLabel struct {
-	Num            int
-	Initial        ScriptLine
-	DefaultAnswers []ScriptLine
-	//	QA             []scriptQuestionAnswer
-	QA map[string]*scriptQuestionAnswer
+	Num            int                              `json:"Num"`
+	Initial        ScriptLine                       `json:"Initial"`
+	DefaultAnswers []ScriptLine                     `json:"DefaultAnswers"`
+	QA             map[string]*scriptQuestionAnswer `json:"QA"`
 }
 
 type TalkScript struct {
-	Lines     []ScriptLine
-	Questions map[string]*scriptQuestionAnswer
-	Labels    map[int]*scriptTalkLabel
+	Lines     []ScriptLine                     `json:"Lines"`
+	Questions map[string]*scriptQuestionAnswer `json:"Questions"`
+	Labels    map[int]*scriptTalkLabel         `json:"Labels"`
 }
 
 // Ask – simple lowercase lookup.

@@ -86,3 +86,7 @@ func (t *TalkReferences) GetTalkScript(smallMapType SmallMapMasterTypes) []*Talk
 func (t *TalkReferences) GetTalkScriptByNpcIndex(smallMapType SmallMapMasterTypes, npcIndex int) *TalkScript {
 	return t.talkScripts[smallMapType][npcIndex]
 }
+
+func (tr *TalkReferences) GetTalkScripts() map[SmallMapMasterTypes][]*TalkScript {
+	return tr.talkScripts
+}

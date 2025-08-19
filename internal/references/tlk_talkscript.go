@@ -32,8 +32,9 @@ func ParseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
 				//return
 			}
 			currLine = append(currLine, ScriptItem{
-				Cmd: PlainString,
-				Str: buf.String(),
+				Cmd:         PlainString,
+				FriendlyCmd: PlainString.String(),
+				Str:         buf.String(),
 			})
 			buf.Reset()
 		}
@@ -64,8 +65,9 @@ func ParseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
 			labelNum = 0
 			i++ // skip the payload byte
 			currLine = append(currLine, ScriptItem{
-				Cmd: DefineLabel,
-				Num: labelNum,
+				Cmd:         DefineLabel,
+				FriendlyCmd: DefineLabel.String(),
+				Num:         labelNum,
 			})
 		case b == eol:
 			flushLine()
@@ -81,7 +83,7 @@ func ParseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
 			b == byte(EndConversation) ||
 			b == byte(Pause) /* …add any others you’ve defined… */ :
 			addPlain()
-			currLine = append(currLine, ScriptItem{Cmd: TalkCommand(b)})
+			currLine = append(currLine, ScriptItem{Cmd: TalkCommand(b), FriendlyCmd: TalkCommand(b).String()})
 
 		// 3) compressed‑word bytes ----------------------------
 		case dict.IsWordByte(b):
@@ -97,7 +99,7 @@ func ParseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
 			// 4) unknown fall‑through -----------------------------
 		default:
 			addPlain()
-			currLine = append(currLine, ScriptItem{Cmd: TalkCommand(b)})
+			currLine = append(currLine, ScriptItem{Cmd: TalkCommand(b), FriendlyCmd: TalkCommand(b).String()})
 		}
 
 	}
@@ -167,7 +169,7 @@ func (ts *TalkScript) BuildIndices() error {
 	// Bye always ends the conversation so append explicit opcode
 	if TalkScriptConstantsBye < len(ts.Lines) {
 		bye := &ts.Lines[TalkScriptConstantsBye]
-		*bye = append(*bye, ScriptItem{Cmd: EndConversation})
+		*bye = append(*bye, ScriptItem{Cmd: EndConversation, FriendlyCmd: EndConversation.String()})
 		_ = ""
 	}
 
