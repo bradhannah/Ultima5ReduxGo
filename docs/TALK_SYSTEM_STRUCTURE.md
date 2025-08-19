@@ -63,9 +63,9 @@ Each is a zero-terminated string, possibly containing special codes.
 
 Keywords are encoded as blocks, each with a keyword and an answer text. Multiple keywords can be chained together using the OR code (135). For example:
 
-| Encoding | Meaning |
-|----------|---------|
-| [Keyword1][Answer1]\0 | Keyword1 triggers Answer1 |
+| Encoding                      | Meaning                               |
+|-------------------------------|---------------------------------------|
+| [Keyword1][Answer1]\0         | Keyword1 triggers Answer1             |
 | [135][0][Keyword2][Answer2]\0 | Keyword1 OR Keyword2 triggers Answer2 |
 
 The OR code (135) is followed by a zero byte and the next keyword. This allows for flexible keyword matching in conversations.
@@ -198,33 +198,3 @@ Special codes may be embedded in any string.
 
 ## References
 - [Ultima V Internal Formats Wiki](https://wiki.ultimacodex.com/wiki/Ultima_V_internal_formats)
-
----
-
-## NPC Dialog Table
-
-| NPC Name        | Dialog Number | Location           | File         |
-|-----------------|--------------|--------------------|--------------|
-| Lord British    | 1            | Castle Britannia   | CASTLE.TLK   |
-| Geoffrey        | 2            | Castle Britannia   | CASTLE.TLK   |
-| Chuckles        | 3            | Castle Britannia   | CASTLE.TLK   |
-| Thorne          | 4            | Jhelom             | TOWNE.TLK    |
-| Smith the Horse | 5            | Iolo's Hut         | DWELLING.TLK |
-| Iolo            | 6            | Iolo's Hut         | DWELLING.TLK |
-| Shamino         | 7            | Shamino's Hut      | DWELLING.TLK |
-| Dupre           | 8            | Trinsic            | TOWNE.TLK    |
-| Katrina         | 9            | New Magincia       | TOWNE.TLK    |
-| Jaana           | 10           | Yew                | TOWNE.TLK    |
-| Mariah          | 11           | Moonglow           | TOWNE.TLK    |
-| Julia           | 12           | Minoc              | TOWNE.TLK    |
-| Sentri          | 13           | Serpent's Hold     | KEEP.TLK     |
-| Johne           | 14           | Dungeon Deceit     | DWELLING.TLK |
-| Gwenno          | 15           | Iolo's Hut         | DWELLING.TLK |
-| Toshi           | 16            | Magincia           | TOWNE.TLK    |
-| Inamo           | 17            | Magincia           | TOWNE.TLK    |
-| Quenton         | 18            | Skara Brae         | TOWNE.TLK    |
-| Horance         | 19            | Skara Brae         | TOWNE.TLK    |
-| Fiona           | 20            | Skara Brae         | TOWNE.TLK    |
-| ...             | ...          | ...                | ...          |
-
-*This table lists all NPCs, their dialog numbers, locations, and TLK files as referenced in the [Ultima V transcript](https://wiki.ultimacodex.com/wiki/Ultima_V_transcript). This is a partial sample. The full table should be expanded to include every NPC from the transcript, with dialog numbers shown without leading zeros.*
