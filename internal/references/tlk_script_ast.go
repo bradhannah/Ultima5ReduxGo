@@ -165,23 +165,16 @@ type scriptTalkLabel struct {
 	QA             map[string]*scriptQuestionAnswer `json:"QA"`
 }
 
-type TalkScript struct {
-	Lines     []ScriptLine                     `json:"Lines"`
-	Questions map[string]*scriptQuestionAnswer `json:"Questions"`
-	Labels    map[int]*scriptTalkLabel         `json:"Labels"`
+type QuestionGroup struct {
+	Options []string   `json:"options" yaml:"options"`
+	Script  ScriptLine `json:"script" yaml:"script"`
 }
 
-// Ask – simple lowercase lookup.
-//func (ts *TalkScript) Ask(q string) (ScriptLine, bool) {
-//	if ts.Questions == nil {
-//		return nil, false
-//	}
-//	qa, ok := ts.Questions[strings.ToLower(q)]
-//	if !ok {
-//		return nil, false
-//	}
-//	return qa.Answer, true
-//}
+type TalkScript struct {
+	Lines          []ScriptLine             `json:"Lines"`
+	QuestionGroups []QuestionGroup          `json:"questions" yaml:"questions"`
+	Labels         map[int]*scriptTalkLabel `json:"Labels"`
+}
 
 /* ----------------- Convenience constants (fixed line indices) ------------ */
 

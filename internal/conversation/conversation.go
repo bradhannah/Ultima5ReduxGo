@@ -112,14 +112,24 @@ func (c *Conversation) loop() {
 			// Ask a question
 			//c.enqueueFmt("\n> ")
 			userInput := c.readLine()
-
 			if userInput == "" {
 				userInput = "bye"
 			}
-
-			if qa, ok := c.ts.Questions[strings.ToLower(userInput)]; ok {
-				_ = c.processMultiLines(qa.Answer.SplitIntoSections(), -1)
-
+			found := false
+			inputLower := strings.ToLower(userInput)
+			for _, group := range c.ts.QuestionGroups {
+				for _, option := range group.Options {
+					if strings.ToLower(option) == inputLower {
+						_ = c.processMultiLines(group.Script.SplitIntoSections(), -1)
+						found = true
+						break
+					}
+				}
+				if found {
+					break
+				}
+			}
+			if found {
 				continue
 			}
 			// unrecognised

@@ -2,17 +2,16 @@
 package references
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"strings"
 )
 
-const (
-	minLabelByte = 0x91 // first label byte in a .tlk file
-	maxLabelByte = 0x9B // last  (exclusive)
-	totalLabels  = 0x0A // ⇐ here – exactly 10 labels (0‑9)
-)
+const minLabelByte = 0x91 // first label byte in a .tlk file
 
 // parseNPCBlob converts the raw TLK byte slice for a single NPC into
 // a TalkScript that currently contains only plain strings.
@@ -107,9 +106,8 @@ func ParseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
 	flushLine() // final line, if any
 
 	ts := TalkScript{
-		Lines:     lines,
-		Questions: nil,
-		Labels:    nil,
+		Lines:  lines,
+		Labels: nil,
 	}
 	err := ts.BuildIndices()
 
@@ -141,12 +139,26 @@ func (ts *TalkScript) ensure(keys []string, lineIdx int) {
 	if lineIdx >= len(ts.Lines) {
 		return
 	}
-	sqa := &scriptQuestionAnswer{Questions: keys, Answer: ts.Lines[lineIdx]}
-	for _, k := range keys {
-		ts.Questions[k] = sqa
+	// Add or merge into QuestionGroups
+	answer := ts.Lines[lineIdx]
+	hash := hashScriptLine(answer)
+	found := false
+	for i, group := range ts.QuestionGroups {
+		if hashScriptLine(group.Script) == hash {
+			// Merge options
+			ts.QuestionGroups[i].Options = append(ts.QuestionGroups[i].Options, keys...)
+			found = true
+			break
+		}
 	}
-	if lineIdx == TalkScriptConstantsName {
-		sqa.Answer[0].Str = fmt.Sprintf("My name is %s", sqa.Answer[0].Str)
+	if !found {
+		ts.QuestionGroups = append(ts.QuestionGroups, QuestionGroup{
+			Options: keys,
+			Script:  answer,
+		})
+	}
+	if lineIdx == TalkScriptConstantsName && len(answer) > 0 {
+		answer[0].Str = fmt.Sprintf("My name is %s", answer[0].Str)
 	}
 }
 
@@ -156,12 +168,10 @@ func (ts *TalkScript) BuildIndices() error {
 	if ts == nil {
 		return errors.New("nil TalkScript")
 	}
-	// guard against double‑build
-	if ts.Questions != nil && ts.Labels != nil {
+	if ts.Labels != nil {
 		return nil
 	}
 
-	ts.Questions = map[string]*scriptQuestionAnswer{}
 	ts.Labels = map[int]*scriptTalkLabel{}
 
 	// 1) default hard‑wired Q&A lines -----------------------------
@@ -173,17 +183,39 @@ func (ts *TalkScript) BuildIndices() error {
 		_ = ""
 	}
 
-	ts.ensure([]string{"name"}, TalkScriptConstantsName)
-	ts.ensure([]string{"job", "work"}, TalkScriptConstantsJob)
-	ts.ensure([]string{"bye"}, TalkScriptConstantsBye)
+	questionToAnswer := map[string]ScriptLine{}
+	questionGroupsMap := map[string][]string{}
+	answerMap := map[string]ScriptLine{}
 
-	/* ------------------------------------------------------------
-	   2) dynamic Q&A section until the first StartLabelDef
-	   ----------------------------------------------------------*/
+	// Add hard-wired Q&A
+	questionToAnswer["name"] = ts.Lines[TalkScriptConstantsName]
+	questionToAnswer["job"] = ts.Lines[TalkScriptConstantsJob]
+	questionToAnswer["work"] = ts.Lines[TalkScriptConstantsJob]
+	questionToAnswer["bye"] = ts.Lines[TalkScriptConstantsBye]
+
+	// Dynamic Q&A section
 	nIndex := TalkScriptConstantsBye + 1
 	simpleQuestions, nIndex := ts.buildQuestions(nIndex)
-	MergeMaps(ts.Questions, simpleQuestions)
-	//ts.Questions, nIndex = ts.buildQuestions(nIndex)
+	for q, qa := range simpleQuestions {
+		questionToAnswer[q] = qa.Answer
+	}
+
+	// Group questions by identical answer
+	for q, answer := range questionToAnswer {
+		hash := hashScriptLine(answer)
+		questionGroupsMap[hash] = append(questionGroupsMap[hash], q)
+		answerMap[hash] = answer
+	}
+
+	// Convert to QuestionGroups
+	var questionGroups []QuestionGroup
+	for hash, options := range questionGroupsMap {
+		questionGroups = append(questionGroups, QuestionGroup{
+			Options: options,
+			Script:  answerMap[hash],
+		})
+	}
+	ts.QuestionGroups = questionGroups
 
 	/* ------------------------------------------------------------
 	   3) label section
@@ -229,7 +261,6 @@ func (ts *TalkScript) BuildIndices() error {
 			}
 
 			if line.isEndOfLabelSection() {
-				fmt.Sprint("oof")
 				break
 			}
 
@@ -247,8 +278,6 @@ func (ts *TalkScript) BuildIndices() error {
 			var qa map[string]*scriptQuestionAnswer
 			qa, nIndex = ts.buildQuestions(nIndex)
 			MergeMaps(label.QA, qa)
-
-			fmt.Sprint("oof")
 		}
 	}
 
@@ -397,8 +426,10 @@ func (sl ScriptLine) SplitIntoSections() []SplitScriptLine {
 			if i+1 < len(sl) && len(sl[i+1].Str) >= 3 {
 				digits := sl[i+1].Str[:3]
 				var amt uint16
-				fmt.Sscanf(digits, "%d", &amt)
-				item.ItemAdditionalData = amt
+				_, err := fmt.Sscanf(digits, "%d", &amt)
+				if err == nil {
+					item.ItemAdditionalData = amt
+				}
 			}
 			sections[nSection] = append(sections[nSection], item)
 			i++ // skip payload
@@ -437,4 +468,10 @@ func MergeMaps[K comparable, V any](dst, src map[K]V) {
 	for k, v := range src {
 		dst[k] = v
 	}
+}
+
+func hashScriptLine(sl ScriptLine) string {
+	b, _ := json.Marshal(sl)
+	h := sha256.Sum256(b)
+	return hex.EncodeToString(h[:])
 }
