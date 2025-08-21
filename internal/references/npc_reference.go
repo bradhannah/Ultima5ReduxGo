@@ -28,7 +28,7 @@ type NPCReference struct {
 	Location     Location    `json:"location" yaml:"location"`
 	DialogNumber byte        `json:"dialog_number" yaml:"dialog_number"`
 	Schedule     NPCSchedule `json:"schedule" yaml:"schedule"`
-	npcType      NPCType     `json:"npc_type" yaml:"npc_type"`
+	NpcType      NPCType     `json:"npc_type" yaml:"npc_type"`
 	// script TalkScript
 }
 
@@ -56,18 +56,18 @@ func isValidType(nType int) bool {
 func NewNPCReferenceForVehicle(vehicle VehicleType, position Position, floorNumber FloorNumber) *NPCReference {
 	npcRef := &NPCReference{}
 	npcRef.Position = position
-	npcRef.npcType = Vehicle
+	npcRef.NpcType = Vehicle
 	npcRef.SetKeyIndex(vehicle.GetBoardedSpriteByDirection(Right, Right))
 	npcRef.Schedule = CreateNPCScheduledFixedOneLocation(position, floorNumber)
 	return npcRef
 }
 
 func (n *NPCReference) GetSpriteIndex() indexes.SpriteIndex {
-	return indexes.SpriteIndex(int(n.npcType) + secondHalfSpriteTableIndex)
+	return indexes.SpriteIndex(int(n.NpcType) + secondHalfSpriteTableIndex)
 }
 
 func (n *NPCReference) SetKeyIndex(index indexes.SpriteIndex) {
-	n.npcType = NPCType(index - secondHalfSpriteTableIndex)
+	n.NpcType = NPCType(index - secondHalfSpriteTableIndex)
 }
 
 func (n *NPCReference) GetVehicleType() VehicleType {
@@ -111,8 +111,8 @@ func (n *NPCReference) GetNPCType() NPCType {
 		return NPCType(n.DialogNumber)
 	}
 
-	if isValidType(int(n.npcType)) {
-		return n.npcType
+	if isValidType(int(n.NpcType)) {
+		return n.NpcType
 	}
 
 	if tileIndex.IsHorseUnBoarded() || tileIndex.IsMagicCarpetUnboarded() || tileIndex.IsFrigateFurled() || tileIndex.IsSkiff() {

@@ -71,7 +71,9 @@ func NewUltimaVConfiguration() *UltimaVConfiguration {
 	_ = viper.Unmarshal(&uc.SavedConfigData)
 	dfp := viper.GetString("DataFilePath")
 	if dfp == "" {
-		viper.Set("DataFilePath", "/Users/bradhannah/games/Ultima_5/Gold")
+		viper.Set("DataFilePath", "./OLD")
+		uc.SavedConfigData.DataFilePath = "./OLD"
+	} else {
 		uc.SavedConfigData.DataFilePath = dfp
 	}
 

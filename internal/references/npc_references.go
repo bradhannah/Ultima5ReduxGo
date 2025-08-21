@@ -18,7 +18,7 @@ const (
 )
 
 type NPCReferences struct {
-	npcs []NPCReference `json:"npcs" yaml:"npcs"`
+	Npcs []NPCReference `json:"npcs" yaml:"npcs"`
 }
 
 func NewNPCReferences(config *config.UltimaVConfiguration) *NPCReferences {
@@ -31,7 +31,7 @@ func NewNPCReferences(config *config.UltimaVConfiguration) *NPCReferences {
 		if err != nil {
 			log.Fatal(err)
 		}
-		allNpcs.npcs = append(allNpcs.npcs, npcs...)
+		allNpcs.Npcs = append(allNpcs.Npcs, npcs...)
 	}
 
 	return allNpcs
@@ -51,7 +51,7 @@ func getNPCsFromFile(path string, locationOffset int) ([]NPCReference, error) {
 			npc := NPCReference{}
 			npc.Location = Location(locationOffset + townIndex + 1)
 			npc.Schedule = CreateNPCSchedule(townRawData[npcIndex*sizeOfNPCSchedule : (npcIndex*sizeOfNPCSchedule)+sizeOfNPCSchedule])
-			npc.npcType = NPCType(townRawData[startingNpcTypeOffset+npcIndex])
+			npc.NpcType = NPCType(townRawData[startingNpcTypeOffset+npcIndex])
 			npc.DialogNumber = townRawData[startingNpcDialogNumberOffset+npcIndex]
 
 			sprite := npc.GetSpriteIndex()
@@ -72,6 +72,6 @@ func (n *NPCReferences) getNPCIndexesByLocation(location Location) (startIndex, 
 
 func (n *NPCReferences) GetNPCReferencesByLocation(location Location) *[]NPCReference {
 	startIndex, endIndex := n.getNPCIndexesByLocation(location)
-	npcs := n.npcs[startIndex:endIndex]
+	npcs := n.Npcs[startIndex:endIndex]
 	return &npcs
 }
