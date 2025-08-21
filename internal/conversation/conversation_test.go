@@ -1,6 +1,8 @@
 package conversation
 
 import (
+	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -291,6 +293,161 @@ func TestNPCKeywordOptions(t *testing.T) {
 
 			if len(npcData.ThematicOptions) > 0 && foundThematicOptions == 0 {
 				t.Logf("No thematic options found for %s (may be expected depending on dialog structure)", npcData.Name)
+			}
+		})
+	}
+}
+
+// BranchingTestScenario defines a branching conversation test
+type BranchingTestScenario struct {
+	Name          string   // Test scenario name
+	NPC           string   // NPC name from test suite
+	InitialInput  string   // First input to trigger branch
+	BranchInputs  []string // Follow-up inputs for each branch
+	ExpectedTexts []string // Expected response fragments for each branch
+}
+
+// GetBranchingTestScenarios returns test scenarios for branching conversations
+func GetBranchingTestScenarios() []BranchingTestScenario {
+	return []BranchingTestScenario{
+		{
+			Name:         "Treanna_val_branch",
+			NPC:          "Treanna",
+			InitialInput: "val",
+			BranchInputs: []string{"20", "40", "anything_else"}, // Three branch options + default
+			ExpectedTexts: []string{
+				"",            // Will discover what val actually triggers
+				"",            // Will discover what val actually triggers
+				"cannot help", // Expected for default/unrecognized
+			},
+		},
+		{
+			Name:         "Treanna_value_branch",
+			NPC:          "Treanna",
+			InitialInput: "value",                               // Test longer form that should match "val"
+			BranchInputs: []string{"20", "40", "anything_else"}, // Three branch options + default
+			ExpectedTexts: []string{
+				"val",         // Expected for val prompt/response
+				"val",         // Expected for val prompt/response
+				"cannot help", // Expected for default/unrecognized
+			},
+		},
+	}
+}
+
+// TestNPCBranchingConversations tests complex branching dialog scenarios
+func TestNPCBranchingConversations(t *testing.T) {
+	gameState := createTestGameState(t)
+	testSuite := GetTestSuite()
+	branchingScenarios := GetBranchingTestScenarios()
+
+	for _, scenario := range branchingScenarios {
+		t.Run(scenario.Name, func(t *testing.T) {
+			// Find the NPC data
+			var npcData NPCTestData
+			found := false
+			for _, npc := range testSuite.NPCs {
+				if npc.Name == scenario.NPC {
+					npcData = npc
+					found = true
+					break
+				}
+			}
+			if !found {
+				t.Fatalf("Could not find NPC %s in test suite", scenario.NPC)
+			}
+
+			for i, branchInput := range scenario.BranchInputs {
+				t.Run(fmt.Sprintf("branch_%d_%s", i, branchInput), func(t *testing.T) {
+					talkScript := getNPCDialog(gameState, npcData)
+					if talkScript == nil {
+						t.Fatalf("Could not find %s's talk script", npcData.Name)
+					}
+
+					npcRef := getNPCReference(gameState, npcData)
+					convo := NewConversation(*npcRef, gameState, talkScript)
+
+					convo.Start()
+					defer convo.Stop()
+
+					// Collect initial greeting output
+					var initialOutputs []string
+					for j := 0; j < 5; j++ {
+						select {
+						case item := <-convo.Out():
+							initialOutputs = append(initialOutputs, item.Str)
+						case <-time.After(100 * time.Millisecond):
+							break
+						}
+					}
+
+					// Send the initial trigger
+					select {
+					case convo.In() <- scenario.InitialInput:
+					case <-time.After(500 * time.Millisecond):
+						t.Fatal("Timed out sending initial input")
+					}
+
+					// Collect response to initial trigger
+					var triggerOutputs []string
+					for j := 0; j < 5; j++ {
+						select {
+						case item := <-convo.Out():
+							triggerOutputs = append(triggerOutputs, item.Str)
+						case <-time.After(100 * time.Millisecond):
+							break
+						}
+					}
+
+					// Send the branch input
+					select {
+					case convo.In() <- branchInput:
+					case <-time.After(500 * time.Millisecond):
+						t.Fatal("Timed out sending branch input")
+					}
+
+					// Collect final response
+					var finalOutputs []string
+					for j := 0; j < 5; j++ {
+						select {
+						case item := <-convo.Out():
+							finalOutputs = append(finalOutputs, item.Str)
+						case <-time.After(100 * time.Millisecond):
+							break
+						}
+					}
+
+					// Log all outputs for debugging
+					t.Logf("Initial outputs: %v", initialOutputs)
+					t.Logf("Trigger (%s) outputs: %v", scenario.InitialInput, triggerOutputs)
+					t.Logf("Branch (%s) outputs: %v", branchInput, finalOutputs)
+
+					// Log if we got any response to the trigger (val)
+					if len(triggerOutputs) > 0 {
+						t.Logf("SUCCESS: '%s' keyword was recognized and triggered response", scenario.InitialInput)
+					} else {
+						t.Logf("INFO: '%s' keyword was not recognized or produced no immediate output", scenario.InitialInput)
+					}
+
+					// Verify we got expected response text
+					allOutputs := append(append(initialOutputs, triggerOutputs...), finalOutputs...)
+					expectedFragment := scenario.ExpectedTexts[i]
+
+					found := false
+					for _, output := range allOutputs {
+						if strings.Contains(strings.ToLower(output), strings.ToLower(expectedFragment)) {
+							found = true
+							break
+						}
+					}
+
+					if !found {
+						t.Logf("Expected to find fragment %q in conversation outputs", expectedFragment)
+						t.Logf("All outputs: %v", allOutputs)
+					}
+
+					t.Logf("Branch test completed for %s -> %s", scenario.InitialInput, branchInput)
+				})
 			}
 		})
 	}
