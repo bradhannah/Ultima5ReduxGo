@@ -1,0 +1,186 @@
+location_names:
+    - ""
+    - MOONGLOW
+    - BRITAIN
+    - JHELOM
+    - YEW
+    - MINOC
+    - TRINSIC
+    - SKARA BRAE
+    - NEW MAGINCIA
+    - FOGSBANE
+    - STORMCROW
+    - GREYHAVEN
+    - WAVEGUIDE
+    - IOLO'S HUT
+    - SUTEK'S HUT
+    - SIN VRAAL'S HUT
+    - GRENDAL'S HUT
+    - LORD BRITISH'S CASTLE
+    - PALACE OF BLACKTHORN
+    - WEST BRITANNY
+    - NORTH BRITANNY
+    - EAST BRITANNY
+    - PAWS
+    - COVE
+    - BUCCANEER'S DEN
+    - ARARAT
+    - BORDERMARCH
+    - FARTHING
+    - WINDEMERE
+    - STONEGATE
+    - THE LYCAEUM
+    - EMPATH ABBEY
+    - SERPENT'S HOLD
+compressed_words:
+    - the
+    - thou
+    - of
+    - to
+    - and
+    - that
+    - for
+    - in
+    - is
+    - have
+    - with
+    - thee
+    - this
+    - not
+    - my
+    - it
+    - me
+    - but
+    - dost
+    - know
+    - be
+    - was
+    - Blackthorn
+    - from
+    - thy
+    - one
+    - are
+    - here
+    - many
+    - Lord
+    - am
+    - we
+    - they
+    - he
+    - would
+    - art
+    - "on"
+    - young
+    - what
+    - see
+    - like
+    - only
+    - by
+    - there
+    - Blackthorn's
+    - good
+    - been
+    - must
+    - his
+    - British
+    - fine
+    - an
+    - great
+    - thee,
+    - our
+    - who
+    - name
+    - heard
+    - as
+    - at
+    - has
+    - through
+    - once
+    - can
+    - him
+    - ye
+    - Shadowlords
+    - tell
+    - some
+    - believe
+    - all
+    - their
+    - upon
+    - even
+    - '''tis'
+    - find
+    - if
+    - about
+    - don't
+    - before
+    - these
+    - just
+    - make
+    - will
+    - when
+    - three
+    - Great
+    - might
+    - those
+    - old
+    - hast
+    - ask
+    - unto
+    - wish
+    - man
+    - so
+    - knows
+    - still
+    - Mantra
+    - out
+    - help
+    - well
+    - shall
+    - think
+    - where
+    - named
+    - talking
+    - more
+    - such
+    - very
+    - may
+    - lives
+    - canst
+    - which
+    - since
+    - need
+    - I've
+    - work
+filenames:
+    - PROPORT.PCS
+    - BRITISH.BIT
+    - TITLE.BIT
+    - TILES.16
+    - ITEMS.16
+    - DNG1.16
+    - DNG2.16
+    - DNG3.16
+    - MON0.16
+    - MON1.16
+    - MON2.16
+    - MON3.16
+    - MON4.16
+    - MON5.16
+    - MON6.16
+    - MON7.16
+    - CREATE.16
+    - TEXT.16
+    - STORY1.16
+    - STORY2.16
+    - STORY3.16
+    - STORY4.16
+    - STORY5.16
+    - STORY6.16
+    - END1.16
+    - END2.16
+    - ULTIMA.16
+    - STARTSC.16
+    - ENDSC.16
+    - ""
+    - BRIT.DAT
+    - UNDER.DAT

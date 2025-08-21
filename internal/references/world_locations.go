@@ -9,23 +9,23 @@ const (
 )
 
 type WorldLocations struct {
-	largeMapLocationPositions map[Location]WorldLocation
+	LargeMapLocationPositions map[Location]WorldLocation `json:"large_map_location_positions" yaml:"large_map_location_positions"`
 	// shrinePositions
 }
 
 type WorldLocation struct {
-	Position Position
-	Location Location
+	Position Position `json:"position" yaml:"position"`
+	Location Location `json:"location" yaml:"location"`
 }
 
 func NewWorldLocations(gameConfig *config.UltimaVConfiguration) *WorldLocations {
 	wl := &WorldLocations{}
-	wl.largeMapLocationPositions = make(map[Location]WorldLocation)
+	wl.LargeMapLocationPositions = make(map[Location]WorldLocation)
 
 	for i := 0; i < TotalLocations; i++ {
 		x := Coordinate(gameConfig.RawDataOvl[xCoordsOffset+i])
 		y := Coordinate(gameConfig.RawDataOvl[yCoordsOffset+i])
-		wl.largeMapLocationPositions[Location(i+1)] = WorldLocation{
+		wl.LargeMapLocationPositions[Location(i+1)] = WorldLocation{
 			Location: Location(i + 1),
 			Position: Position{
 				X: x,
@@ -37,7 +37,7 @@ func NewWorldLocations(gameConfig *config.UltimaVConfiguration) *WorldLocations 
 }
 
 func (wl *WorldLocations) GetLocationByPosition(position Position) Location {
-	for _, worldLocation := range wl.largeMapLocationPositions {
+	for _, worldLocation := range wl.LargeMapLocationPositions {
 		if worldLocation.Position.Equals(&position) {
 			return worldLocation.Location
 		}

@@ -16,7 +16,7 @@ type LocationReferences struct {
 	mapsByStr      map[string]*SmallLocationReference
 	config         *config.UltimaVConfiguration
 	dataOvl        *DataOvl
-	WorldLocations *WorldLocations
+	WorldLocations *WorldLocations `json:"world_locations" yaml:"world_locations"`
 
 	npcRefs *NPCReferences
 }

@@ -1,0 +1,32 @@
+{
+  "docks": [
+    {
+      "location": 3,
+      "position": {
+        "x": 39,
+        "y": 221
+      }
+    },
+    {
+      "location": 5,
+      "position": {
+        "x": 151,
+        "y": 21
+      }
+    },
+    {
+      "location": 21,
+      "position": {
+        "x": 79,
+        "y": 109
+      }
+    },
+    {
+      "location": 24,
+      "position": {
+        "x": 138,
+        "y": 159
+      }
+    }
+  ]
+}
