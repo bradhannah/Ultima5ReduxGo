@@ -14,17 +14,17 @@ const (
 )
 
 type NPCSchedule struct {
-	Ai    [totalScheduleItemsPerNpc]byte
-	X     [totalScheduleItemsPerNpc]byte
-	Y     [totalScheduleItemsPerNpc]byte
-	Floor [totalScheduleItemsPerNpc]byte
-	Time  [totalScheduleItemsPerNpc + 1]byte
+	Ai    [totalScheduleItemsPerNpc]byte     `json:"ai" yaml:"ai"`
+	X     [totalScheduleItemsPerNpc]byte     `json:"x" yaml:"x"`
+	Y     [totalScheduleItemsPerNpc]byte     `json:"y" yaml:"y"`
+	Floor [totalScheduleItemsPerNpc]byte     `json:"floor" yaml:"floor"`
+	Time  [totalScheduleItemsPerNpc + 1]byte `json:"time" yaml:"time"`
 }
 
 type IndividualNPCBehaviour struct {
-	Ai       AiType
-	Position Position
-	Floor    FloorNumber
+	Ai       AiType      `json:"ai" yaml:"ai"`
+	Position Position    `json:"position" yaml:"position"`
+	Floor    FloorNumber `json:"floor" yaml:"floor"`
 }
 
 func CreateNPCSchedule(rawData []byte) NPCSchedule {

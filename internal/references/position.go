@@ -11,7 +11,8 @@ type GetTileFromPosition func(*Position) *Tile
 type Coordinate int16
 
 type Position struct {
-	X, Y Coordinate
+	X Coordinate `json:"x" yaml:"x"`
+	Y Coordinate `json:"y" yaml:"y"`
 }
 
 func move(val, mapSize Coordinate, decrease, bWrap bool) Coordinate {
