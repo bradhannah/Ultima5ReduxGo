@@ -31,21 +31,21 @@ const (
 )
 
 type EnemyReference struct {
-	KeyFrameTile   *Tile
-	Armour         int
-	Damage         int
-	Dexterity      int
-	HitPoints      int
-	Intelligence   int
-	MaxPerMap      int
-	Strength       int
-	TreasureNumber int
+	KeyFrameTile   *Tile `json:"key_frame_tile" yaml:"key_frame_tile"`
+	Armour         int   `json:"armour" yaml:"armour"`
+	Damage         int   `json:"damage" yaml:"damage"`
+	Dexterity      int   `json:"dexterity" yaml:"dexterity"`
+	HitPoints      int   `json:"hit_points" yaml:"hit_points"`
+	Intelligence   int   `json:"intelligence" yaml:"intelligence"`
+	MaxPerMap      int   `json:"max_per_map" yaml:"max_per_map"`
+	Strength       int   `json:"strength" yaml:"strength"`
+	TreasureNumber int   `json:"treasure_number" yaml:"treasure_number"`
 
-	enemyAbilities       map[EnemyAbility]bool
-	additionalEnemyFlags AdditionalEnemyFlags
+	enemyAbilities       map[EnemyAbility]bool `json:"enemy_abilities" yaml:"enemy_abilities"`
+	additionalEnemyFlags AdditionalEnemyFlags  `json:"additional_enemy_flags" yaml:"additional_enemy_flags"`
 
-	AttackRange int
-	Friend      *EnemyReference
+	AttackRange int             `json:"attack_range" yaml:"attack_range"`
+	Friend      *EnemyReference `json:"friend" yaml:"friend"`
 }
 
 func (e *EnemyReference) GetEraWeight(era datetime.Era) int {
@@ -149,4 +149,41 @@ func (e *EnemyReferences) GetRandomEnemyReferenceByEraAndTile(era datetime.Era, 
 	// Choose a random enemy reference from the filtered list.
 	idx := rand.Intn(len(enemiesThatCanGoOnTile))
 	return enemiesThatCanGoOnTile[idx], nil
+}
+
+type EnemyReferenceSafe struct {
+	KeyFrameTile         *Tile                 `json:"key_frame_tile" yaml:"key_frame_tile"`
+	Armour               int                   `json:"armour" yaml:"armour"`
+	Damage               int                   `json:"damage" yaml:"damage"`
+	Dexterity            int                   `json:"dexterity" yaml:"dexterity"`
+	HitPoints            int                   `json:"hit_points" yaml:"hit_points"`
+	Intelligence         int                   `json:"intelligence" yaml:"intelligence"`
+	MaxPerMap            int                   `json:"max_per_map" yaml:"max_per_map"`
+	Strength             int                   `json:"strength" yaml:"strength"`
+	TreasureNumber       int                   `json:"treasure_number" yaml:"treasure_number"`
+	EnemyAbilities       map[EnemyAbility]bool `json:"enemy_abilities" yaml:"enemy_abilities"`
+	AdditionalEnemyFlags AdditionalEnemyFlags  `json:"additional_enemy_flags" yaml:"additional_enemy_flags"`
+	AttackRange          int                   `json:"attack_range" yaml:"attack_range"`
+	// Friend omitted to avoid cyclic reference
+}
+
+func ToSafeEnemyReferences(refs []EnemyReference) []EnemyReferenceSafe {
+	safe := make([]EnemyReferenceSafe, len(refs))
+	for i, e := range refs {
+		safe[i] = EnemyReferenceSafe{
+			KeyFrameTile:         e.KeyFrameTile,
+			Armour:               e.Armour,
+			Damage:               e.Damage,
+			Dexterity:            e.Dexterity,
+			HitPoints:            e.HitPoints,
+			Intelligence:         e.Intelligence,
+			MaxPerMap:            e.MaxPerMap,
+			Strength:             e.Strength,
+			TreasureNumber:       e.TreasureNumber,
+			EnemyAbilities:       e.enemyAbilities,
+			AdditionalEnemyFlags: e.additionalEnemyFlags,
+			AttackRange:          e.AttackRange,
+		}
+	}
+	return safe
 }

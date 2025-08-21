@@ -13,12 +13,12 @@ const (
 )
 
 type DockReference struct {
-	Location Location
-	Position Position
+	Location Location `json:"location" yaml:"location"`
+	Position Position `json:"position" yaml:"position"`
 }
 
 type DockReferences struct {
-	docks []DockReference
+	docks []DockReference `json:"docks" yaml:"docks"`
 }
 
 func GetListOfAllLocationsWithDocks() []Location {

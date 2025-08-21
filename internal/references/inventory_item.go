@@ -28,18 +28,18 @@ var inventoryDetails []byte
 type inventoryItemsMap map[ItemTypeStringIndex][]InventoryItem
 
 type InventoryItemReferences struct {
-	inventoryItemsMap inventoryItemsMap
+	inventoryItemsMap inventoryItemsMap `json:"inventory_items_map" yaml:"inventory_items_map"`
 
-	Equipment map[Equipment]InventoryItem
-	Reagent   map[Reagent]InventoryItem
-	Spell     map[Spell]InventoryItem
-	Scroll    map[Scroll]InventoryItem
-	Special   map[SpecialItem]InventoryItem
-	Potion    map[Potion]InventoryItem
-	Shard     map[Shard]InventoryItem
-	QuestItem map[QuestItem]InventoryItem
-	Moonstone map[Moonstone]InventoryItem
-	Provision map[Provision]InventoryItem
+	Equipment map[Equipment]InventoryItem   `json:"equipment" yaml:"equipment"`
+	Reagent   map[Reagent]InventoryItem     `json:"reagent" yaml:"reagent"`
+	Spell     map[Spell]InventoryItem       `json:"spell" yaml:"spell"`
+	Scroll    map[Scroll]InventoryItem      `json:"scroll" yaml:"scroll"`
+	Special   map[SpecialItem]InventoryItem `json:"special" yaml:"special"`
+	Potion    map[Potion]InventoryItem      `json:"potion" yaml:"potion"`
+	Shard     map[Shard]InventoryItem       `json:"shard" yaml:"shard"`
+	QuestItem map[QuestItem]InventoryItem   `json:"quest_item" yaml:"quest_item"`
+	Moonstone map[Moonstone]InventoryItem   `json:"moonstone" yaml:"moonstone"`
+	Provision map[Provision]InventoryItem   `json:"provision" yaml:"provision"`
 }
 
 func NewInventoryItemsReferences() *InventoryItemReferences {

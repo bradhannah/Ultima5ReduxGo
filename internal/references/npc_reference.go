@@ -24,11 +24,11 @@ const (
 )
 
 type NPCReference struct {
-	Position     Position
-	Location     Location
-	DialogNumber byte
-	Schedule     NPCSchedule
-	npcType      NPCType
+	Position     Position    `json:"position" yaml:"position"`
+	Location     Location    `json:"location" yaml:"location"`
+	DialogNumber byte        `json:"dialog_number" yaml:"dialog_number"`
+	Schedule     NPCSchedule `json:"schedule" yaml:"schedule"`
+	npcType      NPCType     `json:"npc_type" yaml:"npc_type"`
 	// script TalkScript
 }
 

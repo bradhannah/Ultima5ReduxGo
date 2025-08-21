@@ -18,7 +18,7 @@ const (
 )
 
 type NPCReferences struct {
-	npcs []NPCReference
+	npcs []NPCReference `json:"npcs" yaml:"npcs"`
 }
 
 func NewNPCReferences(config *config.UltimaVConfiguration) *NPCReferences {

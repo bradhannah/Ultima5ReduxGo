@@ -4,7 +4,6 @@ package main
 import (
 	"bufio"
 	_ "embed"
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -44,20 +43,25 @@ func main() {
 		saveFile, cfg, baseGameReferences,
 		xTilesVisibleOnGameScreen, yTilesVisibleOnGameScreen,
 	)
-	npcId := 3
+	npcID := 3
+	talkScriptIndex := 2
+	talkScript := baseState.GameReferences.TalkReferences.GetTalkScriptByNpcIndex(references.Castle, talkScriptIndex)
 
-	talkScript := baseState.GameReferences.TalkReferences.GetTalkScriptByNpcIndex(references.Castle, 2)
+	npcState := &NPCState{HasMetAvatar: false, Script: talkScript}
 
-	ns := &NPCState{HasMetAvatar: false, Script: talkScript}
+	npcReferences := baseState.GameReferences.NPCReferences.GetNPCReferencesByLocation(references.Britain)
+	npcReference := (*npcReferences)[npcID]
 
-	// 3) start Conversation
-	convo := conversation.NewConversation(npcId,
-		&baseState.PartyState,
-		ns.Script,
+	// Pass the correct arguments to NewConversation
+	convo := conversation.NewConversation(npcReference,
+		baseState,
+		npcState.Script,
 	)
 
 	convo.Start()
-	time.Sleep(10)
+	sleepDuration := 10 * time.Second
+	time.Sleep(sleepDuration)
+
 	scanCh := make(chan string)
 	go func() {
 		scanner := bufio.NewScanner(os.Stdin)
@@ -67,22 +71,17 @@ func main() {
 		close(scanCh) // on EOF / error
 	}()
 
-	//scan := bufio.NewScanner(os.Stdin)
-
 	for {
 		select {
 		case v := <-convo.Out():
 			{
-				fmt.Print(v.Str)
+				log.Print(v.Str)
 			}
 		case line, ok := <-scanCh:
-			//default:
 			if !ok {
 				continue
 			}
-			//if scan.Scan() {
-			convo.In() <- line //scan.Text()
-			//}
+			convo.In() <- line
 		}
 	}
 

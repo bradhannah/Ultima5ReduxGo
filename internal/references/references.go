@@ -7,18 +7,18 @@ import (
 )
 
 type GameReferences struct {
-	OverworldLargeMapReference  *LargeMapReference
-	UnderworldLargeMapReference *LargeMapReference
+	OverworldLargeMapReference  *LargeMapReference `json:"overworld_large_map_reference" yaml:"overworld_large_map_reference"`
+	UnderworldLargeMapReference *LargeMapReference `json:"underworld_large_map_reference" yaml:"underworld_large_map_reference"`
 
-	LocationReferences      *LocationReferences
-	DataOvl                 *DataOvl
-	TileReferences          *Tiles
-	InventoryItemReferences *InventoryItemReferences
-	LookReferences          *LookReferences
-	NPCReferences           *NPCReferences
-	DockReferences          *DockReferences
-	EnemyReferences         *EnemyReferences
-	TalkReferences          *TalkReferences
+	LocationReferences      *LocationReferences      `json:"location_references" yaml:"location_references"`
+	DataOvl                 *DataOvl                 `json:"data_ovl" yaml:"data_ovl"`
+	TileReferences          *Tiles                   `json:"tile_references" yaml:"tile_references"`
+	InventoryItemReferences *InventoryItemReferences `json:"inventory_item_references" yaml:"inventory_item_references"`
+	LookReferences          *LookReferences          `json:"look_references" yaml:"look_references"`
+	NPCReferences           *NPCReferences           `json:"npc_references" yaml:"npc_references"`
+	DockReferences          *DockReferences          `json:"dock_references" yaml:"dock_references"`
+	EnemyReferences         *EnemyReferences         `json:"enemy_references" yaml:"enemy_references"`
+	TalkReferences          *TalkReferences          `json:"talk_references" yaml:"talk_references"`
 }
 
 func NewGameReferences(gameConfig *config.UltimaVConfiguration) (*GameReferences, error) {

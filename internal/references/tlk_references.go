@@ -10,24 +10,24 @@ import (
 type talkDataForSmallMapType map[SmallMapMasterTypes]TalkBytesForSmallMapType
 
 type TalkReferences struct {
-	WordDict                *WordDict
-	talkDataForSmallMapType talkDataForSmallMapType
-	talkScripts             map[SmallMapMasterTypes][]*TalkScript
+	WordDict                *WordDict                             `json:"word_dict" yaml:"word_dict"`
+	TalkDataForSmallMapType talkDataForSmallMapType               `json:"talk_data_for_small_map_type" yaml:"talk_data_for_small_map_type"`
+	TalkScripts             map[SmallMapMasterTypes][]*TalkScript `json:"talk_scripts" yaml:"talk_scripts"`
 }
 
 func NewTalkReferences(config *config.UltimaVConfiguration, dataOvl *DataOvl) *TalkReferences {
 	talkReferences := &TalkReferences{} //nolint:exhaustruct
-	talkReferences.talkDataForSmallMapType = make(map[SmallMapMasterTypes]TalkBytesForSmallMapType)
+	talkReferences.TalkDataForSmallMapType = make(map[SmallMapMasterTypes]TalkBytesForSmallMapType)
 
 	talkReferences.WordDict = NewWordDict(dataOvl.CompressedWords)
-	talkReferences.talkDataForSmallMapType = createTalkDataForSmallMapType(config)
+	talkReferences.TalkDataForSmallMapType = createTalkDataForSmallMapType(config)
 
 	talkScripts := make(map[SmallMapMasterTypes][]*TalkScript)
 
 	for _, smt := range getTalkLocationByFiles() {
 		// required to make an assumption it starts at 1, and they are all in order - which they are
-		for nTalk := 1; nTalk <= len(talkReferences.talkDataForSmallMapType[smt]); nTalk++ {
-			specificSmallMapTalkData := talkReferences.talkDataForSmallMapType[smt][nTalk]
+		for nTalk := 1; nTalk <= len(talkReferences.TalkDataForSmallMapType[smt]); nTalk++ {
+			specificSmallMapTalkData := talkReferences.TalkDataForSmallMapType[smt][nTalk]
 			script, err := ParseNPCBlob(specificSmallMapTalkData, talkReferences.WordDict)
 
 			if err != nil {
@@ -38,7 +38,7 @@ func NewTalkReferences(config *config.UltimaVConfiguration, dataOvl *DataOvl) *T
 		}
 	}
 
-	talkReferences.talkScripts = talkScripts
+	talkReferences.TalkScripts = talkScripts
 
 	return talkReferences
 }
@@ -80,13 +80,13 @@ func getTalkLocationByFiles() []SmallMapMasterTypes {
 }
 
 func (t *TalkReferences) GetTalkScript(smallMapType SmallMapMasterTypes) []*TalkScript {
-	return t.talkScripts[smallMapType]
+	return t.TalkScripts[smallMapType]
 }
 
 func (t *TalkReferences) GetTalkScriptByNpcIndex(smallMapType SmallMapMasterTypes, npcIndex int) *TalkScript {
-	return t.talkScripts[smallMapType][npcIndex]
+	return t.TalkScripts[smallMapType][npcIndex]
 }
 
 func (tr *TalkReferences) GetTalkScripts() map[SmallMapMasterTypes][]*TalkScript {
-	return tr.talkScripts
+	return tr.TalkScripts
 }

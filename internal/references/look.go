@@ -11,10 +11,9 @@ import (
 const totalLooks = 512
 
 type LookReferences struct {
-	gameConfig  *config.UltimaVConfiguration
-	lookOffsets [totalLooks]int
-	//	lookMessages [totalLooks]string
-	lookData []byte
+	gameConfig  *config.UltimaVConfiguration `json:"game_config" yaml:"game_config"`
+	lookOffsets [totalLooks]int              `json:"look_offsets" yaml:"look_offsets"`
+	lookData    []byte                       `json:"look_data" yaml:"look_data"`
 }
 
 func NewLookReferences(gameConfig *config.UltimaVConfiguration) *LookReferences {

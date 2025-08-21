@@ -22,8 +22,8 @@ const (
 )
 
 type DataOvl struct {
-	LocationNames   []string
-	CompressedWords []string
+	LocationNames   []string `json:"location_names" yaml:"location_names"`
+	CompressedWords []string `json:"compressed_words" yaml:"compressed_words"`
 }
 
 func readNullTerminatedStrings(data *[]byte, offset, n int) ([]string, error) {
