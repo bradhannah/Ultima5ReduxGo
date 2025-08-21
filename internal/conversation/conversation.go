@@ -119,7 +119,15 @@ func (c *Conversation) loop() {
 			inputLower := strings.ToLower(userInput)
 			for _, group := range c.ts.QuestionGroups {
 				for _, option := range group.Options {
-					if strings.ToLower(option) == inputLower {
+					optionLower := strings.ToLower(option)
+					// Exact match always works
+					if optionLower == inputLower {
+						_ = c.processMultiLines(group.Script.SplitIntoSections(), -1)
+						found = true
+						break
+					}
+					// For options < 4 characters, accept if user input starts with the option
+					if len(option) < 4 && strings.HasPrefix(inputLower, optionLower) {
 						_ = c.processMultiLines(group.Script.SplitIntoSections(), -1)
 						found = true
 						break
