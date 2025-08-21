@@ -1,0 +1,1233 @@
+equipment:
+    -2:
+        itemname: Bare Hands
+        itemindex: -2
+        itemnamehighlight: ""
+        itemsprite: 265
+        itemspriteexposed: 265
+        itemdescription: You were lucky enough to be born with both!
+        itemdescriptionattribution: The Book of Brad
+    0:
+        itemname: Leather Helm
+        itemindex: 0
+        itemnamehighlight: ""
+        itemsprite: 265
+        itemspriteexposed: 265
+        itemdescription: A cut above cloth, yet also fairly inexpensive, leather armour is made from thick leather hardened by boiling, often in parafin.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    1:
+        itemname: Chain Coif
+        itemindex: 1
+        itemnamehighlight: ""
+        itemsprite: 265
+        itemspriteexposed: 265
+        itemdescription: Chain mail is fashioned from small loops of metal wire linked in a manner to make something resembling metal cloth. The best chain mail has each link actually riveted shut. Chain mail provides very good protection, but is quite expensive.
+        itemdescriptionattribution: The Book of Lore  (Ultima V)
+    2:
+        itemname: Iron Helm
+        itemindex: 2
+        itemnamehighlight: ""
+        itemsprite: 265
+        itemspriteexposed: 265
+        itemdescription: Custom made from hand-forged sheets of metal, plate armour affords its wearer the most complete protection possible. However, it is very expensive and can be borne only by the strongest.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    3:
+        itemname: Spiked Helm
+        itemindex: 3
+        itemnamehighlight: ""
+        itemsprite: 265
+        itemspriteexposed: 265
+        itemdescription: It's pointy. Be smart - use your head!
+        itemdescriptionattribution: The Book of Brad
+    4:
+        itemname: Small Shield
+        itemindex: 4
+        itemnamehighlight: ""
+        itemsprite: 262
+        itemspriteexposed: 262
+        itemdescription: Shields also vary greatly. Not all war rigs call for shields any use of two handed weapons precludes them and they require some strength yet many thank shields for their lives.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    5:
+        itemname: Large Shield
+        itemindex: 5
+        itemnamehighlight: ""
+        itemsprite: 262
+        itemspriteexposed: 262
+        itemdescription: Shields also vary greatly. Not all war rigs call for shields any use of two handed weapons precludes them and they require some strength yet many thank shields for their lives.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    6:
+        itemname: Spiked Shield
+        itemindex: 6
+        itemnamehighlight: ""
+        itemsprite: 262
+        itemspriteexposed: 262
+        itemdescription: As with the Spiked Helm, the spiked shields have a double function; protection and to attack opponents with its spikes.
+        itemdescriptionattribution: UltimaCodex.com
+    7:
+        itemname: Magic Shield
+        itemindex: 7
+        itemnamehighlight: ""
+        itemsprite: 262
+        itemspriteexposed: 262
+        itemdescription: The Mystic Armour was wrought by the Minoxian blacksmith Zircon, who entrusted its safekeeping to Sir Simon.
+        itemdescriptionattribution: UltimaCodex.com
+    8:
+        itemname: Jewel Shield
+        itemindex: 8
+        itemnamehighlight: ""
+        itemsprite: 262
+        itemspriteexposed: 262
+        itemdescription: ' Who can explain the ways of Evil? Why would anyone for Evil''s cause or any other, forge a shining sword that can do no damage and a suit of fine plate armour transparent to a foe''s blade? Seek the answer if thou wilst, but remember along thy way to beware of any highly touted gifts to thee by Thrud of Windemere, Servant of Blackthorn.'
+        itemdescriptionattribution: Paths of Destiny (Ultima V)
+    9:
+        itemname: Cloth Armour
+        itemindex: 9
+        itemnamehighlight: ""
+        itemsprite: 267
+        itemspriteexposed: 267
+        itemdescription: Usually little more than a heavy quilted gambeson worn below a tunic, cloth armour is inexpensive and comfortable, but it affords only limited protection.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    10:
+        itemname: Leather Armour
+        itemindex: 10
+        itemnamehighlight: ""
+        itemsprite: 267
+        itemspriteexposed: 267
+        itemdescription: A cut above cloth, yet also fairly inexpensive, leather armour is made from thick leather hardened by boiling, often in parafin.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    11:
+        itemname: Ringmail
+        itemindex: 11
+        itemnamehighlight: ""
+        itemsprite: 267
+        itemspriteexposed: 267
+        itemdescription: A curious form of armour seen only briefly in Britannia, ring mail was used most commonly.
+        itemdescriptionattribution: UltimaCodex.com
+    12:
+        itemname: Scale Mail
+        itemindex: 12
+        itemnamehighlight: ""
+        itemsprite: 267
+        itemspriteexposed: 267
+        itemdescription: Fashioned from four to six inch square overlapping plates attached to cloth or leather gambeson, scale armour looks like its name-sake; fish scales. Although scale is often somewhat noisy, it offers good protection.h
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    13:
+        itemname: Chain Mail
+        itemindex: 13
+        itemnamehighlight: ""
+        itemsprite: 267
+        itemspriteexposed: 267
+        itemdescription: Chain mail is fashioned from small loops of metal wire linked in a manner to make something resembling metal cloth. The best chain mail has each link actually riveted shut. Chain mail provides very good protection, but is quite expensive.
+        itemdescriptionattribution: The Book of Lore  (Ultima V)
+    14:
+        itemname: Plate Mail
+        itemindex: 14
+        itemnamehighlight: ""
+        itemsprite: 267
+        itemspriteexposed: 267
+        itemdescription: Custom made from hand-forged sheets of metal, plate armour affords its wearer the most complete protection possible. However, it is very expensive and can be borne only by the strongest.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    15:
+        itemname: Mystic Armour
+        itemindex: 15
+        itemnamehighlight: ""
+        itemsprite: 267
+        itemspriteexposed: 267
+        itemdescription: The Mystic Armour was wrought by the Minoxian blacksmith Zircon, who entrusted its safekeeping to Sir Simon.
+        itemdescriptionattribution: UltimaCodex.com
+    16:
+        itemname: Dagger
+        itemindex: 16
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: ' Daggers offer two choices. The common dagger is useful when its ability to be concealed is a benefit; and it can be thrown in open combat. The main gauche is more formidable, especially when used as a second weapon.'
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    17:
+        itemname: Sling
+        itemindex: 17
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: Inexpensive and easy to port is the sling, and ammunition is plentiful in open country.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    18:
+        itemname: Club
+        itemindex: 18
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: ' Oldest of all bludgeons, and probably of all weapons, is the club. Clubs are crude weapons, but when a blow connects, it often does the trick.'
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    19:
+        itemname: Flaming Oil
+        itemindex: 19
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: Some knights prefer missiles they can hurl without mechanical aid. Popular throwing weapons include daggers, spears, axes, and flasks of flaming oil.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    20:
+        itemname: Main Gauche
+        itemindex: 20
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: ' Daggers offer two choices. The common dagger is useful when its ability to be concealed is a benefit; and it can be thrown in open combat. The main gauche is more formidable, especially when used as a second weapon.'
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    21:
+        itemname: Spear
+        itemindex: 21
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: Some knights prefer missiles they can hurl without mechanical aid. Popular throwing weapons include daggers, spears, axes, and flasks of flaming oil.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    22:
+        itemname: Throwing Axe
+        itemindex: 22
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: Some knights prefer missiles they can hurl without mechanical aid. Popular throwing weapons include daggers, spears, axes, and flasks of flaming oil.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    23:
+        itemname: Short Sword
+        itemindex: 23
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: ' Swords continue to be the most popular weapon. There are long and short swords, and two-handed swords.'
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    24:
+        itemname: Mace
+        itemindex: 24
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: The mace is much more streamlined than the club. Its weight is balanced to derive the most possible effect with the most possible accuracy.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    25:
+        itemname: Morning Star
+        itemindex: 25
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: A mace on a chain is the morning star which reaches over obstacles to smite thy foe at range. One blow straight on from this and the enemy is out till morning at least.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    26:
+        itemname: Bow
+        itemindex: 26
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: Bows come from craftsmen in the deep forest. Made from strong and resilient yew, bows, and their stronger counterparts, crossbows, make formidable long-range weapons. Be aware, however, that one engaged in hand-to-hand combat is unlikely to be able to load such a weapon, much less shoot it.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    27:
+        itemname: Arrows
+        itemindex: 27
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: Arrows are made of carefully carved wood, with embedded feathers to keep their flight true. On the opposite end is a sharpened piece of iron, ready to pierce the heart of thine enemy.
+        itemdescriptionattribution: The Book of Brad
+    28:
+        itemname: Crossbow
+        itemindex: 28
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: Made from strong and resilient yew, bows, and their stronger counterparts, crossbows, make formidable long-range weapons. Be aware, however, that one engaged in hand-to-hand combat is unlikely to be able to load such a weapon, much less shoot it.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    29:
+        itemname: Quarrels
+        itemindex: 29
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: I have no quarrel with you good Sir Knight!
+        itemdescriptionattribution: King Arthur
+    30:
+        itemname: Long Sword
+        itemindex: 30
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: ' Swords continue to be the most popular weapon. There are long and short swords, and two-handed swords.'
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    31:
+        itemname: Two Handed Hammer
+        itemindex: 31
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: Finally, there is the two-handed hammer. It takes great strength to wield it, but the hammer can inflict devastating damage.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    32:
+        itemname: Two Handed Axe
+        itemindex: 32
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: ' A harbinger of grievance wounds, a battle axe in the hands of a mighty warrior can smash through weapon and shield, armour and plating. An expertly delivered blow from either blade of this doubly edged weapon takes the fight out of all save the most fearsome creatures. Like the rings on a tree of fine wood, the steel of a properly wrought axe most be folded many times.'
+        itemdescriptionattribution: 'Journal (Ultima IX: Ascension)'
+    33:
+        itemname: Two Handed Sword
+        itemindex: 33
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: ' Swords continue to be the most popular weapon. There are long and short swords, and two-handed swords.'
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    34:
+        itemname: Halberd
+        itemindex: 34
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: Polearms require much strength to wield but they're extremely effective. Most popular among those strong enough to wield it is the halberd, a long stout staff with a battleax blade at the end that allows its wielder to strike a foe at twice the distance of most weapons.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    35:
+        itemname: Chaos Sword
+        itemindex: 35
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: ' Another of the Oppression''s playthings of Evil, the Sword of Chaos possesses the soul of the knight who wields it. Once the Sword is brought to bear, its wielder will seek to slaughter his or her allies in battle. Blows of unmatched strength will be struck until each and every friend suffers a bloody death, whereupon the insane fighter will faint dead away at the sight of the carnage. '
+        itemdescriptionattribution: Ultima V Cluebook
+    36:
+        itemname: Magic Bow
+        itemindex: 36
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: 'A magic bow is a bow that has undergone enchantments to strengthen the force and hone the accuracy of any arrows fired from it, giving the archer who employs it a magical edge against his enemies. '
+        itemdescriptionattribution: UltimaCodex.com
+    37:
+        itemname: Silver Sword
+        itemindex: 37
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: Purveyors of these expensive blades insist their weapons will "bring true death to those who once arose,] but these claims have not been substantiated.
+        itemdescriptionattribution: UltimaCodex.com
+    38:
+        itemname: Magic Axe
+        itemindex: 38
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: Magic axes are axes that have been enchanted to produce desirable effects in combat, and may bear magics which enhance damage done to a foe or allow thrown axes to magically return to their wielder.
+        itemdescriptionattribution: UltimaCodex.com
+    39:
+        itemname: Glass Sword
+        itemindex: 39
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: 'A glass sword is a magical blade of nigh unsurpassed power, which is made out of specially prepared glass. While it may kill virtually any being it strikes dead with a single well placed hit, it will always shatter upon impact, making it a weapon to be used cautiously. '
+        itemdescriptionattribution: UltimaCodex.com
+    40:
+        itemname: Jewelled Sword
+        itemindex: 40
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: Who can explain the ways of Evil? Why would anyone for Evil's cause or any other, forge a shining sword that can do no damage and a suit of fine plate armour transparent to a foe's blade?
+        itemdescriptionattribution: Paths of Destiny (Ultima V)
+    41:
+        itemname: Mystic Sword
+        itemindex: 41
+        itemnamehighlight: ""
+        itemsprite: 261
+        itemspriteexposed: 261
+        itemdescription: The Mystic Weapons are among the only weapons that work in The Abyss and are the only weapons that are effective in dungeon Doom.
+        itemdescriptionattribution: UltimaCodex.com
+    42:
+        itemname: Ring Invisibility
+        itemindex: 42
+        itemnamehighlight: ""
+        itemsprite: 266
+        itemspriteexposed: 266
+        itemdescription: |-
+            Magical Rings are for the magic-users and the mundane alike and allows magic to help out passively.
+
+            This will provide the user with invisibility during battle.
+        itemdescriptionattribution: UltimaCodex.com
+    43:
+        itemname: Ring Protection
+        itemindex: 43
+        itemnamehighlight: ""
+        itemsprite: 266
+        itemspriteexposed: 266
+        itemdescription: |-
+            Magical Rings are for the magic-users and the mundane alike and allows magic to help out passively.
+
+            This ring provides additional armour protection.
+        itemdescriptionattribution: UltimaCodex.com
+    44:
+        itemname: Ring Regeneration
+        itemindex: 44
+        itemnamehighlight: ""
+        itemsprite: 266
+        itemspriteexposed: 266
+        itemdescription: |-
+            Magical Rings are for the magic-users and the mundane alike and allows magic to help out passively.
+
+            This ring will slowly heal the member wearing it.
+        itemdescriptionattribution: UltimaCodex.com
+    45:
+        itemname: Amulet Of Turning
+        itemindex: 45
+        itemnamehighlight: ""
+        itemsprite: 268
+        itemspriteexposed: 268
+        itemdescription: You wear it on your neck and it does things?
+        itemdescriptionattribution: The Book of Brad
+    46:
+        itemname: Spiked Collar
+        itemindex: 46
+        itemnamehighlight: ""
+        itemsprite: 268
+        itemspriteexposed: 268
+        itemdescription: These collars seem to be the precursor of the gorgets found in later sets of plate armour. It basically is a leather neckband, riddled with metal spikes. While it may resemble something more likely to be found in certain bedrooms, it did grant the wearer some protection.These collarswere later made obsolete by the appearance of gorgets.
+        itemdescriptionattribution: UltimaCodex.com
+    47:
+        itemname: Ankh
+        itemindex: 47
+        itemnamehighlight: ""
+        itemsprite: 268
+        itemspriteexposed: 268
+        itemdescription: 'An ankh amulet is a small, loop-headed cross displayed by those who have attained Avatarhood or those undertaking the path to Avatarhood in striving to embody the Eight Virtues. '
+        itemdescriptionattribution: UltimaCodex.com
+reagent:
+    0:
+        itemname: Sulfur Ash
+        itemindex: 0
+        itemnamehighlight: sulphurous ash,ash
+        itemsprite: 1
+        itemspriteexposed: 0
+        itemdescription: Common material left by volcanic action, ash is an excellent source of energy in magical mixtures.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    1:
+        itemname: Ginseng
+        itemindex: 1
+        itemnamehighlight: ginseng
+        itemsprite: 1
+        itemspriteexposed: 0
+        itemdescription: Ancient reagent used extensively in healing.
+        itemdescriptionattribution: TheBook of Lore (Ultima V)
+    2:
+        itemname: Garlic
+        itemindex: 2
+        itemnamehighlight: garlic
+        itemsprite: 1
+        itemspriteexposed: 0
+        itemdescription: Ubiquitous and strong-scented reagent, used effectively in warding off evil spirits.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    3:
+        itemname: Spider Silk
+        itemindex: 3
+        itemnamehighlight: spider silk,silk
+        itemsprite: 1
+        itemspriteexposed: 0
+        itemdescription: The magical product of the garden spider and its relatives has no peer in its ability to bind. As a reagent mixed for magic, spider silk magnifies its binding power many times over.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    4:
+        itemname: Blood Moss
+        itemindex: 4
+        itemnamehighlight: blood moss,moss
+        itemsprite: 1
+        itemspriteexposed: 0
+        itemdescription: Fungal growth usually found in deep forests and warm, damp areas; especially favored as a reagent for its ability to enhance mobility.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    5:
+        itemname: Black Pearl
+        itemindex: 5
+        itemnamehighlight: black pearl,pearl
+        itemsprite: 1
+        itemspriteexposed: 0
+        itemdescription: A rare version of the standard white pearl, a black pearl is a forceful reagent in the creation of kinesthetic magic, that is, projecting objects.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    6:
+        itemname: Night Shade
+        itemindex: 6
+        itemnamehighlight: nightshade
+        itemsprite: 1
+        itemspriteexposed: 0
+        itemdescription: Rare, poisonous plant that appears only when the moons are in a certain conjunction. Those who learn its whereabouts and manage to be there in the dead of night when the moons are full can pick nightshade without danger and benefit from its powerful ability as a reagent to create illusions.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    7:
+        itemname: Mandrake Root
+        itemindex: 7
+        itemnamehighlight: mandrake root,mandrake
+        itemsprite: 1
+        itemspriteexposed: 0
+        itemdescription: Very rare and usually expensive magical herb growing only in swampy areas, mandrake root is said to bring great power to magic that uses it.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+spell:
+    0:
+        itemname: In_Lor
+        itemindex: 0
+        itemnamehighlight: In Lor
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: |-
+            This simple spell creates a pool of light. Although a short duration, In Lor creates a brighter light than the best of torches. Note, however, that In Lor cannot be used in place of real flame to enhance the mixing of reagents for spells, for its properties are quite different.
+            In Lor's sole ingredient is sulphurous ash powder. Place the powder upon the object intended as the light source; rub it rhythmically while chanting "In Lor." Almost instantly, the object will blaze with white light.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    1:
+        itemname: Grav_Por
+        itemindex: 1
+        itemnamehighlight: Grav Por
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: A novice magic user had best count on a good solid weapon in battle. A good spell for novices to practice, not rely in battle, is Grav Por, which casts a missile of energy at a target on the battlefield. If the caster's mental powers exceed the foe's, small damage will be inflicted. Grav Por requires sulphurous ash for energy and black pearl to project it. This spell has little effect for novices, not because of weak ingredients, but because of inexperience.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    2:
+        itemname: An_Zu
+        itemindex: 2
+        itemnamehighlight: An Zu
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: An Zu, which requires a simple mixture of ginseng and garlic, is used to awaken sleeping comrades. An Zu has limitations; it works only on members of the caster's party, it awakens only one person per casting, and it has no lasting preventive effect.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    3:
+        itemname: An_Nox
+        itemindex: 3
+        itemnamehighlight: An Nox
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Few deadly problems are as easy to arrest as poison. So common is the use of poison that alchemists have been able to devise a formula, using the relatively common plants garlic and ginseng, that is effective against nearly every form of poison in nearly every user. However, the magic works on individuals only; thus, simple as it is, novice mages in a party mush have magic endurance among them great enough to cast An Nox as many times as they have afflicted members. Even then, safety is not secured. Strength already sapped by toxins is not regained without peaceful rest or healing magic.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    4:
+        itemname: Mani
+        itemindex: 4
+        itemnamehighlight: Vas Mani,Mani
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Mani is the simplest healing spell. Mani does not cure patients, but it does make them feel better and may take them out of immediate danger. Mani is useful even to higher circle magicians, because it is simple enough to cast during combat. Spider silk and ginseng are the components needed for Mani. No special conditions are necessary during mixing or casting.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    5:
+        itemname: An_Ylem
+        itemindex: 5
+        itemnamehighlight: An Ylem
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Don't want it? Don't like it? An Ylem it!
+        itemdescriptionattribution: The Book of Brad
+    6:
+        itemname: An_Sanct
+        itemindex: 6
+        itemnamehighlight: An Sanct
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Many evil creatures carry chests full of treasure and useful items, often the result of thievery against some other good Britannian. No good person begrudges the vanquisher a monster's gold and good, but evil creatures often arm their chests with deadly traps. Popular chest traps are acid sprays, poison fumes, bombs and gaseous atmospheres. The first two are designed with intent to destroy the individual tampering with the lock. The last two a affect the entire area of the chest and injure anyone in that area. An Sanct used blood moss and sulphurous ash to seep into hidden traps and render them impotent. The spell also negates any non-magical locks in the chest. The same spell may be used to unlock doors locked by mechanical keys.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    7:
+        itemname: An_Xen_Corp
+        itemindex: 7
+        itemnamehighlight: An Xen Corp
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: 'The powers of evil revel in their ability to command the uneasy dead. Rotted corpses and corrupted spirits, given motion and a semblance of life, are set on the mindless destruction of everything good. Such phantoms are not living but are merely animated. They act mindlessly, unaware of their own horrible state. By negating their armour of mindlessness, An Xen Corp causes most risen dead to flee in lurching terror. An Xen Corp is not a difficult spell, especially for casters of good intellect. Nor is its mixture difficult: ordinary amounts of common garlic and sulphurous ash must be mixed while pronouncing words of reverence for life and beauty.'
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    8:
+        itemname: Rel_Hur
+        itemindex: 8
+        itemnamehighlight: Rel Hur
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Those who love the open sea will find frequent use of Rel Hur. This powerful spell can redirect the wind for a time. To mix Rel Hur, line a board with damp blood moss and set the board against a tree or mast. Study the wind and find the exact spot in which to stand so that the sulphurous ash thrown into the air will be caught by the wind and flung against the blood moss. Complete the spell by blowing in the direction the wind should follow.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    9:
+        itemname: In_Wis
+        itemindex: 9
+        itemnamehighlight: In Wis
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: ' In Wis performs the job of a navigator, determining one''s precise location in terms of the recently devised concepts of latitude and longitude. Nightshade is its only ingredient, but that nightshade must be encased in glass and kept alive with dew drops until its use is required.'
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    10:
+        itemname: Kal_Xen
+        itemindex: 10
+        itemnamehighlight: Kal Xen
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Beginning mages often find their responsibility onerous, with an entire group of adventurers relying on their meager magical skills for protection and assistance in difficult situations. These novice mages may quickly and frequently turn to Kal Xen to add to the offensive ranks of their party in battle. Kal Xen summons small nasty creatures such as rats and snakes to help in combat. Nasty or not, these summoned beasts are always loyal to the caster, and often direct a foe's attention away from members of the mage's party. Mix mandrake root with spider silk to ensure the beast's loyalty. The local where the mandrake root is gathered influences what type of creature is summoned.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    11:
+        itemname: In_Xen_Mani
+        itemindex: 11
+        itemnamehighlight: In Xen Mani
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Feeling hangry, but stuck in the Abyss - consider In Xen Mani for a yummy snack!
+        itemdescriptionattribution: The Book of Brad
+    12:
+        itemname: Vas_Lor
+        itemindex: 12
+        itemnamehighlight: Vas Lor
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Vas Lor conjures a great light. This light is equivalent to In Lor's in quality and range, but Vas Lor lasts longer. Its endurance comes from mandrake root. Mix the prepared root with sulphurous ash and proceed as if making In Lor.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    13:
+        itemname: Vas_Flam
+        itemindex: 13
+        itemnamehighlight: Vas Flam
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Vas Flam effectively gathers a great ball of flame, which may then be hurled at a foe. A simple spell, the great advantage of Vas Flam is that, aimed accurately, it will surely hit its mark and, just as surely, inflict damage. Combine common sulphurous ash and a single black pearl over a hot flame. When the ash has adhered well to the pearl, remove it and store it until needed. Cast the talisman at a foe while uttering "Vas Flam."
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    14:
+        itemname: In_Flam_Grav
+        itemindex: 14
+        itemnamehighlight: In Flam Grav
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: One of three energy field spells, alike except for the nature of the horrors they create. In Flam Grav causes the particular spot indicated by the caster to erupt into red hot flames. Any creature on that spot or that steps into that spot is seared by a wall of flame. Be careful not to direct this spell too close to friends or they shall suffer the same as foes. Sulphurous ash and black pearl project the burning fire to the chosen spot; spider silk holds it there a short while. The mix works best when blended over a flame.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    15:
+        itemname: In_Nox_Grav
+        itemindex: 15
+        itemnamehighlight: In Nox Grav
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Another of the three energy field spells, In Nox Grav causes a cloud of nauseating poison to occur in the location indicated. Any creatures entering the cloud suffer some degree of poisoning. Like In Flam Grav, this spell can be just as effective in harming friends as enemies, so use care. That rare but deadly poison, nightshade, is required for In Nox Grav. Add spider silk to shape the cloud, and black pearl to direct its placement.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    16:
+        itemname: In_Zu_Grav
+        itemindex: 16
+        itemnamehighlight: In Zu Grav
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Least damaging of the three energy field spells, In Zu Grav is often the most effective. The spell cloaks a foe in purple haze that puts it instantly to sleep, taking it out of the fight, rendering it helpless. Like the other two similar spells, In Zu Grav can affect friends as easily as enemies. While sleep will not directly harm friends, falling asleep on the field of battle can be deadly. In Zu Grav is easily mixed of common ginseng, spider silk and black pearl. For best results, add the air of many yawns and sand from sleepy eyes.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    17:
+        itemname: In_Por
+        itemindex: 17
+        itemnamehighlight: In Por
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: In Por teleports an entire party a fair distance in any specified direction. However, incanting this spell during the haste of battle will diminish its effects. It will only remove the caster, and then only to another place on the battlefield. In Por will not transport a party if there is no clear, grassy spot to which the party can be moved. Nor will In Por work in dungeons or in townes, as its energies require a fair bit of open space to operate. The dust for In Por consists of spider silk and fresh young blood moss. The caster must close his eyes and conjure a vision of the current position after the party has left. In a wink, the party will be elsewhere and the vision, reality.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    18:
+        itemname: An_Grav
+        itemindex: 18
+        itemnamehighlight: An Grav
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Adventuring parties are sometimes prevented from pursuing their objective by obstructing or noxious fields. An Grav removes the obstructing field by negating the field's energy. Ash countermines the field's energy; a black pearl thrusts the negating energy in the direction indicated by the spell caster. The obstructing field is instantly dispersed.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    19:
+        itemname: In_Sanct
+        itemindex: 19
+        itemnamehighlight: In Sanct
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Sometimes young questers join in battles beyond their might. In Sanct helps balance the fight by creating a protective shield around each party member. In Sanct works only during combat and does not last long, so knights should be sure to hit hard and fast while the iron is doubled. In Sanct is most effective when sulphurous ash, fast-working ginseng, and reeking garlic are mixed by the mage and the group's strongest fighter, simultaneously.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    20:
+        itemname: In_Sanct_Grav
+        itemindex: 20
+        itemnamehighlight: In Sanct Grav
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: In Sanct Grav's protective energy provides a strong defense. Its shimmering blueness cannot be entered or passed through. An excellent recourse when a few moments of safety are required, In Sanct Grav is well used to block dungeon corridors fully. Mandrake root is necessary for In Sanct Grav; choose older, tougher specimens for this concoction. Add spider silk to make it impenetrable and black pearl for placement.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    21:
+        itemname: Uus_Por
+        itemindex: 21
+        itemnamehighlight: Uus Por
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Magic users often travel with courageous groups, and courageous groups often find themselves in danger. When problems occur within dungeons, it is sometimes helpful to use Des Por and its complement Uus Por for moving among floors. Only effective when going from empty corridor to empty corridor, Des Por transports an entire group to the exact same location one floor lower, Uus Por works in reverse and transports upward. Unfortunately, these spells take too long to intone during the heat of battle. Blood moss provides the motion the spider silk keeps the party together during the transport.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    22:
+        itemname: Des_Por
+        itemindex: 22
+        itemnamehighlight: Des Por
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Magic users often travel with courageous groups, and courageous groups often find themselves in danger. When problems occur within dungeons, it is sometimes helpful to use Des Por and its complement Uus Por for moving among floors. Only effective when going from empty corridor to empty corridor, Des Por transports an entire group to the exact same location one floor lower, Uus Por works in reverse and transports upward. Unfortunately, these spells take too long to intone during the heat of battle. Blood moss provides the motion the spider silk keeps the party together during the transport.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    23:
+        itemname: Wis_Quas
+        itemindex: 23
+        itemnamehighlight: Wis Quas
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Wis Quas strips illusion from creatures hidden by the cloak of invisibility, instantly revealing their position. Nightshade cut many times to form a paper-like sheet, then carved into lace is secured by spider silk. It is glazed, dried in the sun, then crystallized into a shiny powder that must be tossed in the sky over the field of battle as the spell is cast.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    24:
+        itemname: In_Bet_Xen
+        itemindex: 24
+        itemnamehighlight: In Bet Xen
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: This combat spell creates a powerful ally by calling up four swarms of small but deadly insects. All four swarms are generated in the same location. However, each can be commanded to move independently and on its own turn. Quartets of insect swarms generated by In Bet Xen have been known to surround and suffocate an enemy by their very number. The powder for In bet Xen consists of sulphurous ash to give life energy, blood moss to set them swarming, and spider silk to bind the swarm in obedience. For deadliest results, blend with stagnant water from the dankest swamp.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    25:
+        itemname: An_Ex_Por
+        itemindex: 25
+        itemnamehighlight: An Ex Por
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: The magical locking of doors works in nearly every situation. Even normal locks can be transformed into magical locks by means of this spell. Thus the very creature who initially locked a door with its own key may be forbidden access. Mix ash and moss, gathered from darkest glens under heavy clouds, into a strong garlic paste. While mixing, sing a melody that no other creature has every heard. For greatest security, the melody should be different each mixing; so each magical lock will require a subtly different magical key, and anyone trying to break the magical lock will not be able to use any previously discovered keys.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    26:
+        itemname: In_Ex_Por
+        itemindex: 26
+        itemnamehighlight: In Ex Por
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: This powerful spell can open magical locks. The power of In Ex Por is that it first analyzes the lock to be broken and then actually produces the precise tool or magical potion that will break the lock. The success of this spell comes from combining ash and moss in isolation, in complete darkness.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    27:
+        itemname: Vas_Mani
+        itemindex: 27
+        itemnamehighlight: Vas Mani
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Whole health restored; full vitality given; such is the nature of Vas Mani. A miraculous spell requiring concentration and vast knowledge of anatomy, Vas Mani is reserved for experience mages. Vas Mani fully restores patients from combat wounds. While it provides neither antidote to poison nor cure for disease, Vas Mani does heal all damage wrought by these ravagers, ensuring survival until a cure can be found. The difficulty in preparing Vas Mani is in locating the mandrake root; otherwise the preparation is straightforward; mix the mandrake root with ginseng and spider silk. To cast Vas Mani successfully, the caster must concentrate totally on the subject to be healed. When the concentration is full, one can actually see wounds heal. Because the healing process can take several hours, Vas Mani cannot be used during combat.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    28:
+        itemname: In_Zu
+        itemindex: 28
+        itemnamehighlight: In Zu
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: The first mass effect spell the developing magician learns, In Zu causes the scent of poppies to emanate from the caster in an ever-widening wedge, dropping into a sound of sleep all those touched by it. Only the toughest minds and wills may deny it. Nightshade, gathered when high tide coincides with a moonless midnight, must be mixed with ocean ginseng and spider silk. Moisten with brine and add sand to mix thoroughly. Lay to dry in bright moonlight. Note that this spell is just as effective on friend as foe; aim carefully.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    29:
+        itemname: Rel_Tym
+        itemindex: 29
+        itemnamehighlight: Rel Tym
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: ' Rel Tym doubles a party''s speed, anytime, anywhere. It is especially effective in battle, when a party''s members can return two blows for each of the enemies blows. It is also effective in surveillance, when being caught could be disastrous. Sulphurous ash provides energy, blood moss creates movement, and mandrake root provides the magical power required for this incantation.'
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    30:
+        itemname: In_Vas_Por_Ylem
+        itemindex: 30
+        itemnamehighlight: In Vas Por Ylem
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: In Vas Por Ylem is a terrifying spell that can generate a massive earthquake. While it reaches every enemy in combat, even if lurking in distant corners or behind mountains, the magical earthquake leaves allies unshaken and unharmed. Seek mandrake root that has grown unobstructed, so that its form is string yet fibrous. Grind it with sulphurous ash and blood moss until no ingredient can be distinguished from another.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    31:
+        itemname: Quas_An_Wis
+        itemindex: 31
+        itemnamehighlight: Quas An Wis
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Quas An Wis turns a foe's orderly, well-planned attack into bedlam. Confusion reigns and creatures strike out at whomever is nearest, regardless of loyalty. Extremely effective against the likes of rats and Orcs, Quas An Wis loses much of its impact against more intelligent monsters, which are often capable of recognizing and resisting it. A mix of rare mandrake root and nightshade, the cloud of Quas An Wis works only for experienced mages.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    32:
+        itemname: In_An
+        itemindex: 32
+        itemnamehighlight: In An
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: In An creates an air of magical negation. Spells fizzle when In An is in effect and neither side in combat can use magic for several rounds. First, mandrake root must be gathered; the root must be rubbed with garlic and wrapped in a damp, black cloth for several hours. At midnight, it must be pulverized and mixed with sulphurous ash. The mixture must be dried on parchment and the parchment then folded into a tricorn. In casting the spell, a hole must be cut in the tricorn and the mixture dispensed from this in a wide arc.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    33:
+        itemname: Wis_An_Ylem
+        itemindex: 33
+        itemnamehighlight: Wis An Ylem
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Adept magicians are relied upon, not only to aid in battle and to repair wounds, but to guide their party wisely. Wis An Ylem provides the necessary insight, by making the hidden apparent. For an instant, the caster may see through the densest forest, tallest mountain and most solid rock. No wall can be too thick, no door too heavy. Requiring intensity of concentration, Wis An Ylem cannot be maintained for more than a flash of time. Thick, mature mandrake root must be combined with sulphurous ash in clear rain water. Boil the mixture until it becomes steam and capture the steam in a small glass box. Open the box as the spell is uttered.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    34:
+        itemname: An_Xen_Ex
+        itemindex: 34
+        itemnamehighlight: An Xen Ex
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: |-
+            A most effective tactic to use against enemies is to charm members of their party to work against them. However, this spell is most difficult to apply where it could be of the most help, against the most diabolical of foes, those of superior intelligence. Control of a charmed individual is limited to fighting and moving; it does not extend to use of magic or special forms of attack. This spell can also be used to bring back party members after they have been charmed by a foe.
+            An Xen Ex requires a careful mixture of nightshade, to poison the mind; a black pearl, for projection; and spider silk to bind loyalty
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    35:
+        itemname: Rel_Xen_Bet
+        itemindex: 35
+        itemnamehighlight: Rel Xen Bet
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: 'You dirty rat, you killed my brother! '
+        itemdescriptionattribution: The Book of Brad
+    36:
+        itemname: Sanct_Lor
+        itemindex: 36
+        itemnamehighlight: Sanct Lor
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Sanct Lor affects the path of light, bending it around the caster; so it may continue on. The result is an illusion that the caster is not there. Mix mandrake root and nightshade picked in absolute darkness with blood moss to bend the light. It is essential that, while intoning this spell, none see any indication of its casting. Speak without moving lips.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    37:
+        itemname: Xen_Corp
+        itemindex: 37
+        itemnamehighlight: Xen Corp
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Regardless of the strength, size or endurance of a foe, Xen Corp will overcome it. Only a creature with intelligence capable of greater concentration than that used in the casting, and capable of recognizing the intent before the spell is completed, has a chance of escaping death when assailed by Xen Corp. Mix nightshade that has never seen light with black pearl. Pour the powder into a small lead capsule and seal with black wax. While intoning the spell, hurl the capsule at the foe selected for destruction.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    38:
+        itemname: In_Quas_Xen
+        itemindex: 38
+        itemnamehighlight: In Quas Xen
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Another powerful combat spell is In Quas Xen. By means of illusion, this spell duplicates friend or foe, in every detail. Although the new creature is an illusion, it fights and bleeds exactly as the original. When a friend is cloned, the original and duplicates are still joined. Injury to each is felt by the other, death to one destroys the other. Yet the two are physically separate; they have independent turns in battle and may work together to vanquish a foe. When a hostile creature is duplicated, no connection between copy and original seems to remain. Pain to a monster's clone is not felt by the monster; and death of the creature does not remove the clone. The power of mandrake root is essential to this spell; as are the illusionary properties of nightshade. To mature the root, add spider silk to bind and ginseng to heal; mix with the living energy of sulphurous ash and add blood moss for animation. When casting the spell, fling the glittering sand that results into the air. The wind will catch the granules, and where the first one touches earth, there shall the clone arise.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    39:
+        itemname: In_Quas_Wis
+        itemindex: 39
+        itemnamehighlight: In Quas Wis
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Travelers in Britannia tell of magical gems that transport the vision of one gazing into their depths to a viewpoint thousands of feet above the land, like that of an eagle suspended in flight. It is illusion and reality. The change of viewpoint is illusion, but the knowledge provided is real. Powerful mages can replicate these miraculous effects through magic. In Quas Wis requires only two ingredients to create its illusion. Only the most powerful mandrake root will work for this spell; and only the most convoluted stems of nightshade. Mix the two in the dark of night with seven drops of cold spring water. Let the moisture evaporate, then place the shimmering powder in a cloth sack. When intoning In Quas Wis, cast the powder high to view the world about as if from the air. If cast within a towne, building or dungeon, all the detail of that level is revealed.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    40:
+        itemname: In_Nox_Hur
+        itemindex: 40
+        itemnamehighlight: In Nor Hur
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: A cone of poisonous wind emanates from the hands of an agile wizard when in Nox Hur is cast, widening as it moves forward and sickening all in its path, friend or foe. Quite effective against many kinds of creatures, In Nox Hur is dangerous to use since the slightest error can destroy comrades as well as foes. Only the most dexterous should attempt it
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    41:
+        itemname: In_Quas_Corp
+        itemindex: 41
+        itemnamehighlight: In Quas Corp
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Illusion is a dangerous tool, and In Quas Corp creates a powerful illusion. Suddenly, in the eyes of all creatures not intelligent enough to recognize the illusion, each party member may be made to appear as a twelve-foot giant, with a sword like a guillotine and a staff like a tree trunk. Fear strikes foes to the cores of their beings. They shriek and flee. In Quas Corp is expensive. The dust that must fill the atmosphere as the spell is cast contains both mandrake root and hallucinatory nightshade. Simple garlic adds to the distastefulness of the experience for the foe.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    42:
+        itemname: In_Mani_Corp
+        itemindex: 42
+        itemnamehighlight: In Mani Corp
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: There are many rewards for hard work and concentrated practice. For practiced wizards, having attained the eighth circle, there is the reward of being able to reverse death itself. Resurrection requires such total concentration and peace of mind that it should never be attempted on the harried field of battle. To mix, place a mandrake root in a sieve in a fresh water spring on a sunlit day. One by one, add garlic, to keep away ills and evil, spider silk, for binding the life forces together, ginseng for healing, sulphurous ash for the spark of life, and blood moss to animate the spirit. Remove the sieve from the spring and let the mixture dry. A small crystal will form from the drying mass. To revive a companion, place the crystal on the friend's forehead and intone In Mani Corp. The resurrected person will be weak and in need of further assistance.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    43:
+        itemname: Kal_Xen_Corp
+        itemindex: 43
+        itemnamehighlight: Kal Xen Corp
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Kal Xen Corp resembles Kal Xen, but its summons has far greater complexity and power. Kal Xen Corp calls forth a daemon. But only an experienced wizard is able to devote the concentration needed to bind the daemon's allegiance and prevent it from turning on his party. Then, although the daemon cannot use its own powers of possession, it can hurl great balls of fire across long distance to smite foes. Mandrake root, gathered as near as possible to an entrance to dungeons, pits, and other vile holes, is the base of this spell. Add garlic, blood moss and the strongest spider silk. Mix the lot together letting the moisture of the root act as a binding. Now shape the mixture into the form of the winged daemon. Raise the icon to the sky, into this spell and hear it calling its own.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    44:
+        itemname: In_Vas_Grav_Corp
+        itemindex: 44
+        itemnamehighlight: In Vas Grav Corp
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: In Vas Grav Corp is the most powerful instrument of death yet devised. This spell lays waste to every living creature in its path unless the creature be exempt from the natural laws of this world or be strong enough intellect to resist the spell. Mandrake root must be gathered on a dark night during a lightning storm. It must be marinated in slime from stagnant mosquito fens and wrapped in nightshade, which must have been picked at midnight in total darkness. This package should be rolled in sulphurous ash and left on a grave overnight. If it is not discovered, it is ready to be dried into stringy dreadlocks of death.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    45:
+        itemname: In_Flam_Hur
+        itemindex: 45
+        itemnamehighlight: In Flam Hur
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: In Flam Hur causes the wind itself to catch fire and devastate all in its path. Those who intone this spell can direct the flaming wind in a deadly spreading wedge. All creatures in the path of this wedge are severely burned; few ever survive. Careless misdirection of In Flam Hur over one's own companions may result in their deaths as well. Sulphurous ash, blood moss and mandrake root combine best for this spell in an iron cauldron over great heat.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    46:
+        itemname: Vas_Rel_Por
+        itemindex: 46
+        itemnamehighlight: Vas Rel Por
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: A moongate traveler cannot rely on magic alone. The knowledge of the influence of the moon's phases is also required. Take a black pearl and shine it well. Bury the pearl in a clean piece of mandrake root. Sprinkle the whole with sulphurous ash and expose the conglomeration to the moons during one night. In the morning it will be a fine silver powder. To travel, cast the powder in the direction of the gate to be reached while speaking the name of that gate's town followed by Vas Rel Por. Immediately drop to the ground and meditate on the proper phases of the moon for that gate. Instantly, the party will be there.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    47:
+        itemname: An_Tym
+        itemindex: 47
+        itemnamehighlight: An Tym
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Perhaps the most difficult of spells, An Tym appears to stop time itself. For eons, scholars of thaumaturgy have tried to learn the secret of controlling the universe, and the more they discovered, the more convinced they became that they could never control this power even if they understood it. It is a tribute to the brilliance and creativity of Britannian minds that experts, undaunted by their failures, simply turned the problem around and found a way to achieve every advantage of briefly controlling time without actually controlling it at all. Those capable of this spell will witness their foes paralyzed in mid-motion. After a few moments, all returns to normal, just as though time had actually stopped and started up again. However, the caster's party remains active throughout the spell. An Tym requires a mixture of mandrake root, well-preserved blood moss and a garlic clove.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    48:
+        itemname: Nox
+        itemindex: 48
+        itemnamehighlight: Nox
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: This tends to leave the caster feeling worse than they started!
+        itemdescriptionattribution: The Book of Brad
+scroll:
+    0:
+        itemname: Vas_Lor
+        itemindex: 0
+        itemnamehighlight: ""
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Vas Lor conjures a great light. This light is equivalent to In Lor's in quality and range, but Vas Lor lasts longer. Its endurance comes from mandrake root.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    1:
+        itemname: Rel_Hur
+        itemindex: 1
+        itemnamehighlight: ""
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Those who love the open sea will find frequent use of Rel Hur. This powerful spell can redirect the wind for a time. Complete the spell by blowing in the direction the wind should follow.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    2:
+        itemname: In_Sanct
+        itemindex: 2
+        itemnamehighlight: ""
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: 'Sometimes young questers join in battles beyond their might. In Sanct helps balance the fight by creating a protective shield around each party member. In Sanct works only during combat and does not last long, so knights should be sure to hit hard and fast while the iron is doubled. '
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    3:
+        itemname: In_An
+        itemindex: 3
+        itemnamehighlight: ""
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: In An creates an air of magical negation. Spells fizzle when In An is in effect and neither side in combat can use magic for several rounds.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    4:
+        itemname: In_Quas_Wis
+        itemindex: 4
+        itemnamehighlight: ""
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Travelers in Britannia tell of magical gems that transport the vision of one gazing into their depths to a viewpoint thousands of feet above the land, like that of an eagle suspended in flight. It is illusion and reality. The change of viewpoint is illusion, but the knowledge provided is real. Powerful mages can replicate these miraculous effects through magic.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    5:
+        itemname: Kal_Xen_Corp
+        itemindex: 5
+        itemnamehighlight: ""
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: 'Beginning mages often find their responsibility onerous, with an entire group of adventurers relying on their meager magical skills for protection and assistance in difficult situations. These novice mages may quickly and frequently turn to Kal Xen to add to the offensive ranks of their party in battle. Kal Xen summons small nasty creatures such as rats and snakes to help in combat. Nasty or not, these summoned beasts are always loyal to the caster, and often direct a foe''s attention away from members of the mage''s party. '
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    6:
+        itemname: In_Mani_Corp
+        itemindex: 6
+        itemnamehighlight: ""
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: There are many rewards for hard work and concentrated practice. For practiced wizards, having attained the eighth circle, there is the reward of being able to reverse death itself. Resurrection requires such total concentration and peace of mind that it should never be attempted on the harried field of battle. The resurrected person will be weak and in need of further assistance.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    7:
+        itemname: An_Tym
+        itemindex: 7
+        itemnamehighlight: ""
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: Perhaps the most difficult of spells, An Tym appears to stop time itself. For eons, scholars of thaumaturgy have tried to learn the secret of controlling the universe, and the more they discovered, the more convinced they became that they could never control this power even if they understood it. It is a tribute to the brilliance and creativity of Britannian minds that experts, undaunted by their failures, simply turned the problem around and found a way to achieve every advantage of briefly controlling time without actually controlling it at all. Those capable of this spell will witness their foes paralyzed in mid-motion. After a few moments, all returns to normal, just as though time had actually stopped and started up again. However, the caster's party remains active throughout the spell.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+special:
+    0:
+        itemname: Carpet
+        itemindex: 0
+        itemnamehighlight: Carpet
+        itemsprite: 283
+        itemspriteexposed: 283
+        itemdescription: Said to have been brought to Britannia from a faraway land of trackless deserts and strange, humped beasts, the magic carpet is an excellent conveyance for quick travel over swamps, calm waters and other places when ground travel is impeded or imperiled. Since it flies only a handspan from the ground, it cannot be used to pass over mountains, walls, or any sort of high obstruction. Rapid waters will soak it, subjecting its riders to freezing spray and possible drowning.
+        itemdescriptionattribution: Paths of Destiny (Ultima V)
+    1:
+        itemname: Grapple
+        itemindex: 1
+        itemnamehighlight: Grapple
+        itemsprite: 12
+        itemspriteexposed: 12
+        itemdescription: The grapple is an important tool for mountain-climbing.
+        itemdescriptionattribution: UltimaCodex.com
+    2:
+        itemname: Spyglass
+        itemindex: 2
+        itemnamehighlight: Spyglass
+        itemsprite: 89
+        itemspriteexposed: 89
+        itemdescription: 'Normally used by sailors as a navigational aid, it is possible to study the planets and brighter stars with even a small spyglass. '
+        itemdescriptionattribution: Paths of Destiny (Ultima V)
+    3:
+        itemname: HMSCape
+        itemindex: 3
+        itemnamehighlight: HMSCape
+        itemsprite: 260
+        itemspriteexposed: 260
+        itemdescription: The H.M.S. Cape had seen better days. Algae and ribbons of seaweed covered her. Bloated, dead sailors bobbed with the current, arms and legs tangled in the seaweed and wreckage. I shuddered at the sight of their watery grave, but I did not hesitate.
+        itemdescriptionattribution: 'Ultima: The Avatar Adventures'
+    4:
+        itemname: PocketWatch
+        itemindex: 4
+        itemnamehighlight: ""
+        itemsprite: 256
+        itemspriteexposed: 256
+        itemdescription: 'A pocket watch is a portable timepiece meant to be kept in one''s pocket. Such a device numbers among the scant personal affects that the Avatar brought to Britannia from Earth, and the hero routinely carries this particular pocket watch. '
+        itemdescriptionattribution: UltimaCodex.com
+    5:
+        itemname: BlackBadge
+        itemindex: 5
+        itemnamehighlight: ""
+        itemsprite: 256
+        itemspriteexposed: 256
+        itemdescription: Exploring the dark paths of Blackthorn's palace may be quite hazardous to the health of one who is not recognizable as a member of the Oppression.
+        itemdescriptionattribution: Paths of Destiny (Ultima V)
+    6:
+        itemname: WoodenBox
+        itemindex: 6
+        itemnamehighlight: ""
+        itemsprite: 270
+        itemspriteexposed: 270
+        itemdescription: What a curious little box... You feel compelled to bring it along on your journey.
+        itemdescriptionattribution: The Book of Brad
+    7:
+        itemname: Sextant
+        itemindex: 7
+        itemnamehighlight: Sextant
+        itemsprite: 256
+        itemspriteexposed: 256
+        itemdescription: 'The sextant is a tool commonly used in celestial navigation, as it allows its user to take an accurate measurement of a heavenly body relative to the horizon. Once a navigator ascertains this angle, he may use it to reliably determine his geographic position. '
+        itemdescriptionattribution: UltimaCodex.com
+potion:
+    0:
+        itemname: Blue
+        itemindex: 0
+        itemnamehighlight: ""
+        itemsprite: 259
+        itemspriteexposed: 259
+        itemdescription: An Zu, which requires a simple mixture of ginseng and garlic, is used to awaken sleeping comrades. An Zu has limitations; it works only on members of the caster's party, it awakens only one person per casting, and it has no lasting preventive effect.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    1:
+        itemname: Yellow
+        itemindex: 1
+        itemnamehighlight: ""
+        itemsprite: 259
+        itemspriteexposed: 259
+        itemdescription: 'This simple spell heals the caster of superficial cuts and bruises, restoring a modicum of vitality.  Although healing spells of higher circles offer relief from injury, Lesser Heal is of great use to inexperienced spell-casters who have no better alternatives. '
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    2:
+        itemname: Red
+        itemindex: 2
+        itemnamehighlight: ""
+        itemsprite: 259
+        itemspriteexposed: 259
+        itemdescription: ' Few deadly problems are as easy to arrest as poison. So common is the use of poison that alchemists have been able to devise a formula, using the relatively common plants garlic and ginseng, that is effective against nearly every form of poison in nearly every user. However, the magic works on individuals only; thus, simple as it is, novice mages in a party mush have magic endurance among them great enough to cast An Nox as many times as they have afflicted members. Even then, safety is not secured. Strength already sapped by toxins is not regained without peaceful rest or healing magic.'
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    3:
+        itemname: Green
+        itemindex: 3
+        itemnamehighlight: ""
+        itemsprite: 259
+        itemspriteexposed: 259
+        itemdescription: Splashing the potion on an enemy, if hit, the enemy is weakened by the poison, losing much of his fighting power. However, many creatures are immune to this spell, and often enough the poison won't hit or have no effect at all. Just don't poison yourself in the process!
+        itemdescriptionattribution: UltimaCodex.com and Brad
+    4:
+        itemname: Orange
+        itemindex: 4
+        itemnamehighlight: ""
+        itemsprite: 259
+        itemspriteexposed: 259
+        itemdescription: The first mass effect spell the developing magician learns, In Zu causes the scent of poppies to emanate from the caster in an ever-widening wedge, dropping into a sound of sleep all those touched by it. Only the toughest minds and wills may deny it. Note that this spell is just as effective on friend as foe; aim carefully.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    5:
+        itemname: Purple
+        itemindex: 5
+        itemnamehighlight: ""
+        itemsprite: 259
+        itemspriteexposed: 259
+        itemdescription: Perhaps Grendel got thirsty one night?
+        itemdescriptionattribution: Brad
+    6:
+        itemname: Black
+        itemindex: 6
+        itemnamehighlight: ""
+        itemsprite: 259
+        itemspriteexposed: 259
+        itemdescription: 'Sanct Lor affects the path of light, bending it around the caster; so it may continue on. The result is an illusion that the caster is not there. '
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    7:
+        itemname: White
+        itemindex: 7
+        itemnamehighlight: ""
+        itemsprite: 259
+        itemspriteexposed: 259
+        itemdescription: Adept magicians are relied upon, not only to aid in battle and to repair wounds, but to guide their party wisely. Wis An Ylem provides the necessary insight, by making the hidden apparent. For an instant, the caster may see through the densest forest, tallest mountain and most solid rock. No wall can be too thick, no door too heavy. Requiring intensity of concentration, Wis An Ylem cannot be maintained for more than a flash of time.
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+shard:
+    0:
+        itemname: 'Falsehood       '
+        itemindex: 0
+        itemnamehighlight: '                        '
+        itemsprite: 436
+        itemspriteexposed: 436
+        itemdescription: "At th e same time as Lord British was gaining a reputation for fair and honest government over his provinces and attracting attention for his startlingly innovative ideas, Mondain was using his father's gem against itself to produce a black jewel that would render him and his evil immortal. Success meant gaining even greater power over the minions of darkness.\n\nWithin days, a stranger arrived in Sosaria. With utter devotion to truth and good, the stranger grew into a hero capable of facing Mondain. Eventually, the heroic stranger found the malevolent gem and destroyed it, along with its creator. With Mondain's destruction, the forces of evil began to wane.\n\nThis shard is one third of that very powerful gem!                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               "
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    1:
+        itemname: Hatred
+        itemindex: 1
+        itemnamehighlight: ""
+        itemsprite: 436
+        itemspriteexposed: 436
+        itemdescription: |-
+            At the same time as Lord British was gaining a reputation for fair and honest government over his provinces and attracting attention for his startlingly innovative ideas, Mondain was using his father's gem against itself to produce a black jewel that would render him and his evil immortal. Success meant gaining even greater power over the minions of darkness.
+
+            Within days, a stranger arrived in Sosaria. With utter devotion to truth and good, the stranger grew into a hero capable of facing Mondain. Eventually, the heroic stranger found the malevolent gem and destroyed it, along with its creator. With Mondain's destruction, the forces of evil began to wane.
+
+            This shard is one third of that very powerful gem!
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+    2:
+        itemname: Cowardice
+        itemindex: 2
+        itemnamehighlight: ""
+        itemsprite: 436
+        itemspriteexposed: 436
+        itemdescription: |-
+            At the same time as Lord British was gaining a reputation for fair and honest government over his provinces and attracting attention for his startlingly innovative ideas, Mondain was using his father's gem against itself to produce a black jewel that would render him and his evil immortal. Success meant gaining even greater power over the minions of darkness.
+
+            Within days, a stranger arrived in Sosaria. With utter devotion to truth and good, the stranger grew into a hero capable of facing Mondain. Eventually, the heroic stranger found the malevolent gem and destroyed it, along with its creator. With Mondain's destruction, the forces of evil began to wane.
+
+            This shard is one third of that very powerful gem!
+        itemdescriptionattribution: The Book of Lore (Ultima V)
+quest_item:
+    0:
+        itemname: Amulet
+        itemindex: 0
+        itemnamehighlight: ""
+        itemsprite: 439
+        itemspriteexposed: 439
+        itemdescription: The magical amulet consists of a silver, serpentine medallion suspended from a gold chain, its likeness variously attributed to Britannia's rarely-observed silver serpents, and even the Great Earth Serpent itself. It emanates a blue aura and is notably warm to the touch, imbued with enchantments that have allowed it both to facilitate interplanetary moongate travel and pierce supernatural forms of darkness.
+        itemdescriptionattribution: UltimaCodex.com
+    1:
+        itemname: Crown
+        itemindex: 1
+        itemnamehighlight: ""
+        itemsprite: 437
+        itemspriteexposed: 437
+        itemdescription: Lord British's Crown is one of Lord British's Royal Crown Jewels. It has a powerful magic effect that the Avatar will need to discover!
+        itemdescriptionattribution: UltimaCodex.com and The Book of Brad
+    2:
+        itemname: Sceptre
+        itemindex: 2
+        itemnamehighlight: ""
+        itemsprite: 438
+        itemspriteexposed: 438
+        itemdescription: The Sceptre of Lord British, one of the three Royal Crown Jewels, is a powerful magical artifact. This powerful tool has an amazing ability that the Avatar will need to discover!
+        itemdescriptionattribution: UltimaCodex.com and The Book of Brad
+moonstone:
+    0:
+        itemname: NewMoon
+        itemindex: 0
+        itemnamehighlight: ""
+        itemsprite: 281
+        itemspriteexposed: 281
+        itemdescription: Blue moongates, generated by moonstones, generally focus on destinations in but a single world - the world in which they appear. Their power, awesome though it may seem, is limited, allowing the traveler to teleport only from the location of one moonstone to that of another. The moonstone the user travels to is determined by the phase of the moon that appears directly overhead in the sky. Through experimentation and observation, the moongate traveler can correlate the phases of the highest moon with the destination the gate will select.
+        itemdescriptionattribution: Compendium (Ultima VI)
+    1:
+        itemname: CrescentWaxing
+        itemindex: 1
+        itemnamehighlight: ""
+        itemsprite: 281
+        itemspriteexposed: 281
+        itemdescription: Blue moongates, generated by moonstones, generally focus on destinations in but a single world - the world in which they appear. Their power, awesome though it may seem, is limited, allowing the traveler to teleport only from the location of one moonstone to that of another. The moonstone the user travels to is determined by the phase of the moon that appears directly overhead in the sky. Through experimentation and observation, the moongate traveler can correlate the phases of the highest moon with the destination the gate will select.
+        itemdescriptionattribution: Compendium (Ultima VI)
+    2:
+        itemname: FirstQuarter
+        itemindex: 2
+        itemnamehighlight: ""
+        itemsprite: 281
+        itemspriteexposed: 281
+        itemdescription: Blue moongates, generated by moonstones, generally focus on destinations in but a single world - the world in which they appear. Their power, awesome though it may seem, is limited, allowing the traveler to teleport only from the location of one moonstone to that of another. The moonstone the user travels to is determined by the phase of the moon that appears directly overhead in the sky. Through experimentation and observation, the moongate traveler can correlate the phases of the highest moon with the destination the gate will select.
+        itemdescriptionattribution: Compendium (Ultima VI)
+    3:
+        itemname: GibbousWaxing
+        itemindex: 3
+        itemnamehighlight: ""
+        itemsprite: 281
+        itemspriteexposed: 281
+        itemdescription: Blue moongates, generated by moonstones, generally focus on destinations in but a single world - the world in which they appear. Their power, awesome though it may seem, is limited, allowing the traveler to teleport only from the location of one moonstone to that of another. The moonstone the user travels to is determined by the phase of the moon that appears directly overhead in the sky. Through experimentation and observation, the moongate traveler can correlate the phases of the highest moon with the destination the gate will select.
+        itemdescriptionattribution: Compendium (Ultima VI)
+    4:
+        itemname: FullMoon
+        itemindex: 4
+        itemnamehighlight: ""
+        itemsprite: 281
+        itemspriteexposed: 281
+        itemdescription: Blue moongates, generated by moonstones, generally focus on destinations in but a single world - the world in which they appear. Their power, awesome though it may seem, is limited, allowing the traveler to teleport only from the location of one moonstone to that of another. The moonstone the user travels to is determined by the phase of the moon that appears directly overhead in the sky. Through experimentation and observation, the moongate traveler can correlate the phases of the highest moon with the destination the gate will select.
+        itemdescriptionattribution: Compendium (Ultima VI)
+    5:
+        itemname: GibbousWaning
+        itemindex: 5
+        itemnamehighlight: ""
+        itemsprite: 281
+        itemspriteexposed: 281
+        itemdescription: Blue moongates, generated by moonstones, generally focus on destinations in but a single world - the world in which they appear. Their power, awesome though it may seem, is limited, allowing the traveler to teleport only from the location of one moonstone to that of another. The moonstone the user travels to is determined by the phase of the moon that appears directly overhead in the sky. Through experimentation and observation, the moongate traveler can correlate the phases of the highest moon with the destination the gate will select.
+        itemdescriptionattribution: ""
+    6:
+        itemname: LastQuarter
+        itemindex: 6
+        itemnamehighlight: ""
+        itemsprite: 281
+        itemspriteexposed: 281
+        itemdescription: Blue moongates, generated by moonstones, generally focus on destinations in but a single world - the world in which they appear. Their power, awesome though it may seem, is limited, allowing the traveler to teleport only from the location of one moonstone to that of another. The moonstone the user travels to is determined by the phase of the moon that appears directly overhead in the sky. Through experimentation and observation, the moongate traveler can correlate the phases of the highest moon with the destination the gate will select.
+        itemdescriptionattribution: Compendium (Ultima VI)
+    7:
+        itemname: CrescentWaning
+        itemindex: 7
+        itemnamehighlight: ""
+        itemsprite: 281
+        itemspriteexposed: 281
+        itemdescription: Blue moongates, generated by moonstones, generally focus on destinations in but a single world - the world in which they appear. Their power, awesome though it may seem, is limited, allowing the traveler to teleport only from the location of one moonstone to that of another. The moonstone the user travels to is determined by the phase of the moon that appears directly overhead in the sky. Through experimentation and observation, the moongate traveler can correlate the phases of the highest moon with the destination the gate will select.
+        itemdescriptionattribution: Compendium (Ultima VI)
+provision:
+    0:
+        itemname: Torches
+        itemindex: 0
+        itemnamehighlight: ""
+        itemsprite: 269
+        itemspriteexposed: 269
+        itemdescription: These are torches
+        itemdescriptionattribution: The Book of Brad
+    1:
+        itemname: Gems
+        itemindex: 1
+        itemnamehighlight: ""
+        itemsprite: 264
+        itemspriteexposed: 264
+        itemdescription: These are gems
+        itemdescriptionattribution: The Book of Brad
+    2:
+        itemname: Keys
+        itemindex: 2
+        itemnamehighlight: ""
+        itemsprite: 263
+        itemspriteexposed: 263
+        itemdescription: These are keys
+        itemdescriptionattribution: The Book of Brad
+    3:
+        itemname: SkullKeys
+        itemindex: 3
+        itemnamehighlight: ""
+        itemsprite: 263
+        itemspriteexposed: 263
+        itemdescription: These open lots of things
+        itemdescriptionattribution: The Book of Brad
+    4:
+        itemname: Food
+        itemindex: 4
+        itemnamehighlight: ""
+        itemsprite: 271
+        itemspriteexposed: 271
+        itemdescription: You eat this
+        itemdescriptionattribution: The Book of Brad
+    5:
+        itemname: Gold
+        itemindex: 5
+        itemnamehighlight: ""
+        itemsprite: 258
+        itemspriteexposed: 258
+        itemdescription: You spend this
+        itemdescriptionattribution: The Book of Brad

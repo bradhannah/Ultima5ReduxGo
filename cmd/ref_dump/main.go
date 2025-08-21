@@ -131,14 +131,16 @@ func dumpReferences(outputDir, outputFormat string) error {
 
 	// Dump each field of GameReferences to its own file
 	fields := map[string]interface{}{
-		"LocationReferences": gameReferences.LocationReferences,
-		"DataOvl":            gameReferences.DataOvl,
-		"TileReferences":     gameReferences.TileReferences,
-		"LookReferences":     gameReferences.LookReferences.TileDescriptions, // Only dump TileDescriptions
-		"NPCReferences":      gameReferences.NPCReferences,
-		"DockReferences":     gameReferences.DockReferences,
-		"EnemyReferences":    toSafeEnemyReferences(*gameReferences.EnemyReferences),
-		"TalkReferences":     buildTalkDumpOutput(gameReferences.TalkReferences.GetTalkScripts()),
+		"LocationReferences":      gameReferences.LocationReferences,
+		"DataOvl":                 gameReferences.DataOvl,
+		"TileReferences":          gameReferences.TileReferences,
+		"InventoryItemReferences": gameReferences.InventoryItemReferences,
+		"LookReferences":          gameReferences.LookReferences.TileDescriptions, // Only dump TileDescriptions
+		"NPCReferences":           gameReferences.NPCReferences,
+		"DockReferences":          gameReferences.DockReferences,
+		"EnemyReferences":         toSafeEnemyReferences(*gameReferences.EnemyReferences),
+		"TalkReferences":          buildTalkDumpOutput(gameReferences.TalkReferences.GetTalkScripts()),
+		// Note: Large map references excluded - too much data for reference purposes
 	}
 
 	for name, field := range fields {
