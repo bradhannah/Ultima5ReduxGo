@@ -11,32 +11,49 @@ import (
 const totalLooks = 512
 
 type LookReferences struct {
-	gameConfig  *config.UltimaVConfiguration `json:"game_config" yaml:"game_config"`
-	lookOffsets [totalLooks]int              `json:"look_offsets" yaml:"look_offsets"`
-	lookData    []byte                       `json:"look_data" yaml:"look_data"`
+	GameConfig       *config.UltimaVConfiguration `json:"game_config" yaml:"game_config"`
+	LookOffsets      [totalLooks]int              `json:"look_offsets" yaml:"look_offsets"`
+	LookData         []byte                       `json:"look_data" yaml:"look_data"`
+	TileDescriptions map[int]string               `json:"tile_descriptions" yaml:"tile_descriptions"`
 }
 
 func NewLookReferences(gameConfig *config.UltimaVConfiguration) *LookReferences {
+	log.SetFlags(0)
+	log.SetOutput(os.Stderr)
 	lookRefs := &LookReferences{}
-	lookRefs.gameConfig = gameConfig
+	lookRefs.GameConfig = gameConfig
+
+	lookDataPath := gameConfig.GetLookDataFilePath()
+	log.Printf("Look data file path: %s", lookDataPath)
+	if _, err := os.Stat(lookDataPath); os.IsNotExist(err) {
+		log.Printf("ERROR: Look data file does not exist at: %s", lookDataPath)
+		return lookRefs
+	}
 
 	var err error
-	lookRefs.lookData, err = lookRefs.getLookFileAsBytes()
+	lookRefs.LookData, err = lookRefs.getLookFileAsBytes()
 	if err != nil {
+		log.Printf("Error reading look file: %v", err)
 		log.Fatal("can't read look file")
 	}
 
 	count := 0
 	for i := 0; i < totalLooks*2; i += 2 {
-		lookRefs.lookOffsets[count] = int((lookRefs.lookData)[i]) | int((lookRefs.lookData)[i+1])<<8
+		lookRefs.LookOffsets[count] = int((lookRefs.LookData)[i]) | int((lookRefs.LookData)[i+1])<<8
 		count++
+	}
+
+	// Populate tile descriptions
+	lookRefs.TileDescriptions = make(map[int]string)
+	for i := 0; i < totalLooks; i++ {
+		lookRefs.TileDescriptions[i] = lookRefs.GetTileLookDescription(indexes.SpriteIndex(i))
 	}
 
 	return lookRefs
 }
 
 func (l *LookReferences) getLookFileAsBytes() ([]byte, error) {
-	lookData, err := os.ReadFile(l.gameConfig.GetLookDataFilePath())
+	lookData, err := os.ReadFile(l.GameConfig.GetLookDataFilePath())
 	if err != nil {
 		return nil, err
 	}
@@ -46,9 +63,9 @@ func (l *LookReferences) getLookFileAsBytes() ([]byte, error) {
 func (l *LookReferences) GetTileLookDescription(tileIndex indexes.SpriteIndex) string {
 	lookBytes := make([]byte, 0)
 
-	for i := l.lookOffsets[tileIndex]; i < len(l.lookData)-1; i++ {
-		if l.lookData[i] != 0 {
-			lookBytes = append(lookBytes, l.lookData[i])
+	for i := l.LookOffsets[tileIndex]; i < len(l.LookData)-1; i++ {
+		if l.LookData[i] != 0 {
+			lookBytes = append(lookBytes, l.LookData[i])
 			continue
 		}
 		break

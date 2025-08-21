@@ -70,36 +70,34 @@ func dumpReferences(outputDir, outputFormat string) error {
 
 	// Dump each field of GameReferences to its own file
 	fields := map[string]interface{}{
-		"OverworldLargeMapReference":  gameReferences.OverworldLargeMapReference,
-		"UnderworldLargeMapReference": gameReferences.UnderworldLargeMapReference,
-		"LocationReferences":          gameReferences.LocationReferences,
-		"DataOvl":                     gameReferences.DataOvl,
-		"TileReferences":              gameReferences.TileReferences,
-		"InventoryItemReferences":     gameReferences.InventoryItemReferences,
-		"LookReferences":              gameReferences.LookReferences,
-		"NPCReferences":               gameReferences.NPCReferences,
-		"DockReferences":              *gameReferences.DockReferences,
-		"EnemyReferences":             references.ToSafeEnemyReferences(*gameReferences.EnemyReferences),
-		"TalkReferences":              gameReferences.TalkReferences,
+		"LocationReferences": gameReferences.LocationReferences,
+		"DataOvl":            gameReferences.DataOvl,
+		"TileReferences":     gameReferences.TileReferences,
+		"LookReferences":     gameReferences.LookReferences.TileDescriptions, // Only dump TileDescriptions
+		"NPCReferences":      gameReferences.NPCReferences,
+		"DockReferences":     gameReferences.DockReferences,
+		"EnemyReferences":    references.ToSafeEnemyReferences(*gameReferences.EnemyReferences),
+		"TalkReferences":     gameReferences.TalkReferences,
 	}
-
-	// Debug: Print DockReferences before dumping
-	fmt.Printf("DockReferences: %+v\n", gameReferences.DockReferences)
-	// Debug: Print EnemyReferences after conversion
-	fmt.Printf("EnemyReferences (safe): %+v\n", references.ToSafeEnemyReferences(*gameReferences.EnemyReferences))
 
 	for name, field := range fields {
 		filePath := filepath.Join(outputDir, name+".json")
-		file, err := os.Create(filePath)
-		if err != nil {
-			return fmt.Errorf("failed to create file %s: %w", filePath, err)
+		var output []byte
+		if name == "LookReferences" {
+			// Convert map[string]string to map[int]string for LookReferences
+			intMap := make(map[int]string)
+			for k, v := range gameReferences.LookReferences.TileDescriptions {
+				intMap[k] = v
+			}
+			output, err = json.MarshalIndent(intMap, "", "  ")
+		} else {
+			output, err = json.MarshalIndent(field, "", "  ")
 		}
-		defer file.Close()
-
-		encoder := json.NewEncoder(file)
-		encoder.SetIndent("", "  ")
-		if err := encoder.Encode(field); err != nil {
+		if err != nil {
 			return fmt.Errorf("failed to encode data for %s: %w", name, err)
+		}
+		if err := os.WriteFile(filePath, output, 0600); err != nil {
+			return fmt.Errorf("failed to write file %s: %w", filePath, err)
 		}
 	}
 
