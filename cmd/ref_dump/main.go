@@ -13,7 +13,6 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v2"
 )
 
 // dumpReferences handles the logic for dumping references to the specified output directory and format.
@@ -47,27 +46,6 @@ func dumpReferences(outputDir, outputFormat string) error {
 		return fmt.Errorf("failed to initialize game references: %w", err)
 	}
 
-	// Dump references
-	referencesData := map[string]interface{}{
-		"locations": references.GetListOfAllLocationsWithDocksAsString(),
-		// Add other references here as needed
-	}
-
-	var outputData []byte
-	if outputFormat == "json" {
-		outputData, err = json.MarshalIndent(referencesData, "", "  ")
-	} else {
-		outputData, err = yaml.Marshal(referencesData)
-	}
-	if err != nil {
-		return fmt.Errorf("failed to marshal data: %w", err)
-	}
-
-	outputFile := fmt.Sprintf("%s/references.%s", outputDir, outputFormat)
-	if err := os.WriteFile(outputFile, outputData, 0600); err != nil {
-		return fmt.Errorf("failed to write output file: %w", err)
-	}
-
 	// Dump each field of GameReferences to its own file
 	fields := map[string]interface{}{
 		"LocationReferences": gameReferences.LocationReferences,
@@ -83,16 +61,9 @@ func dumpReferences(outputDir, outputFormat string) error {
 	for name, field := range fields {
 		filePath := filepath.Join(outputDir, name+".json")
 		var output []byte
-		if name == "LookReferences" {
-			// Convert map[string]string to map[int]string for LookReferences
-			intMap := make(map[int]string)
-			for k, v := range gameReferences.LookReferences.TileDescriptions {
-				intMap[k] = v
-			}
-			output, err = json.MarshalIndent(intMap, "", "  ")
-		} else {
-			output, err = json.MarshalIndent(field, "", "  ")
-		}
+
+		output, err = json.MarshalIndent(field, "", "  ")
+
 		if err != nil {
 			return fmt.Errorf("failed to encode data for %s: %w", name, err)
 		}
@@ -101,21 +72,6 @@ func dumpReferences(outputDir, outputFormat string) error {
 		}
 	}
 
-	// Directly serialize safe enemy references for verification
-	enemyReferencesSafe := references.ToSafeEnemyReferences(*gameReferences.EnemyReferences)
-	enemyReferencesSafeFile := filepath.Join(outputDir, "EnemyReferencesSafe.json")
-	enemyReferencesSafeF, err := os.Create(enemyReferencesSafeFile)
-	if err != nil {
-		return fmt.Errorf("failed to create file %s: %w", enemyReferencesSafeFile, err)
-	}
-	encoder := json.NewEncoder(enemyReferencesSafeF)
-	encoder.SetIndent("", "  ")
-	if err := encoder.Encode(enemyReferencesSafe); err != nil {
-		return fmt.Errorf("failed to encode data for EnemyReferencesSafe: %w", err)
-	}
-	enemyReferencesSafeF.Close()
-
-	log.Printf("References dumped to %s", outputFile)
 	return nil
 }
 
