@@ -207,7 +207,8 @@ func (c *Conversation) processMultiLines(sections []references.SplitScriptLine, 
 			}
 		case doNotSkip:
 			{
-				break
+				//break
+				continue
 			}
 		}
 	}
@@ -267,7 +268,13 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 		c.enqueueStr("You see ")
 	}
 
+	var bSkipOne bool = false
 	for _, scriptItem := range line {
+		if bSkipOne {
+			// we skip one because the StartLabelDef indicates a label is being defined - not jumped to
+			bSkipOne = false
+			continue
+		}
 		switch scriptItem.Cmd {
 
 		case references.IfElseKnowsName:
@@ -296,15 +303,18 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 		case references.Change:
 			c.enqueueFmt("PLACEHOLDER")
 			c.giveIncrement(scriptItem.ItemAdditionalData)
-		case references.DefineLabel:
+			//c.enqueueStr(scriptItem.Str)
+		case references.Label1, references.Label2, references.Label3, references.Label4, references.Label5,
+			references.Label6, references.Label7, references.Label8, references.Label9, references.Label10,
+			references.DefineLabel:
 			{
 				// maybe ok?
-				tgt := scriptItem.Num
+				tgt := int(scriptItem.Cmd) - int(references.Label1) //scriptItem.Num
 
 				idx := c.ts.GetScriptLineLabelIndex(tgt)
-				if idx != -1 {
-					c.convoOrder = append(c.convoOrder, idx)
-				}
+				//if idx != -1 {
+				//	c.convoOrder = append(c.convoOrder, idx)
+				//}
 
 				c.convoOrder = append(c.convoOrder, idx)
 				c.currentSkip = skipToLabel
@@ -355,9 +365,6 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 			}
 		case references.KeyWait:
 			c.enqueueStr("PLACEHOLDER")
-		case references.Label1, references.Label2, references.Label3, references.Label4, references.Label5,
-			references.Label6, references.Label7, references.Label8, references.Label9, references.Label10:
-			c.enqueueStr(scriptItem.Str)
 		case references.MakeAHorse:
 			c.enqueueStr("PLACEHOLDER")
 		case references.NewLine:
@@ -378,6 +385,7 @@ func (c *Conversation) processLine(line references.ScriptLine, talkIdx, splitIdx
 			c.runeMode = !c.runeMode
 		case references.StartLabelDef:
 			c.enqueueFmt("PLACEHOLDER - nItem++")
+			bSkipOne = true
 		case references.OrBranch, references.StartNewSection:
 			// never appears in split sections – sanity only
 			log.Fatalf("Unexpected OR, StartNewSection or DoNothingSection in script: %v", scriptItem.Cmd)

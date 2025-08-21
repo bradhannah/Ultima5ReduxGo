@@ -60,8 +60,8 @@ func ParseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
 			if i+1 >= len(blob) {
 				return nil, fmt.Errorf("truncated DefineLabel at end of blob")
 			}
-			labelNum := int(blob[i+1]) - minLabelByte
-			labelNum = 0
+			labelNum := int(blob[i+1]) - int(Label1)
+			//labelNum = 0
 			i++ // skip the payload byte
 			currLine = append(currLine, ScriptItem{
 				Cmd:         DefineLabel,
@@ -128,7 +128,8 @@ func (ts *TalkScript) GetScriptLine(idx int) (ScriptLine, bool) {
 
 func (ts *TalkScript) GetScriptLineLabelIndex(labelNum int) int {
 	for idx, line := range ts.Lines {
-		if line.isLabelDefinition() && line[1].Num == labelNum {
+		//if line.isLabelDefinition() && line[1].Num == labelNum {
+		if line.isLabelDefinition() && int(line[1].Cmd)-int(Label1) == labelNum {
 			return idx
 		}
 	}
