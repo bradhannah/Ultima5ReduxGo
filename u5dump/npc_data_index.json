@@ -1,0 +1,812 @@
+[
+  {
+    "name": "Sven",
+    "index": 37,
+    "file": "CASTLE.TLK",
+    "size_bytes": 546
+  },
+  {
+    "name": "Joshua",
+    "index": 22,
+    "file": "CASTLE.TLK",
+    "size_bytes": 622
+  },
+  {
+    "name": "Kurt",
+    "index": 25,
+    "file": "CASTLE.TLK",
+    "size_bytes": 539
+  },
+  {
+    "name": "Squire Jimmy",
+    "index": 27,
+    "file": "CASTLE.TLK",
+    "size_bytes": 603
+  },
+  {
+    "name": "Lord Dalgrin",
+    "index": 38,
+    "file": "CASTLE.TLK",
+    "size_bytes": 601
+  },
+  {
+    "name": "Alistair",
+    "index": 1,
+    "file": "CASTLE.TLK",
+    "size_bytes": 419
+  },
+  {
+    "name": "Weblock",
+    "index": 14,
+    "file": "CASTLE.TLK",
+    "size_bytes": 555
+  },
+  {
+    "name": "Flint",
+    "index": 28,
+    "file": "CASTLE.TLK",
+    "size_bytes": 503
+  },
+  {
+    "name": "Desiree",
+    "index": 5,
+    "file": "CASTLE.TLK",
+    "size_bytes": 493
+  },
+  {
+    "name": "....",
+    "index": 12,
+    "file": "CASTLE.TLK",
+    "size_bytes": 356
+  },
+  {
+    "name": "Thentis",
+    "index": 21,
+    "file": "CASTLE.TLK",
+    "size_bytes": 571
+  },
+  {
+    "name": "Glinkie",
+    "index": 29,
+    "file": "CASTLE.TLK",
+    "size_bytes": 608
+  },
+  {
+    "name": "Treanna",
+    "index": 3,
+    "file": "CASTLE.TLK",
+    "size_bytes": 596
+  },
+  {
+    "name": "Saduj",
+    "index": 7,
+    "file": "CASTLE.TLK",
+    "size_bytes": 617
+  },
+  {
+    "name": "Chuckles",
+    "index": 9,
+    "file": "CASTLE.TLK",
+    "size_bytes": 657
+  },
+  {
+    "name": "Christopher",
+    "index": 20,
+    "file": "CASTLE.TLK",
+    "size_bytes": 527
+  },
+  {
+    "name": "Vigil",
+    "index": 24,
+    "file": "CASTLE.TLK",
+    "size_bytes": 656
+  },
+  {
+    "name": "Ava",
+    "index": 31,
+    "file": "CASTLE.TLK",
+    "size_bytes": 514
+  },
+  {
+    "name": "Stillwelt",
+    "index": 8,
+    "file": "CASTLE.TLK",
+    "size_bytes": 324
+  },
+  {
+    "name": "Blackthorn",
+    "index": 10,
+    "file": "CASTLE.TLK",
+    "size_bytes": 558
+  },
+  {
+    "name": "Bandaii",
+    "index": 30,
+    "file": "CASTLE.TLK",
+    "size_bytes": 617
+  },
+  {
+    "name": "Scally",
+    "index": 35,
+    "file": "CASTLE.TLK",
+    "size_bytes": 637
+  },
+  {
+    "name": "Tierra",
+    "index": 39,
+    "file": "CASTLE.TLK",
+    "size_bytes": 513
+  },
+  {
+    "name": "Geoffrey",
+    "index": 40,
+    "file": "CASTLE.TLK",
+    "size_bytes": 486
+  },
+  {
+    "name": "Margaret",
+    "index": 4,
+    "file": "CASTLE.TLK",
+    "size_bytes": 657
+  },
+  {
+    "name": "Gorn",
+    "index": 11,
+    "file": "CASTLE.TLK",
+    "size_bytes": 584
+  },
+  {
+    "name": "Kraw",
+    "index": 13,
+    "file": "CASTLE.TLK",
+    "size_bytes": 292
+  },
+  {
+    "name": "Foulwell",
+    "index": 16,
+    "file": "CASTLE.TLK",
+    "size_bytes": 584
+  },
+  {
+    "name": "Phillip",
+    "index": 19,
+    "file": "CASTLE.TLK",
+    "size_bytes": 310
+  },
+  {
+    "name": "Stephen",
+    "index": 2,
+    "file": "CASTLE.TLK",
+    "size_bytes": 424
+  },
+  {
+    "name": "Drudgeworth",
+    "index": 6,
+    "file": "CASTLE.TLK",
+    "size_bytes": 668
+  },
+  {
+    "name": "Leof",
+    "index": 23,
+    "file": "CASTLE.TLK",
+    "size_bytes": 504
+  },
+  {
+    "name": "Thorkin",
+    "index": 34,
+    "file": "CASTLE.TLK",
+    "size_bytes": 540
+  },
+  {
+    "name": "Gallrot",
+    "index": 15,
+    "file": "CASTLE.TLK",
+    "size_bytes": 405
+  },
+  {
+    "name": "Hassad",
+    "index": 17,
+    "file": "CASTLE.TLK",
+    "size_bytes": 554
+  },
+  {
+    "name": "Camile",
+    "index": 18,
+    "file": "CASTLE.TLK",
+    "size_bytes": 595
+  },
+  {
+    "name": "Sir Adam",
+    "index": 26,
+    "file": "CASTLE.TLK",
+    "size_bytes": 630
+  },
+  {
+    "name": "Leona",
+    "index": 32,
+    "file": "CASTLE.TLK",
+    "size_bytes": 657
+  },
+  {
+    "name": "Ambrose",
+    "index": 33,
+    "file": "CASTLE.TLK",
+    "size_bytes": 617
+  },
+  {
+    "name": "Bidney",
+    "index": 36,
+    "file": "CASTLE.TLK",
+    "size_bytes": 567
+  },
+  {
+    "name": "Katrina",
+    "index": 47,
+    "file": "TOWNE.TLK",
+    "size_bytes": 351
+  },
+  {
+    "name": "Trian",
+    "index": 14,
+    "file": "TOWNE.TLK",
+    "size_bytes": 576
+  },
+  {
+    "name": "Chamfort",
+    "index": 17,
+    "file": "TOWNE.TLK",
+    "size_bytes": 546
+  },
+  {
+    "name": "Landon",
+    "index": 18,
+    "file": "TOWNE.TLK",
+    "size_bytes": 617
+  },
+  {
+    "name": "Judge Dryden",
+    "index": 19,
+    "file": "TOWNE.TLK",
+    "size_bytes": 606
+  },
+  {
+    "name": "Delwyn",
+    "index": 30,
+    "file": "TOWNE.TLK",
+    "size_bytes": 626
+  },
+  {
+    "name": "Yasuda",
+    "index": 43,
+    "file": "TOWNE.TLK",
+    "size_bytes": 358
+  },
+  {
+    "name": "Tetsuo",
+    "index": 44,
+    "file": "TOWNE.TLK",
+    "size_bytes": 426
+  },
+  {
+    "name": "Fumiko",
+    "index": 45,
+    "file": "TOWNE.TLK",
+    "size_bytes": 379
+  },
+  {
+    "name": "Zachariah",
+    "index": 1,
+    "file": "TOWNE.TLK",
+    "size_bytes": 617
+  },
+  {
+    "name": "Eb",
+    "index": 8,
+    "file": "TOWNE.TLK",
+    "size_bytes": 594
+  },
+  {
+    "name": "Gwenno",
+    "index": 11,
+    "file": "TOWNE.TLK",
+    "size_bytes": 602
+  },
+  {
+    "name": "Thorne",
+    "index": 16,
+    "file": "TOWNE.TLK",
+    "size_bytes": 637
+  },
+  {
+    "name": "Jeremy",
+    "index": 20,
+    "file": "TOWNE.TLK",
+    "size_bytes": 577
+  },
+  {
+    "name": "Felespar",
+    "index": 22,
+    "file": "TOWNE.TLK",
+    "size_bytes": 585
+  },
+  {
+    "name": "Fiona",
+    "index": 26,
+    "file": "TOWNE.TLK",
+    "size_bytes": 574
+  },
+  {
+    "name": "Flain",
+    "index": 38,
+    "file": "TOWNE.TLK",
+    "size_bytes": 580
+  },
+  {
+    "name": "Justin",
+    "index": 7,
+    "file": "TOWNE.TLK",
+    "size_bytes": 627
+  },
+  {
+    "name": "Annon",
+    "index": 12,
+    "file": "TOWNE.TLK",
+    "size_bytes": 590
+  },
+  {
+    "name": "Bullwier",
+    "index": 13,
+    "file": "TOWNE.TLK",
+    "size_bytes": 602
+  },
+  {
+    "name": "Jerone",
+    "index": 21,
+    "file": "TOWNE.TLK",
+    "size_bytes": 656
+  },
+  {
+    "name": "Tactus",
+    "index": 25,
+    "file": "TOWNE.TLK",
+    "size_bytes": 567
+  },
+  {
+    "name": "Saul",
+    "index": 40,
+    "file": "TOWNE.TLK",
+    "size_bytes": 625
+  },
+  {
+    "name": "Donn Piatt",
+    "index": 4,
+    "file": "TOWNE.TLK",
+    "size_bytes": 522
+  },
+  {
+    "name": "Lord Stuart",
+    "index": 5,
+    "file": "TOWNE.TLK",
+    "size_bytes": 603
+  },
+  {
+    "name": "Greyson",
+    "index": 6,
+    "file": "TOWNE.TLK",
+    "size_bytes": 595
+  },
+  {
+    "name": "Woolfe",
+    "index": 31,
+    "file": "TOWNE.TLK",
+    "size_bytes": 647
+  },
+  {
+    "name": "Jimmy",
+    "index": 33,
+    "file": "TOWNE.TLK",
+    "size_bytes": 664
+  },
+  {
+    "name": "Jaana",
+    "index": 35,
+    "file": "TOWNE.TLK",
+    "size_bytes": 374
+  },
+  {
+    "name": "Kaiko",
+    "index": 46,
+    "file": "TOWNE.TLK",
+    "size_bytes": 597
+  },
+  {
+    "name": "Wartow",
+    "index": 48,
+    "file": "TOWNE.TLK",
+    "size_bytes": 512
+  },
+  {
+    "name": "Malifora",
+    "index": 2,
+    "file": "TOWNE.TLK",
+    "size_bytes": 547
+  },
+  {
+    "name": "Aleyn",
+    "index": 24,
+    "file": "TOWNE.TLK",
+    "size_bytes": 271
+  },
+  {
+    "name": "Kindor",
+    "index": 39,
+    "file": "TOWNE.TLK",
+    "size_bytes": 579
+  },
+  {
+    "name": "Terrance",
+    "index": 9,
+    "file": "TOWNE.TLK",
+    "size_bytes": 596
+  },
+  {
+    "name": "Mario",
+    "index": 23,
+    "file": "TOWNE.TLK",
+    "size_bytes": 601
+  },
+  {
+    "name": "Lady Sahra",
+    "index": 29,
+    "file": "TOWNE.TLK",
+    "size_bytes": 519
+  },
+  {
+    "name": "Malik",
+    "index": 3,
+    "file": "TOWNE.TLK",
+    "size_bytes": 594
+  },
+  {
+    "name": "Rew",
+    "index": 27,
+    "file": "TOWNE.TLK",
+    "size_bytes": 619
+  },
+  {
+    "name": "Sindar...",
+    "index": 32,
+    "file": "TOWNE.TLK",
+    "size_bytes": 209
+  },
+  {
+    "name": "Gruman",
+    "index": 34,
+    "file": "TOWNE.TLK",
+    "size_bytes": 507
+  },
+  {
+    "name": "Greymarch",
+    "index": 36,
+    "file": "TOWNE.TLK",
+    "size_bytes": 599
+  },
+  {
+    "name": "Froed",
+    "index": 37,
+    "file": "TOWNE.TLK",
+    "size_bytes": 555
+  },
+  {
+    "name": "Telila",
+    "index": 10,
+    "file": "TOWNE.TLK",
+    "size_bytes": 637
+  },
+  {
+    "name": "Goeth",
+    "index": 15,
+    "file": "TOWNE.TLK",
+    "size_bytes": 704
+  },
+  {
+    "name": "Fenelon",
+    "index": 28,
+    "file": "TOWNE.TLK",
+    "size_bytes": 623
+  },
+  {
+    "name": "Tomoka",
+    "index": 41,
+    "file": "TOWNE.TLK",
+    "size_bytes": 393
+  },
+  {
+    "name": "Shirita",
+    "index": 42,
+    "file": "TOWNE.TLK",
+    "size_bytes": 656
+  },
+  {
+    "name": "Charlotte",
+    "index": 6,
+    "file": "DWELLING.TLK",
+    "size_bytes": 609
+  },
+  {
+    "name": "David",
+    "index": 7,
+    "file": "DWELLING.TLK",
+    "size_bytes": 586
+  },
+  {
+    "name": "Gregory",
+    "index": 8,
+    "file": "DWELLING.TLK",
+    "size_bytes": 310
+  },
+  {
+    "name": "Sir Arbuthnot",
+    "index": 15,
+    "file": "DWELLING.TLK",
+    "size_bytes": 521
+  },
+  {
+    "name": "Windmire",
+    "index": 3,
+    "file": "DWELLING.TLK",
+    "size_bytes": 628
+  },
+  {
+    "name": "Emilly",
+    "index": 4,
+    "file": "DWELLING.TLK",
+    "size_bytes": 504
+  },
+  {
+    "name": "Sin'Vraal",
+    "index": 11,
+    "file": "DWELLING.TLK",
+    "size_bytes": 597
+  },
+  {
+    "name": "Grendel",
+    "index": 12,
+    "file": "DWELLING.TLK",
+    "size_bytes": 638
+  },
+  {
+    "name": "Lord Kenneth",
+    "index": 14,
+    "file": "DWELLING.TLK",
+    "size_bytes": 618
+  },
+  {
+    "name": "Jotham",
+    "index": 2,
+    "file": "DWELLING.TLK",
+    "size_bytes": 627
+  },
+  {
+    "name": "Anthony",
+    "index": 5,
+    "file": "DWELLING.TLK",
+    "size_bytes": 582
+  },
+  {
+    "name": "Jacqueline",
+    "index": 9,
+    "file": "DWELLING.TLK",
+    "size_bytes": 146
+  },
+  {
+    "name": "Smith",
+    "index": 13,
+    "file": "DWELLING.TLK",
+    "size_bytes": 607
+  },
+  {
+    "name": "Jennifer",
+    "index": 1,
+    "file": "DWELLING.TLK",
+    "size_bytes": 342
+  },
+  {
+    "name": "Sutek",
+    "index": 10,
+    "file": "DWELLING.TLK",
+    "size_bytes": 602
+  },
+  {
+    "name": "Johne, Captain Johne.",
+    "index": 1,
+    "file": "KEEP.TLK",
+    "size_bytes": 617
+  },
+  {
+    "name": "Dufus",
+    "index": 6,
+    "file": "KEEP.TLK",
+    "size_bytes": 560
+  },
+  {
+    "name": "Balinor",
+    "index": 10,
+    "file": "KEEP.TLK",
+    "size_bytes": 615
+  },
+  {
+    "name": "Lord Michael",
+    "index": 16,
+    "file": "KEEP.TLK",
+    "size_bytes": 599
+  },
+  {
+    "name": "Monsieur Loubet",
+    "index": 23,
+    "file": "KEEP.TLK",
+    "size_bytes": 584
+  },
+  {
+    "name": "Toshi",
+    "index": 28,
+    "file": "KEEP.TLK",
+    "size_bytes": 481
+  },
+  {
+    "name": "Lord Seggallion",
+    "index": 4,
+    "file": "KEEP.TLK",
+    "size_bytes": 628
+  },
+  {
+    "name": "Sir Sean",
+    "index": 26,
+    "file": "KEEP.TLK",
+    "size_bytes": 631
+  },
+  {
+    "name": "Maxwell",
+    "index": 29,
+    "file": "KEEP.TLK",
+    "size_bytes": 444
+  },
+  {
+    "name": "Kristi",
+    "index": 24,
+    "file": "KEEP.TLK",
+    "size_bytes": 598
+  },
+  {
+    "name": "Gardner",
+    "index": 25,
+    "file": "KEEP.TLK",
+    "size_bytes": 549
+  },
+  {
+    "name": "Sir Simon",
+    "index": 2,
+    "file": "KEEP.TLK",
+    "size_bytes": 552
+  },
+  {
+    "name": "Quintin",
+    "index": 7,
+    "file": "KEEP.TLK",
+    "size_bytes": 557
+  },
+  {
+    "name": "Elistaria",
+    "index": 9,
+    "file": "KEEP.TLK",
+    "size_bytes": 557
+  },
+  {
+    "name": "Lady Hayden.",
+    "index": 14,
+    "file": "KEEP.TLK",
+    "size_bytes": 569
+  },
+  {
+    "name": "Hardluck",
+    "index": 18,
+    "file": "KEEP.TLK",
+    "size_bytes": 533
+  },
+  {
+    "name": "Barbra",
+    "index": 19,
+    "file": "KEEP.TLK",
+    "size_bytes": 597
+  },
+  {
+    "name": "Sentri",
+    "index": 31,
+    "file": "KEEP.TLK",
+    "size_bytes": 372
+  },
+  {
+    "name": "Thrud",
+    "index": 8,
+    "file": "KEEP.TLK",
+    "size_bytes": 598
+  },
+  {
+    "name": "Lord Shalineth",
+    "index": 12,
+    "file": "KEEP.TLK",
+    "size_bytes": 590
+  },
+  {
+    "name": "Rollo",
+    "index": 13,
+    "file": "KEEP.TLK",
+    "size_bytes": 532
+  },
+  {
+    "name": "Toede",
+    "index": 21,
+    "file": "KEEP.TLK",
+    "size_bytes": 620
+  },
+  {
+    "name": "Lord Malone",
+    "index": 22,
+    "file": "KEEP.TLK",
+    "size_bytes": 581
+  },
+  {
+    "name": "Temme",
+    "index": 5,
+    "file": "KEEP.TLK",
+    "size_bytes": 592
+  },
+  {
+    "name": "Cory",
+    "index": 17,
+    "file": "KEEP.TLK",
+    "size_bytes": 670
+  },
+  {
+    "name": "Tim",
+    "index": 20,
+    "file": "KEEP.TLK",
+    "size_bytes": 693
+  },
+  {
+    "name": "Mariah",
+    "index": 27,
+    "file": "KEEP.TLK",
+    "size_bytes": 442
+  },
+  {
+    "name": "Dupre",
+    "index": 30,
+    "file": "KEEP.TLK",
+    "size_bytes": 475
+  },
+  {
+    "name": "Lady Tessa",
+    "index": 3,
+    "file": "KEEP.TLK",
+    "size_bytes": 551
+  },
+  {
+    "name": "Lady Janell",
+    "index": 11,
+    "file": "KEEP.TLK",
+    "size_bytes": 570
+  },
+  {
+    "name": "Lord R'hien",
+    "index": 15,
+    "file": "KEEP.TLK",
+    "size_bytes": 459
+  },
+  {
+    "name": "Julia",
+    "index": 32,
+    "file": "KEEP.TLK",
+    "size_bytes": 401
+  }
+]

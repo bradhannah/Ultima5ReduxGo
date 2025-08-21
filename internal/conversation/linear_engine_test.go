@@ -776,3 +776,97 @@ func TestLinearConversationEngine_IfElseKnowsName_FirstMeeting(t *testing.T) {
 		t.Error("Should not show 'has met' text for first meeting")
 	}
 }
+
+// TestLinearEngineWithRealAlistairData tests the engine against real Alistair TLK data
+func TestLinearEngineWithRealAlistairData(t *testing.T) {
+	// Load CASTLE.TLK file
+	talkData, err := references.LoadFile("/Users/bradhannah/GitHub/Ultima5ReduxGo/OLD/CASTLE.TLK")
+	if err != nil {
+		t.Skipf("Skipping real data test: %v", err)
+		return
+	}
+
+	// Alistair is at NPC index 1 in CASTLE.TLK
+	alistairData, exists := talkData[1]
+	if !exists {
+		t.Fatal("Alistair data not found at index 1 in CASTLE.TLK")
+	}
+
+	// Create a mock word dictionary for parsing
+	// For this test, we'll use a minimal dictionary since we're focusing on the conversation engine
+	wordDict := &references.WordDict{}
+
+	// Parse Alistair's blob into a TalkScript
+	script, err := references.ParseNPCBlob(alistairData, wordDict)
+	if err != nil {
+		t.Fatalf("Failed to parse Alistair's data: %v", err)
+	}
+
+	// Create test callbacks
+	callbacks := &TestActionCallbacks{
+		avatarName: "TestAvatar",
+		hasMetNPC:  false, // First time meeting Alistair
+	}
+
+	// Create engine with real data
+	engine := NewLinearConversationEngine(script, callbacks)
+
+	// Test start conversation
+	response := engine.Start(1) // NPC ID 1 for Alistair
+	if response.Error != nil {
+		t.Fatalf("Start conversation failed: %v", response.Error)
+	}
+
+	// Should show introduction
+	if !response.NeedsInput {
+		t.Error("Expected conversation to need input after introduction")
+	}
+
+	t.Logf("Initial response: %s", response.Output)
+
+	// Test NAME keyword
+	nameResponse := engine.ProcessInput("NAME")
+	if nameResponse.Error != nil {
+		t.Fatalf("NAME query failed: %v", nameResponse.Error)
+	}
+
+	t.Logf("Name response: %s", nameResponse.Output)
+
+	// Should contain "Alistair"
+	if !strings.Contains(nameResponse.Output, "Alistair") {
+		t.Error("Expected name response to contain 'Alistair'")
+	}
+
+	// Test JOB keyword
+	jobResponse := engine.ProcessInput("JOB")
+	if jobResponse.Error != nil {
+		t.Fatalf("JOB query failed: %v", jobResponse.Error)
+	}
+
+	t.Logf("Job response: %s", jobResponse.Output)
+
+	// Should contain something about music or spirits
+	if !strings.Contains(jobResponse.Output, "music") && !strings.Contains(jobResponse.Output, "spirit") {
+		t.Error("Expected job response to mention music or spirits")
+	}
+
+	// Test custom keyword - "MUSI" should be recognized
+	musicResponse := engine.ProcessInput("MUSI")
+	if musicResponse.Error != nil {
+		t.Fatalf("MUSI query failed: %v", musicResponse.Error)
+	}
+
+	t.Logf("Music response: %s", musicResponse.Output)
+
+	// Test BYE to end conversation
+	byeResponse := engine.ProcessInput("BYE")
+	if byeResponse.Error != nil {
+		t.Fatalf("BYE failed: %v", byeResponse.Error)
+	}
+
+	if !byeResponse.IsComplete {
+		t.Error("Expected conversation to be complete after BYE")
+	}
+
+	t.Logf("Bye response: %s", byeResponse.Output)
+}
