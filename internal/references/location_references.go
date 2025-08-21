@@ -48,7 +48,7 @@ func newSingleMapReferences(config *config.UltimaVConfiguration, dataOvl *DataOv
 func (s *LocationReferences) addLocation(location Location, bHasBasement bool, nFloors, nOffset int) int {
 	maps := make(map[int]*SmallLocationReference)
 	// get the file
-	mapFileAndPath := path.Join(s.config.SavedConfigData.DataFilePath, getSmallMapFile(getMapMasterFromLocation(location)))
+	mapFileAndPath := path.Join(s.config.SavedConfigData.DataFilePath, GetSmallMapFile(getMapMasterFromLocation(location)))
 
 	// a bit wasteful since it's open a few times, but... fast computers...
 	theChunksSerial, err := os.ReadFile(mapFileAndPath)

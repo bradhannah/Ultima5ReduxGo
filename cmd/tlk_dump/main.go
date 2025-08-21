@@ -11,32 +11,36 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type DumpOutput map[references.SmallMapMasterTypes][][]references.QuestionGroup
+type DumpOutput map[string][]map[string]interface{}
 
 func buildDumpOutput(raw map[references.SmallMapMasterTypes][]*references.TalkScript) DumpOutput {
 	out := make(DumpOutput)
 	for k, v := range raw {
-		var npcDump [][]references.QuestionGroup
-		for _, ts := range v {
-			// Include description and greeting as the first entries
+		fileName := references.GetSmallMapTalkFile(k)
+		var npcDump []map[string]interface{}
+		for i, ts := range v {
+			entry := make(map[string]interface{})
+			entry["dialog_number"] = i
+			var questionGroups []references.QuestionGroup
 			if len(ts.Lines) > references.TalkScriptConstantsDescription {
 				description := references.QuestionGroup{
 					Options: []string{"description"},
 					Script:  ts.Lines[references.TalkScriptConstantsDescription],
 				}
-				npcDump = append(npcDump, []references.QuestionGroup{description})
+				questionGroups = append(questionGroups, description)
 			}
 			if len(ts.Lines) > references.TalkScriptConstantsGreeting {
 				greeting := references.QuestionGroup{
 					Options: []string{"greeting"},
 					Script:  ts.Lines[references.TalkScriptConstantsGreeting],
 				}
-				npcDump = append(npcDump, []references.QuestionGroup{greeting})
+				questionGroups = append(questionGroups, greeting)
 			}
-			// Add the rest of the question groups
-			npcDump = append(npcDump, ts.QuestionGroups)
+			questionGroups = append(questionGroups, ts.QuestionGroups...)
+			entry["dialog"] = questionGroups
+			npcDump = append(npcDump, entry)
 		}
-		out[k] = npcDump
+		out[fileName] = npcDump
 	}
 	return out
 }

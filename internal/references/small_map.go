@@ -24,7 +24,7 @@ const (
 	None
 )
 
-func getSmallMapFile(smallMap SmallMapMasterTypes) string {
+func GetSmallMapFile(smallMap SmallMapMasterTypes) string {
 	switch smallMap {
 	case Castle:
 		return files.CASTLE_DAT
@@ -37,8 +37,24 @@ func getSmallMapFile(smallMap SmallMapMasterTypes) string {
 	case Dungeon:
 		return files.DUNGEON_DAT
 	default:
-
 		panic("unhandled default case")
+	}
+}
+
+func GetSmallMapTalkFile(smallMap SmallMapMasterTypes) string {
+	switch smallMap {
+	case Castle:
+		return "CASTLE.TLK"
+	case Towne:
+		return "TOWNE.TLK"
+	case Dwelling:
+		return "DWELLING.TLK"
+	case Keep:
+		return "KEEP.TLK"
+	case Dungeon:
+		return "DUNGEON.TLK"
+	default:
+		panic("unhandled default case for TLK file")
 	}
 }
 

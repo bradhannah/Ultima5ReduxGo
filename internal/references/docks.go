@@ -18,7 +18,7 @@ type DockReference struct {
 }
 
 type DockReferences struct {
-	docks []DockReference `json:"docks" yaml:"docks"`
+	Docks []DockReference `json:"docks" yaml:"docks"`
 }
 
 func GetListOfAllLocationsWithDocks() []Location {
@@ -41,13 +41,13 @@ func NewDocks(gameConfig *config.UltimaVConfiguration) *DockReferences {
 				Y: Coordinate(gameConfig.RawDataOvl[startDockYOffset+i]),
 			},
 		}
-		dockRefs.docks = append(dockRefs.docks, dock)
+		dockRefs.Docks = append(dockRefs.Docks, dock)
 	}
 	return dockRefs
 }
 
 func (d *DockReferences) GetDockPosition(dockLocation Location) Position {
-	for _, dock := range d.docks {
+	for _, dock := range d.Docks {
 		if dock.Location == dockLocation {
 			return dock.Position
 		}
@@ -56,7 +56,7 @@ func (d *DockReferences) GetDockPosition(dockLocation Location) Position {
 }
 
 func (d *DockReferences) GetDockPositionByString(dockLocation string) Position {
-	for _, l := range d.docks {
+	for _, l := range d.Docks {
 		if strings.ToLower(l.Location.String()) == strings.ToLower(dockLocation) {
 			return l.Position
 		}

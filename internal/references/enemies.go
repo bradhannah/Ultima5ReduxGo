@@ -35,10 +35,10 @@ func NewAllEnemyReferences(gameConfig *config.UltimaVConfiguration,
 			MaxPerMap:            rawEnemyRef.EnemyStats[EnemyStatMaxPerMap],
 			Strength:             rawEnemyRef.EnemyStats[EnemyStatStrength],
 			TreasureNumber:       rawEnemyRef.EnemyStats[EnemyStatTreasureNumber],
-			enemyAbilities:       rawEnemyRef.EnemyAbilities,
+			EnemyAbilities:       rawEnemyRef.EnemyAbilities,
+			AdditionalEnemyFlags: rawEnemyRef.AdditionalEnemyFlags,
 			AttackRange:          int(rawEnemyRef.AttackRange),
 			Friend:               nil,
-			additionalEnemyFlags: rawEnemyRef.AdditionalEnemyFlags,
 		}
 
 		enemyRefs = append(enemyRefs, enemyRef)

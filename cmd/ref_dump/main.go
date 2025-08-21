@@ -78,10 +78,15 @@ func dumpReferences(outputDir, outputFormat string) error {
 		"InventoryItemReferences":     gameReferences.InventoryItemReferences,
 		"LookReferences":              gameReferences.LookReferences,
 		"NPCReferences":               gameReferences.NPCReferences,
-		"DockReferences":              gameReferences.DockReferences,
+		"DockReferences":              *gameReferences.DockReferences,
 		"EnemyReferences":             references.ToSafeEnemyReferences(*gameReferences.EnemyReferences),
 		"TalkReferences":              gameReferences.TalkReferences,
 	}
+
+	// Debug: Print DockReferences before dumping
+	fmt.Printf("DockReferences: %+v\n", gameReferences.DockReferences)
+	// Debug: Print EnemyReferences after conversion
+	fmt.Printf("EnemyReferences (safe): %+v\n", references.ToSafeEnemyReferences(*gameReferences.EnemyReferences))
 
 	for name, field := range fields {
 		filePath := filepath.Join(outputDir, name+".json")
@@ -97,6 +102,20 @@ func dumpReferences(outputDir, outputFormat string) error {
 			return fmt.Errorf("failed to encode data for %s: %w", name, err)
 		}
 	}
+
+	// Directly serialize safe enemy references for verification
+	enemyReferencesSafe := references.ToSafeEnemyReferences(*gameReferences.EnemyReferences)
+	enemyReferencesSafeFile := filepath.Join(outputDir, "EnemyReferencesSafe.json")
+	enemyReferencesSafeF, err := os.Create(enemyReferencesSafeFile)
+	if err != nil {
+		return fmt.Errorf("failed to create file %s: %w", enemyReferencesSafeFile, err)
+	}
+	encoder := json.NewEncoder(enemyReferencesSafeF)
+	encoder.SetIndent("", "  ")
+	if err := encoder.Encode(enemyReferencesSafe); err != nil {
+		return fmt.Errorf("failed to encode data for EnemyReferencesSafe: %w", err)
+	}
+	enemyReferencesSafeF.Close()
 
 	log.Printf("References dumped to %s", outputFile)
 	return nil
