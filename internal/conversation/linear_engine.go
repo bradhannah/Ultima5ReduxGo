@@ -228,7 +228,9 @@ func (e *LinearConversationEngine) searchScriptKeywords() *ConversationResponse 
 			if strings.Contains(e.inputBuffer, strings.ToUpper(option)) {
 				e.currentOutput.Reset()
 				e.currentOutput.WriteString("\"")
-				e.processScriptLine(group.Script)
+				if err := e.processScriptLine(group.Script); err != nil {
+					return &ConversationResponse{Error: err}
+				}
 				e.currentOutput.WriteString("\"\n\n")
 				return e.promptForInput("Your interest?")
 			}
@@ -246,7 +248,31 @@ func (e *LinearConversationEngine) handleUnrecognizedInput() *ConversationRespon
 
 // processScriptLine processes a single script line command by command
 func (e *LinearConversationEngine) processScriptLine(line references.ScriptLine) error {
-	for _, item := range line {
+	for i := 0; i < len(line); i++ {
+		item := line[i]
+
+		if item.Cmd == references.IfElseKnowsName {
+			// Handle IfElseKnowsName inline with context
+			var targetIndex int
+			if e.hasMet {
+				// Use the next item (+1) - they DO know the Avatar
+				targetIndex = i + 1
+			} else {
+				// Use the item after that (+2) - they do NOT know the Avatar
+				targetIndex = i + 2
+			}
+
+			if targetIndex < len(line) {
+				if err := e.processScriptItem(line[targetIndex]); err != nil {
+					return err
+				}
+			}
+
+			// Skip the two conditional items and continue from after them
+			i += 2
+			continue
+		}
+
 		if err := e.processScriptItem(item); err != nil {
 			return err
 		}
@@ -311,8 +337,9 @@ func (e *LinearConversationEngine) processScriptItem(item references.ScriptItem)
 		// Label section markers don't execute
 
 	case references.IfElseKnowsName:
-		// Conditional branch based on whether NPC knows the Avatar's name
-		return e.processIfElseKnowsName()
+		// This should be handled in processScriptLine, not here
+		// If we reach here, something is wrong
+		return fmt.Errorf("IfElseKnowsName should be handled at line level")
 
 	default:
 		// Handle question labels (Label1 through EndScript range for questions)

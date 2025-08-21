@@ -718,7 +718,7 @@ func TestLinearConversationEngine_IfElseKnowsName_HasMet(t *testing.T) {
 }
 
 func TestLinearConversationEngine_IfElseKnowsName_FirstMeeting(t *testing.T) {
-	// Create script with IfElseKnowsName conditional
+	// Test IfElseKnowsName conditional in QuestionGroup context
 	script := &references.TalkScript{
 		Lines: []references.ScriptLine{
 			// Name (index 0)
@@ -731,10 +731,7 @@ func TestLinearConversationEngine_IfElseKnowsName_FirstMeeting(t *testing.T) {
 			},
 			// Greeting (index 2)
 			{
-				{Cmd: references.PlainString, Str: "Halt! "},
-				{Cmd: references.IfElseKnowsName},
-				{Cmd: references.PlainString, Str: "Good to see thee again, "},
-				{Cmd: references.PlainString, Str: "State thy business, stranger."},
+				{Cmd: references.PlainString, Str: "Halt!"},
 			},
 			// Job (index 3)
 			{
@@ -745,7 +742,17 @@ func TestLinearConversationEngine_IfElseKnowsName_FirstMeeting(t *testing.T) {
 				{Cmd: references.PlainString, Str: "Move along."},
 			},
 		},
-		QuestionGroups: []references.QuestionGroup{},
+		QuestionGroups: []references.QuestionGroup{
+			{
+				Options: []string{"TEST"},
+				Script: references.ScriptLine{
+					{Cmd: references.PlainString, Str: "Testing "},
+					{Cmd: references.IfElseKnowsName},
+					{Cmd: references.PlainString, Str: "met before"},
+					{Cmd: references.PlainString, Str: "first time"},
+				},
+			},
+		},
 	}
 
 	callbacks := &TestActionCallbacks{
@@ -754,15 +761,18 @@ func TestLinearConversationEngine_IfElseKnowsName_FirstMeeting(t *testing.T) {
 	}
 
 	engine := NewLinearConversationEngine(script, callbacks)
-	response := engine.Start(1)
+	engine.Start(1)
 
-	// Should show the "first meeting" branch
-	if !strings.Contains(response.Output, "State thy business, stranger") {
+	// Test the conditional in a keyword response
+	response := engine.ProcessInput("TEST")
+
+	// Should show the "first meeting" branch (first time)
+	if !strings.Contains(response.Output, "first time") {
 		t.Error("Expected 'first meeting' branch output")
 	}
 
 	// Should NOT show the "has met" text
-	if strings.Contains(response.Output, "Good to see thee again") {
+	if strings.Contains(response.Output, "met before") {
 		t.Error("Should not show 'has met' text for first meeting")
 	}
 }
