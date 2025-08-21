@@ -18,6 +18,7 @@ type LinearConversationEngine struct {
 	inputBuffer   string
 	hasMet        bool
 	isActive      bool
+	labelMap      map[references.TalkCommand]int // Maps label commands to script positions
 }
 
 // ActionCallbacks defines the interface for handling conversation actions
@@ -59,12 +60,18 @@ type ConversationResponse struct {
 
 // NewLinearConversationEngine creates a new linear conversation engine
 func NewLinearConversationEngine(script *references.TalkScript, callbacks ActionCallbacks) *LinearConversationEngine {
-	return &LinearConversationEngine{
+	engine := &LinearConversationEngine{
 		script:    script,
 		pointer:   0,
 		callbacks: callbacks,
 		isActive:  false,
+		labelMap:  make(map[references.TalkCommand]int),
 	}
+
+	// Build label map for fast navigation
+	engine.buildLabelMap()
+
+	return engine
 }
 
 // Start begins the conversation with the NPC introduction
@@ -99,7 +106,9 @@ func (e *LinearConversationEngine) performBootstrap() *ConversationResponse {
 	// Show NPC description (fixed entry 1)
 	if len(e.script.Lines) > references.TalkScriptConstantsDescription {
 		descLine := e.script.Lines[references.TalkScriptConstantsDescription]
-		e.processScriptLine(descLine)
+		if err := e.processScriptLine(descLine); err != nil {
+			return &ConversationResponse{Error: err}
+		}
 	}
 
 	// Determine greeting based on whether player has met NPC
@@ -111,14 +120,18 @@ func (e *LinearConversationEngine) performBootstrap() *ConversationResponse {
 		// Introduce themselves if first meeting
 		e.currentOutput.WriteString("\"I am called ")
 		nameLine := e.script.Lines[references.TalkScriptConstantsName]
-		e.processScriptLine(nameLine)
+		if err := e.processScriptLine(nameLine); err != nil {
+			return &ConversationResponse{Error: err}
+		}
 		e.currentOutput.WriteString("\"\n\n")
 		return e.promptForInput("Your interest?")
 	}
 
 	if len(greetingLine) > 0 {
 		e.currentOutput.WriteString("\"")
-		e.processScriptLine(greetingLine)
+		if err := e.processScriptLine(greetingLine); err != nil {
+			return &ConversationResponse{Error: err}
+		}
 		e.currentOutput.WriteString("\"\n\n")
 	}
 
@@ -280,7 +293,39 @@ func (e *LinearConversationEngine) processScriptItem(item references.ScriptItem)
 	case references.EndConversation:
 		e.isActive = false
 
+	case references.GotoLabel:
+		// Look for the label in the Num field
+		if item.Num >= 1 && item.Num <= 10 {
+			labelCmd := references.TalkCommand(int(references.Label1) + item.Num - 1)
+			return e.gotoLabel(labelCmd)
+		}
+
+	case references.DefineLabel:
+		// Label definitions don't execute, just mark positions
+
+	case references.Label1, references.Label2, references.Label3, references.Label4, references.Label5,
+		references.Label6, references.Label7, references.Label8, references.Label9, references.Label10:
+		// Labels themselves don't execute
+
+	case references.StartLabelDef:
+		// Label section markers don't execute
+
+	case references.IfElseKnowsName:
+		// Conditional branch based on whether NPC knows the Avatar's name
+		return e.processIfElseKnowsName()
+
 	default:
+		// Handle question labels (Label1 through EndScript range for questions)
+		if item.Cmd >= references.Label1 && item.Cmd <= references.EndScript {
+			// This is a question - transition to question mode
+			e.currentOutput.WriteString("\"")
+			if err := e.processQuestion(item.Cmd); err != nil {
+				return err
+			}
+			e.currentOutput.WriteString("\"")
+			return nil
+		}
+
 		// Log unknown commands but don't fail
 		log.Printf("Unknown talk command: %s (0x%02X)", item.Cmd, byte(item.Cmd))
 	}
@@ -310,4 +355,132 @@ func (e *LinearConversationEngine) IsActive() bool {
 // Stop forcefully ends the conversation
 func (e *LinearConversationEngine) Stop() {
 	e.isActive = false
+}
+
+// buildLabelMap scans the script and builds a map of labels to their positions
+func (e *LinearConversationEngine) buildLabelMap() {
+	for lineIndex, line := range e.script.Lines {
+		for itemIndex, item := range line {
+			// Look for DefineLabel followed by a label
+			if item.Cmd == references.DefineLabel && itemIndex+1 < len(line) {
+				nextItem := line[itemIndex+1]
+				if nextItem.Cmd >= references.Label1 && nextItem.Cmd <= references.Label10 {
+					e.labelMap[nextItem.Cmd] = lineIndex
+				}
+			}
+		}
+	}
+
+	// Also check labels defined in script.Labels if available
+	if e.script.Labels != nil {
+		for labelNum := range e.script.Labels {
+			if labelNum >= 1 && labelNum <= int(references.Label10-references.Label1+1) {
+				labelCmd := references.TalkCommand(int(references.Label1) + labelNum - 1)
+				// Find the label in the script lines
+				for lineIndex, line := range e.script.Lines {
+					for _, item := range line {
+						if item.Cmd == labelCmd {
+							e.labelMap[labelCmd] = lineIndex
+							break
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+// gotoLabel jumps to the specified label in the script
+func (e *LinearConversationEngine) gotoLabel(label references.TalkCommand) error {
+	if position, exists := e.labelMap[label]; exists {
+		e.pointer = position
+		return nil
+	}
+	return fmt.Errorf("label %s not found", label.String())
+}
+
+// processQuestion handles question processing and waits for user response
+func (e *LinearConversationEngine) processQuestion(questionCmd references.TalkCommand) error {
+	// For now, find the question text from the script.Labels if available
+	if e.script.Labels != nil {
+		labelNum := int(questionCmd - references.Label1 + 1)
+		if labelData, exists := e.script.Labels[labelNum]; exists {
+			// Process the initial question text
+			if err := e.processScriptLine(labelData.Initial); err != nil {
+				return err
+			}
+		}
+	}
+
+	// For basic implementation, just output a generic question prompt
+	if e.currentOutput.String() == "\"" {
+		e.currentOutput.WriteString("I have a question for thee.")
+	}
+
+	return nil
+}
+
+// processIfElseKnowsName handles conditional branching based on whether NPC knows Avatar's name
+func (e *LinearConversationEngine) processIfElseKnowsName() error {
+	// This method is called when processing a script line that contains IfElseKnowsName
+	// We need to find the current context (what line/item we're processing)
+
+	// Since we're processing within processScriptLine, we need to look at the current processing context
+	// For now, let's implement a simpler approach that works during bootstrap
+
+	// Find the line that contains IfElseKnowsName
+	var currentLine references.ScriptLine
+	var currentItemIndex int = -1
+
+	// First try the current pointer position
+	if e.pointer < len(e.script.Lines) {
+		for i, item := range e.script.Lines[e.pointer] {
+			if item.Cmd == references.IfElseKnowsName {
+				currentLine = e.script.Lines[e.pointer]
+				currentItemIndex = i
+				break
+			}
+		}
+	}
+
+	// If not found at current pointer, search all lines (for bootstrap phase)
+	if currentItemIndex == -1 {
+		for lineIdx, line := range e.script.Lines {
+			for itemIdx, item := range line {
+				if item.Cmd == references.IfElseKnowsName {
+					currentLine = line
+					currentItemIndex = itemIdx
+					e.pointer = lineIdx // Update pointer for consistency
+					break
+				}
+			}
+			if currentItemIndex != -1 {
+				break
+			}
+		}
+	}
+
+	if currentItemIndex == -1 {
+		return fmt.Errorf("IfElseKnowsName command not found")
+	}
+
+	// According to the documentation:
+	// The next script item (+1) will be what happens if they DO know the Avatar (HasMet),
+	// the one after that (+2) will be what happens if they do NOT know the Avatar.
+
+	var targetItemIndex int
+	if e.hasMet {
+		// Use the next item (+1) - they DO know the Avatar
+		targetItemIndex = currentItemIndex + 1
+	} else {
+		// Use the item after that (+2) - they do NOT know the Avatar
+		targetItemIndex = currentItemIndex + 2
+	}
+
+	if targetItemIndex < len(currentLine) {
+		// Process the target item
+		return e.processScriptItem(currentLine[targetItemIndex])
+	}
+
+	return nil
 }

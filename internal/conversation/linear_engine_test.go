@@ -566,3 +566,203 @@ func TestLinearConversationEngine_FullConversation(t *testing.T) {
 		t.Error("Expected farewell message")
 	}
 }
+
+func TestLinearConversationEngine_LabelNavigation(t *testing.T) {
+	// Create script with labels and jumps
+	script := &references.TalkScript{
+		Lines: []references.ScriptLine{
+			// Name (index 0)
+			{
+				{Cmd: references.PlainString, Str: "Wizard"},
+			},
+			// Description (index 1)
+			{
+				{Cmd: references.PlainString, Str: "a wise old wizard"},
+			},
+			// Greeting (index 2)
+			{
+				{Cmd: references.PlainString, Str: "Greetings, seeker."},
+			},
+			// Job (index 3)
+			{
+				{Cmd: references.PlainString, Str: "I study the mysteries of magic."},
+				{Cmd: references.GotoLabel, Num: 1}, // Jump to Label1
+			},
+			// Bye (index 4)
+			{
+				{Cmd: references.PlainString, Str: "Farewell."},
+			},
+			// Label1 content (index 5)
+			{
+				{Cmd: references.DefineLabel},
+				{Cmd: references.Label1},
+				{Cmd: references.PlainString, Str: "You have been transported by magic!"},
+			},
+		},
+		QuestionGroups: []references.QuestionGroup{},
+	}
+
+	callbacks := &TestActionCallbacks{
+		avatarName: "TestHero",
+		hasMetNPC:  true,
+	}
+
+	engine := NewLinearConversationEngine(script, callbacks)
+
+	// Check that label map was built
+	if len(engine.labelMap) == 0 {
+		t.Error("Expected label map to be built")
+	}
+
+	// Verify Label1 is mapped correctly
+	if position, exists := engine.labelMap[references.Label1]; !exists {
+		t.Error("Expected Label1 to be in label map")
+	} else if position != 5 {
+		t.Errorf("Expected Label1 to map to position 5, got %d", position)
+	}
+
+	engine.Start(1)
+
+	// Ask about job which should trigger goto Label1
+	response := engine.ProcessInput("JOB")
+
+	if response.Error != nil {
+		t.Errorf("Unexpected error: %v", response.Error)
+	}
+
+	if !strings.Contains(response.Output, "I study the mysteries of magic") {
+		t.Error("Expected job response")
+	}
+}
+
+func TestLinearConversationEngine_GotoLabelError(t *testing.T) {
+	script := createTestScript()
+	callbacks := &TestActionCallbacks{
+		avatarName: "TestHero",
+		hasMetNPC:  true,
+	}
+
+	engine := NewLinearConversationEngine(script, callbacks)
+
+	// Try to goto a non-existent label
+	err := engine.gotoLabel(references.Label5)
+
+	if err == nil {
+		t.Error("Expected error when going to non-existent label")
+	}
+
+	if !strings.Contains(err.Error(), "label") && !strings.Contains(err.Error(), "not found") {
+		t.Error("Expected 'label not found' error message")
+	}
+}
+
+func TestLinearConversationEngine_IfElseKnowsName_HasMet(t *testing.T) {
+	// Create script with IfElseKnowsName conditional
+	script := &references.TalkScript{
+		Lines: []references.ScriptLine{
+			// Name (index 0)
+			{
+				{Cmd: references.PlainString, Str: "Guard"},
+			},
+			// Description (index 1)
+			{
+				{Cmd: references.PlainString, Str: "a town guard"},
+			},
+			// Greeting (index 2)
+			{
+				{Cmd: references.PlainString, Str: "Halt! "},
+				{Cmd: references.IfElseKnowsName},
+				{Cmd: references.PlainString, Str: "Good to see thee again, "},
+				{Cmd: references.PlainString, Str: "State thy business, stranger."},
+				{Cmd: references.AvatarsName},
+			},
+			// Job (index 3)
+			{
+				{Cmd: references.PlainString, Str: "I guard this town."},
+			},
+			// Bye (index 4)
+			{
+				{Cmd: references.PlainString, Str: "Move along."},
+			},
+		},
+		QuestionGroups: []references.QuestionGroup{},
+	}
+
+	callbacks := &TestActionCallbacks{
+		avatarName: "TestHero",
+		hasMetNPC:  true, // Has met before
+	}
+
+	engine := NewLinearConversationEngine(script, callbacks)
+	response := engine.Start(1)
+
+	// Debug output
+	t.Logf("Actual output: %q", response.Output)
+	if response.Error != nil {
+		t.Logf("Error: %v", response.Error)
+	}
+
+	// Check for errors first
+	if response.Error != nil {
+		t.Fatalf("Unexpected error: %v", response.Error)
+	}
+
+	// Should show the "has met" branch
+	if !strings.Contains(response.Output, "Good to see thee again") {
+		t.Error("Expected 'has met' branch output")
+	}
+
+	if !strings.Contains(response.Output, "TestHero") {
+		t.Error("Expected avatar name in output")
+	}
+}
+
+func TestLinearConversationEngine_IfElseKnowsName_FirstMeeting(t *testing.T) {
+	// Create script with IfElseKnowsName conditional
+	script := &references.TalkScript{
+		Lines: []references.ScriptLine{
+			// Name (index 0)
+			{
+				{Cmd: references.PlainString, Str: "Guard"},
+			},
+			// Description (index 1)
+			{
+				{Cmd: references.PlainString, Str: "a town guard"},
+			},
+			// Greeting (index 2)
+			{
+				{Cmd: references.PlainString, Str: "Halt! "},
+				{Cmd: references.IfElseKnowsName},
+				{Cmd: references.PlainString, Str: "Good to see thee again, "},
+				{Cmd: references.PlainString, Str: "State thy business, stranger."},
+			},
+			// Job (index 3)
+			{
+				{Cmd: references.PlainString, Str: "I guard this town."},
+			},
+			// Bye (index 4)
+			{
+				{Cmd: references.PlainString, Str: "Move along."},
+			},
+		},
+		QuestionGroups: []references.QuestionGroup{},
+	}
+
+	callbacks := &TestActionCallbacks{
+		avatarName: "TestHero",
+		hasMetNPC:  false, // First meeting
+	}
+
+	engine := NewLinearConversationEngine(script, callbacks)
+	response := engine.Start(1)
+
+	// Should show the "first meeting" branch
+	if !strings.Contains(response.Output, "State thy business, stranger") {
+		t.Error("Expected 'first meeting' branch output")
+	}
+
+	// Should NOT show the "has met" text
+	if strings.Contains(response.Output, "Good to see thee again") {
+		t.Error("Should not show 'has met' text for first meeting")
+	}
+}
