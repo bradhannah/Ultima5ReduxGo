@@ -44,7 +44,7 @@ controls dialogue flow, substitutions, prompts, and engine-internal operations.
 | String Output   | PlainString                    | 0x00       | Basic printable string                                                                                                                                                                                                                     |             | No                                                    |                                                                    | No                                 |                               |
 | String Output   | AvatarsName                    | 0x81       | Substitute Avatar's name                                                                                                                                                                                                                   |             | No                                                    |                                                                    | No                                 |                               |
 | String Output   | NewLine                        | 0x8D       | Insert new line                                                                                                                                                                                                                            |             | No                                                    |                                                                    | No                                 |                               |
-| Workflow        | OrBranch                       | 0x87       | Branch (was Or)                                                                                                                                                                                                                            |             | No                                                    |                                                                    | No                                 |                               |
+| Workflow        | OrBranch                       | 0x87       | Branch (was Or). Will require a look ahead to determine if there is an OR condition.                                                                                                                                                       |             | No                                                    |                                                                    | No                                 |                               |
 | Workflow        | IfElseKnowsName                | 0x8C       | If/else branch based on name knowledge. The next script item (+1) will be what happens if they DO know the Avatar (HasMet), the one after that (+2) will be what happens if they do NOT know the Avatar.                                   |             | No                                                    |                                                                    | No                                 |                               |
 | Workflow        | StartLabelDef                  | 0x90       | Start label definition.    Defines the beginning or end of the label sections.   If next item (+1) is EndScript, then that is end of all labels and conversation script. If next item (+1) is DefineLabel then it is defining a NEW label. |             | No                                                    |                                                                    | No                                 |                               |
 | Workflow        | Label1                         | 0x91       | Label 1                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                               |
@@ -278,3 +278,51 @@ Special codes may be embedded in any string.
 ## References
 
 - [Ultima V Internal Formats Wiki](https://wiki.ultimacodex.com/wiki/Ultima_V_internal_formats)
+
+---
+
+## TLK File Conversation Processing Algorithm
+
+This section describes the general algorithm for reading and processing TLK files during NPC conversations. It abstracts the pointer-driven logic used in the original TALKNPC.C implementation, suitable for re-implementation in other languages or systems.
+
+### 1. Loading TLK Data
+- Load the TLK file data for the current NPC into a buffer.
+- Use the script index table to locate the start of the NPC's script block.
+
+### 2. Pointer-Based Script Traversal
+- Initialize a pointer to the start of the NPC's script block.
+- Traverse the TLK script data using the pointer, reading one byte/command at a time.
+
+### 3. Searching for Dialogue Blocks
+- Use search routines to locate specific markers, string numbers, or command codes within the TLK data.
+- Advance the pointer to the desired block or response using delimiter bytes or command codes.
+
+### 4. Outputting Dialogue
+- Output printable strings by reading bytes from the buffer until a null or delimiter is found.
+- Handle text formatting and line wrapping as needed.
+
+### 5. Handling User Input and Branching
+- When prompted, wait for user input and match it against known keywords or triggers.
+- Use conditional branching to advance the pointer to the appropriate response block based on input or script logic.
+
+### 6. Executing Scripted Actions
+- When a TLK command requiring an action is encountered (e.g., join party, give item, adjust karma), trigger the corresponding game logic.
+- Actions are executed by interpreting specific command bytes in the TLK data.
+
+### 7. Looping and Termination
+- Continue processing commands and advancing the pointer until an end-of-script marker is reached or the conversation is terminated.
+
+#### Abstracted Algorithm (for LLM Re-implementation)
+
+1. Load TLK data for the current NPC into a buffer.
+2. Initialize a pointer to the start of the NPC’s script block.
+3. While not at end-of-script:
+    - Read the next byte/command.
+    - If it’s a printable string, output it.
+    - If it’s a prompt, wait for user input and match against keywords.
+    - If it’s a branch or label, advance the pointer to the correct block.
+    - If it’s an action command, trigger the corresponding game logic.
+    - Advance the pointer as needed.
+4. Repeat until the conversation ends.
+
+---
