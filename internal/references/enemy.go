@@ -151,22 +151,6 @@ func (e *EnemyReferences) GetRandomEnemyReferenceByEraAndTile(era datetime.Era, 
 	return enemiesThatCanGoOnTile[idx], nil
 }
 
-type EnemyReferenceSafe struct {
-	KeyFrameTile         *Tile                `json:"key_frame_tile" yaml:"key_frame_tile"`
-	Armour               int                  `json:"armour" yaml:"armour"`
-	Damage               int                  `json:"damage" yaml:"damage"`
-	Dexterity            int                  `json:"dexterity" yaml:"dexterity"`
-	HitPoints            int                  `json:"hit_points" yaml:"hit_points"`
-	Intelligence         int                  `json:"intelligence" yaml:"intelligence"`
-	MaxPerMap            int                  `json:"max_per_map" yaml:"max_per_map"`
-	Strength             int                  `json:"strength" yaml:"strength"`
-	TreasureNumber       int                  `json:"treasure_number" yaml:"treasure_number"`
-	EnemyAbilities       map[string]bool      `json:"enemy_abilities" yaml:"enemy_abilities"`
-	AdditionalEnemyFlags AdditionalEnemyFlags `json:"additional_enemy_flags" yaml:"additional_enemy_flags"`
-	AttackRange          int                  `json:"attack_range" yaml:"attack_range"`
-	// Friend omitted to avoid cyclic reference
-}
-
 func EnemyAbilityToString(ability EnemyAbility) string {
 	switch ability {
 	case Bludgeons:
@@ -202,34 +186,4 @@ func EnemyAbilityToString(ability EnemyAbility) string {
 	default:
 		return "Unknown"
 	}
-}
-
-func toFriendlyAbilityMap(abilities map[EnemyAbility]bool) map[string]bool {
-	friendly := make(map[string]bool)
-	for k, v := range abilities {
-		key := fmt.Sprintf("%d_%s", k, EnemyAbilityToString(k))
-		friendly[key] = v
-	}
-	return friendly
-}
-
-func ToSafeEnemyReferences(refs []EnemyReference) []EnemyReferenceSafe {
-	safe := make([]EnemyReferenceSafe, len(refs))
-	for i, e := range refs {
-		safe[i] = EnemyReferenceSafe{
-			KeyFrameTile:         e.KeyFrameTile,
-			Armour:               e.Armour,
-			Damage:               e.Damage,
-			Dexterity:            e.Dexterity,
-			HitPoints:            e.HitPoints,
-			Intelligence:         e.Intelligence,
-			MaxPerMap:            e.MaxPerMap,
-			Strength:             e.Strength,
-			TreasureNumber:       e.TreasureNumber,
-			EnemyAbilities:       toFriendlyAbilityMap(e.EnemyAbilities),
-			AdditionalEnemyFlags: e.AdditionalEnemyFlags,
-			AttackRange:          e.AttackRange,
-		}
-	}
-	return safe
 }
