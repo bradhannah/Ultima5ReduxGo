@@ -331,7 +331,10 @@ func (e *LinearConversationEngine) processScriptItem(item references.ScriptItem)
 
 	case references.Label1, references.Label2, references.Label3, references.Label4, references.Label5,
 		references.Label6, references.Label7, references.Label8, references.Label9, references.Label10:
-		// Labels themselves don't execute
+		// When we encounter a label in a response, navigate to that label's content
+		if err := e.processQuestion(item.Cmd); err != nil {
+			return err
+		}
 
 	case references.StartLabelDef:
 		// Label section markers don't execute
@@ -345,11 +348,9 @@ func (e *LinearConversationEngine) processScriptItem(item references.ScriptItem)
 		// Handle question labels (Label1 through EndScript range for questions)
 		if item.Cmd >= references.Label1 && item.Cmd <= references.EndScript {
 			// This is a question - transition to question mode
-			e.currentOutput.WriteString("\"")
 			if err := e.processQuestion(item.Cmd); err != nil {
 				return err
 			}
-			e.currentOutput.WriteString("\"")
 			return nil
 		}
 
@@ -428,13 +429,30 @@ func (e *LinearConversationEngine) gotoLabel(label references.TalkCommand) error
 
 // processQuestion handles question processing and waits for user response
 func (e *LinearConversationEngine) processQuestion(questionCmd references.TalkCommand) error {
-	// For now, find the question text from the script.Labels if available
+	// Find the question text from the script.Labels if available
 	if e.script.Labels != nil {
-		labelNum := int(questionCmd - references.Label1 + 1)
+		// Calculate label number: Label1=0x91 -> 0, Label2=0x92 -> 1, etc.
+		// But the TLK data seems to be off by one, so Label5 (0x95) should map to Label 4
+		labelNum := int(questionCmd - references.Label1)
+
 		if labelData, exists := e.script.Labels[labelNum]; exists {
-			// Process the initial question text
-			if err := e.processScriptLine(labelData.Initial); err != nil {
-				return err
+			// Skip the label definition header (StartLabelDef and the label itself)
+			// Start processing from the actual content
+			contentStart := 0
+			for i, item := range labelData.Initial {
+				if item.Cmd == references.StartLabelDef ||
+					(item.Cmd >= references.Label1 && item.Cmd <= references.Label10) {
+					contentStart = i + 1
+				} else {
+					break
+				}
+			}
+
+			if contentStart < len(labelData.Initial) {
+				contentItems := labelData.Initial[contentStart:]
+				if err := e.processScriptLine(contentItems); err != nil {
+					return err
+				}
 			}
 		}
 	}

@@ -1007,4 +1007,84 @@ func TestLinearEngineWithRealTreannaData(t *testing.T) {
 			t.Logf("NAME responses differ - IfElseKnowsName working in NAME response")
 		}
 	})
+
+	t.Run("SmitKeywordLabelNavigation", func(t *testing.T) {
+		// Test the SMIT keyword which should trigger label navigation to Label 4
+		callbacks := &TestActionCallbacks{
+			avatarName: "TestAvatar",
+			hasMetNPC:  false, // Doesn't matter for this test
+		}
+
+		engine := NewLinearConversationEngine(script, callbacks)
+
+		// Debug: Show available question groups
+		t.Logf("Available question groups (%d total):", len(script.QuestionGroups))
+		for i, group := range script.QuestionGroups {
+			t.Logf("  Group %d: Options=%v", i, group.Options)
+		}
+
+		// Debug: Show available labels
+		if script.Labels != nil {
+			t.Logf("Available labels (%d total):", len(script.Labels))
+			for labelNum, labelData := range script.Labels {
+				t.Logf("  Label %d: %d items in Initial", labelNum, len(labelData.Initial))
+				if len(labelData.Initial) > 0 {
+					t.Logf("    First item: Cmd=%s, Str='%s'", labelData.Initial[0].Cmd.String(), labelData.Initial[0].Str)
+				}
+				// Show Label 4 content in detail since that's what we expect
+				if labelNum == 4 {
+					t.Logf("  Label 4 detailed content:")
+					for i, item := range labelData.Initial {
+						t.Logf("    Item %d: Cmd=%s, Str='%s'", i, item.Cmd.String(), item.Str)
+					}
+				}
+			}
+		} else {
+			t.Logf("No labels found in script")
+		}
+
+		// Start conversation
+		response := engine.Start(3)
+		if response.Error != nil {
+			t.Fatalf("Start conversation failed: %v", response.Error)
+		}
+
+		// Test SMIT keyword - should trigger label navigation to Label 4
+		t.Logf("Testing 'SMIT' keyword...")
+		smitResponse := engine.ProcessInput("SMIT")
+		if smitResponse.Error != nil {
+			t.Fatalf("SMIT query failed: %v", smitResponse.Error)
+		}
+
+		// Also test with lowercase to make sure
+		if smitResponse.Output == "\"I cannot help thee with that.\"\n\n" {
+			t.Logf("SMIT not found, trying 'smit' (lowercase)...")
+			engine2 := NewLinearConversationEngine(script, callbacks)
+			engine2.Start(3)
+			smitResponse = engine2.ProcessInput("smit")
+		}
+
+		t.Logf("SMIT response: %s", smitResponse.Output)
+
+		// Should contain the expected text from Label 4
+		if !strings.Contains(smitResponse.Output, "That's it!") {
+			t.Error("Expected SMIT response to contain 'That's it!'")
+		}
+
+		if !strings.Contains(smitResponse.Output, "Iolo's barn") {
+			t.Error("Expected SMIT response to mention 'Iolo's barn'")
+		}
+
+		if !strings.Contains(smitResponse.Output, "deep forest") {
+			t.Error("Expected SMIT response to mention 'deep forest'")
+		}
+
+		// Check that the response needs input (conversation should continue)
+		if !smitResponse.NeedsInput {
+			t.Error("Expected conversation to continue after SMIT response")
+		}
+
+		// End conversation cleanly
+		engine.ProcessInput("BYE")
+	})
 }
