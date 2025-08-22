@@ -4,8 +4,11 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/conversation"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
@@ -126,78 +129,127 @@ func (d *DemoCallbacks) SetMet(npcID int) {
 	d.metNPCs[npcID] = true
 }
 
-// createDemoScript creates a sample TalkScript for the demo
-func createDemoScript() *references.TalkScript {
-	return &references.TalkScript{
-		Lines: []references.ScriptLine{
-			// Name (index 0)
-			{
-				{Cmd: references.PlainString, Str: "Treanna"},
-			},
-			// Description (index 1)
-			{
-				{Cmd: references.PlainString, Str: "a mysterious woman in flowing robes"},
-			},
-			// Greeting (index 2)
-			{
-				{Cmd: references.PlainString, Str: "Greetings again, "},
-				{Cmd: references.AvatarsName},
-				{Cmd: references.PlainString, Str: ". I have been expecting thee."},
-			},
-			// Job (index 3)
-			{
-				{Cmd: references.PlainString, Str: "I am a keeper of ancient knowledge and seeker of the Eight Virtues."},
-				{Cmd: references.NewLine},
-				{Cmd: references.PlainString, Str: "My studies have revealed many secrets."},
-			},
-			// Bye (index 4)
-			{
-				{Cmd: references.PlainString, Str: "May the virtues guide thy path, "},
-				{Cmd: references.AvatarsName},
-				{Cmd: references.PlainString, Str: ". Farewell."},
-			},
-		},
-		QuestionGroups: []references.QuestionGroup{
-			{
-				Options: []string{"VIRTUE", "VIRTUES", "HONOR", "JUSTICE", "COMPASSION"},
-				Script: references.ScriptLine{
-					{Cmd: references.PlainString, Str: "The Eight Virtues are the foundation of all that is good."},
-					{Cmd: references.NewLine},
-					{Cmd: references.PlainString, Str: "Through Honesty, Compassion, Valor, Justice, Sacrifice, Honor, Spirituality, and Humility, one achieves enlightenment."},
-					{Cmd: references.KarmaPlusOne},
-				},
-			},
-			{
-				Options: []string{"MAGIC", "SPELL", "SPELLS", "RUNE", "RUNES"},
-				Script: references.ScriptLine{
-					{Cmd: references.PlainString, Str: "Magic flows through all things in Britannia, if one knows how to perceive it."},
-					{Cmd: references.NewLine},
-					{Cmd: references.PlainString, Str: "The runes hold power beyond mortal understanding."},
-				},
-			},
-			{
-				Options: []string{"JOIN", "PARTY", "HELP", "TRAVEL"},
-				Script: references.ScriptLine{
-					{Cmd: references.PlainString, Str: "Thy quest calls to me, Avatar. I shall join thee in thy noble cause!"},
-					{Cmd: references.JoinParty},
-				},
-			},
-			{
-				Options: []string{"KNOWLEDGE", "SECRETS", "ANCIENT", "LORE"},
-				Script: references.ScriptLine{
-					{Cmd: references.PlainString, Str: "Knowledge is power, but with power comes responsibility."},
-					{Cmd: references.NewLine},
-					{Cmd: references.PlainString, Str: "I sense great wisdom within thee. This knowledge may aid thy quest."},
-					{Cmd: references.Pause},
-					{Cmd: references.PlainString, Str: "But remember - some secrets are better left undisturbed."},
-				},
-			},
-		},
+type NPCInfo struct {
+	Name       string `json:"name"`
+	TLKFile    string `json:"tlk_file"`
+	TLKIndex   int    `json:"tlk_index"`
+	NPCFile    string `json:"npc_file"`
+	NPCIndex   int    `json:"npc_index"`
+	Location   string `json:"location"`
+	Occupation string `json:"occupation"`
+}
+
+// loadNPCList loads available NPCs for selection
+func loadNPCList() []NPCInfo {
+	return []NPCInfo{
+		{Name: "Alistair", TLKFile: "CASTLE.TLK", TLKIndex: 1, NPCFile: "CASTLE.NPC", NPCIndex: 1, Location: "Castle", Occupation: "Bard"},
+		{Name: "Treanna", TLKFile: "CASTLE.TLK", TLKIndex: 3, NPCFile: "CASTLE.NPC", NPCIndex: 3, Location: "Castle", Occupation: "Girl"},
+		{Name: "Blackthorn", TLKFile: "CASTLE.TLK", TLKIndex: 0, NPCFile: "CASTLE.NPC", NPCIndex: 0, Location: "Castle", Occupation: "King"},
+		{Name: "Margaret", TLKFile: "CASTLE.TLK", TLKIndex: 2, NPCFile: "CASTLE.NPC", NPCIndex: 2, Location: "Castle", Occupation: "Cook"},
+		{Name: "Chuckles", TLKFile: "CASTLE.TLK", TLKIndex: 4, NPCFile: "CASTLE.NPC", NPCIndex: 4, Location: "Castle", Occupation: "Jester"},
 	}
 }
 
+// loadTalkScript loads a TalkScript from a TLK file
+func loadTalkScript(npcInfo NPCInfo) (*references.TalkScript, error) {
+	cfg := config.NewUltimaVConfiguration()
+	tlkPath := filepath.Join(cfg.SavedConfigData.DataFilePath, npcInfo.TLKFile)
+
+	// Load TLK file
+	talkData, err := references.LoadFile(tlkPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load TLK file: %v", err)
+	}
+
+	// Get NPC data
+	npcData, exists := talkData[npcInfo.TLKIndex]
+	if !exists {
+		return nil, fmt.Errorf("NPC data not found at index %d in %s", npcInfo.TLKIndex, npcInfo.TLKFile)
+	}
+
+	// Load proper word dictionary from DATA.OVL
+	dataOvl := references.NewDataOvl(cfg)
+	wordDict := references.NewWordDict(dataOvl.CompressedWords)
+
+	// Parse NPC's blob into a TalkScript
+	script, err := references.ParseNPCBlob(npcData, wordDict)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse NPC data: %v", err)
+	}
+
+	return script, nil
+}
+
+func selectNPC() NPCInfo {
+	npcs := loadNPCList()
+	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Println("Available NPCs:")
+	for i, npc := range npcs {
+		fmt.Printf("%d. %s (%s - %s)\n", i+1, npc.Name, npc.Location, npc.Occupation)
+	}
+
+	fmt.Print("\nSelect an NPC (1-5): ")
+	input, _ := reader.ReadString('\n')
+	input = strings.TrimSpace(input)
+
+	choice, err := strconv.Atoi(input)
+	if err != nil || choice < 1 || choice > len(npcs) {
+		fmt.Println("Invalid choice, defaulting to Alistair")
+		return npcs[0]
+	}
+
+	return npcs[choice-1]
+}
+
+func runConversation(npcInfo NPCInfo, avatarName string, hasMet bool) error {
+	// Load the real TalkScript
+	script, err := loadTalkScript(npcInfo)
+	if err != nil {
+		return fmt.Errorf("failed to load script for %s: %v", npcInfo.Name, err)
+	}
+
+	// Create callbacks
+	callbacks := NewDemoCallbacks(avatarName)
+	if hasMet {
+		callbacks.SetMet(npcInfo.TLKIndex)
+	}
+
+	// Create conversation engine
+	engine := conversation.NewLinearConversationEngine(script, callbacks)
+
+	// Start conversation
+	response := engine.Start(npcInfo.TLKIndex)
+	reader := bufio.NewReader(os.Stdin)
+
+	// Main conversation loop
+	for engine.IsActive() && !response.IsComplete {
+		if response.Error != nil {
+			return fmt.Errorf("conversation error: %v", response.Error)
+		}
+
+		// Display output
+		fmt.Print(response.Output)
+
+		// Get input if needed
+		if response.NeedsInput {
+			input, err := reader.ReadString('\n')
+			if err != nil {
+				return fmt.Errorf("error reading input: %v", err)
+			}
+			input = strings.TrimSpace(input)
+
+			response = engine.ProcessInput(input)
+		}
+	}
+
+	// Final output
+	fmt.Print(response.Output)
+	return nil
+}
+
 func main() {
-	fmt.Println("=== Linear Conversation System Demo ===")
+	fmt.Println("=== Linear Conversation System Demo (Real TLK Data) ===")
 	fmt.Println()
 
 	// Get player name
@@ -211,84 +263,36 @@ func main() {
 
 	fmt.Printf("\nWelcome, %s!\n\n", avatarName)
 
-	// Create callbacks and script
-	callbacks := NewDemoCallbacks(avatarName)
-	script := createDemoScript()
+	// Select NPC
+	npcInfo := selectNPC()
+	fmt.Printf("\nYou have chosen to speak with %s.\n\n", npcInfo.Name)
 
-	// Create conversation engine
-	engine := conversation.NewLinearConversationEngine(script, callbacks)
+	// First meeting
+	fmt.Printf("--- First Meeting with %s ---\n", npcInfo.Name)
+	fmt.Printf("You approach %s...\n\n", npcInfo.Name)
 
-	// Demo: First meeting
-	fmt.Println("--- First Meeting ---")
-	fmt.Println("You see a mysterious woman in flowing robes...")
-	fmt.Println()
-
-	npcID := 1
-	response := engine.Start(npcID)
-
-	// Main conversation loop
-	for engine.IsActive() && !response.IsComplete {
-		if response.Error != nil {
-			fmt.Printf("Error: %v\n", response.Error)
-			break
-		}
-
-		// Display output
-		fmt.Print(response.Output)
-
-		// Get input if needed
-		if response.NeedsInput {
-			input, err := reader.ReadString('\n')
-			if err != nil {
-				fmt.Printf("Error reading input: %v\n", err)
-				break
-			}
-			input = strings.TrimSpace(input)
-
-			response = engine.ProcessInput(input)
-		}
+	if err := runConversation(npcInfo, avatarName, false); err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
 	}
 
-	// Final output
-	fmt.Print(response.Output)
+	// Ask if they want to try a return visit
+	fmt.Print("\n\nWould you like to try a return visit? (y/n): ")
+	input, _ := reader.ReadString('\n')
+	input = strings.TrimSpace(strings.ToLower(input))
 
-	// Mark as met for second demo
-	callbacks.SetMet(npcID)
+	if input == "y" || input == "yes" {
+		// Second meeting (HasMet=true)
+		fmt.Printf("\n--- Return Visit to %s ---\n", npcInfo.Name)
+		fmt.Printf("You approach %s again...\n\n", npcInfo.Name)
 
-	// Demo: Second meeting
-	fmt.Println("\n\n--- Return Visit ---")
-	fmt.Println("You approach the woman again...")
-	fmt.Println()
-
-	engine2 := conversation.NewLinearConversationEngine(script, callbacks)
-	response = engine2.Start(npcID)
-
-	// Second conversation loop
-	for engine2.IsActive() && !response.IsComplete {
-		if response.Error != nil {
-			fmt.Printf("Error: %v\n", response.Error)
-			break
-		}
-
-		// Display output
-		fmt.Print(response.Output)
-
-		// Get input if needed
-		if response.NeedsInput {
-			input, err := reader.ReadString('\n')
-			if err != nil {
-				fmt.Printf("Error reading input: %v\n", err)
-				break
-			}
-			input = strings.TrimSpace(input)
-
-			response = engine2.ProcessInput(input)
+		if err := runConversation(npcInfo, avatarName, true); err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return
 		}
 	}
-
-	// Final output
-	fmt.Print(response.Output)
 
 	fmt.Println("\n\n=== Demo Complete ===")
-	fmt.Println("Try different keywords like: NAME, JOB, VIRTUE, MAGIC, JOIN, KNOWLEDGE, BYE")
+	fmt.Println("Try different keywords like: NAME, JOB, BYE")
+	fmt.Printf("For %s, also try keywords from the test cases like: MUSI, SMIT, VAL\n", npcInfo.Name)
 }
