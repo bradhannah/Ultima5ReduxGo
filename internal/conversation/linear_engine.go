@@ -502,20 +502,17 @@ func (e *LinearConversationEngine) processQuestionAnswer() *ConversationResponse
 			e.currentOutput.Reset()
 			e.currentOutput.WriteString("\"")
 
-			// Special case: if the answer is "val" and we're in label 1, navigate to label 2
-			if inputKey == "val" && e.currentLabel == 1 {
-				log.Printf("DEBUG: Special case: 'val' in label 1, navigating to label 2")
-				e.currentLabel = -1 // Exit question mode
-				// Label2 = 0x92, which maps to labelNum = 0x92 - 0x91 = 1
-				// But we want to go to label 2, so use Label3 (0x93)
-				if err := e.processQuestion(references.Label3); err != nil {
-					return &ConversationResponse{Error: err}
-				}
-			} else {
-				// Process the normal answer
-				if err := e.processScriptLine(qa.Answer); err != nil {
-					return &ConversationResponse{Error: err}
-				}
+			// Store original label before processing answer
+			originalLabel := e.currentLabel
+
+			// Process the answer - it may contain navigation commands
+			if err := e.processScriptLine(qa.Answer); err != nil {
+				return &ConversationResponse{Error: err}
+			}
+
+			// Only exit question mode if we haven't navigated to another question
+			// If processScriptLine triggered a label navigation, we'll stay in question mode
+			if e.currentLabel == originalLabel {
 				e.currentLabel = -1 // Exit question mode after answering
 			}
 
