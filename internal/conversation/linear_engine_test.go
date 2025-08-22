@@ -1112,6 +1112,12 @@ func TestLinearEngineWithRealTreannaData(t *testing.T) {
 							t.Logf("    '%s' -> %d items", key, len(qa.Answer))
 						}
 					}
+					if len(labelData.DefaultAnswers) > 0 {
+						t.Logf("  DefaultAnswers: %d entries", len(labelData.DefaultAnswers))
+						for i, defaultAnswer := range labelData.DefaultAnswers {
+							t.Logf("    Default %d: %d items", i, len(defaultAnswer))
+						}
+					}
 				}
 			}
 		}
@@ -1180,5 +1186,138 @@ func TestLinearEngineWithRealTreannaData(t *testing.T) {
 
 		// End conversation cleanly
 		engine.ProcessInput("BYE")
+	})
+
+	t.Run("CompleteValSequenceWithYN", func(t *testing.T) {
+		// Create test callbacks
+		callbacks := &TestActionCallbacks{
+			avatarName: "TestAvatar",
+		}
+
+		// Create conversation engine with Treanna's data
+		engine := NewLinearConversationEngine(script, callbacks)
+		engine.Start(3)
+
+		t.Log("Testing complete VAL → VAL → Y/N sequence...")
+
+		// Step 1: Say "VAL" to trigger Label 1
+		valResponse1 := engine.ProcessInput("VAL")
+		t.Logf("First VAL response: %q", strings.TrimSpace(valResponse1.Output))
+
+		// Should ask "What's thy favorite breed?"
+		if !strings.Contains(valResponse1.Output, "What's thy favorite breed?") {
+			t.Error("Expected first VAL to ask about favorite breed")
+		}
+
+		// Step 2: Say "VAL" again to trigger Label 2 navigation
+		valResponse2 := engine.ProcessInput("VAL")
+		t.Logf("Second VAL response: %q", strings.TrimSpace(valResponse2.Output))
+
+		// Should show "Hey, mine too!" and ask "Ever heard of a talking horse?"
+		if !strings.Contains(valResponse2.Output, "Hey, mine too!") {
+			t.Error("Expected second VAL to show 'Hey, mine too!'")
+		}
+		if !strings.Contains(valResponse2.Output, "Ever heard of a talking horse?") {
+			t.Error("Expected second VAL to ask about talking horse")
+		}
+
+		// Step 3: Answer "N" to the talking horse question
+		nResponse := engine.ProcessInput("N")
+		t.Logf("N response: %q", strings.TrimSpace(nResponse.Output))
+
+		// Should respond with info about Bandaii
+		if strings.Contains(nResponse.Output, "I cannot help thee with that") {
+			t.Error("Expected N response to provide information about Bandaii, not default message")
+		}
+
+		// Step 3b: Test what happens with "NO" instead of "N"
+		engine3 := NewLinearConversationEngine(script, callbacks)
+		engine3.Start(3)
+		engine3.ProcessInput("VAL")
+		engine3.ProcessInput("VAL")
+
+		noResponse := engine3.ProcessInput("NO")
+		t.Logf("NO response: %q", strings.TrimSpace(noResponse.Output))
+
+		// This should use the default answer instead of fallback message
+		if strings.Contains(noResponse.Output, "I cannot help thee with that") {
+			t.Error("Expected NO response to use default answer, not fallback message")
+		}
+
+		// Step 3c: Test with completely unrecognized input like "OOF"
+		engine4 := NewLinearConversationEngine(script, callbacks)
+		engine4.Start(3)
+		engine4.ProcessInput("VAL")
+		engine4.ProcessInput("VAL")
+
+		oofResponse := engine4.ProcessInput("OOF")
+		t.Logf("OOF response: %q", strings.TrimSpace(oofResponse.Output))
+
+		// Should use default answer (Goto Label 2) which loops back to "Ever heard of a talking horse?"
+		if strings.Contains(oofResponse.Output, "I cannot help thee with that") {
+			t.Error("Expected OOF response to use default answer (loop back), not fallback message")
+		}
+		if !strings.Contains(oofResponse.Output, "Ever heard of a talking horse?") {
+			t.Error("Expected OOF response to loop back to 'Ever heard of a talking horse?' via default answer")
+		}
+
+		// Step 3d: Test enhanced Y/N matching
+		engine5 := NewLinearConversationEngine(script, callbacks)
+		engine5.Start(3)
+		engine5.ProcessInput("VAL")
+		engine5.ProcessInput("VAL")
+
+		yesResponse := engine5.ProcessInput("YES")
+		t.Logf("YES response: %q", strings.TrimSpace(yesResponse.Output))
+
+		// Should navigate to Label 3 just like "Y"
+		if strings.Contains(yesResponse.Output, "I cannot help thee with that") {
+			t.Error("Expected YES response to navigate to Label 3, not show fallback")
+		}
+		if !strings.Contains(yesResponse.Output, "What was its name?") {
+			t.Error("Expected YES response to navigate to Label 3 and ask 'What was its name?'")
+		}
+
+		// Step 3e: Test enhanced NO matching
+		engine6 := NewLinearConversationEngine(script, callbacks)
+		engine6.Start(3)
+		engine6.ProcessInput("VAL")
+		engine6.ProcessInput("VAL")
+
+		noResponseEnhanced := engine6.ProcessInput("NO")
+		t.Logf("NO (enhanced) response: %q", strings.TrimSpace(noResponseEnhanced.Output))
+
+		// Should respond with Bandaii info just like "N"
+		if strings.Contains(noResponseEnhanced.Output, "I cannot help thee with that") {
+			t.Error("Expected NO response to provide Bandaii info, not show fallback")
+		}
+		if !strings.Contains(noResponseEnhanced.Output, "A mage from Paws name Bandaii") {
+			t.Error("Expected NO response to provide info about Bandaii")
+		}
+
+		// Step 4: Start fresh and test "Y" response
+		engine2 := NewLinearConversationEngine(script, callbacks)
+		engine2.Start(3)
+
+		// Navigate to Label 2 again
+		engine2.ProcessInput("VAL")
+		engine2.ProcessInput("VAL")
+
+		// Answer "Y" to the talking horse question
+		yResponse := engine2.ProcessInput("Y")
+		t.Logf("Y response: %q", strings.TrimSpace(yResponse.Output))
+
+		// Should navigate to Label 3 or provide different response
+		if strings.Contains(yResponse.Output, "I cannot help thee with that") {
+			t.Error("Expected Y response to navigate properly, not default message")
+		}
+
+		// End conversations cleanly
+		engine.ProcessInput("BYE")
+		engine2.ProcessInput("BYE")
+		engine3.ProcessInput("BYE")
+		engine4.ProcessInput("BYE")
+		engine5.ProcessInput("BYE")
+		engine6.ProcessInput("BYE")
 	})
 }

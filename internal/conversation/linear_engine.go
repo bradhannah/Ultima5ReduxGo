@@ -497,13 +497,16 @@ func (e *LinearConversationEngine) processQuestionAnswer() *ConversationResponse
 	// Check if input matches any QA mappings for this label
 	if labelData.QA != nil {
 		inputKey := strings.ToLower(e.inputBuffer)
+
+		// First try exact match
 		if qa, exists := labelData.QA[inputKey]; exists {
-			log.Printf("DEBUG: Found QA mapping for '%s'", inputKey)
-			e.currentOutput.Reset()
-			e.currentOutput.WriteString("\"")
+			log.Printf("DEBUG: Found exact QA mapping for '%s'", inputKey)
 
 			// Store original label before processing answer
 			originalLabel := e.currentLabel
+
+			e.currentOutput.Reset()
+			e.currentOutput.WriteString("\"")
 
 			// Process the answer - it may contain navigation commands
 			if err := e.processScriptLine(qa.Answer); err != nil {
@@ -511,7 +514,6 @@ func (e *LinearConversationEngine) processQuestionAnswer() *ConversationResponse
 			}
 
 			// Only exit question mode if we haven't navigated to another question
-			// If processScriptLine triggered a label navigation, we'll stay in question mode
 			if e.currentLabel == originalLabel {
 				e.currentLabel = -1 // Exit question mode after answering
 			}
@@ -519,10 +521,89 @@ func (e *LinearConversationEngine) processQuestionAnswer() *ConversationResponse
 			e.currentOutput.WriteString("\"\n\n")
 			return e.promptForInput("Your interest?")
 		}
+
+		// Try intelligent matching for common yes/no variations
+		if inputKey == "yes" || inputKey == "yeah" || inputKey == "yep" || inputKey == "yea" {
+			if qa, exists := labelData.QA["y"]; exists {
+				log.Printf("DEBUG: Found QA mapping for '%s' via intelligent matching (matched 'y')", inputKey)
+
+				// Store original label before processing answer
+				originalLabel := e.currentLabel
+
+				e.currentOutput.Reset()
+				e.currentOutput.WriteString("\"")
+
+				// Process the answer - it may contain navigation commands
+				if err := e.processScriptLine(qa.Answer); err != nil {
+					return &ConversationResponse{Error: err}
+				}
+
+				// Only exit question mode if we haven't navigated to another question
+				if e.currentLabel == originalLabel {
+					e.currentLabel = -1 // Exit question mode after answering
+				}
+
+				e.currentOutput.WriteString("\"\n\n")
+				return e.promptForInput("Your interest?")
+			}
+		}
+
+		if inputKey == "no" || inputKey == "nope" || inputKey == "nay" {
+			if qa, exists := labelData.QA["n"]; exists {
+				log.Printf("DEBUG: Found QA mapping for '%s' via intelligent matching (matched 'n')", inputKey)
+
+				// Store original label before processing answer
+				originalLabel := e.currentLabel
+
+				e.currentOutput.Reset()
+				e.currentOutput.WriteString("\"")
+
+				// Process the answer - it may contain navigation commands
+				if err := e.processScriptLine(qa.Answer); err != nil {
+					return &ConversationResponse{Error: err}
+				}
+
+				// Only exit question mode if we haven't navigated to another question
+				if e.currentLabel == originalLabel {
+					e.currentLabel = -1 // Exit question mode after answering
+				}
+
+				e.currentOutput.WriteString("\"\n\n")
+				return e.promptForInput("Your interest?")
+			}
+		}
 	}
 
-	// No match found, exit question mode and provide default response
-	log.Printf("DEBUG: No QA mapping found, exiting question mode")
+	// No match found, check for default answers
+	log.Printf("DEBUG: No QA mapping found, checking for default answers")
+
+	if len(labelData.DefaultAnswers) > 0 {
+		// Process the first default answer
+		defaultAnswer := labelData.DefaultAnswers[0]
+		log.Printf("DEBUG: Processing default answer with %d items", len(defaultAnswer))
+
+		// Store original label before processing default answer
+		originalLabel := e.currentLabel
+
+		e.currentOutput.Reset()
+		e.currentOutput.WriteString("\"")
+
+		// Process the default answer - it may contain navigation commands
+		if err := e.processScriptLine(defaultAnswer); err != nil {
+			return &ConversationResponse{Error: err}
+		}
+
+		// Only exit question mode if we haven't navigated to another question
+		if e.currentLabel == originalLabel {
+			e.currentLabel = -1 // Exit question mode after answering
+		}
+
+		e.currentOutput.WriteString("\"\n\n")
+		return e.promptForInput("Your interest?")
+	}
+
+	// No default answer either, exit question mode and provide fallback response
+	log.Printf("DEBUG: No default answer found, exiting question mode")
 	e.currentLabel = -1
 	return e.handleUnrecognizedInput()
 }
