@@ -355,6 +355,7 @@ func (e *LinearConversationEngine) processScriptLine(line references.ScriptLine)
 				// Check if this is a label jump command
 				if targetItem.Cmd >= references.Label1 && targetItem.Cmd <= references.Label10 {
 					// This is a label jump - process it and stop processing current script line
+					log.Printf("DEBUG: IfElseKnowsName HasMet=%v -> jumping to %s", e.hasMet, targetItem.Cmd.String())
 					if err := e.processScriptItem(targetItem); err != nil {
 						return err
 					}
@@ -362,6 +363,8 @@ func (e *LinearConversationEngine) processScriptLine(line references.ScriptLine)
 					return nil
 				} else {
 					// This is a regular command - process it and continue
+					// But if HasMet=false, we might need to continue through the script to find the actual navigation
+					log.Printf("DEBUG: IfElseKnowsName HasMet=%v -> target is %s, continuing script", e.hasMet, targetItem.Cmd.String())
 					if err := e.processScriptItem(targetItem); err != nil {
 						return err
 					}
@@ -425,9 +428,11 @@ func (e *LinearConversationEngine) processScriptItem(item references.ScriptItem)
 		return e.callbacks.CallGuards()
 
 	case references.KarmaPlusOne:
+		log.Printf("DEBUG: Processing KarmaPlusOne command")
 		return e.callbacks.IncreaseKarma()
 
 	case references.KarmaMinusOne:
+		log.Printf("DEBUG: Processing KarmaMinusOne command")
 		return e.callbacks.DecreaseKarma()
 
 	case references.Pause:
@@ -579,8 +584,18 @@ func (e *LinearConversationEngine) processQuestion(questionCmd references.TalkCo
 	// Find the question text from the script.Labels if available
 	if e.script.Labels != nil {
 		// Calculate label number: Label1=0x91 -> 0, Label2=0x92 -> 1, etc.
-		// But the TLK data seems to be off by one, so Label5 (0x95) should map to Label 4
+		// But the TLK data seems to be off by one, so Label3 (0x93) should map to script.Labels[3]
 		labelNum := int(questionCmd - references.Label1)
+
+		// Check if we need to adjust for off-by-one mapping
+		log.Printf("DEBUG: questionCmd=0x%02X, labelNum calculated=%d", byte(questionCmd), labelNum)
+
+		// Apply off-by-one correction: Label3 (0x93) should access script.Labels[3], not script.Labels[2]
+		// This appears to be needed because the TLK format has this offset
+		if labelNum >= 2 {
+			labelNum += 1
+			log.Printf("DEBUG: Applying off-by-one correction, adjusted labelNum=%d", labelNum)
+		}
 
 		if labelData, exists := e.script.Labels[labelNum]; exists {
 			// Enter question mode for this label
