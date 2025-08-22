@@ -144,6 +144,7 @@ func loadNPCList() []NPCInfo {
 	return []NPCInfo{
 		{Name: "Alistair", TLKFile: "CASTLE.TLK", TLKIndex: 1, NPCFile: "CASTLE.NPC", NPCIndex: 1, Location: "Castle", Occupation: "Bard"},
 		{Name: "Treanna", TLKFile: "CASTLE.TLK", TLKIndex: 3, NPCFile: "CASTLE.NPC", NPCIndex: 3, Location: "Castle", Occupation: "Girl"},
+		{Name: "Ava", TLKFile: "CASTLE.TLK", TLKIndex: 31, NPCFile: "CASTLE.NPC", NPCIndex: 31, Location: "Cove Temple", Occupation: "Temple Keeper"},
 		{Name: "Blackthorn", TLKFile: "CASTLE.TLK", TLKIndex: 0, NPCFile: "CASTLE.NPC", NPCIndex: 0, Location: "Castle", Occupation: "King"},
 		{Name: "Margaret", TLKFile: "CASTLE.TLK", TLKIndex: 2, NPCFile: "CASTLE.NPC", NPCIndex: 2, Location: "Castle", Occupation: "Cook"},
 		{Name: "Chuckles", TLKFile: "CASTLE.TLK", TLKIndex: 4, NPCFile: "CASTLE.NPC", NPCIndex: 4, Location: "Castle", Occupation: "Jester"},
@@ -189,7 +190,7 @@ func selectNPC() NPCInfo {
 		fmt.Printf("%d. %s (%s - %s)\n", i+1, npc.Name, npc.Location, npc.Occupation)
 	}
 
-	fmt.Print("\nSelect an NPC (1-5): ")
+	fmt.Print("\nSelect an NPC (1-6): ")
 	input, _ := reader.ReadString('\n')
 	input = strings.TrimSpace(input)
 
@@ -294,5 +295,14 @@ func main() {
 
 	fmt.Println("\n\n=== Demo Complete ===")
 	fmt.Println("Try different keywords like: NAME, JOB, BYE")
-	fmt.Printf("For %s, also try keywords from the test cases like: MUSI, SMIT, VAL\n", npcInfo.Name)
+	switch npcInfo.Name {
+	case "Alistair":
+		fmt.Println("For Alistair, also try: MUSI")
+	case "Treanna":
+		fmt.Println("For Treanna, also try: SMIT, VAL")
+	case "Ava":
+		fmt.Println("For Ava, also try: VIRT (and answer YES to make an offering)")
+	default:
+		fmt.Printf("For %s, explore conversation keywords!\n", npcInfo.Name)
+	}
 }

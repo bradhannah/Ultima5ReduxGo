@@ -1,6 +1,7 @@
 package conversation
 
 import (
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -871,6 +872,179 @@ func TestLinearEngineWithRealAlistairData(t *testing.T) {
 	}
 
 	t.Logf("Bye response: %s", byeResponse.Output)
+}
+
+func TestLinearEngineWithRealAvaData(t *testing.T) {
+	cfg := config.NewUltimaVConfiguration()
+	tlkPath := filepath.Join(cfg.SavedConfigData.DataFilePath, "CASTLE.TLK")
+
+	// Load TLK file for Ava
+	talkData, err := references.LoadFile(tlkPath)
+	if err != nil {
+		t.Fatalf("Failed to load CASTLE.TLK: %v", err)
+	}
+
+	// Get Ava's data (index 31 according to npc_data_index.json)
+	avaData, exists := talkData[31]
+	if !exists {
+		t.Fatalf("Ava data not found at index 31 in CASTLE.TLK")
+	}
+
+	// Load word dictionary
+	dataOvl := references.NewDataOvl(cfg)
+	wordDict := references.NewWordDict(dataOvl.CompressedWords)
+
+	// Parse Ava's blob into a TalkScript
+	script, err := references.ParseNPCBlob(avaData, wordDict)
+	if err != nil {
+		t.Fatalf("Failed to parse Ava data: %v", err)
+	}
+
+	t.Run("AvaBasicConversation", func(t *testing.T) {
+		callbacks := &TestActionCallbacks{
+			avatarName: "TestAvatar",
+			hasMetNPC:  false,
+		}
+
+		engine := NewLinearConversationEngine(script, callbacks)
+		response := engine.Start(31)
+
+		t.Logf("Ava first meeting response: %s", response.Output)
+
+		// Should contain description
+		if !strings.Contains(response.Output, "pretty young girl") {
+			t.Error("Expected Ava response to contain 'pretty young girl'")
+		}
+
+		// Test NAME keyword
+		nameResponse := engine.ProcessInput("NAME")
+		t.Logf("NAME response: %s", nameResponse.Output)
+
+		if !strings.Contains(nameResponse.Output, "Ava") {
+			t.Error("Expected NAME response to contain 'Ava'")
+		}
+
+		// Test JOB keyword
+		jobResponse := engine.ProcessInput("JOB")
+		t.Logf("JOB response: %s", jobResponse.Output)
+
+		if !strings.Contains(jobResponse.Output, "sister") && !strings.Contains(jobResponse.Output, "temple") {
+			t.Error("Expected JOB response to mention sister or temple")
+		}
+
+		engine.ProcessInput("BYE")
+	})
+
+	t.Run("AvaVirtueKeyword", func(t *testing.T) {
+		callbacks := &TestActionCallbacks{
+			avatarName: "TestAvatar",
+			hasMetNPC:  false,
+		}
+
+		engine := NewLinearConversationEngine(script, callbacks)
+		engine.Start(31)
+
+		// Test VIRT keyword which should trigger "Goto Label 0"
+		virtResponse := engine.ProcessInput("VIRT")
+		t.Logf("VIRT response: %s", virtResponse.Output)
+
+		if !strings.Contains(virtResponse.Output, "Eight Virtues") {
+			t.Error("Expected VIRT response to mention 'Eight Virtues'")
+		}
+
+		// This should navigate to Label 0 which asks about making an offering
+		if virtResponse.NeedsInput {
+			t.Logf("VIRT correctly triggered question mode")
+
+			// Test saying "yes" to offering
+			yesResponse := engine.ProcessInput("YES")
+			t.Logf("YES to offering response: %s", yesResponse.Output)
+		}
+
+		engine.ProcessInput("BYE")
+	})
+
+	t.Run("AvaComplexOfferingFlow", func(t *testing.T) {
+		// Test the complete offering sequence with HasMet=false (first meeting)
+		callbacks := &TestActionCallbacks{
+			avatarName:         "TestAvatar",
+			hasMetNPC:          false,
+			userInputResponses: []string{"TestAvatar"}, // For AskName
+		}
+
+		engine := NewLinearConversationEngine(script, callbacks)
+		engine.Start(31)
+
+		// Navigate to offering sequence
+		virtResponse := engine.ProcessInput("VIRT")
+		t.Logf("VIRT response: %s", virtResponse.Output)
+
+		if !virtResponse.NeedsInput {
+			t.Fatal("Expected VIRT to trigger question mode")
+		}
+
+		// Say yes to offering
+		yesResponse := engine.ProcessInput("YES")
+		t.Logf("YES response: %s", yesResponse.Output)
+
+		// This should trigger Label 1 with IfElseKnowsName logic
+		// Since HasMet=false, it should show welcome, pause, then ask name
+		if !strings.Contains(yesResponse.Output, "We welcome thee") {
+			t.Error("Expected welcome message in Label 1")
+		}
+
+		// Check if it's paused and waiting for keypress
+		if yesResponse.NeedsInput {
+			t.Logf("Label 1 correctly paused, continuing...")
+
+			// Continue from pause (this will trigger AskName)
+			continueResponse := engine.ProcessInput("")
+			t.Logf("Continue from pause: %s", continueResponse.Output)
+
+			// Should ask for name since HasMet=false
+			if continueResponse.NeedsInput {
+				t.Logf("AskName triggered, providing name...")
+
+				// Provide name
+				nameResponse := engine.ProcessInput("TestAvatar")
+				t.Logf("Name provided response: %s", nameResponse.Output)
+
+				// Should get "A pleasure!" and continue to Label 2
+				if strings.Contains(nameResponse.Output, "A pleasure!") {
+					t.Log("AskName worked correctly")
+				}
+			}
+		}
+
+		engine.ProcessInput("BYE")
+	})
+
+	t.Run("AvaOfferingWithKnownPlayer", func(t *testing.T) {
+		// Test offering sequence with HasMet=true (return visit)
+		callbacks := &TestActionCallbacks{
+			avatarName: "TestAvatar",
+			hasMetNPC:  true, // Player has met Ava before
+		}
+
+		engine := NewLinearConversationEngine(script, callbacks)
+		engine.Start(31)
+
+		// Navigate to offering sequence
+		engine.ProcessInput("VIRT")
+		yesResponse := engine.ProcessInput("YES")
+
+		t.Logf("Known player offering response: %s", yesResponse.Output)
+
+		// For known player, should skip welcome/name and go directly to Label 3
+		// which asks for 5 gold and gives extra karma
+		if yesResponse.NeedsInput {
+			// Continue from any pause
+			continueResponse := engine.ProcessInput("")
+			t.Logf("Continue response for known player: %s", continueResponse.Output)
+		}
+
+		engine.ProcessInput("BYE")
+	})
 }
 
 // TestLinearEngineWithRealTreannaData tests IfElseKnowsName conditional behavior with Treanna

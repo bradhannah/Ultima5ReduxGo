@@ -103,10 +103,10 @@ When a conversation starts, the engine follows this sequence:
 
 1. **Reset State**: Clear output buffer and reset pointer to 0
 2. **Check Meeting Status**: Use `HasMet(npcID)` callback to determine if player has met NPC
-3. **Display Description**: Show NPC description (fixed entry 1)
+3. **Display Description**: Show "You see" + NPC description (fixed entry 1)
 4. **Show Greeting**:
-   - If first meeting: "I am called [Name]"
-   - If already met: Use greeting text (fixed entry 2)
+   - If first meeting: Show description only, wait for player to ask "name"
+   - If already met: Process greeting text (fixed entry 2) which may contain conditional logic or label navigation
 5. **Prompt for Input**: "Your interest?"
 
 ### Input Processing
@@ -178,8 +178,16 @@ The engine currently supports these commands from the TalkScript AST:
 
 ### Flow Control
 - `EndConversation`: End the conversation
-- `Pause`: Pause for user keypress
+- `Pause`: Pause for user keypress with state preservation
 - `KeyWait`: Wait for keypress
+- `GotoLabel`: Jump to specific label in script
+- `DefineLabel`: Define label positions for navigation
+
+### Conditionals
+- `IfElseKnowsName`: Branch based on whether NPC knows Avatar
+
+### Interactive Commands
+- `AskName`: Request player name with party member matching
 
 ### Actions
 - `JoinParty`: NPC joins party
@@ -188,6 +196,12 @@ The engine currently supports these commands from the TalkScript AST:
 - `KarmaMinusOne`: Decrease karma
 - `GoToJail`: Send to jail
 - `MakeAHorse`: Create horse
+
+### Question/Answer System
+- Multi-label navigation (Label1-Label10)
+- Intelligent input matching for Y/N responses
+- Default answer handling for unrecognized inputs
+- Nested question sequences with proper state management
 
 ## Testing
 
@@ -215,15 +229,18 @@ The engine handles errors gracefully:
 - **Unknown Commands**: Logged but don't stop conversation
 - **Missing Data**: Gracefully handles missing script entries
 
-## Future Extensions
+## Advanced Features (Implemented)
 
-The linear design makes it easy to add:
+The linear conversation engine now supports:
 
-1. **Label Navigation**: Support for GotoLabel and DefineLabel commands
-2. **Conditional Branches**: IfElseKnowsName and similar conditionals
-3. **Question Handling**: Complex question/answer sequences
-4. **Script Variables**: State tracking within conversations
-5. **Extended Actions**: Additional game actions and commands
+1. **Label Navigation**: Full support for GotoLabel and DefineLabel commands with label mapping
+2. **Conditional Branches**: IfElseKnowsName logic for different behavior based on meeting status
+3. **Question/Answer Sequences**: Complex Q&A flows with label-specific mappings and default answers
+4. **Pause/Resume Logic**: State preservation during pause commands with proper text sequencing
+5. **AskName Command**: Interactive name collection and recognition with party member matching
+6. **Enhanced Input Matching**: Intelligent Y/N matching (yes/no, yeah/nope variations)
+7. **Multi-Label Navigation**: Complex conversation flows through multiple nested labels
+8. **Real TLK Data Integration**: Full compatibility with original Ultima V conversation files
 
 ## Comparison with Old Implementation
 
