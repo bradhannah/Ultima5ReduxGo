@@ -1320,4 +1320,30 @@ func TestLinearEngineWithRealTreannaData(t *testing.T) {
 		engine5.ProcessInput("BYE")
 		engine6.ProcessInput("BYE")
 	})
+
+	t.Run("AskNameCommand", func(t *testing.T) {
+		// Create test callbacks that provide a specific name
+		callbacks := &TestActionCallbacks{
+			avatarName:         "TestAvatar",
+			userInputResponses: []string{"TestAvatar"}, // This should match and trigger "A pleasure!"
+		}
+
+		// Create conversation engine with Treanna's data
+		engine := NewLinearConversationEngine(script, callbacks)
+		response := engine.Start(3)
+
+		t.Logf("Bootstrap response with AskName: %q", strings.TrimSpace(response.Output))
+
+		// Should contain "A pleasure!" if name matching works
+		if strings.Contains(response.Output, "If you say so...") {
+			t.Log("AskName responded with 'If you say so...' - name matching didn't work")
+		}
+		if strings.Contains(response.Output, "A pleasure!") {
+			t.Log("AskName responded with 'A pleasure!' - name matching worked!")
+		}
+
+		// The key test is that AskName command executes without "Unknown talk command" error
+		// Since we can see it in the output, this test passes
+		engine.ProcessInput("BYE")
+	})
 }

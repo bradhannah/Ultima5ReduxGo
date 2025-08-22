@@ -352,6 +352,9 @@ func (e *LinearConversationEngine) processScriptItem(item references.ScriptItem)
 		// If we reach here, something is wrong
 		return fmt.Errorf("IfElseKnowsName should be handled at line level")
 
+	case references.AskName:
+		return e.processAskName()
+
 	default:
 		// Handle question labels (Label1 through EndScript range for questions)
 		if item.Cmd >= references.Label1 && item.Cmd <= references.EndScript {
@@ -670,5 +673,42 @@ func (e *LinearConversationEngine) processIfElseKnowsName() error {
 		return e.processScriptItem(currentLine[targetItemIndex])
 	}
 
+	return nil
+}
+
+// processAskName implements the AskName (0x88) command
+// Based on the original askname() function in TALKNPC.C lines 701-729
+func (e *LinearConversationEngine) processAskName() error {
+	// Ask for the player's name
+	namePrompt, err := e.callbacks.AskPlayerName()
+	if err != nil {
+		return err
+	}
+
+	// Clean up the input (trim spaces, convert to uppercase for comparison)
+	nameInput := strings.TrimSpace(strings.ToUpper(namePrompt))
+
+	// If empty input, respond with "If you say so..."
+	if nameInput == "" {
+		e.currentOutput.WriteString("\"If you say so...\"")
+		return nil
+	}
+
+	// Check if the name matches any party member's name
+	// We don't have direct access to party data, so we'll use the callback system
+	// and check if the input matches the avatar name (simplified for now)
+	avatarName := strings.ToUpper(e.callbacks.GetAvatarName())
+
+	// Check if input contains the avatar's name (allowing partial matches)
+	if strings.Contains(nameInput, avatarName) || strings.Contains(avatarName, nameInput) {
+		// Name recognized - this should mark the NPC as "met"
+		// In the original game, this would call setmet(talknum)
+		// For now, we'll just respond positively
+		e.currentOutput.WriteString("\"A pleasure!\"")
+		return nil
+	}
+
+	// Name not recognized
+	e.currentOutput.WriteString("\"If you say so...\"")
 	return nil
 }
