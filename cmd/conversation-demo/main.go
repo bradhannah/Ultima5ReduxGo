@@ -109,25 +109,12 @@ func (d *DemoCallbacks) WaitForKeypress() {
 }
 
 func (d *DemoCallbacks) TimedPause() {
-	fmt.Print(" [Pausing for 3 seconds - press Enter to skip]")
+	fmt.Print(" [Pausing for 3 seconds]")
 
-	// Create a channel to receive input
-	inputChan := make(chan string, 1)
+	// Simple 3-second pause without input handling
+	time.Sleep(3 * time.Second)
 
-	// Start a goroutine to read input
-	go func() {
-		reader := bufio.NewReader(os.Stdin)
-		input, _ := reader.ReadString('\n')
-		inputChan <- input
-	}()
-
-	// Wait for either 3 seconds or user input
-	select {
-	case <-inputChan:
-		fmt.Print(" [Skipped]\n")
-	case <-time.After(3 * time.Second):
-		fmt.Print(" [Done]\n")
-	}
+	fmt.Print(" [Done]\n")
 }
 
 // Game state queries
@@ -244,7 +231,6 @@ func runConversation(npcInfo NPCInfo, avatarName string, hasMet bool) error {
 
 	// Start conversation
 	response := engine.Start(npcInfo.TLKIndex)
-	reader := bufio.NewReader(os.Stdin)
 
 	// Main conversation loop
 	for engine.IsActive() && !response.IsComplete {
@@ -257,6 +243,7 @@ func runConversation(npcInfo NPCInfo, avatarName string, hasMet bool) error {
 
 		// Get input if needed
 		if response.NeedsInput {
+			reader := bufio.NewReader(os.Stdin)
 			input, err := reader.ReadString('\n')
 			if err != nil {
 				return fmt.Errorf("error reading input: %v", err)

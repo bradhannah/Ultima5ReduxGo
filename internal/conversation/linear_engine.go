@@ -104,7 +104,9 @@ func (e *LinearConversationEngine) ProcessInput(input string) *ConversationRespo
 		}
 	}
 
+	log.Printf("DEBUG: ProcessInput called with raw input: '%s'", input)
 	e.inputBuffer = strings.TrimSpace(strings.ToUpper(input))
+	log.Printf("DEBUG: ProcessInput processed input: '%s'", e.inputBuffer)
 
 	// If we're waiting for name input from AskName command, handle it
 	if e.waitingForName {
@@ -424,6 +426,13 @@ func (e *LinearConversationEngine) processScriptItem(item references.ScriptItem)
 	case references.AskName:
 		return e.processAskName()
 
+	case references.GoldPrompt:
+		// GoldPrompt (0x85) - deduct gold and display amount
+		// For now, just display the amount from the Num field
+		if item.Num > 0 {
+			e.currentOutput.WriteString(fmt.Sprintf("%03d", item.Num))
+		}
+
 	case references.StartNewSection:
 		// StartNewSection (0xA2) - formatting/organizational marker, no action needed
 
@@ -560,14 +569,8 @@ func (e *LinearConversationEngine) processQuestion(questionCmd references.TalkCo
 					return nil
 				}
 
-				// Check if we encountered an AskName command during processing
-				if e.waitingForName {
-					// AskName was processed in this label - we need to wait for name input
-					// before continuing with any further label processing
-					log.Printf("DEBUG: AskName in label %d, waiting for name input", labelNum)
-					// This should be handled by the higher-level response system, not here
-					return nil
-				}
+				// Don't handle AskName at this level - let the QA processing handle it
+				// The QA processing will properly generate the name prompt response
 			}
 		}
 	}
