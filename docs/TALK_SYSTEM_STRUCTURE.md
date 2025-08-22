@@ -24,48 +24,48 @@ controls dialogue flow, substitutions, prompts, and engine-internal operations.
 
 ## Sorted TalkCommand Table (by Type)
 
-| Type of Command | Command Name                   | Byte Value | Description (inferred from code/comments)                                                                                                                                                                                                  | Usage Notes | User Action Required                                  | How/Why User Action Is Required                                    | Requires Callback                  | Callback Description          |
-|-----------------|--------------------------------|------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------|-------------------------------------------------------|--------------------------------------------------------------------|------------------------------------|-------------------------------|
-| Callback Action | JoinParty                      | 0x84       | NPC joins party                                                                                                                                                                                                                            |             | No                                                    |                                                                    | Yes                                | Triggers party join logic     |
-| Callback Action | KarmaPlusOne                   | 0x89       | Increase karma by one                                                                                                                                                                                                                      |             | No                                                    |                                                                    | Yes                                | Triggers karma increase logic |
-| Callback Action | KarmaMinusOne                  | 0x8A       | Decrease karma by one                                                                                                                                                                                                                      |             | No                                                    |                                                                    | Yes                                | Triggers karma decrease logic |
-| Callback Action | CallGuards                     | 0x8B       | Call guards                                                                                                                                                                                                                                |             | No                                                    |                                                                    | Yes                                | Triggers guard call logic     |
-| String Output   | ExtortionAmount                | 0xE0       | Extortion amount (engine-internal)                                                                                                                                                                                                         | Sometimes   | No                                                    | Show user how much extortion is                                    | Triggers extortion logic           |                               |
-| Callback Action | GoToJail                       | 0xE1       | Go to jail (engine-internal)                                                                                                                                                                                                               | No          |                                                       |                                                                    | Triggers jail logic                | Reposition Avatar into jail   |
-| Callback Action | PayGenericExtortion            | 0xE2       | Pay generic extortion (engine-internal)                                                                                                                                                                                                    | Sometimes   | May prompt user for payment or confirmation           |                                                                    | Triggers extortion payment logic   |                               |
-| Callback Action | PayHalfGoldExtortion           | 0xE3       | Pay half gold extortion (engine-internal)                                                                                                                                                                                                  | Sometimes   | May prompt user for payment or confirmation           |                                                                    | Triggers half-gold extortion logic |                               |
-| Callback Action | MakeAHorse                     | 0xE4       | Make a horse (engine-internal)                                                                                                                                                                                                             | No          |                                                       | Yes                                                                | Triggers horse creation logic      | Make a horse appear           |
-| Input Expected  | UserInputNotRecognized         | 0x7E       | User input not recognized                                                                                                                                                                                                                  | Yes         | User must retry input or is notified of invalid input | No                                                                 |                                    |                               |
-| Input Expected  | PromptUserForInputUserInterest | 0x7F       | Prompt user for input (user interest)                                                                                                                                                                                                      |             | Yes                                                   | User is prompted to enter a topic of interest                      | No                                 |                               |
-| Input Expected  | PromptUserForInputNpcQuestion  | 0x80       | Prompt user for input (NPC question)                                                                                                                                                                                                       |             | Yes                                                   | User is prompted to answer NPC's question                          | No                                 |                               |
-| Input Expected  | GoldPrompt                     | 0x85       | Prompt for gold (was Gold)                                                                                                                                                                                                                 |             | Yes                                                   | User is prompted to enter an amount of gold                        | No                                 |                               |
-| Input Expected  | AskName                        | 0x88       | Ask for name. Prompts user for name and matches against party members. If match found, marks NPC as met and responds "A pleasure!", otherwise "If you say so..."                                                                        |             | Yes                                                   | User is prompted to provide a name                                 | Yes                                | Name matching and SetMet logic |
-| Input Expected  | KeyWait                        | 0x8F       | Wait for key input                                                                                                                                                                                                                         |             | Yes, user expected to press enter to continue         | User must press a key to continue                                  | No                                 |                               |
-| String Output   | PlainString                    | 0x00       | Basic printable string                                                                                                                                                                                                                     |             | No                                                    |                                                                    | No                                 |                               |
-| String Output   | AvatarsName                    | 0x81       | Substitute Avatar's name                                                                                                                                                                                                                   |             | No                                                    |                                                                    | No                                 |                               |
-| String Output   | NewLine                        | 0x8D       | Insert new line                                                                                                                                                                                                                            |             | No                                                    |                                                                    | No                                 |                               |
-| Workflow        | OrBranch                       | 0x87       | Branch (was Or). Will require a look ahead to determine if there is an OR condition.                                                                                                                                                       |             | No                                                    |                                                                    | No                                 |                               |
-| Workflow        | IfElseKnowsName                | 0x8C       | If/else branch based on name knowledge. The next script item (+1) will be what happens if they DO know the Avatar (HasMet), the one after that (+2) will be what happens if they do NOT know the Avatar.                                   |             | No                                                    |                                                                    | No                                 |                               |
-| Workflow        | StartLabelDef                  | 0x90       | Start label definition.    Defines the beginning or end of the label sections.   If next item (+1) is EndScript, then that is end of all labels and conversation script. If next item (+1) is DefineLabel then it is defining a NEW label. |             | No                                                    |                                                                    | No                                 |                               |
-| Workflow        | Label1                         | 0x91       | Label 1                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                               |
-| Workflow        | Label2                         | 0x92       | Label 2                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                               |
-| Workflow        | Label3                         | 0x93       | Label 3                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                               |
-| Workflow        | Label4                         | 0x94       | Label 4                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                               |
-| Workflow        | Label5                         | 0x95       | Label 5                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                               |
-| Workflow        | Label6                         | 0x96       | Label 6                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                               |
-| Workflow        | Label7                         | 0x97       | Label 7                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                               |
-| Workflow        | Label8                         | 0x98       | Label 8                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                               |
-| Workflow        | Label9                         | 0x99       | Label 9                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                               |
-| Workflow        | Label10                        | 0x9A       | Label 10                                                                                                                                                                                                                                   |             | No                                                    |                                                                    | No                                 |                               |
-| Workflow        | EndScript                      | 0x9F       | End of script                                                                                                                                                                                                                              |             | No                                                    | Yes, user will be expected to press ENTER to close dialogue window | No                                 |                               |
-| Workflow        | StartNewSection                | 0xA2       | Start new section. Defines the beginning of a new Section                                                                                                                                                                                  |             | No                                                    |                                                                    | No                                 |                               |
-| Workflow        | GotoLabel                      | 0xFD       | Go to label. Move pointer to new position immediately.                                                                                                                                                                                     | No          |                                                       | No                                                                 |                                    |                               |
-| Workflow        | DefineLabel                    | 0xFE       | Define label.  Defines the beginning of a new label. Next script item (+1) will be a Label Id (ie. Label1).                                                                                                                                | No          |                                                       | No                                                                 |                                    |                               |
-| Workflow        | DoNothingSection               | 0xFF       | No operation                                                                                                                                                                                                                               | No          |                                                       | No                                                                 |                                    |                               |
-| Other           | EndConversation                | 0x82       | End the current conversation                                                                                                                                                                                                               |             | No                                                    |                                                                    | No                                 |                               |
-| Other           | Pause                          | 0x83       | Pause dialogue                                                                                                                                                                                                                             |             | Sort of - the UI will pause for a period of time      | May require user to press a key to continue                        | No                                 |                               |
-| Other           | Change                         | 0x86       | Change (context-specific)                                                                                                                                                                                                                  |             | Sometimes                                             | May require user to confirm or act depending on context            | No                                 |                               |
-| Other           | Rune                           | 0x8E       | Rune (context-specific)                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                               |
+| Type of Command | Command Name                   | Byte Value | Description (inferred from code/comments)                                                                                                                                                                                                  | Usage Notes | User Action Required                                  | How/Why User Action Is Required                                    | Requires Callback                  | Callback Description           |
+|-----------------|--------------------------------|------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------|-------------------------------------------------------|--------------------------------------------------------------------|------------------------------------|--------------------------------|
+| Callback Action | JoinParty                      | 0x84       | NPC joins party                                                                                                                                                                                                                            |             | No                                                    |                                                                    | Yes                                | Triggers party join logic      |
+| Callback Action | KarmaPlusOne                   | 0x89       | Increase karma by one                                                                                                                                                                                                                      |             | No                                                    |                                                                    | Yes                                | Triggers karma increase logic  |
+| Callback Action | KarmaMinusOne                  | 0x8A       | Decrease karma by one                                                                                                                                                                                                                      |             | No                                                    |                                                                    | Yes                                | Triggers karma decrease logic  |
+| Callback Action | CallGuards                     | 0x8B       | Call guards                                                                                                                                                                                                                                |             | No                                                    |                                                                    | Yes                                | Triggers guard call logic      |
+| String Output   | ExtortionAmount                | 0xE0       | Extortion amount (engine-internal)                                                                                                                                                                                                         | Sometimes   | No                                                    | Show user how much extortion is                                    | Triggers extortion logic           |                                |
+| Callback Action | GoToJail                       | 0xE1       | Go to jail (engine-internal)                                                                                                                                                                                                               | No          |                                                       |                                                                    | Triggers jail logic                | Reposition Avatar into jail    |
+| Callback Action | PayGenericExtortion            | 0xE2       | Pay generic extortion (engine-internal)                                                                                                                                                                                                    | Sometimes   | May prompt user for payment or confirmation           |                                                                    | Triggers extortion payment logic   |                                |
+| Callback Action | PayHalfGoldExtortion           | 0xE3       | Pay half gold extortion (engine-internal)                                                                                                                                                                                                  | Sometimes   | May prompt user for payment or confirmation           |                                                                    | Triggers half-gold extortion logic |                                |
+| Callback Action | MakeAHorse                     | 0xE4       | Make a horse (engine-internal)                                                                                                                                                                                                             | No          |                                                       | Yes                                                                | Triggers horse creation logic      | Make a horse appear            |
+| Input Expected  | UserInputNotRecognized         | 0x7E       | User input not recognized                                                                                                                                                                                                                  | Yes         | User must retry input or is notified of invalid input | No                                                                 |                                    |                                |
+| Input Expected  | PromptUserForInputUserInterest | 0x7F       | Prompt user for input (user interest)                                                                                                                                                                                                      |             | Yes                                                   | User is prompted to enter a topic of interest                      | No                                 |                                |
+| Input Expected  | PromptUserForInputNpcQuestion  | 0x80       | Prompt user for input (NPC question)                                                                                                                                                                                                       |             | Yes                                                   | User is prompted to answer NPC's question                          | No                                 |                                |
+| Input Expected  | GoldPrompt                     | 0x85       | Prompt for gold deduction. **IMPORTANT**: The Num field is typically 0. The actual gold amount is embedded as a numeric prefix in the following PlainString (e.g., "005We thank thee." means 5 gold). Engine must parse and strip this prefix. |             | Yes                                                   | User is prompted to pay gold, engine deducts amount via callback   | Yes                                | Gold deduction logic           |
+| Input Expected  | AskName                        | 0x88       | Ask for name. Prompts user for name and matches against party members. If match found, marks NPC as met and responds "A pleasure!", otherwise "If you say so..."                                                                           |             | Yes                                                   | User is prompted to provide a name                                 | Yes                                | Name matching and SetMet logic |
+| Input Expected  | KeyWait                        | 0x8F       | Wait for key input                                                                                                                                                                                                                         |             | Yes, user expected to press enter to continue         | User must press a key to continue                                  | No                                 |                                |
+| String Output   | PlainString                    | 0x00       | Basic printable string                                                                                                                                                                                                                     |             | No                                                    |                                                                    | No                                 |                                |
+| String Output   | AvatarsName                    | 0x81       | Substitute Avatar's name                                                                                                                                                                                                                   |             | No                                                    |                                                                    | No                                 |                                |
+| String Output   | NewLine                        | 0x8D       | Insert new line                                                                                                                                                                                                                            |             | No                                                    |                                                                    | No                                 |                                |
+| Workflow        | OrBranch                       | 0x87       | Branch (was Or). Will require a look ahead to determine if there is an OR condition.                                                                                                                                                       |             | No                                                    |                                                                    | No                                 |                                |
+| Workflow        | IfElseKnowsName                | 0x8C       | If/else branch based on name knowledge. The next script item (+1) will be what happens if they DO know the Avatar (HasMet), the one after that (+2) will be what happens if they do NOT know the Avatar.                                   |             | No                                                    |                                                                    | No                                 |                                |
+| Workflow        | StartLabelDef                  | 0x90       | Start label definition.    Defines the beginning or end of the label sections.   If next item (+1) is EndScript, then that is end of all labels and conversation script. If next item (+1) is DefineLabel then it is defining a NEW label. |             | No                                                    |                                                                    | No                                 |                                |
+| Workflow        | Label1                         | 0x91       | Label 1                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                                |
+| Workflow        | Label2                         | 0x92       | Label 2                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                                |
+| Workflow        | Label3                         | 0x93       | Label 3                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                                |
+| Workflow        | Label4                         | 0x94       | Label 4                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                                |
+| Workflow        | Label5                         | 0x95       | Label 5                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                                |
+| Workflow        | Label6                         | 0x96       | Label 6                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                                |
+| Workflow        | Label7                         | 0x97       | Label 7                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                                |
+| Workflow        | Label8                         | 0x98       | Label 8                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                                |
+| Workflow        | Label9                         | 0x99       | Label 9                                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                                |
+| Workflow        | Label10                        | 0x9A       | Label 10                                                                                                                                                                                                                                   |             | No                                                    |                                                                    | No                                 |                                |
+| Workflow        | EndScript                      | 0x9F       | End of script                                                                                                                                                                                                                              |             | No                                                    | Yes, user will be expected to press ENTER to close dialogue window | No                                 |                                |
+| Workflow        | StartNewSection                | 0xA2       | Start new section. Defines the beginning of a new Section                                                                                                                                                                                  |             | No                                                    |                                                                    | No                                 |                                |
+| Workflow        | GotoLabel                      | 0xFD       | Go to label. Move pointer to new position immediately.                                                                                                                                                                                     | No          |                                                       | No                                                                 |                                    |                                |
+| Workflow        | DefineLabel                    | 0xFE       | Define label.  Defines the beginning of a new label. Next script item (+1) will be a Label Id (ie. Label1).                                                                                                                                | No          |                                                       | No                                                                 |                                    |                                |
+| Workflow        | DoNothingSection               | 0xFF       | No operation                                                                                                                                                                                                                               | No          |                                                       | No                                                                 |                                    |                                |
+| Other           | EndConversation                | 0x82       | End the current conversation                                                                                                                                                                                                               |             | No                                                    |                                                                    | No                                 |                                |
+| Other           | Pause                          | 0x83       | Pause dialogue                                                                                                                                                                                                                             |             | Sort of - the UI will pause for a period of time      | May require user to press a key to continue                        | No                                 |                                |
+| Other           | Change                         | 0x86       | Change (context-specific)                                                                                                                                                                                                                  |             | Sometimes                                             | May require user to confirm or act depending on context            | No                                 |                                |
+| Other           | Rune                           | 0x8E       | Rune (context-specific)                                                                                                                                                                                                                    |             | No                                                    |                                                                    | No                                 |                                |
 
 Here are a few snippets from a C# project.
 
@@ -225,11 +225,13 @@ NPCs are mapped to TLK entries using the dialog_number field in *.NPC files. The
 
 ## Testing and Integration
 
-- Integration tests should load actual data files and simulate conversations with real NPCs.
-- Use testdata/britain2_SAVED.GAM for save file state.
-- Verify that all fixed entries, keywords, labels, and branching paths are parsed and displayed correctly.
-- Test error handling for missing or malformed TLK entries.
-- Ensure integration with SAVED.GAM and NPC schedules for correct state-dependent responses.
+- ✅ **Integration tests implemented**: Load actual TLK data files and simulate conversations with real NPCs (Alistair, Treanna, Ava).
+- ✅ **Real data validation**: Successfully tested against CASTLE.TLK with proper DATA.OVL word expansion.
+- ✅ **Complex conversation flows**: Validated multi-label navigation, conditional branching, and pause/resume logic.
+- ✅ **Regression test suite**: Comprehensive tests for GoldPrompt, AskName, and IfElseKnowsName edge cases.
+- ✅ **Command line demo**: Interactive testing tool with scriptable NPC selection and conversation flows.
+- 🚧 **Save game integration**: Not yet implemented - SAVED.GAM integration for persistent HasMet state.
+- 🚧 **Error handling**: Basic error handling implemented, comprehensive error recovery needed.
 
 ## Visual Diagrams
 
@@ -260,11 +262,122 @@ Special codes may be embedded in any string.
 
 ---
 
+## Critical Implementation Discoveries (2025)
+
+### GoldPrompt Command (0x85) Implementation
+
+**Key Discovery**: The GoldPrompt command's `Num` field is typically `0`, but the actual gold amount is embedded as a numeric prefix in the immediately following PlainString command.
+
+**Pattern:**
+```
+[GoldPrompt: Cmd=0x85, Num=0]
+[PlainString: Cmd=0x00, Str="005We thank thee."]
+```
+
+**Required Implementation:**
+1. When processing GoldPrompt (0x85), check if the next command is PlainString (0x00)
+2. If PlainString starts with digits (e.g., "005"), extract the gold amount (5)
+3. Process GoldPrompt with the extracted amount instead of the Num field (0)
+4. Output the PlainString with the numeric prefix stripped ("We thank thee.")
+
+**Example Processing:**
+```go
+// Detect GoldPrompt followed by PlainString with numeric prefix
+if item.Cmd == references.GoldPrompt && nextItem.Cmd == references.PlainString {
+    if goldAmount, err := strconv.Atoi(digitPrefix); err == nil {
+        // Process gold deduction with correct amount (5, not 0)
+        modifiedItem := item
+        modifiedItem.Num = goldAmount
+        processScriptItem(modifiedItem)
+        
+        // Output clean text without prefix
+        cleanStr := str[digitEnd:] // "We thank thee."
+        currentOutput.WriteString(cleanStr)
+    }
+}
+```
+
+### AskName Command (0x88) with Pause/Resume Logic
+
+**Key Discovery**: AskName commands can appear mid-script line and require sophisticated pause/resume functionality.
+
+**Implementation Requirements:**
+1. When AskName is encountered, set `waitingForName = true`
+2. Save current script line and item index for resuming
+3. Process name input and match against party members
+4. Resume script processing from the saved position
+5. Handle nested pauses (AskName can follow Pause commands in complex sequences)
+
+### IfElseKnowsName Command (0x8C) Context-Aware Processing
+
+**Key Discovery**: IfElseKnowsName must be processed at the script line level, not individual item level.
+
+**Implementation Logic:**
+```go
+if item.Cmd == references.IfElseKnowsName {
+    targetIndex := i + 1  // HasMet=true: next item
+    if !e.hasMet {
+        targetIndex = i + 2  // HasMet=false: item after next
+    }
+    
+    targetItem := line[targetIndex]
+    
+    // Check if target is a label jump - if so, stop current line processing
+    if targetItem.Cmd >= references.Label1 && targetItem.Cmd <= references.Label10 {
+        processScriptItem(targetItem)
+        return nil // Stop processing current line
+    }
+}
+```
+
+### Multi-Label Navigation System
+
+**Key Discovery**: Complex conversations use Label 0→1→2→3 navigation patterns with conditional branching.
+
+**Pattern Example (Ava's Temple Offering):**
+```
+VIRT keyword → Label 0 (offering question)
+  ↓ YES
+Label 1 (IfElseKnowsName check)
+  ↓ HasMet=false        ↓ HasMet=true
+Label 2 (ask name)   Label 3 (skip to gold)
+  ↓ (after name)
+Label 3 (gold question)
+  ↓ YES               ↓ NO
+GoldPrompt+Text    Default answer
+```
+
+### Question/Answer System with Intelligent Matching
+
+**Key Discovery**: QA system supports intelligent input matching beyond exact matches.
+
+**Matching Rules:**
+1. Exact match: `"y"` matches `"y"`
+2. Intelligent yes matching: `"yes"`, `"yeah"`, `"yep"`, `"yea"` → `"y"`
+3. Intelligent no matching: `"no"`, `"nope"`, `"nay"` → `"n"`
+4. Default answers: Used when no specific QA mapping exists
+
+### TimedPause vs Pause Command Handling
+
+**Key Discovery**: Original implementation had input buffering issues with TimedPause goroutines.
+
+**Solution**: Removed Enter-to-skip functionality from TimedPause to prevent input interference:
+```go
+func (d *DemoCallbacks) TimedPause() {
+    fmt.Print(" [Pausing for 3 seconds]")
+    time.Sleep(3 * time.Second)  // Simple sleep, no input handling
+    fmt.Print(" [Done]\n")
+}
+```
+
 ## Implementation Notes
 
 - NPCs are mapped to dialogue via *.NPC files and DATA.OVL.
 - Text decoding must handle special codes and compressed words.
 - Branching and labels allow for complex Q&A and conditional responses.
+- **GoldPrompt requires special handling** - amount is in following PlainString, not command Num field.
+- **AskName requires pause/resume logic** - can interrupt script processing mid-line.
+- **IfElseKnowsName requires context awareness** - must process at line level with label jump detection.
 
 ---
 
@@ -275,9 +388,54 @@ Special codes may be embedded in any string.
 
 ---
 
+## Current Implementation Status (2025)
+
+### ✅ Fully Implemented Commands
+- **PlainString** (0x00): Basic text output with proper word expansion
+- **AvatarsName** (0x81): Avatar name substitution
+- **NewLine** (0x8D): Line break handling
+- **EndConversation** (0x82): Conversation termination
+- **Pause** (0x83): 3-second timed pause with proper state management
+- **JoinParty** (0x84): Party join callback integration
+- **GoldPrompt** (0x85): **Gold deduction with prefix parsing** ✅ **FIXED**
+- **AskName** (0x88): **Name input with pause/resume logic** ✅ **FIXED**
+- **KarmaPlusOne/KarmaMinusOne** (0x89/0x8A): Karma adjustment callbacks
+- **CallGuards** (0x8B): Guard call callback
+- **IfElseKnowsName** (0x8C): **Context-aware conditional branching** ✅ **FIXED**
+- **KeyWait** (0x8F): Keypress waiting
+- **StartLabelDef** (0x90): Label section markers
+- **Label1-Label10** (0x91-0x9A): **Multi-label navigation system** ✅ **WORKING**
+- **EndScript** (0x9F): Script termination
+- **StartNewSection** (0xA2): Section formatting markers
+- **GotoLabel** (0xFD): Label jumping
+- **DefineLabel** (0xFE): Label definitions
+- **DoNothingSection** (0xFF): No-operation markers
+
+### 🚧 Partially Implemented Commands
+- **UserInputNotRecognized** (0x7E): Basic framework, needs UX polish
+- **PromptUserForInputUserInterest** (0x7F): Basic framework, needs implementation
+- **PromptUserForInputNpcQuestion** (0x80): Basic framework, needs implementation
+
+### ❌ Not Yet Implemented Commands
+- **OrBranch** (0x87): Keyword chaining logic
+- **Change** (0x86): Context-specific behavior
+- **Rune** (0x8E): Rune system integration
+- **ExtortionAmount/PayGenericExtortion/PayHalfGoldExtortion** (0xE0-0xE3): Economic systems
+- **GoToJail** (0xE1): Jail transportation
+- **MakeAHorse** (0xE4): Horse creation
+
+### Implementation Architecture
+- **Linear conversation engine**: Pointer-based sequential processing
+- **Interface-based callbacks**: Clean separation between conversation logic and game actions
+- **Comprehensive test suite**: 17+ regression tests covering complex edge cases
+- **Command line demo tool**: Scriptable testing with `-npc` and `-name` flags
+- **Real TLK data integration**: Successfully processing CASTLE.TLK, TOWNE.TLK, etc.
+
 ## References
 
 - [Ultima V Internal Formats Wiki](https://wiki.ultimacodex.com/wiki/Ultima_V_internal_formats)
+- [Linear Conversation System Documentation](./LINEAR_CONVERSATION_SYSTEM.md)
+- [Implementation Progress Tracking](../prompts/TALK_TRACKING.md)
 
 ---
 

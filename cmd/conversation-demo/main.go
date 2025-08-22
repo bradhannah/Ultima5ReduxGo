@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -191,8 +192,21 @@ func loadTalkScript(npcInfo NPCInfo) (*references.TalkScript, error) {
 	return script, nil
 }
 
-func selectNPC() NPCInfo {
+func selectNPC(npcName string) NPCInfo {
 	npcs := loadNPCList()
+
+	// If an NPC name was specified via command line, find it
+	if npcName != "" {
+		for _, npc := range npcs {
+			if strings.EqualFold(npc.Name, npcName) {
+				fmt.Printf("Selected NPC: %s (%s - %s)\n", npc.Name, npc.Location, npc.Occupation)
+				return npc
+			}
+		}
+		fmt.Printf("NPC '%s' not found, showing available options:\n", npcName)
+	}
+
+	// Interactive selection
 	reader := bufio.NewReader(os.Stdin)
 
 	fmt.Println("Available NPCs:")
@@ -260,35 +274,44 @@ func runConversation(npcInfo NPCInfo, avatarName string, hasMet bool) error {
 }
 
 func main() {
+	// Parse command line flags
+	var npcName = flag.String("npc", "", "Name of NPC to talk to (e.g., 'Ava', 'Alistair', 'Treanna')")
+	var avatarName = flag.String("name", "", "Avatar name (if not specified, will prompt)")
+	flag.Parse()
+
 	fmt.Println("=== Linear Conversation System Demo (Real TLK Data) ===")
 	fmt.Println()
 
 	// Get player name
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Enter thy name, brave adventurer: ")
-	avatarName, _ := reader.ReadString('\n')
-	avatarName = strings.TrimSpace(avatarName)
-	if avatarName == "" {
-		avatarName = "Hero"
+	playerName := *avatarName
+	if playerName == "" {
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print("Enter thy name, brave adventurer: ")
+		input, _ := reader.ReadString('\n')
+		playerName = strings.TrimSpace(input)
+		if playerName == "" {
+			playerName = "Hero"
+		}
 	}
 
-	fmt.Printf("\nWelcome, %s!\n\n", avatarName)
+	fmt.Printf("Welcome, %s!\n\n", playerName)
 
 	// Select NPC
-	npcInfo := selectNPC()
-	fmt.Printf("\nYou have chosen to speak with %s.\n\n", npcInfo.Name)
+	npcInfo := selectNPC(*npcName)
+	fmt.Printf("You have chosen to speak with %s.\n\n", npcInfo.Name)
 
 	// First meeting
 	fmt.Printf("--- First Meeting with %s ---\n", npcInfo.Name)
 	fmt.Printf("You approach %s...\n\n", npcInfo.Name)
 
-	if err := runConversation(npcInfo, avatarName, false); err != nil {
+	if err := runConversation(npcInfo, playerName, false); err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
 	// Ask if they want to try a return visit
 	fmt.Print("\n\nWould you like to try a return visit? (y/n): ")
+	reader := bufio.NewReader(os.Stdin)
 	input, _ := reader.ReadString('\n')
 	input = strings.TrimSpace(strings.ToLower(input))
 
@@ -297,7 +320,7 @@ func main() {
 		fmt.Printf("\n--- Return Visit to %s ---\n", npcInfo.Name)
 		fmt.Printf("You approach %s again...\n\n", npcInfo.Name)
 
-		if err := runConversation(npcInfo, avatarName, true); err != nil {
+		if err := runConversation(npcInfo, playerName, true); err != nil {
 			fmt.Printf("Error: %v\n", err)
 			return
 		}

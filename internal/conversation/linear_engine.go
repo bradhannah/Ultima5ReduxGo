@@ -3,6 +3,7 @@ package conversation
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
@@ -104,9 +105,7 @@ func (e *LinearConversationEngine) ProcessInput(input string) *ConversationRespo
 		}
 	}
 
-	log.Printf("DEBUG: ProcessInput called with raw input: '%s'", input)
 	e.inputBuffer = strings.TrimSpace(strings.ToUpper(input))
-	log.Printf("DEBUG: ProcessInput processed input: '%s'", e.inputBuffer)
 
 	// If we're waiting for name input from AskName command, handle it
 	if e.waitingForName {
@@ -290,6 +289,55 @@ func (e *LinearConversationEngine) processScriptLine(line references.ScriptLine)
 	for i := 0; i < len(line); i++ {
 		item := line[i]
 
+		// Special handling for GoldPrompt followed by PlainString with gold amount prefix
+		if item.Cmd == references.GoldPrompt && i+1 < len(line) {
+			nextItem := line[i+1]
+			if nextItem.Cmd == references.PlainString {
+				// Check if the next PlainString starts with digits (likely gold amount)
+				str := nextItem.Str
+				digitEnd := 0
+				for digitEnd < len(str) && str[digitEnd] >= '0' && str[digitEnd] <= '9' {
+					digitEnd++
+				}
+
+				if digitEnd > 0 {
+					// Found digits at start - process GoldPrompt and strip digits from PlainString
+					goldPrefix := str[:digitEnd]
+					cleanStr := str[digitEnd:]
+					log.Printf("DEBUG: GoldPrompt followed by PlainString with gold prefix '%s' (GoldPrompt.Num=%d)", goldPrefix, item.Num)
+
+					// Parse the gold amount from the prefix
+					if goldAmount, err := strconv.Atoi(goldPrefix); err == nil {
+						log.Printf("DEBUG: Parsed gold amount from prefix: %d (original GoldPrompt.Num was %d)", goldAmount, item.Num)
+
+						// Create a modified GoldPrompt item with the correct gold amount
+						modifiedItem := item
+						modifiedItem.Num = goldAmount
+
+						// Process the GoldPrompt command with the correct amount
+						if err := e.processScriptItem(modifiedItem); err != nil {
+							return err
+						}
+					} else {
+						log.Printf("DEBUG: Failed to parse gold amount from prefix '%s': %v", goldPrefix, err)
+
+						// Process the original GoldPrompt command as fallback
+						if err := e.processScriptItem(item); err != nil {
+							return err
+						}
+					}
+
+					// Process the PlainString without the gold amount prefix
+					log.Printf("DEBUG: Outputting cleaned PlainString: '%s'", cleanStr)
+					e.currentOutput.WriteString(cleanStr)
+
+					// Skip both items - we've processed them
+					i++ // Skip the PlainString since we handled it
+					continue
+				}
+			}
+		}
+
 		if item.Cmd == references.IfElseKnowsName {
 			// Handle IfElseKnowsName inline with context
 			var targetIndex int
@@ -427,10 +475,14 @@ func (e *LinearConversationEngine) processScriptItem(item references.ScriptItem)
 		return e.processAskName()
 
 	case references.GoldPrompt:
-		// GoldPrompt (0x85) - deduct gold and display amount
-		// For now, just display the amount from the Num field
+		// GoldPrompt (0x85) - deduct gold from player
+		// This should handle gold transactions via callbacks, not display text
+		log.Printf("DEBUG: GoldPrompt command processing with Num=%d", item.Num)
 		if item.Num > 0 {
-			e.currentOutput.WriteString(fmt.Sprintf("%03d", item.Num))
+			// TODO: Add callback for gold deduction: e.callbacks.DeductGold(item.Num)
+			log.Printf("DEBUG: GoldPrompt would deduct %d gold from player", item.Num)
+		} else {
+			log.Printf("DEBUG: GoldPrompt with Num=0 - no gold transaction")
 		}
 
 	case references.StartNewSection:
