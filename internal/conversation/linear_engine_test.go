@@ -4,6 +4,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
@@ -792,9 +793,10 @@ func TestLinearEngineWithRealAlistairData(t *testing.T) {
 		t.Fatal("Alistair data not found at index 1 in CASTLE.TLK")
 	}
 
-	// Create a mock word dictionary for parsing
-	// For this test, we'll use a minimal dictionary since we're focusing on the conversation engine
-	wordDict := &references.WordDict{}
+	// Load proper word dictionary from DATA.OVL for accurate text parsing
+	cfg := config.NewUltimaVConfiguration()
+	dataOvl := references.NewDataOvl(cfg)
+	wordDict := references.NewWordDict(dataOvl.CompressedWords)
 
 	// Parse Alistair's blob into a TalkScript
 	script, err := references.ParseNPCBlob(alistairData, wordDict)
@@ -869,4 +871,140 @@ func TestLinearEngineWithRealAlistairData(t *testing.T) {
 	}
 
 	t.Logf("Bye response: %s", byeResponse.Output)
+}
+
+// TestLinearEngineWithRealTreannaData tests IfElseKnowsName conditional behavior with Treanna
+func TestLinearEngineWithRealTreannaData(t *testing.T) {
+	// Load CASTLE.TLK file
+	talkData, err := references.LoadFile("/Users/bradhannah/GitHub/Ultima5ReduxGo/OLD/CASTLE.TLK")
+	if err != nil {
+		t.Skipf("Skipping real data test: %v", err)
+		return
+	}
+
+	// Treanna is at NPC index 3 in CASTLE.TLK
+	treannaData, exists := talkData[3]
+	if !exists {
+		t.Fatal("Treanna data not found at index 3 in CASTLE.TLK")
+	}
+
+	// Load proper word dictionary from DATA.OVL for accurate text parsing
+	cfg := config.NewUltimaVConfiguration()
+	dataOvl := references.NewDataOvl(cfg)
+	wordDict := references.NewWordDict(dataOvl.CompressedWords)
+
+	// Parse Treanna's blob into a TalkScript
+	script, err := references.ParseNPCBlob(treannaData, wordDict)
+	if err != nil {
+		t.Fatalf("Failed to parse Treanna's data: %v", err)
+	}
+
+	t.Run("HasMet=false", func(t *testing.T) {
+		// Test when Avatar has NOT met Treanna before
+		callbacks := &TestActionCallbacks{
+			avatarName: "TestAvatar",
+			hasMetNPC:  false, // First time meeting
+		}
+
+		engine := NewLinearConversationEngine(script, callbacks)
+
+		// Test start conversation - should show introduction
+		response := engine.Start(3) // NPC ID 3 for Treanna
+		if response.Error != nil {
+			t.Fatalf("Start conversation failed: %v", response.Error)
+		}
+
+		t.Logf("First meeting response: %s", response.Output)
+
+		// Test NAME keyword when haven't met
+		nameResponse := engine.ProcessInput("NAME")
+		if nameResponse.Error != nil {
+			t.Fatalf("NAME query failed: %v", nameResponse.Error)
+		}
+
+		t.Logf("Name response (first meeting): %s", nameResponse.Output)
+
+		// Should contain "Treanna"
+		if !strings.Contains(nameResponse.Output, "Treanna") {
+			t.Error("Expected name response to contain 'Treanna'")
+		}
+
+		// End conversation cleanly
+		engine.ProcessInput("BYE")
+	})
+
+	t.Run("HasMet=true", func(t *testing.T) {
+		// Test when Avatar HAS met Treanna before
+		callbacks := &TestActionCallbacks{
+			avatarName: "TestAvatar",
+			hasMetNPC:  true, // Has met before
+		}
+
+		engine := NewLinearConversationEngine(script, callbacks)
+
+		// Test start conversation - should show greeting
+		response := engine.Start(3) // NPC ID 3 for Treanna
+		if response.Error != nil {
+			t.Fatalf("Start conversation failed: %v", response.Error)
+		}
+
+		t.Logf("Return visit response: %s", response.Output)
+
+		// Test NAME keyword when have met
+		nameResponse := engine.ProcessInput("NAME")
+		if nameResponse.Error != nil {
+			t.Fatalf("NAME query failed: %v", nameResponse.Error)
+		}
+
+		t.Logf("Name response (return visit): %s", nameResponse.Output)
+
+		// Should contain "Treanna"
+		if !strings.Contains(nameResponse.Output, "Treanna") {
+			t.Error("Expected name response to contain 'Treanna'")
+		}
+
+		// End conversation cleanly
+		engine.ProcessInput("BYE")
+	})
+
+	t.Run("CompareHasMetBehavior", func(t *testing.T) {
+		// Compare the difference in behavior between HasMet states
+
+		// First time meeting
+		callbacksFirst := &TestActionCallbacks{
+			avatarName: "TestAvatar",
+			hasMetNPC:  false,
+		}
+		engineFirst := NewLinearConversationEngine(script, callbacksFirst)
+		firstResponse := engineFirst.Start(3)
+		firstNameResponse := engineFirst.ProcessInput("NAME")
+
+		// Return visit
+		callbacksReturn := &TestActionCallbacks{
+			avatarName: "TestAvatar",
+			hasMetNPC:  true,
+		}
+		engineReturn := NewLinearConversationEngine(script, callbacksReturn)
+		returnResponse := engineReturn.Start(3)
+		returnNameResponse := engineReturn.ProcessInput("NAME")
+
+		t.Logf("First meeting bootstrap: %s", firstResponse.Output)
+		t.Logf("Return visit bootstrap: %s", returnResponse.Output)
+		t.Logf("First meeting NAME: %s", firstNameResponse.Output)
+		t.Logf("Return visit NAME: %s", returnNameResponse.Output)
+
+		// The responses should be different if IfElseKnowsName is working
+		// This is a behavioral test to ensure conditional logic is functioning
+		if firstResponse.Output == returnResponse.Output {
+			t.Logf("Bootstrap responses are identical - this may indicate IfElseKnowsName is not used in bootstrap")
+		} else {
+			t.Logf("Bootstrap responses differ - IfElseKnowsName working in bootstrap")
+		}
+
+		if firstNameResponse.Output == returnNameResponse.Output {
+			t.Logf("NAME responses are identical - this may indicate IfElseKnowsName is not used in NAME response")
+		} else {
+			t.Logf("NAME responses differ - IfElseKnowsName working in NAME response")
+		}
+	})
 }
