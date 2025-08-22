@@ -1376,9 +1376,9 @@ func TestLinearEngineWithRealTreannaData(t *testing.T) {
 
 		t.Logf("Default response: %s", defaultResponse.Output)
 
-		// Should contain default message
-		if !strings.Contains(defaultResponse.Output, "I cannot help thee with that") {
-			t.Error("Expected default response to contain 'I cannot help thee with that'")
+		// Should contain the actual TLK default answer
+		if !strings.Contains(defaultResponse.Output, "Never heard of that one") {
+			t.Error("Expected default response to contain TLK default answer about 'Never heard of that one'")
 		}
 
 		// End conversation cleanly

@@ -279,6 +279,13 @@ func (e *LinearConversationEngine) searchScriptKeywords() *ConversationResponse 
 
 // handleUnrecognizedInput provides default response for unmatched input
 func (e *LinearConversationEngine) handleUnrecognizedInput() *ConversationResponse {
+	// First try to handle as a standard keyword (NAME, JOB, BYE)
+	keywordResponse := e.handleKeywordMatch()
+	if keywordResponse != nil {
+		return keywordResponse
+	}
+
+	// If not a standard keyword, provide generic response
 	e.currentOutput.Reset()
 	e.currentOutput.WriteString("\"I cannot help thee with that.\"\n\n")
 	return e.promptForInput("Your interest?")
@@ -590,12 +597,8 @@ func (e *LinearConversationEngine) processQuestion(questionCmd references.TalkCo
 		// Check if we need to adjust for off-by-one mapping
 		log.Printf("DEBUG: questionCmd=0x%02X, labelNum calculated=%d", byte(questionCmd), labelNum)
 
-		// Apply off-by-one correction: Label3 (0x93) should access script.Labels[3], not script.Labels[2]
-		// This appears to be needed because the TLK format has this offset
-		if labelNum >= 2 {
-			labelNum += 1
-			log.Printf("DEBUG: Applying off-by-one correction, adjusted labelNum=%d", labelNum)
-		}
+		// The TLK format uses a direct mapping: Label1 (0x91) -> script.Labels[0], Label2 (0x92) -> script.Labels[1], etc.
+		// No off-by-one correction needed - labelNum is already correct
 
 		if labelData, exists := e.script.Labels[labelNum]; exists {
 			// Enter question mode for this label
@@ -970,7 +973,10 @@ func (e *LinearConversationEngine) processNameInput() *ConversationResponse {
 		// Name recognized - this should mark the NPC as "met"
 		nameRecognized = true
 		log.Printf("DEBUG: Name '%s' recognized as avatar '%s'", nameInput, avatarName)
-		// TODO: Call setmet(npcID) to mark NPC as met
+
+		// CRITICAL: Update HasMet immediately so next IfElseKnowsName sees the change
+		e.hasMet = true
+		log.Printf("DEBUG: Updated HasMet=true after name recognition")
 	} else {
 		log.Printf("DEBUG: Name '%s' not recognized", nameInput)
 	}
