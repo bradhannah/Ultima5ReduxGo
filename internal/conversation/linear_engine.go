@@ -11,15 +11,16 @@ import (
 // LinearConversationEngine implements a straightforward pointer-based conversation system
 // that processes TalkScript commands sequentially with linear navigation
 type LinearConversationEngine struct {
-	script        *references.TalkScript
-	pointer       int // Current position in the script
-	callbacks     ActionCallbacks
-	currentOutput strings.Builder
-	inputBuffer   string
-	hasMet        bool
-	isActive      bool
-	labelMap      map[references.TalkCommand]int // Maps label commands to script positions
-	currentLabel  int                            // Current label for question mode (-1 = not in question mode)
+	script         *references.TalkScript
+	pointer        int // Current position in the script
+	callbacks      ActionCallbacks
+	currentOutput  strings.Builder
+	inputBuffer    string
+	hasMet         bool
+	isActive       bool
+	labelMap       map[references.TalkCommand]int // Maps label commands to script positions
+	currentLabel   int                            // Current label for question mode (-1 = not in question mode)
+	waitingForName bool                           // True when waiting for name input from AskName command
 }
 
 // ActionCallbacks defines the interface for handling conversation actions
@@ -62,12 +63,13 @@ type ConversationResponse struct {
 // NewLinearConversationEngine creates a new linear conversation engine
 func NewLinearConversationEngine(script *references.TalkScript, callbacks ActionCallbacks) *LinearConversationEngine {
 	engine := &LinearConversationEngine{
-		script:       script,
-		pointer:      0,
-		callbacks:    callbacks,
-		isActive:     false,
-		labelMap:     make(map[references.TalkCommand]int),
-		currentLabel: -1, // Not in question mode
+		script:         script,
+		pointer:        0,
+		callbacks:      callbacks,
+		isActive:       false,
+		labelMap:       make(map[references.TalkCommand]int),
+		currentLabel:   -1,    // Not in question mode
+		waitingForName: false, // Not waiting for name input
 	}
 
 	// Build label map for fast navigation
@@ -99,6 +101,11 @@ func (e *LinearConversationEngine) ProcessInput(input string) *ConversationRespo
 
 	e.inputBuffer = strings.TrimSpace(strings.ToUpper(input))
 
+	// If we're waiting for name input from AskName command, handle it
+	if e.waitingForName {
+		return e.processNameInput()
+	}
+
 	// If we're in question mode, handle differently
 	if e.currentLabel >= 0 {
 		return e.processQuestionAnswer()
@@ -113,6 +120,7 @@ func (e *LinearConversationEngine) performBootstrap() *ConversationResponse {
 
 	// Show NPC description (fixed entry 1)
 	if len(e.script.Lines) > references.TalkScriptConstantsDescription {
+		e.currentOutput.WriteString("You see ")
 		descLine := e.script.Lines[references.TalkScriptConstantsDescription]
 		if err := e.processScriptLine(descLine); err != nil {
 			return &ConversationResponse{Error: err}
@@ -120,28 +128,17 @@ func (e *LinearConversationEngine) performBootstrap() *ConversationResponse {
 	}
 
 	// Determine greeting based on whether player has met NPC
-	var greetingLine references.ScriptLine
 	if e.hasMet && len(e.script.Lines) > references.TalkScriptConstantsGreeting {
-		// Use greeting for known NPCs
-		greetingLine = e.script.Lines[references.TalkScriptConstantsGreeting]
-	} else if len(e.script.Lines) > references.TalkScriptConstantsName {
-		// Introduce themselves if first meeting
-		e.currentOutput.WriteString("\"I am called ")
-		nameLine := e.script.Lines[references.TalkScriptConstantsName]
-		if err := e.processScriptLine(nameLine); err != nil {
-			return &ConversationResponse{Error: err}
-		}
-		e.currentOutput.WriteString("\"\n\n")
-		return e.promptForInput("Your interest?")
-	}
-
-	if len(greetingLine) > 0 {
+		// Use greeting for known NPCs - this may contain commands like <Goto Label 0>
+		greetingLine := e.script.Lines[references.TalkScriptConstantsGreeting]
 		e.currentOutput.WriteString("\"")
 		if err := e.processScriptLine(greetingLine); err != nil {
 			return &ConversationResponse{Error: err}
 		}
 		e.currentOutput.WriteString("\"\n\n")
 	}
+	// For first meeting (HasMet=false), just show description and wait for input
+	// Don't automatically process the name line - let player ask for "name" explicitly
 
 	return e.promptForInput("Your interest?")
 }
@@ -190,6 +187,16 @@ func (e *LinearConversationEngine) handleName() *ConversationResponse {
 	if len(e.script.Lines) > references.TalkScriptConstantsName {
 		nameLine := e.script.Lines[references.TalkScriptConstantsName]
 		e.processScriptLine(nameLine)
+
+		// Check if AskName command was encountered and we're now waiting for name input
+		if e.waitingForName {
+			e.currentOutput.WriteString("\"\n\nWhat is thy name?")
+			return &ConversationResponse{
+				Output:      e.currentOutput.String(),
+				NeedsInput:  true,
+				InputPrompt: "You respond:",
+			}
+		}
 	}
 
 	e.currentOutput.WriteString("\"\n\n")
@@ -354,6 +361,12 @@ func (e *LinearConversationEngine) processScriptItem(item references.ScriptItem)
 
 	case references.AskName:
 		return e.processAskName()
+
+	case references.StartNewSection:
+		// StartNewSection (0xA2) - formatting/organizational marker, no action needed
+
+	case references.DoNothingSection:
+		// DoNothingSection (0xFF) - explicitly does nothing
 
 	default:
 		// Handle question labels (Label1 through EndScript range for questions)
@@ -678,20 +691,28 @@ func (e *LinearConversationEngine) processIfElseKnowsName() error {
 
 // processAskName implements the AskName (0x88) command
 // Based on the original askname() function in TALKNPC.C lines 701-729
+// This returns a ConversationResponse that requests name input
 func (e *LinearConversationEngine) processAskName() error {
-	// Ask for the player's name
-	namePrompt, err := e.callbacks.AskPlayerName()
-	if err != nil {
-		return err
-	}
+	// Mark that we're waiting for name input
+	e.waitingForName = true
+	return nil // The actual prompting will be handled by the response system
+}
+
+// processNameInput handles the response to AskName command
+func (e *LinearConversationEngine) processNameInput() *ConversationResponse {
+	// No longer waiting for name input
+	e.waitingForName = false
+
+	e.currentOutput.Reset()
+	e.currentOutput.WriteString("\"")
 
 	// Clean up the input (trim spaces, convert to uppercase for comparison)
-	nameInput := strings.TrimSpace(strings.ToUpper(namePrompt))
+	nameInput := strings.TrimSpace(strings.ToUpper(e.inputBuffer))
 
 	// If empty input, respond with "If you say so..."
 	if nameInput == "" {
-		e.currentOutput.WriteString("\"If you say so...\"")
-		return nil
+		e.currentOutput.WriteString("If you say so...\"")
+		return e.promptForInput("Your interest?")
 	}
 
 	// Check if the name matches any party member's name
@@ -704,11 +725,11 @@ func (e *LinearConversationEngine) processAskName() error {
 		// Name recognized - this should mark the NPC as "met"
 		// In the original game, this would call setmet(talknum)
 		// For now, we'll just respond positively
-		e.currentOutput.WriteString("\"A pleasure!\"")
-		return nil
+		e.currentOutput.WriteString("A pleasure!\"")
+		return e.promptForInput("Your interest?")
 	}
 
 	// Name not recognized
-	e.currentOutput.WriteString("\"If you say so...\"")
-	return nil
+	e.currentOutput.WriteString("If you say so...\"")
+	return e.promptForInput("Your interest?")
 }
