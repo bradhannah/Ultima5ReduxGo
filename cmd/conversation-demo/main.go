@@ -73,6 +73,11 @@ func (d *DemoCallbacks) PayHalfExtortion() error {
 	return nil
 }
 
+func (d *DemoCallbacks) GiveItem(itemID int) error {
+	fmt.Printf("\n[Game Action: You receive item %d!]", itemID)
+	return nil
+}
+
 // Player interaction callbacks
 func (d *DemoCallbacks) GetUserInput(prompt string) (string, error) {
 	reader := bufio.NewReader(os.Stdin)

@@ -38,6 +38,7 @@ type ActionCallbacks interface {
 	MakeHorse() error
 	PayExtortion(amount int) error
 	PayHalfExtortion() error
+	GiveItem(itemID int) error
 
 	// Player interaction callbacks
 	GetUserInput(prompt string) (string, error)
@@ -497,6 +498,11 @@ func (e *LinearConversationEngine) processScriptItem(item references.ScriptItem)
 			log.Printf("DEBUG: GoldPrompt with Num=0 - no gold transaction")
 		}
 
+	case references.Change:
+		// Change (0x86) - give item to player
+		log.Printf("DEBUG: Change command processing - giving item %d to player", item.Num)
+		return e.callbacks.GiveItem(item.Num)
+
 	case references.StartNewSection:
 		// StartNewSection (0xA2) - formatting/organizational marker, no action needed
 
@@ -522,8 +528,15 @@ func (e *LinearConversationEngine) processScriptItem(item references.ScriptItem)
 
 // promptForInput creates a response that requests user input
 func (e *LinearConversationEngine) promptForInput(prompt string) *ConversationResponse {
+	// Add a clear input prompt with newline and ">" symbol
+	output := e.currentOutput.String()
+	if output != "" && !strings.HasSuffix(output, "\n") {
+		output += "\n"
+	}
+	output += "\n> "
+
 	return &ConversationResponse{
-		Output:      e.currentOutput.String(),
+		Output:      output,
 		NeedsInput:  true,
 		InputPrompt: prompt,
 	}
@@ -601,9 +614,15 @@ func (e *LinearConversationEngine) processQuestion(questionCmd references.TalkCo
 		// No off-by-one correction needed - labelNum is already correct
 
 		if labelData, exists := e.script.Labels[labelNum]; exists {
-			// Enter question mode for this label
-			e.currentLabel = labelNum
-			log.Printf("DEBUG: Entering question mode for label %d", labelNum)
+			// Only enter question mode if this label has interactive content (QA mappings)
+			hasInteractiveContent := labelData.QA != nil && len(labelData.QA) > 0
+
+			if hasInteractiveContent {
+				e.currentLabel = labelNum
+				log.Printf("DEBUG: Entering question mode for label %d", labelNum)
+			} else {
+				log.Printf("DEBUG: Processing label %d content (no interactive QA)", labelNum)
+			}
 
 			// Skip the label definition header (StartLabelDef and the label itself)
 			// Start processing from the actual content
@@ -701,8 +720,19 @@ func (e *LinearConversationEngine) processQuestionAnswer() *ConversationResponse
 				}
 			}
 
-			// Only exit question mode if we haven't navigated to another question
-			if e.currentLabel == originalLabel {
+			// Exit question mode if we haven't navigated to a label with interactive content
+			shouldExitQuestionMode := true
+			if e.currentLabel != originalLabel {
+				// Check if the new label has interactive content (QA mappings)
+				if newLabelData, exists := e.script.Labels[e.currentLabel]; exists {
+					if newLabelData.QA != nil && len(newLabelData.QA) > 0 {
+						// New label has interactive QA content, stay in question mode
+						shouldExitQuestionMode = false
+					}
+				}
+			}
+
+			if shouldExitQuestionMode {
 				e.currentLabel = -1 // Exit question mode after answering
 			}
 
@@ -738,8 +768,19 @@ func (e *LinearConversationEngine) processQuestionAnswer() *ConversationResponse
 					}
 				}
 
-				// Only exit question mode if we haven't navigated to another question
-				if e.currentLabel == originalLabel {
+				// Exit question mode if we haven't navigated to a label with interactive content
+				shouldExitQuestionMode := true
+				if e.currentLabel != originalLabel {
+					// Check if the new label has interactive content (QA mappings)
+					if newLabelData, exists := e.script.Labels[e.currentLabel]; exists {
+						if newLabelData.QA != nil && len(newLabelData.QA) > 0 {
+							// New label has interactive QA content, stay in question mode
+							shouldExitQuestionMode = false
+						}
+					}
+				}
+
+				if shouldExitQuestionMode {
 					e.currentLabel = -1 // Exit question mode after answering
 				}
 
@@ -775,8 +816,19 @@ func (e *LinearConversationEngine) processQuestionAnswer() *ConversationResponse
 					}
 				}
 
-				// Only exit question mode if we haven't navigated to another question
-				if e.currentLabel == originalLabel {
+				// Exit question mode if we haven't navigated to a label with interactive content
+				shouldExitQuestionMode := true
+				if e.currentLabel != originalLabel {
+					// Check if the new label has interactive content (QA mappings)
+					if newLabelData, exists := e.script.Labels[e.currentLabel]; exists {
+						if newLabelData.QA != nil && len(newLabelData.QA) > 0 {
+							// New label has interactive QA content, stay in question mode
+							shouldExitQuestionMode = false
+						}
+					}
+				}
+
+				if shouldExitQuestionMode {
 					e.currentLabel = -1 // Exit question mode after answering
 				}
 
@@ -807,8 +859,19 @@ func (e *LinearConversationEngine) processQuestionAnswer() *ConversationResponse
 
 		// Let the higher-level label processing handle AskName state - don't handle it here
 
-		// Only exit question mode if we haven't navigated to another question
-		if e.currentLabel == originalLabel {
+		// Exit question mode if we haven't navigated to a label with interactive content
+		shouldExitQuestionMode := true
+		if e.currentLabel != originalLabel {
+			// Check if the new label has interactive content (QA mappings)
+			if newLabelData, exists := e.script.Labels[e.currentLabel]; exists {
+				if newLabelData.QA != nil && len(newLabelData.QA) > 0 {
+					// New label has interactive QA content, stay in question mode
+					shouldExitQuestionMode = false
+				}
+			}
+		}
+
+		if shouldExitQuestionMode {
 			e.currentLabel = -1 // Exit question mode after answering
 		}
 
