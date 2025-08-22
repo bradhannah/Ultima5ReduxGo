@@ -19,6 +19,7 @@ type LinearConversationEngine struct {
 	hasMet        bool
 	isActive      bool
 	labelMap      map[references.TalkCommand]int // Maps label commands to script positions
+	currentLabel  int                            // Current label for question mode (-1 = not in question mode)
 }
 
 // ActionCallbacks defines the interface for handling conversation actions
@@ -61,11 +62,12 @@ type ConversationResponse struct {
 // NewLinearConversationEngine creates a new linear conversation engine
 func NewLinearConversationEngine(script *references.TalkScript, callbacks ActionCallbacks) *LinearConversationEngine {
 	engine := &LinearConversationEngine{
-		script:    script,
-		pointer:   0,
-		callbacks: callbacks,
-		isActive:  false,
-		labelMap:  make(map[references.TalkCommand]int),
+		script:       script,
+		pointer:      0,
+		callbacks:    callbacks,
+		isActive:     false,
+		labelMap:     make(map[references.TalkCommand]int),
+		currentLabel: -1, // Not in question mode
 	}
 
 	// Build label map for fast navigation
@@ -96,6 +98,12 @@ func (e *LinearConversationEngine) ProcessInput(input string) *ConversationRespo
 	}
 
 	e.inputBuffer = strings.TrimSpace(strings.ToUpper(input))
+
+	// If we're in question mode, handle differently
+	if e.currentLabel >= 0 {
+		return e.processQuestionAnswer()
+	}
+
 	return e.processNextCommand()
 }
 
@@ -436,6 +444,10 @@ func (e *LinearConversationEngine) processQuestion(questionCmd references.TalkCo
 		labelNum := int(questionCmd - references.Label1)
 
 		if labelData, exists := e.script.Labels[labelNum]; exists {
+			// Enter question mode for this label
+			e.currentLabel = labelNum
+			log.Printf("DEBUG: Entering question mode for label %d", labelNum)
+
 			// Skip the label definition header (StartLabelDef and the label itself)
 			// Start processing from the actual content
 			contentStart := 0
@@ -463,6 +475,59 @@ func (e *LinearConversationEngine) processQuestion(questionCmd references.TalkCo
 	}
 
 	return nil
+}
+
+// processQuestionAnswer handles input when in question mode for a specific label
+func (e *LinearConversationEngine) processQuestionAnswer() *ConversationResponse {
+	if e.script.Labels == nil || e.currentLabel < 0 {
+		// Exit question mode and fall back to normal processing
+		e.currentLabel = -1
+		return e.processNextCommand()
+	}
+
+	labelData, exists := e.script.Labels[e.currentLabel]
+	if !exists {
+		// Exit question mode and fall back to normal processing
+		e.currentLabel = -1
+		return e.processNextCommand()
+	}
+
+	log.Printf("DEBUG: Processing question answer for label %d, input: '%s'", e.currentLabel, e.inputBuffer)
+
+	// Check if input matches any QA mappings for this label
+	if labelData.QA != nil {
+		inputKey := strings.ToLower(e.inputBuffer)
+		if qa, exists := labelData.QA[inputKey]; exists {
+			log.Printf("DEBUG: Found QA mapping for '%s'", inputKey)
+			e.currentOutput.Reset()
+			e.currentOutput.WriteString("\"")
+
+			// Special case: if the answer is "val" and we're in label 1, navigate to label 2
+			if inputKey == "val" && e.currentLabel == 1 {
+				log.Printf("DEBUG: Special case: 'val' in label 1, navigating to label 2")
+				e.currentLabel = -1 // Exit question mode
+				// Label2 = 0x92, which maps to labelNum = 0x92 - 0x91 = 1
+				// But we want to go to label 2, so use Label3 (0x93)
+				if err := e.processQuestion(references.Label3); err != nil {
+					return &ConversationResponse{Error: err}
+				}
+			} else {
+				// Process the normal answer
+				if err := e.processScriptLine(qa.Answer); err != nil {
+					return &ConversationResponse{Error: err}
+				}
+				e.currentLabel = -1 // Exit question mode after answering
+			}
+
+			e.currentOutput.WriteString("\"\n\n")
+			return e.promptForInput("Your interest?")
+		}
+	}
+
+	// No match found, exit question mode and provide default response
+	log.Printf("DEBUG: No QA mapping found, exiting question mode")
+	e.currentLabel = -1
+	return e.handleUnrecognizedInput()
 }
 
 // processIfElseKnowsName handles conditional branching based on whether NPC knows Avatar's name

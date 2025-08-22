@@ -1087,4 +1087,98 @@ func TestLinearEngineWithRealTreannaData(t *testing.T) {
 		// End conversation cleanly
 		engine.ProcessInput("BYE")
 	})
+
+	t.Run("ValKeywordSequenceNavigation", func(t *testing.T) {
+		// Test the VAL keyword which should trigger a question sequence
+		// Then test follow-up responses: "val" (goto label 2), "step", and default
+		callbacks := &TestActionCallbacks{
+			avatarName: "TestAvatar",
+			hasMetNPC:  false, // Doesn't matter for this test
+		}
+
+		engine := NewLinearConversationEngine(script, callbacks)
+
+		// Debug: Show VAL label content in detail
+		if script.Labels != nil {
+			for labelNum, labelData := range script.Labels {
+				if labelNum == 0 || labelNum == 1 || labelNum == 2 { // Show labels 0, 1, 2
+					t.Logf("Label %d detailed content:", labelNum)
+					for i, item := range labelData.Initial {
+						t.Logf("  Item %d: Cmd=%s, Str='%s'", i, item.Cmd.String(), item.Str)
+					}
+					if labelData.QA != nil && len(labelData.QA) > 0 {
+						t.Logf("  QA mappings:")
+						for key, qa := range labelData.QA {
+							t.Logf("    '%s' -> %d items", key, len(qa.Answer))
+						}
+					}
+				}
+			}
+		}
+
+		// Start conversation
+		response := engine.Start(3)
+		if response.Error != nil {
+			t.Fatalf("Start conversation failed: %v", response.Error)
+		}
+
+		// Test VAL keyword - should trigger a question
+		t.Logf("Testing initial 'VAL' keyword...")
+		valResponse := engine.ProcessInput("VAL")
+		if valResponse.Error != nil {
+			t.Fatalf("VAL query failed: %v", valResponse.Error)
+		}
+
+		t.Logf("Initial VAL response: %s", valResponse.Output)
+
+		// Should contain the question from the label
+		if !valResponse.NeedsInput {
+			t.Error("Expected VAL response to need input (should ask a question)")
+		}
+
+		// Test second "VAL" response - should goto label 2
+		t.Logf("Testing second 'VAL' response (should goto label 2)...")
+		val2Response := engine.ProcessInput("VAL")
+		if val2Response.Error != nil {
+			t.Fatalf("Second VAL query failed: %v", val2Response.Error)
+		}
+
+		t.Logf("Second VAL response: %s", val2Response.Output)
+
+		// Reset for next test
+		engine2 := NewLinearConversationEngine(script, callbacks)
+		engine2.Start(3)
+		engine2.ProcessInput("VAL") // Trigger the question first
+
+		// Test "STEP" response
+		t.Logf("Testing 'STEP' response...")
+		stepResponse := engine2.ProcessInput("STEP")
+		if stepResponse.Error != nil {
+			t.Fatalf("STEP query failed: %v", stepResponse.Error)
+		}
+
+		t.Logf("STEP response: %s", stepResponse.Output)
+
+		// Reset for next test
+		engine3 := NewLinearConversationEngine(script, callbacks)
+		engine3.Start(3)
+		engine3.ProcessInput("VAL") // Trigger the question first
+
+		// Test default/unrecognized response
+		t.Logf("Testing default response with unrecognized input...")
+		defaultResponse := engine3.ProcessInput("UNKNOWN")
+		if defaultResponse.Error != nil {
+			t.Fatalf("Default response failed: %v", defaultResponse.Error)
+		}
+
+		t.Logf("Default response: %s", defaultResponse.Output)
+
+		// Should contain default message
+		if !strings.Contains(defaultResponse.Output, "I cannot help thee with that") {
+			t.Error("Expected default response to contain 'I cannot help thee with that'")
+		}
+
+		// End conversation cleanly
+		engine.ProcessInput("BYE")
+	})
 }
