@@ -755,6 +755,9 @@ func (e *LinearConversationEngine) processPauseInput() *ConversationResponse {
 
 	// Continue processing from where we left off
 	if e.pausedScriptLine != nil && e.pausedItemIndex < len(e.pausedScriptLine) {
+		// Start fresh output buffer for continuation content only
+		e.currentOutput.Reset()
+
 		// Resume processing the remaining items in the paused script line
 		remainingItems := e.pausedScriptLine[e.pausedItemIndex:]
 		log.Printf("DEBUG: Processing %d remaining items after pause", len(remainingItems))
@@ -773,9 +776,14 @@ func (e *LinearConversationEngine) processPauseInput() *ConversationResponse {
 			e.currentLabel = -1 // Exit question mode
 		}
 
-		// Close the quote and return to normal conversation flow
-		e.currentOutput.WriteString("\"\n\n")
-		return e.promptForInput("Your interest?")
+		// The output now contains only the new content after the pause
+		// Return it without adding quotes since this is a continuation
+		finalOutput := e.currentOutput.String() + "\"\n\n"
+		return &ConversationResponse{
+			Output:      finalOutput,
+			NeedsInput:  true,
+			InputPrompt: "Your interest?",
+		}
 	}
 
 	log.Printf("DEBUG: No paused script to resume")
