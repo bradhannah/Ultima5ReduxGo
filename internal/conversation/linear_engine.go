@@ -44,6 +44,7 @@ type ActionCallbacks interface {
 	GetGoldAmount(prompt string) (int, error)
 	ShowOutput(text string)
 	WaitForKeypress()
+	TimedPause() // 3-second pause that can be interrupted by keypress
 
 	// Game state queries
 	HasMet(npcID int) bool
@@ -107,6 +108,7 @@ func (e *LinearConversationEngine) ProcessInput(input string) *ConversationRespo
 
 	// If we're waiting for name input from AskName command, handle it
 	if e.waitingForName {
+		log.Printf("DEBUG: waitingForName=true, processing as name input: '%s'", e.inputBuffer)
 		return e.processNameInput()
 	}
 
@@ -298,8 +300,21 @@ func (e *LinearConversationEngine) processScriptLine(line references.ScriptLine)
 			}
 
 			if targetIndex < len(line) {
-				if err := e.processScriptItem(line[targetIndex]); err != nil {
-					return err
+				targetItem := line[targetIndex]
+
+				// Check if this is a label jump command
+				if targetItem.Cmd >= references.Label1 && targetItem.Cmd <= references.Label10 {
+					// This is a label jump - process it and stop processing current script line
+					if err := e.processScriptItem(targetItem); err != nil {
+						return err
+					}
+					// Stop processing the current script line - the label jump takes over
+					return nil
+				} else {
+					// This is a regular command - process it and continue
+					if err := e.processScriptItem(targetItem); err != nil {
+						return err
+					}
 				}
 			}
 
@@ -319,6 +334,21 @@ func (e *LinearConversationEngine) processScriptLine(line references.ScriptLine)
 			if e.pausedScriptLine == nil {
 				e.pausedScriptLine = line
 				e.pausedItemIndex = i + 1 // Resume from next item
+			}
+			return nil
+		}
+
+		// Check if we encountered an AskName command and need to stop processing
+		if e.waitingForName {
+			log.Printf("DEBUG: AskName encountered during script processing, stopping at item %d of %d", i+1, len(line))
+			// Save the current script line and position for resuming after name input
+			// Only set if not already set (don't overwrite existing pause state)
+			if e.pausedScriptLine == nil {
+				e.pausedScriptLine = line
+				e.pausedItemIndex = i + 1 // Resume from next item after AskName
+				log.Printf("DEBUG: Setting pausedScriptLine (length %d) at index %d", len(line), i+1)
+			} else {
+				log.Printf("DEBUG: pausedScriptLine already set, not overwriting")
 			}
 			return nil
 		}
@@ -351,7 +381,8 @@ func (e *LinearConversationEngine) processScriptItem(item references.ScriptItem)
 		return e.callbacks.DecreaseKarma()
 
 	case references.Pause:
-		e.waitingForPause = true
+		// Execute 3-second timed pause immediately and continue
+		e.callbacks.TimedPause()
 
 	case references.KeyWait:
 		e.callbacks.WaitForKeypress()
@@ -528,6 +559,15 @@ func (e *LinearConversationEngine) processQuestion(questionCmd references.TalkCo
 					log.Printf("DEBUG: Pause in label %d, resuming from item %d of %d", labelNum, e.pausedItemIndex, len(e.pausedScriptLine))
 					return nil
 				}
+
+				// Check if we encountered an AskName command during processing
+				if e.waitingForName {
+					// AskName was processed in this label - we need to wait for name input
+					// before continuing with any further label processing
+					log.Printf("DEBUG: AskName in label %d, waiting for name input", labelNum)
+					// This should be handled by the higher-level response system, not here
+					return nil
+				}
 			}
 		}
 	}
@@ -576,6 +616,18 @@ func (e *LinearConversationEngine) processQuestionAnswer() *ConversationResponse
 				return &ConversationResponse{Error: err}
 			}
 
+			// Check if we encountered an AskName command during answer processing
+			if e.waitingForName {
+				// AskName was processed - we need to wait for name input
+				log.Printf("DEBUG: AskName in QA answer processing, waiting for name input")
+				e.currentOutput.WriteString("\"\n\nWhat is thy name?")
+				return &ConversationResponse{
+					Output:      e.currentOutput.String(),
+					NeedsInput:  true,
+					InputPrompt: "You respond:",
+				}
+			}
+
 			// Only exit question mode if we haven't navigated to another question
 			if e.currentLabel == originalLabel {
 				e.currentLabel = -1 // Exit question mode after answering
@@ -601,6 +653,18 @@ func (e *LinearConversationEngine) processQuestionAnswer() *ConversationResponse
 					return &ConversationResponse{Error: err}
 				}
 
+				// Check if we encountered an AskName command during answer processing
+				if e.waitingForName {
+					// AskName was processed - we need to wait for name input
+					log.Printf("DEBUG: AskName in QA answer processing, waiting for name input")
+					e.currentOutput.WriteString("\"\n\nWhat is thy name?")
+					return &ConversationResponse{
+						Output:      e.currentOutput.String(),
+						NeedsInput:  true,
+						InputPrompt: "You respond:",
+					}
+				}
+
 				// Only exit question mode if we haven't navigated to another question
 				if e.currentLabel == originalLabel {
 					e.currentLabel = -1 // Exit question mode after answering
@@ -624,6 +688,18 @@ func (e *LinearConversationEngine) processQuestionAnswer() *ConversationResponse
 				// Process the answer - it may contain navigation commands
 				if err := e.processScriptLine(qa.Answer); err != nil {
 					return &ConversationResponse{Error: err}
+				}
+
+				// Check if we encountered an AskName command during answer processing
+				if e.waitingForName {
+					// AskName was processed - we need to wait for name input
+					log.Printf("DEBUG: AskName in QA answer processing, waiting for name input")
+					e.currentOutput.WriteString("\"\n\nWhat is thy name?")
+					return &ConversationResponse{
+						Output:      e.currentOutput.String(),
+						NeedsInput:  true,
+						InputPrompt: "You respond:",
+					}
 				}
 
 				// Only exit question mode if we haven't navigated to another question
@@ -655,6 +731,8 @@ func (e *LinearConversationEngine) processQuestionAnswer() *ConversationResponse
 		if err := e.processScriptLine(defaultAnswer); err != nil {
 			return &ConversationResponse{Error: err}
 		}
+
+		// Let the higher-level label processing handle AskName state - don't handle it here
 
 		// Only exit question mode if we haven't navigated to another question
 		if e.currentLabel == originalLabel {
@@ -740,6 +818,7 @@ func (e *LinearConversationEngine) processIfElseKnowsName() error {
 // Based on the original askname() function in TALKNPC.C lines 701-729
 // This returns a ConversationResponse that requests name input
 func (e *LinearConversationEngine) processAskName() error {
+	log.Printf("DEBUG: processAskName() called - setting waitingForName=true")
 	// Mark that we're waiting for name input
 	e.waitingForName = true
 	return nil // The actual prompting will be handled by the response system
@@ -770,6 +849,17 @@ func (e *LinearConversationEngine) processPauseInput() *ConversationResponse {
 		e.pausedScriptLine = nil
 		e.pausedItemIndex = 0
 
+		// Check if we're now waiting for name input after processing the remaining items
+		if e.waitingForName {
+			// AskName command was processed - we should be waiting for name input, not returning to normal flow
+			finalOutput := e.currentOutput.String() + "\"\n\nWhat is thy name?"
+			return &ConversationResponse{
+				Output:      finalOutput,
+				NeedsInput:  true,
+				InputPrompt: "You respond:",
+			}
+		}
+
 		// After resuming from pause and finishing the script, we should exit question mode
 		// The label content has been fully processed
 		if e.currentLabel >= 0 {
@@ -796,33 +886,94 @@ func (e *LinearConversationEngine) processNameInput() *ConversationResponse {
 	// No longer waiting for name input
 	e.waitingForName = false
 
-	e.currentOutput.Reset()
-	e.currentOutput.WriteString("\"")
+	log.Printf("DEBUG: Resuming from AskName. PausedScriptLine length: %d, PausedItemIndex: %d",
+		len(e.pausedScriptLine), e.pausedItemIndex)
 
 	// Clean up the input (trim spaces, convert to uppercase for comparison)
 	nameInput := strings.TrimSpace(strings.ToUpper(e.inputBuffer))
 
-	// If empty input, respond with "If you say so..."
-	if nameInput == "" {
-		e.currentOutput.WriteString("If you say so...\"")
-		return e.promptForInput("Your interest?")
-	}
-
 	// Check if the name matches any party member's name
-	// We don't have direct access to party data, so we'll use the callback system
-	// and check if the input matches the avatar name (simplified for now)
 	avatarName := strings.ToUpper(e.callbacks.GetAvatarName())
+	nameRecognized := false
 
-	// Check if input contains the avatar's name (allowing partial matches)
-	if strings.Contains(nameInput, avatarName) || strings.Contains(avatarName, nameInput) {
+	if nameInput != "" && (strings.Contains(nameInput, avatarName) || strings.Contains(avatarName, nameInput)) {
 		// Name recognized - this should mark the NPC as "met"
-		// In the original game, this would call setmet(talknum)
-		// For now, we'll just respond positively
-		e.currentOutput.WriteString("A pleasure!\"")
-		return e.promptForInput("Your interest?")
+		nameRecognized = true
+		log.Printf("DEBUG: Name '%s' recognized as avatar '%s'", nameInput, avatarName)
+		// TODO: Call setmet(npcID) to mark NPC as met
+	} else {
+		log.Printf("DEBUG: Name '%s' not recognized", nameInput)
 	}
 
-	// Name not recognized
-	e.currentOutput.WriteString("If you say so...\"")
+	// Continue processing from where we left off after AskName
+	if e.pausedScriptLine != nil && e.pausedItemIndex < len(e.pausedScriptLine) {
+		// Start fresh output buffer for continuation content only
+		e.currentOutput.Reset()
+
+		// Resume processing the remaining items in the paused script line
+		remainingItems := e.pausedScriptLine[e.pausedItemIndex:]
+		log.Printf("DEBUG: Processing %d remaining items after AskName", len(remainingItems))
+
+		if err := e.processScriptLine(remainingItems); err != nil {
+			return &ConversationResponse{Error: err}
+		}
+
+		// Clear the paused state
+		e.pausedScriptLine = nil
+		e.pausedItemIndex = 0
+
+		// Check if we're now waiting for another AskName after processing the remaining items
+		if e.waitingForName {
+			// Another AskName command was processed
+			finalOutput := e.currentOutput.String() + "\"\n\nWhat is thy name?"
+			return &ConversationResponse{
+				Output:      finalOutput,
+				NeedsInput:  true,
+				InputPrompt: "You respond:",
+			}
+		}
+
+		// Check if we encountered a pause during processing
+		if e.waitingForPause {
+			return &ConversationResponse{
+				Output:      e.currentOutput.String() + "[PAUSED, press enter]",
+				NeedsInput:  true,
+				InputPrompt: "[Press Enter to continue...]",
+			}
+		}
+
+		// After resuming from AskName and finishing the script, check if we navigated to another label
+		// If so, we should be in question mode for that label
+		if e.currentLabel >= 0 {
+			// We're now in a different label - continue with that label's processing
+			finalOutput := e.currentOutput.String()
+			return &ConversationResponse{
+				Output:      finalOutput,
+				NeedsInput:  true,
+				InputPrompt: "Your interest?",
+			}
+		}
+
+		// The output now contains the content after processing the remaining script
+		finalOutput := e.currentOutput.String()
+		if finalOutput != "" {
+			return &ConversationResponse{
+				Output:      finalOutput,
+				NeedsInput:  true,
+				InputPrompt: "Your interest?",
+			}
+		}
+	}
+
+	// No paused script to resume, fall back to simple name response
+	e.currentOutput.Reset()
+	e.currentOutput.WriteString("\"")
+
+	if nameInput == "" || !nameRecognized {
+		e.currentOutput.WriteString("If you say so...\"")
+	} else {
+		e.currentOutput.WriteString("A pleasure!\"")
+	}
+
 	return e.promptForInput("Your interest?")
 }

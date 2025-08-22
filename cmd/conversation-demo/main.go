@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/conversation"
@@ -105,6 +106,28 @@ func (d *DemoCallbacks) ShowOutput(text string) {
 func (d *DemoCallbacks) WaitForKeypress() {
 	fmt.Print("\n[Press Enter to continue...]")
 	bufio.NewReader(os.Stdin).ReadString('\n')
+}
+
+func (d *DemoCallbacks) TimedPause() {
+	fmt.Print(" [Pausing for 3 seconds - press Enter to skip]")
+
+	// Create a channel to receive input
+	inputChan := make(chan string, 1)
+
+	// Start a goroutine to read input
+	go func() {
+		reader := bufio.NewReader(os.Stdin)
+		input, _ := reader.ReadString('\n')
+		inputChan <- input
+	}()
+
+	// Wait for either 3 seconds or user input
+	select {
+	case <-inputChan:
+		fmt.Print(" [Skipped]\n")
+	case <-time.After(3 * time.Second):
+		fmt.Print(" [Done]\n")
+	}
 }
 
 // Game state queries

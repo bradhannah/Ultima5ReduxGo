@@ -104,6 +104,11 @@ func (t *TestActionCallbacks) WaitForKeypress() {
 	t.keypressWaits++
 }
 
+func (t *TestActionCallbacks) TimedPause() {
+	// For testing, just track that it was called
+	t.keypressWaits++
+}
+
 func (t *TestActionCallbacks) HasMet(npcID int) bool {
 	return t.hasMetNPC
 }
