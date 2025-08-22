@@ -11,16 +11,19 @@ import (
 // LinearConversationEngine implements a straightforward pointer-based conversation system
 // that processes TalkScript commands sequentially with linear navigation
 type LinearConversationEngine struct {
-	script         *references.TalkScript
-	pointer        int // Current position in the script
-	callbacks      ActionCallbacks
-	currentOutput  strings.Builder
-	inputBuffer    string
-	hasMet         bool
-	isActive       bool
-	labelMap       map[references.TalkCommand]int // Maps label commands to script positions
-	currentLabel   int                            // Current label for question mode (-1 = not in question mode)
-	waitingForName bool                           // True when waiting for name input from AskName command
+	script           *references.TalkScript
+	pointer          int // Current position in the script
+	callbacks        ActionCallbacks
+	currentOutput    strings.Builder
+	inputBuffer      string
+	hasMet           bool
+	isActive         bool
+	labelMap         map[references.TalkCommand]int // Maps label commands to script positions
+	currentLabel     int                            // Current label for question mode (-1 = not in question mode)
+	waitingForName   bool                           // True when waiting for name input from AskName command
+	waitingForPause  bool                           // True when waiting for keypress from Pause command
+	pausedScriptLine references.ScriptLine          // Script line being processed when pause occurred
+	pausedItemIndex  int                            // Index in script line where pause occurred
 }
 
 // ActionCallbacks defines the interface for handling conversation actions
@@ -63,13 +66,14 @@ type ConversationResponse struct {
 // NewLinearConversationEngine creates a new linear conversation engine
 func NewLinearConversationEngine(script *references.TalkScript, callbacks ActionCallbacks) *LinearConversationEngine {
 	engine := &LinearConversationEngine{
-		script:         script,
-		pointer:        0,
-		callbacks:      callbacks,
-		isActive:       false,
-		labelMap:       make(map[references.TalkCommand]int),
-		currentLabel:   -1,    // Not in question mode
-		waitingForName: false, // Not waiting for name input
+		script:          script,
+		pointer:         0,
+		callbacks:       callbacks,
+		isActive:        false,
+		labelMap:        make(map[references.TalkCommand]int),
+		currentLabel:    -1,    // Not in question mode
+		waitingForName:  false, // Not waiting for name input
+		waitingForPause: false, // Not waiting for pause input
 	}
 
 	// Build label map for fast navigation
@@ -104,6 +108,11 @@ func (e *LinearConversationEngine) ProcessInput(input string) *ConversationRespo
 	// If we're waiting for name input from AskName command, handle it
 	if e.waitingForName {
 		return e.processNameInput()
+	}
+
+	// If we're waiting for pause keypress, handle it
+	if e.waitingForPause {
+		return e.processPauseInput()
 	}
 
 	// If we're in question mode, handle differently
@@ -246,6 +255,17 @@ func (e *LinearConversationEngine) searchScriptKeywords() *ConversationResponse 
 				if err := e.processScriptLine(group.Script); err != nil {
 					return &ConversationResponse{Error: err}
 				}
+
+				// Check if we encountered a pause during processing
+				if e.waitingForPause {
+					// Show output so far and wait for keypress
+					return &ConversationResponse{
+						Output:      e.currentOutput.String() + "[PAUSED, press enter]",
+						NeedsInput:  true,
+						InputPrompt: "[Press Enter to continue...]",
+					}
+				}
+
 				e.currentOutput.WriteString("\"\n\n")
 				return e.promptForInput("Your interest?")
 			}
@@ -291,6 +311,17 @@ func (e *LinearConversationEngine) processScriptLine(line references.ScriptLine)
 		if err := e.processScriptItem(item); err != nil {
 			return err
 		}
+
+		// Check if we encountered a pause and need to stop processing
+		if e.waitingForPause {
+			// Pause state is already set by the inner processing (e.g., in processQuestion)
+			// Don't override it here unless it hasn't been set
+			if e.pausedScriptLine == nil {
+				e.pausedScriptLine = line
+				e.pausedItemIndex = i + 1 // Resume from next item
+			}
+			return nil
+		}
 	}
 	return nil
 }
@@ -320,7 +351,7 @@ func (e *LinearConversationEngine) processScriptItem(item references.ScriptItem)
 		return e.callbacks.DecreaseKarma()
 
 	case references.Pause:
-		e.callbacks.WaitForKeypress()
+		e.waitingForPause = true
 
 	case references.KeyWait:
 		e.callbacks.WaitForKeypress()
@@ -480,6 +511,22 @@ func (e *LinearConversationEngine) processQuestion(questionCmd references.TalkCo
 				contentItems := labelData.Initial[contentStart:]
 				if err := e.processScriptLine(contentItems); err != nil {
 					return err
+				}
+
+				// Check if we encountered a pause during processing
+				if e.waitingForPause {
+					// Make sure the pause state is set correctly for the label content
+					// The pause occurred in the label content, not the calling script
+					e.pausedScriptLine = labelData.Initial
+					// Find where the pause occurred by looking for the Pause command
+					for i, item := range labelData.Initial {
+						if item.Cmd == references.Pause {
+							e.pausedItemIndex = i + 1 // Resume after the pause
+							break
+						}
+					}
+					log.Printf("DEBUG: Pause in label %d, resuming from item %d of %d", labelNum, e.pausedItemIndex, len(e.pausedScriptLine))
+					return nil
 				}
 			}
 		}
@@ -696,6 +743,44 @@ func (e *LinearConversationEngine) processAskName() error {
 	// Mark that we're waiting for name input
 	e.waitingForName = true
 	return nil // The actual prompting will be handled by the response system
+}
+
+// processPauseInput handles keypress after Pause command
+func (e *LinearConversationEngine) processPauseInput() *ConversationResponse {
+	// No longer waiting for pause input
+	e.waitingForPause = false
+
+	log.Printf("DEBUG: Resuming from pause. PausedScriptLine length: %d, PausedItemIndex: %d",
+		len(e.pausedScriptLine), e.pausedItemIndex)
+
+	// Continue processing from where we left off
+	if e.pausedScriptLine != nil && e.pausedItemIndex < len(e.pausedScriptLine) {
+		// Resume processing the remaining items in the paused script line
+		remainingItems := e.pausedScriptLine[e.pausedItemIndex:]
+		log.Printf("DEBUG: Processing %d remaining items after pause", len(remainingItems))
+
+		if err := e.processScriptLine(remainingItems); err != nil {
+			return &ConversationResponse{Error: err}
+		}
+
+		// Clear the paused state
+		e.pausedScriptLine = nil
+		e.pausedItemIndex = 0
+
+		// After resuming from pause and finishing the script, we should exit question mode
+		// The label content has been fully processed
+		if e.currentLabel >= 0 {
+			e.currentLabel = -1 // Exit question mode
+		}
+
+		// Close the quote and return to normal conversation flow
+		e.currentOutput.WriteString("\"\n\n")
+		return e.promptForInput("Your interest?")
+	}
+
+	log.Printf("DEBUG: No paused script to resume")
+	// Return to normal conversation flow
+	return e.promptForInput("Your interest?")
 }
 
 // processNameInput handles the response to AskName command
