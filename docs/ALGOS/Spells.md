@@ -48,9 +48,9 @@ Legend: Context = OW (Overworld), T (Town), D (Dungeon), C (Combat). Targeting =
 
 ### Projectiles
 
-| Spell    | Context | Targeting | Duration/Flag | Notes                                 |
-|----------|---------|-----------|---------------|---------------------------------------|
-| Grav Por | C       | Creature  | —             | Magic missile (weapon_spell)          |
+| Spell    | Context | Targeting | Duration/Flag | Notes                                         |
+|----------|---------|-----------|---------------|-----------------------------------------------|
+| Grav Por | C       | Creature  | —             | Magic missile (weapon_spell); no INT save      |
 | Vas Flam | C       | Creature  | —             | Firebolt (weapon_spell); no INT save  |
 | Xen Corp | C       | Creature  | —             | Death bolt (weapon_spell); no INT save|
 
@@ -368,6 +368,7 @@ ENDFUNCTION
 Notes:
 
 - Legal in combat only; see spell flags. Projectile rules in Combat Effects → Missiles.
+- Direct damage; bypasses intelligence save per legacy `saveint` rules.
 
 ## Vas Flam (Firebolt)
 
@@ -581,13 +582,12 @@ Notes:
 
 The following damaging spells do not allow an INT save and should apply effects directly:
 
+- Grav Por (Magic Missile / Flam Por)
 - Vas Flam (Firebolt)
 - In Nox Hur (Poison Storm)
 - In Flam Hur (Firestorm)
 - In Vas Grav Corp (Energy Storm)
 - Xen Corp (Death Bolt)
-
-Legacy also references Flam Por (not documented here), which similarly bypasses the INT save.
 
 ## Scrolls: Light and Wind Change
 
