@@ -332,9 +332,17 @@ func (g *GameScene) smallMapTalkSecondary(direction references2.Direction) bool 
 	}
 
 	if friendly, ok := (*npc).(*map_units.NPCFriendly); ok {
-		talkDialog := NewTalkDialog(g, friendly.NPCReference)
-		talkDialog.AddTestTest()
-		g.dialogStack.PushModalDialog(talkDialog)
+		// Use linear system by default - can be toggled with debug flag
+		if g.gameState.DebugOptions.UseLinearConversationSystem {
+			linearTalkDialog := NewLinearTalkDialog(g, friendly.NPCReference)
+			linearTalkDialog.AddTestTest()
+			g.dialogStack.PushModalDialog(linearTalkDialog)
+		} else {
+			// Original channel-based system
+			talkDialog := NewTalkDialog(g, friendly.NPCReference)
+			talkDialog.AddTestTest()
+			g.dialogStack.PushModalDialog(talkDialog)
+		}
 	}
 
 	return true
