@@ -2,6 +2,30 @@
 
 This document captures the high-level flows for merchants, healers, reagent sellers, horse sellers, and inns.
 
+## Town Multipliers (Per-Shop-Type)
+
+Each town applies a multiplier by shop type. Final price = `round(BasePrice × TownMultiplier)`.
+
+### Town Multipliers — Matrix
+
+| Town            | Arms | Reagents | Healer | Inn  | Horses | Ships | Guild |
+|-----------------|:----:|:--------:|:------:|:----:|:------:|:-----:|:-----:|
+| Britain         |  —   |    —     |   —    |  —   |   —    |   —   |   —   |
+| Moonglow        |  —   |    —     |   —    |  —   |   —    |   —   |   —   |
+| Jhelom          |  —   |    —     |   —    |  —   |   —    |   —   |   —   |
+| Yew             |  —   |    —     |   —    |  —   |   —    |   —   |   —   |
+| Minoc           |  —   |    —     |   —    |  —   |   —    |   —   |   —   |
+| Trinsic         |  —   |    —     |   —    |  —   |   —    |   —   |   —   |
+| Skara Brae      |  —   |    —     |   —    |  —   |   —    |   —   |   —   |
+| New Magincia    |  —   |    —     |   —    |  —   |   —    |   —   |   —   |
+| Cove            |  —   |    —     |   —    |  —   |   —    |   —   |   —   |
+| Buccaneer’s Den |  —   |    —     |   —    |  —   |   —    |   —   |   —   |
+| Paws            |  —   |    —     |   —    |  —   |   —    |   —   |   —   |
+
+Notes:
+
+- Fill with canonical values (defaults 1.00 where unspecified). “Guild” covers general goods (keys, torches, gems, etc.). Not all towns have all shop types.
+
 ## General Notes
 
 - Gems: Vendors may sell gems. Using `View` consumes one gem to render a tactical map; see Commands → View.
@@ -47,6 +71,24 @@ FUNCTION visit_reagent_shop():
     // Optional: track shop restock timing via reagent_days_left if needed
     mark_stats_changed()
 ENDFUNCTION
+
+### Reagents — Items and Base Prices
+
+| Reagent        | Base Price | Notes                         |
+|----------------|------------|-------------------------------|
+| Sulfurous Ash  | —          |                               |
+| Ginseng        | —          |                               |
+| Garlic         | —          |                               |
+| Spider Silk    | —          |                               |
+| Blood Moss     | —          |                               |
+| Black Pearl    | —          |                               |
+| Nightshade     | —          | Rare; may be limited          |
+| Mandrake Root  | —          | Rare; may be limited          |
+
+Notes:
+
+- Final price: `round(Base * TownMuls[reagents])`.
+- Stock/availability may depend on day/time or town; reflect per-location overrides if present.
 ```
 
 ## Arms/Armor Shop (simplified)
@@ -58,6 +100,76 @@ FUNCTION visit_arms_shop():
     IF gold < price THEN show_message("Not enough gold!\n"); RETURN
     gold -= price; add_item_to_inventory(item); mark_stats_changed()
 ENDFUNCTION
+
+### Arms & Armor — Items and Base Prices
+
+Helms/Shields/Armor:
+
+| Item          | Base | Notes           |
+|---------------|------|-----------------|
+| Leather Helm  | —    |                 |
+| Chain Coif    | —    |                 |
+| Iron Helm     | —    |                 |
+| Spiked Helm   | —    |                 |
+| Small Shield  | —    |                 |
+| Large Shield  | —    |                 |
+| Spiked Shield | —    |                 |
+| Magic Shield  | —    |                 |
+| Jeweled Shield| —    |                 |
+| Cloth Armor   | —    |                 |
+| Leather Armor | —    |                 |
+| Ring Mail     | —    |                 |
+| Scale Armor   | —    |                 |
+| Chain Armor   | —    |                 |
+| Plate Armor   | —    |                 |
+| Mystic Armor  | —    | special         |
+
+Weapons/Ammo:
+
+| Item           | Base | Notes                |
+|----------------|------|----------------------|
+| Dagger         | —    |                      |
+| Sling          | —    | two‑handed           |
+| Club           | —    |                      |
+| Flame Oil      | —    | thrown consumable    |
+| Main‑Gauche    | —    |                      |
+| Spear          | —    |                      |
+| Throwing Axe   | —    |                      |
+| Short Sword    | —    |                      |
+| Mace           | —    |                      |
+| Morning Star   | —    |                      |
+| Bow            | —    | two‑handed           |
+| Arrows         | —    | ammo                 |
+| Crossbow       | —    | two‑handed           |
+| Quarrels       | —    | ammo                 |
+| Long Sword     | —    |                      |
+| 2H Hammer      | —    | two‑handed           |
+| 2H Axe         | —    | two‑handed           |
+| 2H Sword       | —    | two‑handed           |
+| Halberd        | —    | two‑handed           |
+| Chaos Sword    | —    | special              |
+| Magic Bow      | —    | special              |
+| Silver Sword   | —    | special              |
+| Magic Axe      | —    | special              |
+| Glass Sword    | —    | one‑use              |
+| Jeweled Sword  | —    | special              |
+| Mystic Sword   | —    | special              |
+
+Rings/Amulets:
+
+| Item               | Base | Notes                   |
+|--------------------|------|-------------------------|
+| Invisibility Ring  | —    | effect‑tagged; see Ztats |
+| Protection Ring    | —    | effect‑tagged            |
+| Regeneration Ring  | —    | effect‑tagged            |
+| Amulet of Turning  | —    | special                  |
+| Spiritual Collar   | —    | special                  |
+| Ankh               | —    | special                  |
+
+Notes:
+
+- Final price: `round(Base * TownMuls[arms])`.
+- Per‑shop inventory varies; use per‑shop item whitelists to reflect availability.
 ```
 
 ## Horse Seller
@@ -69,6 +181,24 @@ FUNCTION visit_horse_seller():
     spawn_horse_nearby() // MakeAHorse callback
     show_message("A fine steed is thine!\n")
 ENDFUNCTION
+
+### Horses — Base Price
+
+| Item  | Base | Notes              |
+|-------|------|--------------------|
+| Horse | —    | Multiplied by town |
+
+## Shipwright — Items and Services
+
+| Item/Service  | Base | Notes                           |
+|---------------|------|---------------------------------|
+| Skiff         |  —   | Portable boat                   |
+| Ship          |  —   | Full‑size vessel                |
+| Repair Hull   |  —   | Per‑point or flat; by location  |
+
+Notes:
+
+- Availability varies by town; coastal locations only.
 ```
 
 ## Innkeeper
@@ -87,6 +217,34 @@ FUNCTION visit_inn():
     ENDFOR
     show_message("Rest well!\n")
 ENDFUNCTION
+
+### Inns — Monthly Rates
+
+| Town           | Monthly Rate |
+|----------------|--------------|
+| Britain        | —            |
+| Moonglow       | —            |
+| Jhelom         | —            |
+| Yew            | —            |
+| Minoc          | —            |
+| Trinsic        | —            |
+| Skara Brae     | —            |
+| New Magincia   | —            |
+| Cove           | —            |
+| Bucs Den       | —            |
+| Paws           | —            |
+
+## Guild Shop — General Goods
+
+| Item    | Base | Notes                         |
+|---------|------|-------------------------------|
+| Key     |  —   | Standard door key             |
+| Torch   |  —   | Wall/hand torch               |
+| Gem     |  —   | Consumed by View              |
+
+Notes:
+
+- Final price: `round(Base * TownMuls[guild])`. Inventory may include other sundries per location.
 ```
 
 

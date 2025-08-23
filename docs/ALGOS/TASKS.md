@@ -158,14 +158,13 @@ Notes:
 
 ## In Progress / Open Items
 
-- [ ] Doors Overview doc: consolidate door state transitions + UI and interactions (Open/Jimmy/Skull/Use).
-- [ ] Doc cross-references per section to internal source (no `OLD/*` in public docs).
 - [ ] Shop pricing data: per-town multipliers and item lists (full tables).
 - [ ] Testing guidance snippets per module (seeded PRNG, deterministic checks).
 - [x] Expand spell list coverage (targeting, durations, town/overworld vs dungeon constraints).
 - [ ] NPC schedule transitions (time-of-day) deeper dive.
 - [ ] Fixture-specific overrides by location (wells/fountains/lamps); expand Wish outcomes.
 - [ ] Rare fixtures/objects edge cases (as discovered).
+ - [ ] Shoppes deep dive: Non-trivial. Reverse-engineer canonical per-town multipliers, per-shop inventories, restock rules, and services pricing (healers/shipwright). Capture hours/closures, special locations (e.g., Buccaneer’s Den), and any rank/quality modifiers in a dedicated data doc.
 
 ## Notes
 
