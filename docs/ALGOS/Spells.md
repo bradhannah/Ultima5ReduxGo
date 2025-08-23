@@ -48,11 +48,11 @@ Legend: Context = OW (Overworld), T (Town), D (Dungeon), C (Combat). Targeting =
 
 ### Projectiles
 
-| Spell    | Context | Targeting | Duration/Flag | Notes                         |
-|----------|---------|-----------|---------------|-------------------------------|
-| Grav Por | C       | Creature  | —             | Magic missile (weapon_spell)  |
-| Vas Flam | C       | Creature  | —             | Firebolt (weapon_spell)       |
-| Xen Corp | C       | Creature  | —             | Death bolt (weapon_spell)     |
+| Spell    | Context | Targeting | Duration/Flag | Notes                                 |
+|----------|---------|-----------|---------------|---------------------------------------|
+| Grav Por | C       | Creature  | —             | Magic missile (weapon_spell)          |
+| Vas Flam | C       | Creature  | —             | Firebolt (weapon_spell); no INT save  |
+| Xen Corp | C       | Creature  | —             | Death bolt (weapon_spell); no INT save|
 
 ### Fields (Create)
 
@@ -101,6 +101,14 @@ Legend: Context = OW (Overworld), T (Town), D (Dungeon), C (Combat). Targeting =
 | In Xen Mani   | OW/T/D/C | Party     | —             | Create 1..3 food                     |
 | In Vas Por Ylem | C      | Area      | —             | Earthquake damage via DEX check      |
 | In Wis        | OW       | Self      | —             | Locate position (coords)             |
+
+### Area Damage (Storms)
+
+| Spell             | Context | Targeting | Duration/Flag | Notes                        |
+|-------------------|---------|-----------|---------------|------------------------------|
+| In Nox Hur        | C       | Area      | —             | Poison storm; no INT save    |
+| In Flam Hur       | C       | Area      | —             | Firestorm; no INT save       |
+| In Vas Grav Corp  | C       | Area      | —             | Energy storm; no INT save    |
 
 ### Unimplemented / Reserved
 
@@ -371,6 +379,10 @@ FUNCTION cast_vas_flam(target):
 ENDFUNCTION
 ```
 
+Notes:
+
+- Direct damage; bypasses intelligence save per legacy `saveint` rules.
+
 ## Field Spells (Create Fields)
 
 Create a persistent field at a targeted tile. Field effects resolve per tick; see Combat Effects → Field Effects.
@@ -546,6 +558,10 @@ FUNCTION cast_xen_corp(target):
 ENDFUNCTION
 ```
 
+Notes:
+
+- Direct damage; bypasses intelligence save per legacy `saveint` rules.
+
 ## Storm Spells (Area Effects)
 
 Large area-of-effect damage/status spells; details are engine-tuned via `nukem`.
@@ -559,6 +575,19 @@ FUNCTION cast_in_vas_grav_corp(): return nukem(caster, variant=4, color=BLUE)
 Notes:
 
 - Colors/variants map to damage type and radius; poison/fire/energy respectively.
+- Area damage; bypasses intelligence save per legacy `saveint` rules.
+
+## Intelligence Save Bypass (Reference)
+
+The following damaging spells do not allow an INT save and should apply effects directly:
+
+- Vas Flam (Firebolt)
+- In Nox Hur (Poison Storm)
+- In Flam Hur (Firestorm)
+- In Vas Grav Corp (Energy Storm)
+- Xen Corp (Death Bolt)
+
+Legacy also references Flam Por (not documented here), which similarly bypasses the INT save.
 
 ## Scrolls: Light and Wind Change
 

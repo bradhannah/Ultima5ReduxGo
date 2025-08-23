@@ -180,3 +180,4 @@ Notes:
 - [x] Talk outcomes matrix (surface/overworld) documented
 - [x] Hole up & camp (repair/camp flows) documented
 - [x] Enter, Ignite Torch, and New Order commands documented
+ - [x] Legacy combat helpers: field expiration (fieldkill), aiming UI (plraim), diagnose messaging, charm cleanup (badtrip)

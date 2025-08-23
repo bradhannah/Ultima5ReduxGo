@@ -40,3 +40,25 @@ FUNCTION monster_turn_should_act(plans):
 ENDFUNCTION
 ```
 
+## Distance Helpers
+
+```pseudocode
+FUNCTION distance_squared(ax, ay, bx, by):
+    dx = ax - bx; dy = ay - by
+    RETURN dx*dx + dy*dy
+
+FUNCTION distance(ax, ay, bx, by):
+    // Integer sqrt via successive odd subtraction (legacy)
+    res = distance_squared(ax, ay, bx, by)
+    odd = 1; sqrt = 0
+    WHILE res >= odd:
+        res -= odd; odd += 2; sqrt += 1
+    RETURN sqrt
+
+FUNCTION combat_distance(i, j):
+    RETURN distance(combatq[i].xpos, combatq[i].ypos, combatq[j].xpos, combatq[j].ypos)
+```
+
+Notes:
+
+- Distance is used by AI for target selection and by the aiming UI for range checks.

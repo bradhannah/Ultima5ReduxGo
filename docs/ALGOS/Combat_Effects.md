@@ -145,6 +145,106 @@ FUNCTION update_players_after_turn():
     check_ring_effects()
 ENDFUNCTION
 
+## Field Expiration (fieldkill)
+
+```pseudocode
+FUNCTION expire_magical_fields_each_tick():
+    FOR i = 0 TO 31:
+        IF (object[i].tile & 0xFC) == MAGIC_FIELD THEN
+            IF random(0,255) < 16 THEN remove_object(i)
+ENDFUNCTION
+```
+
+Notes:
+
+- 1/16 chance per tick for any magic field object to vanish. Uses object list tiles with the MAGIC_FIELD family mask.
+
+## Aiming UI (plraim)
+
+```pseudocode
+FUNCTION aim_with_crosshair(turn_index, max_range) -> range_or_0:
+    crosshair = TRUE
+    target = get_default_target_or_self(turn_index)
+    xcross, ycross = combatq[target].xpos, combatq[target].ypos
+    WHILE TRUE:
+        update_screen()
+        key = getkey()
+        dx, dy = 0, 0
+        SWITCH key:
+            CASE DIR_NW: dx=-1; dy=-1
+            CASE DIR_NE: dx= 1; dy=-1
+            CASE DIR_SW: dx=-1; dy= 1
+            CASE DIR_SE: dx= 1; dy= 1
+            CASE DIR_NORTH: dy=-1
+            CASE DIR_SOUTH: dy= 1
+            CASE DIR_EAST:  dx= 1
+            CASE DIR_WEST:  dx=-1
+            CASE ' ': IF xcross==combatq[turn_index].xpos AND ycross==combatq[turn_index].ypos THEN crosshair=FALSE; newline(); RETURN 0
+                      // else fallthrough to accept
+            CASE ENTER, 'A': IF xcross!=combatq[turn_index].xpos OR ycross!=combatq[turn_index].ypos THEN
+                                 crosshair=FALSE; newline(); play_cast_or_aim_sfx(); RETURN distance(xcross, ycross, combatq[turn_index])
+            CASE ESC: crosshair=FALSE; newline(); RETURN 0
+        END
+        newx = xcross + dx; newy = ycross + dy
+        IF within_bounds(newx, newy) AND distance(newx, newy, combatq[turn_index]) <= max_range THEN
+            xcross, ycross = newx, newy
+    ENDWHILE
+ENDFUNCTION
+```
+
+Notes:
+
+- Space on self aborts; Enter/'A' accepts if not on self. Starts at current target if valid; otherwise self.
+- Returns 0 on abort; otherwise returns range to aimed tile.
+
+## Diagnose Messaging
+
+```pseudocode
+FUNCTION diagnose_after_hit(target, attacker):
+    cond = combatq[target].condition
+    IF wound_type has DEFLECT_WND THEN announce_name(target); show_message(" grazed!\n"); small_glide(); CLEAR DEFLECT_WND
+    ELSE IF NOT (wound_type has VANISHED_WND) THEN
+        IF cond == 0 OR (cond has OBJECT_MASK) THEN announce_name(target); show_message(" killed!\n"); SET KILLED_WND
+        ELSE IF wound_type has SLEPT_WND THEN announce_name(target); show_message(" slept!\n")
+        ELSE IF NOT (wound_type has POISONED_WND) THEN
+            IF cond has PC_MASK THEN
+                IF attacker != NOTHING AND combatq[attacker].number == CORPSER THEN announce_name(target); show_message(" dragged under!\n"); small_glide(); SET UNDER_MASK on target; hide_target_shape()
+                ELSE announce_name(target); show_message(" hit!\n")
+            ELSE
+                // Monster wound tiers by remaining HP fraction
+                msg = monster_condition_bucket(target)
+                SWITCH msg: 4→" barely wounded!", 3→" lightly wounded!", 2→" heavily wounded!", 1→" critical!"
+        ENDIF
+        IF cond has PC_MASK THEN update_stats_and_screen()
+        CLEAR POISONED_WND|SLEPT_WND
+    ELSE CLEAR DEFLECT_WND|VANISHED_WND
+ENDFUNCTION
+```
+
+Notes:
+
+- Corpser special: prints “dragged under!” and sets UNDER_MASK, hiding the target until regurgitation. Matches “throwup”/regurgitation flow.
+
+## Charm Cleanup (“Bad Trip”)
+
+When mass‑charm/confusion leaves no valid enemies to target, the engine applies a cleanup on charmed PCs: remove CHARM, print “passes out!”, unready Chaos Sword, and put the PC to sleep.
+
+```pseudocode
+FUNCTION charm_cleanup_if_no_targets():
+    FOR i IN 0..5: // party slots
+        IF combatq[i].condition has CHARM_MASK AND PC_MASK THEN
+            CLEAR CHARM_MASK
+            show_message(player_name(combatq[i].number) + " passes out!")
+            unready_item_if_equipped(combatq[i].number, CHAOS_SWORD)
+            put_pc_to_sleep(i)
+            BREAK
+    // If none found, no‑op
+ENDFUNCTION
+```
+
+Notes:
+
+- This behavior is triggered in the AI when no enemies remain (legacy `badtrip`). It ensures a charmed PC doesn’t soft‑lock combat.
 ## Equipment Resistances & Effects (Display in Ztats)
 
 Certain equipment grants passive effects or resistances that influence combat and hazards. Ztats should display concise tags when equipped items confer such effects.

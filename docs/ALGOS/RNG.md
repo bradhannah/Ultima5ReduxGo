@@ -30,3 +30,6 @@ FUNCTION does_character_resist_spell(attacker, defender):
 ENDFUNCTION
 ```
 
+Notes:
+
+- No intelligence save applies versus certain direct-damage spells (e.g., Flam Por, Vas Flam, and higher-tier damage effects) per legacy logic; model these as auto‑fail saves or bypass the save entirely for those spell IDs.
