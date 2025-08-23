@@ -121,6 +121,66 @@ Notes:
 - Detailed behaviors and corner cases are described in individual sections above; this table is meant as a quick routing reference (where, how, and whether there’s a duration flag).
 - For scroll equivalents, see Scrolls Summary below; contexts sometimes differ (e.g., View scroll disallowed in combat).
 
+## Allowed Contexts
+
+This table consolidates where each spell may be cast. Context rules come from legacy flags (OUTD/TOWN/DUNG/COMB) and our pseudocode; exceptions add special‑map constraints. Global overrides apply:
+
+- Stonegate: All magic is absorbed (blocked) regardless of spell.
+- Palace of Blackthorn: All magic absorbed if the Avatar does not wear the Crown of Lord British.
+
+Legend: Y = allowed, N = not allowed.
+
+| Spell                | Overworld | Town | Dungeon | Combat | Exceptions |
+|----------------------|:---------:|:----:|:-------:|:------:|------------|
+| In Lor               |    Y      |  Y   |    Y    |   Y    | — |
+| Vas Lor              |    Y      |  Y   |    Y    |   N    | — |
+| Wis An Ylem          |    Y      |  N   |    N    |   N    | — |
+| In Quas Wis (View)   |    Y      |  Y   |    Y    |   N    | — |
+| In Por               |    Y      |  N   |    N    |   Y    | Combat: random legal tile; rooms off |
+| Uus Por              |    N      |  N   |    Y    |   N    | Blocked in Doom |
+| Des Por              |    N      |  N   |    Y    |   N    | Blocked in Doom |
+| Vas Rel Por          |    Y      |  Y   |    N    |   N    | Does not end turn on success |
+| In Sanct             |    Y      |  Y   |    Y    |   Y    | — |
+| In An                |    Y      |  Y   |    Y    |   Y    | — |
+| Rel Tym              |    N      |  N   |    N    |   Y    | — |
+| An Tym               |    Y      |  Y   |    Y    |   Y    | Blocked in Doom/Stonegate |
+| Grav Por             |    N      |  N   |    N    |   Y    | — |
+| Vas Flam             |    N      |  N   |    N    |   Y    | — |
+| Xen Corp             |    N      |  N   |    N    |   Y    | — |
+| In Flam Grav         |    N      |  N   |    Y    |   Y    | — |
+| In Nox Grav          |    N      |  N   |    Y    |   Y    | — |
+| In Zu Grav           |    N      |  N   |    Y    |   Y    | — |
+| In Sanct Grav        |    N      |  N   |    Y    |   Y    | — |
+| Kal Xen              |    N      |  N   |    N    |   Y    | — |
+| Kal Xen Corp         |    N      |  N   |    N    |   Y    | — |
+| In Bet Xen           |    N      |  N   |    N    |   Y    | — |
+| An Xen Ex            |    N      |  N   |    N    |   Y    | — |
+| Quas An Wis          |    N      |  N   |    N    |   Y    | — |
+| An Xen Corp          |    N      |  N   |    N    |   Y    | — |
+| In Quas Corp         |    N      |  N   |    N    |   Y    | — |
+| Rel Xen Bet          |    N      |  N   |    N    |   Y    | — |
+| In Quas Xen          |    N      |  N   |    N    |   Y    | — |
+| Wis Quas             |    N      |  N   |    N    |   Y    | — |
+| In Ex Por            |    Y      |  Y   |    Y    |   N    | — |
+| An Ex Por            |    Y      |  Y   |    Y    |   N    | — |
+| An Sanct             |    Y      |  Y   |    Y    |   N    | — |
+| An Grav              |    Y      |  Y   |    Y    |   N    | Dispel tile fields; not used in combat here |
+| Mani                 |    Y      |  Y   |    Y    |   Y    | — |
+| Vas Mani             |    Y      |  Y   |    Y    |   Y    | — |
+| In Xen Mani          |    Y      |  Y   |    Y    |   Y    | — |
+| In Vas Por Ylem      |    N      |  N   |    N    |   Y    | — |
+| In Wis               |    Y      |  N   |    N    |   N    | — |
+| In Nox Hur           |    N      |  N   |    N    |   Y    | — |
+| In Flam Hur          |    N      |  N   |    N    |   Y    | — |
+| In Vas Grav Corp     |    N      |  N   |    N    |   Y    | — |
+| In Mani Corp         |    Y      |  Y   |    Y    |   Y    | Resurrection |
+| Sanct Lor            |    N      |  N   |    N    |   Y    | — |
+
+Notes:
+
+- “Blocked in Doom” denotes spells disabled in the Doom dungeon (legacy `onmap==0x28`), per engine rules; confirm case‑by‑case as corresponding mechanics are implemented.
+- All rows inherit global overrides (Stonegate/Blackthorn’s crown rule) regardless of Y/N in their context cells.
+
 ## Rel Hur (Change Wind)
 
 ```pseudocode

@@ -1467,6 +1467,178 @@ ENDFUNCTION
 
 ## Mix Reagents
 
+## Ready
+
+Select a party member and ready or unready equipment into appropriate slots, enforcing weight, slot, ammo, and context rules.
+
+```pseudocode
+FUNCTION command_ready():
+    plr = select_character(); IF plr == NONE THEN RETURN
+    IF count_owned_arms() == 0 THEN show_message("Thou art empty-\nhanded!\n"); RETURN
+    show_message("Item: ")
+    selection = select_from_scroll_list(arms, highlight_readied_for(plr)) // supports paging, shows icons for readied
+    IF selection == ESC THEN show_message("Done\n"); RETURN
+    try_to_ready(plr, selection)
+
+FUNCTION try_to_ready(plr, item) -> ring_vanished:
+    IF item IN {ARROWS, QUARRELS} THEN RETURN FALSE // cannot directly ready ammo
+    IF item IN ARMOR_FAMILY AND in_combat() THEN show_message("Thou canst not change armour in heated battle!"); RETURN FALSE
+    IF is_item_already_readied(plr, item) THEN
+        unready_item(plr, item); increment_inventory(item)
+        IF item == INVISO_RING AND in_combat() THEN restore_player_sprite(plr)
+        RETURN FALSE
+    ENDIF
+    IF item REQUIRES_AMMO AND no_ammo_for(item) THEN show_message("Thou hast no ammunition for that weapon!"); RETURN FALSE
+
+    sum = strength_req_of_readied(plr) + strength_req[item]
+    IF sum > player[plr].strength THEN show_message("Thou art not strong enough!"); RETURN FALSE
+
+    SWITCH weapon_usage[item]:
+        CASE HEAD_USE:  IF helm_slot_occupied(plr) THEN show_message("Remove first thy present helm!"); RETURN FALSE ELSE slot = HELM
+        CASE BODY_USE:  IF armor_slot_occupied(plr) THEN show_message("Thou must first remove thine other armour!"); RETURN FALSE ELSE slot = ARMOR
+        CASE ONE_HAND_USE:
+            hand = freehand(plr) // returns 0 or 1 if that hand free; 2 if both free; NOTHING if none
+            IF hand == NOTHING THEN show_message("Thou must free one of thy hands first!"); RETURN FALSE
+            IF hand == 2 THEN hand = 0
+            slot = WEAPON[hand]
+        CASE TWO_HAND_USE:
+            IF freehand(plr) != 2 THEN show_message("Both hands must be free before thou canst wield that!"); RETURN FALSE
+            slot = WEAPON[0] // occupies both hands per engine
+        CASE NECK_USE:  IF amulet_slot_occupied(plr) THEN show_message("Thou must remove thine other amulet!"); RETURN FALSE ELSE slot = AMULET
+        CASE RING_USE:  IF ring_slot_occupied(plr) THEN show_message("Only one magic ring may be worn at a time!"); RETURN FALSE ELSE slot = RING
+    END SWITCH
+
+    set_slot(plr, slot, item); decrement_inventory(item)
+
+    // Special ring behavior
+    IF item IN {INVISO_RING, REGEN_RING} AND random(0,15) == 0 THEN
+        show_message("\n\nRing vanishes!\n"); clear_ring_slot(plr); delay_fx(); RETURN TRUE
+    IF item == INVISO_RING AND in_combat() THEN set_player_sprite_invisible(plr)
+    RETURN FALSE
+```
+
+Notes:
+
+- Ammo gating: Bows require ARROWS; Crossbows require QUARRELS; message: “Thou hast no ammunition for that weapon!”.
+- Weight/strength: The sum of strength requirements of all readied items plus the candidate must be ≤ the character’s Strength.
+- Negative contexts: Armor changes are disallowed in combat; enforce single ring/amulet; enforce free hands for one/two‑handed weapons.
+- Ring vanish: Invisibility and Regeneration rings have a 1‑in‑16 chance to vanish when equipped; Invisibility ring sets invisible sprite in combat.
+
+## Cast
+
+Prompt for a spell by name, validate context and resources, then dispatch to the appropriate spell handler. Uses spell level = floor(index/6)+1.
+
+```pseudocode
+FUNCTION command_cast():
+    caster = select_character(); IF caster == NONE THEN RETURN
+    show_message("Spell name:\n:")
+    spellnum = getspell() // maps typed name to index; returns -1 none, -2 “no effect”
+    IF spellnum == -1 THEN show_message("None!\n"); RETURN
+    IF spellnum == -2 THEN show_message("No effect!\n"); RETURN
+
+    spell_level = (spellnum / 6) + 1
+
+    // Context gating
+    IF is_overworld() AND NOT spell_allowed_outdoors(spellnum) THEN not_here()
+    ELSE IF in_combat() AND NOT spell_allowed_combat(spellnum) THEN not_here()
+    ELSE IF in_blackthorns_castle_without_crown() OR in_stonegate() THEN show_message("Absorbed!\n"); absorb_fx(); RETURN
+    ELSE IF is_town() AND NOT spell_allowed_town(spellnum) THEN not_here()
+    ELSE IF is_dungeon() AND NOT spell_allowed_dungeon(spellnum) THEN not_here()
+
+    // Reagents/stock and MP
+    IF spells_stock[spellnum] == 0 THEN show_message("None mixed!\n"); RETURN
+    spells_stock[spellnum] -= 1
+    IF player[caster].mp < spell_level THEN show_message("M.P. too low!\n"); print_failed(); RETURN
+    player[caster].mp -= spell_level
+    IF player[caster].level < spell_level THEN print_failed(); RETURN
+
+    success = TRUE; end_player_turn = TRUE
+    SWITCH spellnum:
+        CASE 0:  light_short();
+        CASE 1:  weapon_spell(FLAM_POR);
+        CASE 2:  success = cure_sleep_single();
+        CASE 3:  success = cure_poison_single();
+        CASE 4:  success = heal_small();
+        CASE 5:  success = locate();
+        CASE 6:  success = disarm_unlock_standard();
+        CASE 7:  summon_daemon_charmed();
+        CASE 8:  wind_change(prompt_dir(), immediate=FALSE);
+        CASE 9:  xray_surface();
+        ...     // Continue per Spells.md mapping (see detailed behaviors there)
+        CASE 39: IF is_surface() THEN view_area() ELSE dng_view();
+        CASE 46: success = gate_travel(); IF success THEN end_player_turn = FALSE
+        CASE 47: success = time_stop();
+    END SWITCH
+
+    IF success == TRUE THEN show_message("Success!\n") ELSE print_failed()
+    IF end_player_turn THEN finish_turn()
+
+FUNCTION not_here():
+    show_message("Not here!\n"); small_delay(); RETURN
+```
+
+Notes:
+
+- Context negatives: Prints “Not here!” when disallowed by map type; prints “Absorbed!” in prohibited areas (e.g., Stonegate, or Blackthorn’s castle without LB’s Crown).
+- Resources: Requires mixed spell stock and sufficient MP; prints “None mixed!” or “M.P. too low!” when lacking.
+- Success/Failure: Some handlers return success/failure; unsuccessful casts print “Failed!”. Certain spells do not end the player’s turn (e.g., Gate Travel).
+
+### Context Gating Table
+
+| Context      | Allow Rule                         | Failure Text |
+|--------------|------------------------------------|--------------|
+| Overworld    | `OUTD_SPELL` flag required         | “Not here!”  |
+| Town         | `TOWN_SPELL` flag required         | “Not here!”  |
+| Dungeon      | `DUNG_SPELL` flag required         | “Not here!”  |
+| Combat       | `COMB_SPELL` flag required         | “Not here!”  |
+| Blackthorn’s | Block if no LB Crown               | “Absorbed!”  |
+| Stonegate    | Always block (no magic allowed)    | “Absorbed!”  |
+
+Reference (OLD/CAST1.C): `onmap==0x12 && !crown` or `onmap==0x1d` → “Absorbed!”. 0x12 = Palace_of_Blackthorn; 0x1d = Stonegate.
+
+### Dispatch Map (from legacy)
+
+The legacy engine dispatches by `spellnum` (0..47). The table below shows representative cases; full behavior lives in Spells.md.
+
+- 0: Light (short) → `light_spell(100)`
+- 1: Vas Flam (bolt) → `weapon_spell(FLAM_POR)`
+- 2: An Zu (Awaken) → `an_zu()` success/fail
+- 3: An Nox (Cure Poison) → `an_nox()`
+- 4: Mani (Heal small) → `mani()`
+- 6: An Sanct (Disarm/Unlock std) → `an_sanct()`
+- 8: Rel Hur (Change Wind) → `wind_change(spelldir(), FALSE)`
+- 10: Kal Xen (Summon Animal) → `kal_xen()`
+- 14..16,20: Create Field (Poison/Sleep/Fire/Energy) → `field_spell(type)`
+- 17: In Por (Blink/Teleport) → `in_por()`
+- 18: An Grav (Dispel Field) → `an_grav(1)`
+- 19: In Sanct (Protection) → `dur_spell('P', 20, 4)`
+- 21/22: Uus Por/Des Por (Dungeon level up/down) with Doom block `onmap==0x28`
+- 23: Wis Quas (Reveal Invisible) → `wis_quas()`
+- 24: In Bet Xen (Summon Insects) → `in_bet_xen()`
+- 25/26: An Ex Por / In Ex Por (Lock/Unlock Magic)
+- 27: Vas Mani (Great Heal)
+- 28/40/44/45: Storms (Purple/Green/Blue/Red) → `nukem(turn, kind, color)`
+- 29: Rel Tym (Quickness) → `dur_spell('Q', 30, 5)`
+- 30: In Vas Por Ylem (Earthquake) → `in_vas_por_ylem(caster)`
+- 31: Quas An Wis (Mass Charm) → `dur_spell('C', 20, 6)`
+- 32: In An (Negate Magic) → `dur_spell('N', 10, 6)`
+- 33: Wis An Ylem (X‑Ray) → `x_ray_vision()`
+- 34: An Xen Ex (Charm toggle) → `an_xen_ex()`
+- 35: Rel Xen Bet (Polymorph) → `rel_xen_bet()`
+- 36: Sanct Lor (Invisibility) → `sanct_lor()`
+- 37: Xen Corp (Death bolt) → `weapon_spell(IN_CORP)`
+- 38: In Quas Xen (Clone) → `in_quas_xen()`
+- 39: In Quas Wis (View) → surface `view_area(...)`, dungeon `dng_view()`
+- 42: In Mani Corp (Resurrection) → `resurrect(onwho(), FALSE)`
+- 43: Kal Xen Corp (Summon Daemon) → `summon_daemon(FALSE)`
+- 46: Vas Rel Por (Gate Travel) → `vas_rel_por()`; does not end turn on success
+- 47: An Tym (Negate Time) → `an_tym()`
+
+Notes:
+
+- Doom/Stonegate blocks: Some spells have additional map‑specific blocks (e.g., Uus/Des Por in Doom via `onmap==0x28`); see each spell’s section in Spells.md for exact rules and texts.
+
+
 Mix combines owned reagents into a spell component stock, typically outside combat. It validates inventory and prints simple prompts.
 
 ```pseudocode
