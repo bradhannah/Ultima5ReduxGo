@@ -4,17 +4,16 @@ This document describes the conventions used for dialogue handling and modal dia
 
 ## Overview
 
-- **NEW (Linear System)**: Dialogue execution is handled by a LinearConversationEngine that processes TalkScript commands sequentially using a callback-based interface. The engine processes commands linearly with simple pointer navigation and returns responses synchronously.
-- **OLD (Channel System - TO BE CONVERTED)**: The legacy system uses asynchronous channels for output tokens/messages and input. This approach is being phased out in favor of the linear system.
+- **Linear System**: Dialogue execution is handled by a LinearConversationEngine that processes TalkScript commands sequentially using a callback-based interface. The engine processes commands linearly with simple pointer navigation and returns responses synchronously.
 - Dialogue UI and modal widgets follow consistent visual and interaction patterns:
   - Blue rounded borders with a semi-transparent interior are used for modals.
   - Modals are centered relative to the current game/map screen.
   - Modal vertical size is dynamic and determined by content (e.g., number of list rows).
   - Keyboard navigation (Up/Down/Left/Right/Enter) is the primary control method; Escape may be intentionally disabled for some modals (e.g., forced selection dialogs).
 
-## Conversation Lifecycle (Linear vs Channel Systems)
+## Conversation Lifecycle
 
-### NEW: Linear Conversation System
+### Linear Conversation System
 - Conversations are handled by `LinearConversationEngine` with synchronous, stateless operations:
   - Engine processes TalkScript commands sequentially with pointer-based navigation
   - Actions are handled through injected `ActionCallbacks` interface
@@ -24,18 +23,9 @@ This document describes the conventions used for dialogue handling and modal dia
   - `ProcessInput(userInput)` handles player input and returns next response
   - `IsActive()` checks if conversation is still running
 
-### OLD: Channel-Based System (TO BE CONVERTED)
-- The legacy conversation runs in a separate goroutine and exposes:
-  - An output channel for produced ScriptItems (text or control tokens).
-  - An input channel where the caller can send text responses or commands.
-- The interpreter is non-blocking in the game loop, but the readLine helper will block while waiting for input from the input channel.
-- Start/Stop semantics:
-  - Start spawns the interpreter goroutine.
-  - Stop cancels the context and causes the loop to return and close the output channel.
-
 ## Script/opcode handling conventions
 
-### NEW: Linear System TalkCommand Processing
+### Linear System TalkCommand Processing
 - TalkCommands from TalkScript AST are processed sequentially by the LinearConversationEngine
 - Command handling follows these patterns:
   - **Output Commands** (PlainString, AvatarsName, NewLine): Append text to response output buffer
@@ -47,32 +37,17 @@ This document describes the conventions used for dialogue handling and modal dia
   - **GoldPrompt (0x85)**: Extracts gold amount from numeric prefix in following PlainString
   - **AskName (0x88)**: Supports pause/resume logic for mid-script name collection
   - **IfElseKnowsName (0x8C)**: Context-aware conditional branching based on HasMet status
-
-### OLD: Channel-Based Opcode Processing (TO BE CONVERTED)
-- Script items are represented as opcodes (commands) plus optional string or numeric data.
-- Opcode handling is conservative: implemented opcodes produce their intended text or state change. Unimplemented opcodes are passed through as a placeholder string so the game still shows something rather than silently failing.
-- Where a script modifies game state (e.g., karma, inventory), the opcode handler both updates the state and emits text to the conversation output describing the result when appropriate.
-- Many opcodes emit text via helper functions that enqueue strings or formatted strings to the conversation output channel; this keeps text output decoupled from interpreter logic.
-- Special opcodes:
-  - NewLine-type opcodes produce explicit line breaks in the output stream.
-  - Pause opcodes may cause a short delay before continuing output.
-  - Runtime toggles (e.g., rune mode) flip interpreter state rather than immediately emitting text.
-- Placeholders: For opcodes that are not yet fully implemented, the code emits a short placeholder string so the flow remains visible in the UI. These placeholders are intended to be replaced as functionality is implemented.
+- Placeholders: For commands that are not yet fully implemented, the code emits placeholder text so the flow remains visible in the UI. These placeholders are replaced as functionality is implemented.
 
 ## Skip logic, labels, and conditionals
 
-### NEW: Linear System Navigation
+### Linear System Navigation
 - The LinearConversationEngine uses simple pointer-based navigation for branching logic:
   - **Label Navigation**: GotoLabel commands jump to predefined label positions in the script
   - **Conditional Branching**: IfElseKnowsName checks HasMet status and processes next item (+1) for true, item after next (+2) for false
   - **Multi-Label Flows**: Complex conversations navigate through Label1→Label2→Label3 sequences for nested Q&A
   - **Question/Answer System**: Intelligent input matching with label-specific response mappings
 - No skip flags needed - engine directly modifies active pointer position based on command logic
-
-### OLD: Channel-Based Skip Logic (TO BE CONVERTED)
-- The interpreter supports skip semantics for branching: skip next, skip after next, skip to label, etc.
-- Conditions like "If the avatar is known to the NPC" are handled by setting skip flags and returning early when appropriate.
-- Label handling: when a label is defined or a goto occurs, the interpreter manipulates the conversation order and may push new indices into the processing queue.
 
 ## Debugging and optional text
 
@@ -100,7 +75,7 @@ This document describes the conventions used for dialogue handling and modal dia
 
 ## Implementation patterns & helpers
 
-### NEW: Linear System Patterns
+### Linear System Patterns
 - Use helper functions to:
   - Create percent-based placements and compute pixel rectangles for drawing.
   - Build ConversationResponse objects with accumulated output text and input requirements.
@@ -109,15 +84,6 @@ This document describes the conventions used for dialogue handling and modal dia
   - LinearConversationEngine only processes TalkCommands and returns responses; it never directly renders.
   - UI widgets handle ConversationResponse objects and call engine methods (Start, ProcessInput).
   - Game actions are handled through ActionCallbacks interface, keeping conversation logic separate from game state.
-
-### OLD: Channel-Based Patterns (TO BE CONVERTED)
-- Use helper functions to:
-  - Create percent-based placements and compute pixel rectangles for drawing.
-  - Enqueue strings and formatted strings to the conversation/channel rather than directly drawing text in interpreter code.
-  - Create row text outputs with a font instance to draw names and to control color per row.
-- Keep UI and interpreter decoupled:
-  - Interpreter should not directly draw or depend on rendering context; it should only send script items through the output channel and modify game state.
-  - UI widgets read game state and renderer resources to display things (like party members), and provide callbacks back to game logic (e.g., onSelect).
 
 ## Example: character selection dialog (conventions applied)
 
@@ -141,9 +107,4 @@ This document describes the conventions used for dialogue handling and modal dia
 - Use ConversationResponse.NeedsInput flag to determine when to prompt user for input.
 - Handle ConversationResponse.Error properly - conversation should terminate gracefully on errors.
 - Test conversation flows with real TLK data to ensure proper command handling.
-
-### Legacy System Migration Notes
-- **TO BE CONVERTED**: Replace channel-based text emission with ConversationResponse output accumulation.
-- **TO BE CONVERTED**: Convert goroutine-based interpreters to synchronous LinearConversationEngine calls.
-- **TO BE CONVERTED**: Replace placeholder text emission with proper error handling and response building.
 - Keep promotion of unimplemented features visible via placeholders to make scripted dialogs testable even before full functionality is implemented.

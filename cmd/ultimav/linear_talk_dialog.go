@@ -17,6 +17,39 @@ import (
 
 var _ widgets.Widget = &LinearTalkDialog{}
 
+const (
+	talkFontPoint       = 20
+	talkFontLineSpacing = talkFontPoint + 6
+	talkMaxLines        = 11
+	talkMaxCharsInput   = 45
+	//talkMaxCharsInput   = 15
+)
+
+const (
+	talkPercentOffEdge          = 0.1
+	percentTextIndentFromBorder = 0.017
+)
+
+const (
+	borderStartPercentX = talkPercentOffEdge
+	borderEndPercentX   = .75 + .01 - talkPercentOffEdge
+	borderStartPercentY = .605
+	borderEndPercentY   = 0.95
+)
+
+const (
+	textRectStartPercentX = talkPercentOffEdge + percentTextIndentFromBorder
+	textRectEndPercentX   = .75 + .01 - talkPercentOffEdge
+	textRectStartPercentY = borderStartPercentY + 0.03
+	textRectEndPercentY   = 0.9
+)
+const (
+	textInputStartPercentX = textRectStartPercentX
+	textInputEndPercentX   = textRectEndPercentX
+	textInputStartPercentY = 0.90
+	textInputEndPercentY   = textInputStartPercentY + .05
+)
+
 // LinearTalkDialog implements the same UI as TalkDialog but uses the LinearConversationEngine
 type LinearTalkDialog struct {
 	border *widgets.Border

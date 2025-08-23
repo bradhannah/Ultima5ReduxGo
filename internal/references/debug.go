@@ -1,7 +1,7 @@
 package references
 
 type DebugOptions struct {
-	FreeMove                    bool
-	MonsterGen                  bool
-	UseLinearConversationSystem bool
+	FreeMove                         bool
+	MonsterGen                       bool
+	ExperimentalConversationFeatures bool // Reserved for future conversation system experiments
 }

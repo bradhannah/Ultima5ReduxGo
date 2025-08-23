@@ -29,27 +29,8 @@ func (d *DebugConsole) createDebugFunctions(gameScene *GameScene) *grammar.TextC
 	textCommands = append(textCommands, *d.createToggleMonsterGen())
 	textCommands = append(textCommands, *d.createMonsterGenerationOdds())
 	textCommands = append(textCommands, *d.createRemoveAllMonsters())
-	textCommands = append(textCommands, *d.createToggleLinearConversation())
 	textCommands = append(textCommands, *d.talkWithNpc())
 	return &textCommands
-}
-
-func (d *DebugConsole) createToggleLinearConversation() *grammar.TextCommand {
-	return grammar.NewTextCommand([]grammar.Match{
-		grammar.MatchString{
-			Str:           "linear-talk-toggle",
-			Description:   "Toggle between linear and channel-based conversation systems",
-			CaseSensitive: false,
-		},
-	},
-		func(s string, command *grammar.TextCommand) {
-			d.gameScene.gameState.DebugOptions.UseLinearConversationSystem = !d.gameScene.gameState.DebugOptions.UseLinearConversationSystem
-			systemName := "channel-based"
-			if d.gameScene.gameState.DebugOptions.UseLinearConversationSystem {
-				systemName = "linear"
-			}
-			d.dumpQuickState(fmt.Sprintf("Using %s conversation system", systemName))
-		})
 }
 
 func (d *DebugConsole) talkWithNpc() *grammar.TextCommand {
@@ -75,14 +56,9 @@ func (d *DebugConsole) talkWithNpc() *grammar.TextCommand {
 			npcRefs := d.gameScene.gameReferences.NPCReferences.GetNPCReferencesByLocation(slr.Location)
 			npcRef := (*npcRefs)[npcDialogNumber]
 
-			// Use same toggle logic as regular talk command
-			if d.gameScene.gameState.DebugOptions.UseLinearConversationSystem {
-				linearTalkDialog := NewLinearTalkDialog(d.gameScene, npcRef)
-				d.gameScene.dialogStack.PushModalDialog(linearTalkDialog)
-			} else {
-				talkDialog := NewTalkDialog(d.gameScene, npcRef)
-				d.gameScene.dialogStack.PushModalDialog(talkDialog)
-			}
+			// Use linear conversation system
+			linearTalkDialog := NewLinearTalkDialog(d.gameScene, npcRef)
+			d.gameScene.dialogStack.PushModalDialog(linearTalkDialog)
 		})
 
 }
