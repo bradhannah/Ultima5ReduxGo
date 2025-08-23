@@ -164,6 +164,7 @@ func loadNPCList() []NPCInfo {
 		{Name: "Blackthorn", TLKFile: "CASTLE.TLK", TLKIndex: 0, NPCFile: "CASTLE.NPC", NPCIndex: 0, Location: "Castle", Occupation: "King"},
 		{Name: "Margaret", TLKFile: "CASTLE.TLK", TLKIndex: 2, NPCFile: "CASTLE.NPC", NPCIndex: 2, Location: "Castle", Occupation: "Cook"},
 		{Name: "Chuckles", TLKFile: "CASTLE.TLK", TLKIndex: 4, NPCFile: "CASTLE.NPC", NPCIndex: 4, Location: "Castle", Occupation: "Jester"},
+		{Name: "David", TLKFile: "DWELLING.TLK", TLKIndex: 7, NPCFile: "DWELLING.NPC", NPCIndex: 7, Location: "Lighthouse", Occupation: "Lighthouse Keeper"},
 	}
 }
 
@@ -219,7 +220,7 @@ func selectNPC(npcName string) NPCInfo {
 		fmt.Printf("%d. %s (%s - %s)\n", i+1, npc.Name, npc.Location, npc.Occupation)
 	}
 
-	fmt.Print("\nSelect an NPC (1-6): ")
+	fmt.Print("\nSelect an NPC (1-7): ")
 	input, _ := reader.ReadString('\n')
 	input = strings.TrimSpace(input)
 
@@ -340,6 +341,9 @@ func main() {
 		fmt.Println("For Treanna, also try: SMIT, VAL")
 	case "Ava":
 		fmt.Println("For Ava, also try: VIRT (and answer YES to make an offering)")
+	case "David":
+		fmt.Println("For David, also try: SEXT (his invention), WORK (lighthouse keeper), WIFE, SON")
+		fmt.Println("David has a gruff personality and will often insult you!")
 	default:
 		fmt.Printf("For %s, explore conversation keywords!\n", npcInfo.Name)
 	}

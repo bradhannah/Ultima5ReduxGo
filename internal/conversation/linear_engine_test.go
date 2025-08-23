@@ -71,6 +71,10 @@ func (t *TestActionCallbacks) PayHalfExtortion() error {
 	return nil
 }
 
+func (t *TestActionCallbacks) GiveItem(itemID int) error {
+	return nil
+}
+
 func (t *TestActionCallbacks) GetUserInput(prompt string) (string, error) {
 	if t.userInputIndex < len(t.userInputResponses) {
 		response := t.userInputResponses[t.userInputIndex]

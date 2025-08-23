@@ -500,6 +500,7 @@ func (e *LinearConversationEngine) processScriptItem(item references.ScriptItem)
 
 	case references.Change:
 		// Change (0x86) - give item to player
+		log.Printf("DEBUG: Change command processing - Raw item data: Cmd=0x%02X, Num=%d, Str='%s'", byte(item.Cmd), item.Num, item.Str)
 		log.Printf("DEBUG: Change command processing - giving item %d to player", item.Num)
 		return e.callbacks.GiveItem(item.Num)
 
