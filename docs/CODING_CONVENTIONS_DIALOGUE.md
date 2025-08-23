@@ -4,16 +4,28 @@ This document describes the conventions used for dialogue handling and modal dia
 
 ## Overview
 
-- Dialogue execution is handled by a dedicated interpreter that produces output tokens/messages asynchronously (pushed onto a channel) while consuming user input via an input channel.
+- **NEW (Linear System)**: Dialogue execution is handled by a LinearConversationEngine that processes TalkScript commands sequentially using a callback-based interface. The engine processes commands linearly with simple pointer navigation and returns responses synchronously.
+- **OLD (Channel System - TO BE CONVERTED)**: The legacy system uses asynchronous channels for output tokens/messages and input. This approach is being phased out in favor of the linear system.
 - Dialogue UI and modal widgets follow consistent visual and interaction patterns:
   - Blue rounded borders with a semi-transparent interior are used for modals.
   - Modals are centered relative to the current game/map screen.
   - Modal vertical size is dynamic and determined by content (e.g., number of list rows).
   - Keyboard navigation (Up/Down/Left/Right/Enter) is the primary control method; Escape may be intentionally disabled for some modals (e.g., forced selection dialogs).
 
-## Conversation lifecycle and channels
+## Conversation Lifecycle (Linear vs Channel Systems)
 
-- The conversation runs in a separate goroutine and exposes:
+### NEW: Linear Conversation System
+- Conversations are handled by `LinearConversationEngine` with synchronous, stateless operations:
+  - Engine processes TalkScript commands sequentially with pointer-based navigation
+  - Actions are handled through injected `ActionCallbacks` interface
+  - Responses are returned synchronously as `ConversationResponse` objects
+- Start/Process flow:
+  - `Start(npcID)` begins conversation and returns initial response
+  - `ProcessInput(userInput)` handles player input and returns next response
+  - `IsActive()` checks if conversation is still running
+
+### OLD: Channel-Based System (TO BE CONVERTED)
+- The legacy conversation runs in a separate goroutine and exposes:
   - An output channel for produced ScriptItems (text or control tokens).
   - An input channel where the caller can send text responses or commands.
 - The interpreter is non-blocking in the game loop, but the readLine helper will block while waiting for input from the input channel.
@@ -23,6 +35,20 @@ This document describes the conventions used for dialogue handling and modal dia
 
 ## Script/opcode handling conventions
 
+### NEW: Linear System TalkCommand Processing
+- TalkCommands from TalkScript AST are processed sequentially by the LinearConversationEngine
+- Command handling follows these patterns:
+  - **Output Commands** (PlainString, AvatarsName, NewLine): Append text to response output buffer
+  - **Action Commands** (JoinParty, CallGuards, KarmaPlusOne): Invoke corresponding ActionCallbacks method
+  - **Flow Control** (GotoLabel, IfElseKnowsName, EndConversation): Modify engine pointer or state
+  - **Input Commands** (AskName, GoldPrompt, KeyWait): Set response flags to request user input
+- Conservative handling: Implemented commands execute properly, unimplemented commands log warnings but don't crash
+- Special TalkCommand handling:
+  - **GoldPrompt (0x85)**: Extracts gold amount from numeric prefix in following PlainString
+  - **AskName (0x88)**: Supports pause/resume logic for mid-script name collection
+  - **IfElseKnowsName (0x8C)**: Context-aware conditional branching based on HasMet status
+
+### OLD: Channel-Based Opcode Processing (TO BE CONVERTED)
 - Script items are represented as opcodes (commands) plus optional string or numeric data.
 - Opcode handling is conservative: implemented opcodes produce their intended text or state change. Unimplemented opcodes are passed through as a placeholder string so the game still shows something rather than silently failing.
 - Where a script modifies game state (e.g., karma, inventory), the opcode handler both updates the state and emits text to the conversation output describing the result when appropriate.
@@ -35,6 +61,15 @@ This document describes the conventions used for dialogue handling and modal dia
 
 ## Skip logic, labels, and conditionals
 
+### NEW: Linear System Navigation
+- The LinearConversationEngine uses simple pointer-based navigation for branching logic:
+  - **Label Navigation**: GotoLabel commands jump to predefined label positions in the script
+  - **Conditional Branching**: IfElseKnowsName checks HasMet status and processes next item (+1) for true, item after next (+2) for false
+  - **Multi-Label Flows**: Complex conversations navigate through Label1→Label2→Label3 sequences for nested Q&A
+  - **Question/Answer System**: Intelligent input matching with label-specific response mappings
+- No skip flags needed - engine directly modifies active pointer position based on command logic
+
+### OLD: Channel-Based Skip Logic (TO BE CONVERTED)
 - The interpreter supports skip semantics for branching: skip next, skip after next, skip to label, etc.
 - Conditions like "If the avatar is known to the NPC" are handled by setting skip flags and returning early when appropriate.
 - Label handling: when a label is defined or a goto occurs, the interpreter manipulates the conversation order and may push new indices into the processing queue.
@@ -65,6 +100,17 @@ This document describes the conventions used for dialogue handling and modal dia
 
 ## Implementation patterns & helpers
 
+### NEW: Linear System Patterns
+- Use helper functions to:
+  - Create percent-based placements and compute pixel rectangles for drawing.
+  - Build ConversationResponse objects with accumulated output text and input requirements.
+  - Implement ActionCallbacks interface methods for clean separation between conversation logic and game actions.
+- Keep UI and conversation engine decoupled:
+  - LinearConversationEngine only processes TalkCommands and returns responses; it never directly renders.
+  - UI widgets handle ConversationResponse objects and call engine methods (Start, ProcessInput).
+  - Game actions are handled through ActionCallbacks interface, keeping conversation logic separate from game state.
+
+### OLD: Channel-Based Patterns (TO BE CONVERTED)
 - Use helper functions to:
   - Create percent-based placements and compute pixel rectangles for drawing.
   - Enqueue strings and formatted strings to the conversation/channel rather than directly drawing text in interpreter code.
@@ -83,10 +129,21 @@ This document describes the conventions used for dialogue handling and modal dia
 
 ## Best practices
 
+### General UI Practices
 - Keep UI state and game state synchronized: derive modal rows from authoritative game state (party list) at creation time or on open.
-- Keep promotion of unimplemented features visible via placeholders to make scripted dialogs testable even before full functionality is implemented.
 - Use shared styles and font helpers so the dialogue UI remains consistent across the project.
 - Prefer explicit, small helper functions for:
   - computing layout (row positions, icon sizes),
-  - drawing icons (scale & optional desaturation when disabled),
-  - and emitting conversation text into channels.
+  - drawing icons (scale & optional desaturation when disabled).
+
+### Linear System Best Practices
+- Implement ActionCallbacks interface completely - missing methods will cause panics during conversations.
+- Use ConversationResponse.NeedsInput flag to determine when to prompt user for input.
+- Handle ConversationResponse.Error properly - conversation should terminate gracefully on errors.
+- Test conversation flows with real TLK data to ensure proper command handling.
+
+### Legacy System Migration Notes
+- **TO BE CONVERTED**: Replace channel-based text emission with ConversationResponse output accumulation.
+- **TO BE CONVERTED**: Convert goroutine-based interpreters to synchronous LinearConversationEngine calls.
+- **TO BE CONVERTED**: Replace placeholder text emission with proper error handling and response building.
+- Keep promotion of unimplemented features visible via placeholders to make scripted dialogs testable even before full functionality is implemented.
