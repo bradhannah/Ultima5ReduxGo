@@ -227,14 +227,16 @@ func TestLinearConversationEngine_StartConversation_FirstMeeting(t *testing.T) {
 		t.Errorf("Expected prompt 'Your interest?', got '%s'", response.InputPrompt)
 	}
 
-	// Should contain description and introduction
+	// Should contain description for first meeting (no automatic introduction)
 	output := response.Output
-	if !strings.Contains(output, "a mysterious woman in robes") {
-		t.Error("Expected output to contain NPC description")
+	if !strings.Contains(output, "You see a mysterious woman in robes") {
+		t.Error("Expected output to contain NPC description prefixed with 'You see'")
 	}
 
-	if !strings.Contains(output, "I am called Treanna") {
-		t.Error("Expected output to contain NPC introduction for first meeting")
+	// For first meetings, engine should NOT automatically show introduction
+	// Player must explicitly ask for NAME to get "My name is Treanna"
+	if strings.Contains(output, "I am called Treanna") {
+		t.Error("Engine should not show introduction automatically for first meetings")
 	}
 }
 
@@ -544,10 +546,15 @@ func TestLinearConversationEngine_FullConversation(t *testing.T) {
 
 	engine := NewLinearConversationEngine(script, callbacks)
 
-	// Start conversation
+	// Start conversation - should show description, not automatic introduction
 	response := engine.Start(1)
-	if !strings.Contains(response.Output, "I am called Treanna") {
-		t.Error("Expected introduction for first meeting")
+	if !strings.Contains(response.Output, "You see a mysterious woman in robes") {
+		t.Error("Expected description for first meeting")
+	}
+
+	// First meetings should not show automatic introduction
+	if strings.Contains(response.Output, "I am called Treanna") {
+		t.Error("Engine should not show introduction automatically for first meetings")
 	}
 
 	// Ask about name
