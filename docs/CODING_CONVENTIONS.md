@@ -115,6 +115,31 @@ Goals:
 - Tests: Are new behaviors covered by tests or at least easy to test?
 - Docs: Are exported symbols documented and comments accurate?
 
+## Action/Command Patterns
+
+Player actions (commands like Look, Push, Get, Klimb) should follow these patterns:
+
+### GameState Action Methods
+```go
+// Small map actions - require direction parameter
+func (g *GameState) Action[Command]SmallMap(direction references.Direction) bool
+
+// Large map actions - require direction parameter  
+func (g *GameState) Action[Command]LargeMap(direction references.Direction) bool
+```
+
+### Conventions:
+- **Naming**: Always prefix with `Action`, use PascalCase command name, suffix with map type
+- **Parameters**: Always include `direction references.Direction` parameter
+- **Returns**: Return `bool` indicating success/failure
+- **Imports**: Use direct import `"github.com/bradhannah/Ultima5ReduxGo/internal/references"`, avoid aliases
+- **File organization**: Group related actions in `action_[command].go` files
+
+### Examples:
+- `ActionGetSmallMap(direction references.Direction) bool`
+- `ActionLookLargeMap(direction references.Direction) bool`
+- `ActionPushSmallMap(direction references.Direction) bool`
+
 ## Examples
 
 Range vs index-based:
