@@ -290,3 +290,86 @@ FUNCTION compute_reagent_price(selection):
     RETURN total
 ENDFUNCTION
 ```
+
+## Hours of Operation (Template)
+
+Some shops close at night or on specific days. Capture canonical hours here; apply by shop type and town.
+
+| Town            | Arms | Reagents | Healer | Inn | Horses | Shipwright | Guild |
+|-----------------|:----:|:--------:|:------:|:---:|:------:|:----------:|:-----:|
+| Britain         |  —   |    —     |   —    |  —  |   —    |     —      |   —   |
+| Moonglow        |  —   |    —     |   —    |  —  |   —    |     —      |   —   |
+| Jhelom          |  —   |    —     |   —    |  —  |   —    |     —      |   —   |
+| Yew             |  —   |    —     |   —    |  —  |   —    |     —      |   —   |
+| Minoc           |  —   |    —     |   —    |  —  |   —    |     —      |   —   |
+| Trinsic         |  —   |    —     |   —    |  —  |   —    |     —      |   —   |
+| Skara Brae      |  —   |    —     |   —    |  —  |   —    |     —      |   —   |
+| New Magincia    |  —   |    —     |   —    |  —  |   —    |     —      |   —   |
+| Cove            |  —   |    —     |   —    |  —  |   —    |     —      |   —   |
+| Buccaneer’s Den |  —   |    —     |   —    |  —  |   —    |     —      |   —   |
+| Paws            |  —   |    —     |   —    |  —  |   —    |     —      |   —   |
+
+Legend: list as 24h ranges (e.g., 8–20), or Closed.
+
+## Per‑Town Inventories (Templates)
+
+Define available items per town and shop type. Use ✓ where sold; leave blank otherwise. Keep rare/special items clearly flagged.
+
+### Arms & Armor Inventory
+
+| Item            | Britain | Moonglow | Jhelom | Yew | Minoc | Trinsic | Skara Brae | New Magincia | Cove | Bucs Den | Paws |
+|-----------------|:-------:|:--------:|:------:|:---:|:-----:|:-------:|:----------:|:------------:|:----:|:--------:|:----:|
+| Dagger          |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Sling           |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Club            |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Bow/Arrows      |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Crossbow/Quarrels|  —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Longsword       |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Halberd         |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| 2H Weapons      |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Magic Axe       |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Glass Sword     |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Mystic Sword    |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+
+### Reagents Inventory
+
+| Reagent        | Britain | Moonglow | Jhelom | Yew | Minoc | Trinsic | Skara Brae | New Magincia | Cove | Bucs Den | Paws |
+|----------------|:-------:|:--------:|:------:|:---:|:-----:|:-------:|:----------:|:------------:|:----:|:--------:|:----:|
+| Sulfurous Ash  |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Ginseng        |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Garlic         |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Spider Silk    |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Blood Moss     |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Black Pearl    |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Nightshade     |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Mandrake Root  |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+
+### Guild Shop Inventory
+
+| Item    | Britain | Moonglow | Jhelom | Yew | Minoc | Trinsic | Skara Brae | New Magincia | Cove | Bucs Den | Paws |
+|---------|:-------:|:--------:|:------:|:---:|:-----:|:-------:|:----------:|:------------:|:----:|:--------:|:----:|
+| Key     |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Torch   |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+| Gem     |   —     |    —     |   —    | —   |   —   |    —    |     —      |      —       |  —   |    —     |  —   |
+
+### Healer Services
+
+| Town            | Heal (HP) | Cure Poison | Resurrect |
+|-----------------|:---------:|:-----------:|:---------:|
+| Britain         |     —     |      —      |     —     |
+| Moonglow        |     —     |      —      |     —     |
+| …               |     —     |      —      |     —     |
+
+### Shipwright Services
+
+| Town            | Skiff | Ship | Repair Hull |
+|-----------------|:-----:|:----:|:-----------:|
+| Britain         |   —   |  —   |      —      |
+| Moonglow        |   —   |  —   |      —      |
+| …               |   —   |  —   |      —      |
+
+Notes:
+
+- Cross‑link: using Gems triggers [Commands → View](./Commands.md#view-gem-map).
+- Cross‑link: mixing spells uses reagents; see [Commands → Mix Reagents](./Commands.md#mix-reagents) and [Spells](./Spells.md).
+- Deeper shoppes investigation required; keep these matrices as placeholders to be filled with canonical data.

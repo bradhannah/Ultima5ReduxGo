@@ -159,6 +159,7 @@ Notes:
 ## In Progress / Open Items
 
 - [ ] Shop pricing data: per-town multipliers and item lists (full tables).
+- [ ] Fill Shops matrices: hours, inventories, services per town.
 - [ ] Testing guidance snippets per module (seeded PRNG, deterministic checks).
 - [x] Expand spell list coverage (targeting, durations, town/overworld vs dungeon constraints).
 - [x] NPC schedule transitions (time-of-day) deeper dive.
@@ -166,6 +167,10 @@ Notes:
 - [ ] Rare fixtures/objects edge cases (as discovered).
  - [x] Rare fixtures/objects edge cases (as discovered).
 - [ ] Shoppes deep dive: Non-trivial. Reverse-engineer canonical per-town multipliers, per-shop inventories, restock rules, and services pricing (healers/shipwright). Capture hours/closures, special locations (e.g., Buccaneer’s Den), and any rank/quality modifiers in a dedicated data doc.
+
+## Recently Completed
+
+- [x] Link IMPLEMENTATION_TRACKING rows to doc anchors for quick navigation.
 
 ## Notes
 
