@@ -91,6 +91,7 @@ func buildTalkDumpOutput(raw map[references.SmallMapMasterTypes][]*references.Ta
 			}
 			questionGroups = append(questionGroups, ts.QuestionGroups...)
 			entry["dialog"] = questionGroups
+			entry["labels"] = ts.Labels
 			npcDump = append(npcDump, entry)
 		}
 		out[fileName] = npcDump
