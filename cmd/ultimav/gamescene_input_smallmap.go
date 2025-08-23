@@ -82,6 +82,26 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		g.addRowStr("Talk-")
 		g.secondaryKeyState = TalkDirectionInput
 		g.keyboard.SetAllowKeyPressImmediately()
+	case ebiten.KeyS:
+		g.debugMessage = "Search"
+		g.addRowStr("Search-")
+		g.secondaryKeyState = SearchDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
+	case ebiten.KeyA:
+		g.debugMessage = "Attack"
+		g.addRowStr("Attack-")
+		g.secondaryKeyState = AttackDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
+	case ebiten.KeyU:
+		g.debugMessage = "Use"
+		g.addRowStr("Use-")
+		g.secondaryKeyState = UseDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
+	case ebiten.KeyY:
+		g.debugMessage = "Yell"
+		g.addRowStr("Yell-")
+		g.secondaryKeyState = YellDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
 	default:
 		return
 	}
@@ -141,6 +161,26 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 				g.addRowStr("No-one to talk to!")
 			}
 
+			g.secondaryKeyState = PrimaryInput
+		}
+	case SearchDirectionInput:
+		if g.isDirectionKeyValidAndOutput() {
+			g.smallMapSearchSecondary(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
+		}
+	case AttackDirectionInput:
+		if g.isDirectionKeyValidAndOutput() {
+			g.smallMapAttackSecondary(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
+		}
+	case UseDirectionInput:
+		if g.isDirectionKeyValidAndOutput() {
+			g.smallMapUseSecondary(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
+		}
+	case YellDirectionInput:
+		if g.isDirectionKeyValidAndOutput() {
+			g.smallMapYellSecondary(getCurrentPressedArrowKeyAsDirection())
 			g.secondaryKeyState = PrimaryInput
 		}
 	default:
@@ -243,17 +283,21 @@ func (g *GameScene) smallMapOpenSecondary(direction references2.Direction) {
 }
 
 func (g *GameScene) smallMapJimmySecondary(direction references2.Direction) {
-	jimmyResult := g.gameState.JimmyDoor(direction, &g.gameState.PartyState.Characters[0])
-
-	switch jimmyResult {
-	case gamestate.JimmyUnlocked:
+	// Use the standardized Action method
+	success := g.gameState.ActionJimmySmallMap(direction)
+	if success {
 		g.addRowStr("Unlocked!")
-	case gamestate.JimmyNotADoor:
-		g.addRowStr("Not lock!")
-	case gamestate.JimmyBrokenPick, gamestate.JimmyLockedMagical:
-		g.addRowStr("Key broke!")
-	default:
-		panic("unhandled default case")
+	} else {
+		// Get more detailed result from the original method for error messages
+		jimmyResult := g.gameState.JimmyDoor(direction, &g.gameState.PartyState.Characters[0])
+		switch jimmyResult {
+		case gamestate.JimmyNotADoor:
+			g.addRowStr("Not lock!")
+		case gamestate.JimmyBrokenPick, gamestate.JimmyLockedMagical:
+			g.addRowStr("Key broke!")
+		default:
+			g.addRowStr("Failed!")
+		}
 	}
 }
 
@@ -339,4 +383,36 @@ func (g *GameScene) smallMapTalkSecondary(direction references2.Direction) bool 
 	}
 
 	return true
+}
+
+func (g *GameScene) smallMapSearchSecondary(direction references2.Direction) {
+	// TODO: Implement Search secondary action
+	success := g.gameState.ActionSearchSmallMap(direction)
+	if !success {
+		g.addRowStr("Nothing found!")
+	}
+}
+
+func (g *GameScene) smallMapAttackSecondary(direction references2.Direction) {
+	// TODO: Implement Attack secondary action
+	success := g.gameState.ActionAttackSmallMap(direction)
+	if !success {
+		g.addRowStr("Nothing to attack!")
+	}
+}
+
+func (g *GameScene) smallMapUseSecondary(direction references2.Direction) {
+	// TODO: Implement Use secondary action
+	success := g.gameState.ActionUseSmallMap(direction)
+	if !success {
+		g.addRowStr("Cannot use!")
+	}
+}
+
+func (g *GameScene) smallMapYellSecondary(direction references2.Direction) {
+	// TODO: Implement Yell secondary action
+	success := g.gameState.ActionYellSmallMap(direction)
+	if !success {
+		g.addRowStr("No effect!")
+	}
 }

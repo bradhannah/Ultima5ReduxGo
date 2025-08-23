@@ -42,6 +42,10 @@ const (
 	GetDirectionInput
 	LookDirectionInput
 	TalkDirectionInput
+	SearchDirectionInput
+	AttackDirectionInput
+	UseDirectionInput
+	YellDirectionInput
 )
 
 // GameScene is another scene (e.g., the actual game)
