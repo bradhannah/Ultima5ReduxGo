@@ -3,10 +3,21 @@
 ## AI Seek Movement
 
 ```pseudocode
+// Charm aura integration: 'C' stands for Quas An Wis (mass charm)
+FUNCTION effective_loyalty_for_targeting(attacker_index):
+    base = loyalty(attacker_index) // 0 for PCs, >0 for monsters
+    IF active_spell == 'C' AND is_monster(attacker_index) THEN
+        // INT save: failure when d30 > INT → flip to PC side so monsters become enemies
+        IF rolld30() > getattr(attacker_index, STAT_INT) THEN RETURN 0
+    ENDIF
+    RETURN base
+ENDFUNCTION
+```
+
+```pseudocode
 FUNCTION select_nearest_enemy(turn_index):
     killer = combatq[turn_index]
-    killer_loyalty = loyalty(turn_index)
-    IF active_spell == 'C' AND rolld30() > getattr(turn_index, STAT_INT) THEN killer_loyalty = 0
+    killer_loyalty = effective_loyalty_for_targeting(turn_index)
     target_index = -1; best_dist = +INF
     FOR i FROM 31 DOWNTO 0:
         ptr = combatq[i]

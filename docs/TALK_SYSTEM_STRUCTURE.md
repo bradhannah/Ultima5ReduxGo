@@ -29,9 +29,9 @@ controls dialogue flow, substitutions, prompts, and engine-internal operations.
 | Callback Action | JoinParty                      | 0x84       | NPC joins party                                                                                                                                                                                                                            |             | No                                                    |                                                                    | Yes                                | Triggers party join logic      |
 | Callback Action | KarmaPlusOne                   | 0x89       | Increase karma by one                                                                                                                                                                                                                      |             | No                                                    |                                                                    | Yes                                | Triggers karma increase logic  |
 | Callback Action | KarmaMinusOne                  | 0x8A       | Decrease karma by one                                                                                                                                                                                                                      |             | No                                                    |                                                                    | Yes                                | Triggers karma decrease logic  |
-| Callback Action | CallGuards                     | 0x8B       | Call guards                                                                                                                                                                                                                                |             | No                                                    |                                                                    | Yes                                | Triggers guard call logic      |
+| Callback Action | CallGuards                     | 0x8B       | Call guards                                                                                                                                                                                                                                |             | No                                                    |                                                                    | Yes                                | Triggers guard call logic; see ALGOS/Towns → Special Guard Behavior |
 | String Output   | ExtortionAmount                | 0xE0       | Extortion amount (engine-internal)                                                                                                                                                                                                         | Sometimes   | No                                                    | Show user how much extortion is                                    | Triggers extortion logic           |                                |
-| Callback Action | GoToJail                       | 0xE1       | Go to jail (engine-internal)                                                                                                                                                                                                               | No          |                                                       |                                                                    | Triggers jail logic                | Reposition Avatar into jail    |
+| Callback Action | GoToJail                       | 0xE1       | Go to jail (engine-internal)                                                                                                                                                                                                               | No          |                                                       |                                                                    | Triggers jail logic                | Reposition Avatar into jail; see ALGOS/Towns → Jail Flow |
 | Callback Action | PayGenericExtortion            | 0xE2       | Pay generic extortion (engine-internal)                                                                                                                                                                                                    | Sometimes   | May prompt user for payment or confirmation           |                                                                    | Triggers extortion payment logic   |                                |
 | Callback Action | PayHalfGoldExtortion           | 0xE3       | Pay half gold extortion (engine-internal)                                                                                                                                                                                                  | Sometimes   | May prompt user for payment or confirmation           |                                                                    | Triggers half-gold extortion logic |                                |
 | Callback Action | MakeAHorse                     | 0xE4       | Make a horse (engine-internal)                                                                                                                                                                                                             | No          |                                                       | Yes                                                                | Triggers horse creation logic      | Make a horse appear            |
@@ -385,6 +385,7 @@ func (d *DemoCallbacks) TimedPause() {
 
 - [SAVED_GAM_STRUCTURE.md](./SAVED_GAM_STRUCTURE.md)
 - DATA.OVL format and compressed word table
+- Town guard alarm and pursuit behavior (CallGuards/GoToJail integration): [ALGOS/Towns.md#special-guard-behavior](./ALGOS/Towns.md#special-guard-behavior)
 
 ---
 
@@ -400,7 +401,7 @@ func (d *DemoCallbacks) TimedPause() {
 - **GoldPrompt** (0x85): **Gold deduction with prefix parsing** ✅ **FIXED**
 - **AskName** (0x88): **Name input with pause/resume logic** ✅ **FIXED**
 - **KarmaPlusOne/KarmaMinusOne** (0x89/0x8A): Karma adjustment callbacks
-- **CallGuards** (0x8B): Guard call callback
+- **CallGuards** (0x8B): Guard call callback — see ALGOS/Towns → Special Guard Behavior
 - **IfElseKnowsName** (0x8C): **Context-aware conditional branching** ✅ **FIXED**
 - **KeyWait** (0x8F): Keypress waiting
 - **StartLabelDef** (0x90): Label section markers
@@ -421,7 +422,7 @@ func (d *DemoCallbacks) TimedPause() {
 - **Change** (0x86): Context-specific behavior
 - **Rune** (0x8E): Rune system integration
 - **ExtortionAmount/PayGenericExtortion/PayHalfGoldExtortion** (0xE0-0xE3): Economic systems
-- **GoToJail** (0xE1): Jail transportation
+- **GoToJail** (0xE1): Jail transportation — see ALGOS/Towns → Jail Flow
 - **MakeAHorse** (0xE4): Horse creation
 
 ### Implementation Architecture

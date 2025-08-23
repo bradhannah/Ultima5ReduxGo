@@ -13,13 +13,15 @@ Use this index to find systems quickly. Each file contains focused sections and 
 - NPC Schedules: `NPC_Schedules.md`
 - Combat Core (Hit, Damage, Turn Modifiers): `Combat_Core.md`
 - Combat Effects (Poison, Flee, Fields, Missiles, Regurgitation, Per-Turn): `Combat_Effects.md`
-- Spells: `Spells.md`
+- Spells: `Spells.md` (Rel Hur, In/Great Light, Rel Tym/Negate Time, Uus/Des Por, An Sanct/An Grav, In/An Ex Por, summons)
+- Potions: `Potions.md`
 - Environment and Hazards: `Environment.md`
 - Town Systems (Guards, Cannons, Karma, Drawbridges): `Towns.md`
 - Objects and Fixtures (mirrors, pushables, doors, seating, Klimb): `Objects.md`
 - Small-Town Fixtures (fountains, wells, lamps, telescope): `Fixtures.md`
 - Hidden Objects and Search Mechanics (daily skull keys, conditional spawns): `Secrets.md`
 - Dungeon Interactions (chests, traps, search): `Dungeon.md`
+- Commands (Yell, Look, Open, Push, Get, Talk, Use, Fire, Hole Up & Camp, Exit, Klimb, Pass Turn, Search, View, Ztats): `Commands.md`
 - Special: Bridge Trolls: `Special_BridgeTrolls.md`
 - Moongates: `Moongates.md`
 - Shops and Inns: `Shops.md`

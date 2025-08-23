@@ -145,6 +145,44 @@ FUNCTION update_players_after_turn():
     check_ring_effects()
 ENDFUNCTION
 
+## Equipment Resistances & Effects (Display in Ztats)
+
+Certain equipment grants passive effects or resistances that influence combat and hazards. Ztats should display concise tags when equipped items confer such effects.
+
+```pseudocode
+// Equipment metadata
+STRUCT EquipEffect { id: string, tag: string, applies: function(context) -> bool }
+
+LIST<EquipEffect> EffectsByItem = [
+    // Examples; exact items and values are data-driven
+    { id: RING_PROTECTION, tag: "Protection", applies: (ctx) => TRUE },
+    { id: RING_REGEN,       tag: "Regen",      applies: (ctx) => ctx.in_combat },
+    { id: RING_INVIS,       tag: "Invisible",  applies: (ctx) => ctx.in_combat },
+    { id: HELM_MAGIC,       tag: "Resist Magic", applies: (ctx) => TRUE },
+    { id: SHIELD_MAGIC,     tag: "Resist",     applies: (ctx) => TRUE },
+]
+
+FUNCTION equipment_tags_for(player_index, context):
+    tags = []
+    FOR item IN [player.weapon, player.armor, player.shield, player.helm, player.ring]:
+        FOR eff IN EffectsByItem:
+            IF item == eff.id AND eff.applies(context) THEN tags.append(eff.tag)
+    RETURN tags
+```
+
+### Example Item Tags (align with item data)
+
+| Item                  | Slot   | Tag(s)        | Notes                                                                 |
+|-----------------------|--------|---------------|-----------------------------------------------------------------------|
+| Ring of Protection    | Ring   | Protection    | Small damage reduction bonus; stacks with base armor; engine-defined. |
+| Ring of Regeneration  | Ring   | Regen         | Restores a small amount of HP per combat turn.                        |
+| Ring of Invisibility  | Ring   | Invisible     | Sets invisible flag; some foes may still detect (specials).           |
+| Magic Helm            | Helm   | Resist Magic  | Improves saves or reduces magic damage; data-driven mitigation.       |
+| Magic Shield          | Shield | Resist        | Reduces incoming damage (projectiles/magic per design).               |
+| Crown of L. British   | Head   | Light, Negate | Persistent effects while equipped/active; see Commands → Use.         |
+
+These are illustrative; enforce exact effects via your item database and balance tables. Ztats should simply display the resulting tags from `EffectsByItem`.
+
 ## Chest Traps and Random Traps (`boom`)
 
 ```pseudocode

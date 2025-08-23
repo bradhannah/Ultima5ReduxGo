@@ -20,7 +20,11 @@ ENDFUNCTION
 ```pseudocode
 FUNCTION apply_town_tile_hazards(current_tile):
     IF current_tile == FIREPLACE OR current_tile == LAVA THEN
-        update_screen()
+        show_message("Burning!\n")
+        damageparty() // each living member takes 1..8
+    ENDIF
+ENDFUNCTION
+```
 
 ## Hazard Matrix (Summary)
 
@@ -33,22 +37,7 @@ FUNCTION apply_town_tile_hazards(current_tile):
 Notes:
 
 - “Damage party” is the whole-party 1..8 routine, not per-entity field damage.
-- Combat tile effects are handled via the field-effects system (see Combat Effects → Field Effects).
-
-        show_message("Burning!\n")
-        damageparty() // each living member takes 1..8
-    ENDIF
-ENDFUNCTION
-```
-
-Notes:
-
-- On town/small maps, stepping on a `FIREPLACE` or `LAVA` tile immediately burns the party (same text as overworld lava).
-- In combat, fireplaces and lava are also hazardous via the field-effects system (fire flag). See Combat Effects → Field Effects.
-
-```
-
-Note: Interior fixtures like `FIREPLACE` are not hazardous outside combat; they only cause damage during combat via the field-effects system (see Combat Effects → Field Effects).
+- In combat, fireplaces and lava are handled via the field-effects system (see Combat Effects → Field Effects).
 
 ## Underworld Earthquakes
 
@@ -71,7 +60,36 @@ FUNCTION update_darkness(lost):
 ENDFUNCTION
 ```
 
-## Torch Duration (Dungeon)
+## Light Sources & Vision
+
+Light enables vision in dark contexts (dungeons and underworld interiors). Two timers control light: `torch_light` and `magic_light`. Some items provide a persistent light effect.
+
+```pseudocode
+// Returns TRUE if no active light is present
+FUNCTION no_light_sources():
+    RETURN (torch_light <= 0 AND magic_light <= 0 AND NOT is_persistent_light_active())
+
+FUNCTION is_persistent_light_active():
+    // Long-lived item effects (e.g., LB Amulet or Crown) grant light while equipped
+    RETURN is_effect_active(LB_AMULET) OR is_effect_active(CROWN)
+
+// Called each world tick in dark contexts to age light durations
+FUNCTION consume_light_sources_if_needed():
+    IF NOT is_in_dungeon() AND NOT is_underworld_small_map() THEN RETURN
+    IF magic_light > 0 THEN magic_light -= 1
+    IF torch_light > 0 THEN torch_light -= 1
+ENDFUNCTION
+```
+
+### Light Sources Table
+
+- Torch: inventory item; `Ignite Torch` consumes one torch and sets `torch_light` duration.
+- Wall Torch: surface/town fixture; `Get`ing a wall torch sets `torch_light = 100` and removes the torch tile (`Borrowed!`).
+- In Lor (Light): spell; sets `magic_light` to a short duration.
+- In Bet Lor (Great Light): spell; sets `magic_light` to a long duration.
+- LB Amulet / Crown: `Use` equips a persistent effect (duration 255) which counts as light.
+
+### Torch Duration
 
 ```pseudocode
 FUNCTION ignite_torch():
@@ -81,3 +99,9 @@ FUNCTION ignite_torch():
     RETURN TRUE
 ENDFUNCTION
 ```
+
+Notes:
+
+- Torches provide light anywhere but are primarily useful in dungeons/underworld; outside, light has no gameplay effect beyond visuals.
+- If both `magic_light` and `torch_light` are active, visibility is granted as long as either is non-zero; both timers tick independently.
+- Equipping the Amulet or Crown activates a persistent effect treated as light (does not decrement until unequipped or cleared).

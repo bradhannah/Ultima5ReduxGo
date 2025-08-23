@@ -26,6 +26,8 @@ FUNCTION disarm_or_unlock_target_tile(x, y):
 ENDFUNCTION
 ```
 
+Light requirement: `no_light_sources()` gates visibility; see [Environment.md#light-sources--vision](Environment.md#light-sources--vision).
+
 ### Chest Trap Probabilities (Drops)
 
 Dropped monster chests use a treasure-value check to decide if trapped:
@@ -77,9 +79,11 @@ ENDFUNCTION
 | Ladder Up/Down           | Klimb moves a floor up/down             | Also accessible via directional Klimb      |
 | Grate                    | Klimb Down (if matched by map rules)    |                                            |
 | Fountain                 | No hidden search reward by default      | Some locations may override to heal/cure   |
-| Torch/Light sources      | Increases `torch_light`/`magic_light`   | See Environment → Torch Duration           |
+| Torch/Light sources      | Increases `torch_light`/`magic_light`   | See Environment → [Light Sources & Vision](Environment.md#light-sources--vision); [Torch Duration](Environment.md#torch-duration) |
 | Trap tiles               | Search can reveal “simple/complex” trap | Disarming logic handled by specific spells |
 | Fire/Poison/Sleep fields | Field effects per tick in combat        | See Combat Effects → Field Effects         |
+
+Note: Uus Por (Up) and Des Por (Down) provide magical floor changes equivalent to ladders; see Spells → Uus Por / Des Por.
 
 
 ### Treasure Drop/Trap Matrix (Buckets)

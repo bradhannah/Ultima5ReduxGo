@@ -138,3 +138,30 @@ Notes:
 
 - Example values shown; actual matrix should be supplied by data.
 - In code, a non-4 speed gates movement by incrementing a per-ship counter and moving when the counter exceeds the speed; 4 means skip movement.
+
+## Wind System
+
+Wind affects sailing and pirate ship behavior and is visible in the UI.
+
+```pseudocode
+FUNCTION set_wind(dir):
+    // dir: 1=N, 2=S, 3=E, 4=W, 0=calm, -1=display only
+    IF dir != -1 THEN winds = dir; wind_update_counter = 0
+    show_wind_ui(winds) // prints “Calm/ North/ South/ East/ West Winds” with arrow indicators
+
+FUNCTION update_wind_tick():
+    // 1/64 chance per tick to change wind
+    IF random(0, 0x3F) == 0 THEN
+        REPEAT
+            new_wind = random(0, 4) // 0..4 inclusive
+        UNTIL NOT (new_wind == 0 AND random(0, 0xFF) < 0xC0) // bias: calm only 25% when picked
+        set_wind(new_wind)
+    ENDIF
+ENDFUNCTION
+```
+
+Notes:
+
+- `winds` drives pirate ship speed via the matrix above and can influence player ship behavior (e.g., auto-sailing).
+- Calm (0) is rarer: when the wind changes, calm is accepted only 25% of the times it is rolled.
+- The “Rel Hur” spell (Change Wind) can set wind by direction; see Spells → Rel Hur.

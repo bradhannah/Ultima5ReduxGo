@@ -2,6 +2,11 @@
 
 This document captures the high-level flows for merchants, healers, reagent sellers, horse sellers, and inns.
 
+## General Notes
+
+- Gems: Vendors may sell gems. Using `View` consumes one gem to render a tactical map; see Commands → View.
+- Determinism: All price rolls and stock checks must use the central PRNG; prices should be data-driven where possible.
+
 ## Healing Shop
 
 ```pseudocode

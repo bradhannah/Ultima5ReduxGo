@@ -80,9 +80,24 @@ func ParseNPCBlob(blob []byte, dict *WordDict) (*TalkScript, error) {
 		// 2) **real opcodes** --------------------------------
 		case b == byte(AvatarsName) ||
 			b == byte(EndConversation) ||
-			b == byte(Pause) /* …add any others you’ve defined… */ :
+			b == byte(Pause) /* …add any others you've defined… */ :
 			addPlain()
 			currLine = append(currLine, ScriptItem{Cmd: TalkCommand(b), FriendlyCmd: TalkCommand(b).String()})
+
+		case b == byte(Change):
+			addPlain()
+			// Change command has a following byte for item number
+			// guard against running past EOF
+			if i+1 >= len(blob) {
+				return nil, fmt.Errorf("truncated Change command at end of blob")
+			}
+			itemNum := int(blob[i+1])
+			i++ // skip the payload byte
+			currLine = append(currLine, ScriptItem{
+				Cmd:         Change,
+				FriendlyCmd: Change.String(),
+				Num:         itemNum,
+			})
 
 		// 3) compressed‑word bytes ----------------------------
 		case dict.IsWordByte(b):
