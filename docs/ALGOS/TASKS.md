@@ -20,11 +20,11 @@ This tracker mirrors the coverage checklist and adds a place to note open items 
 - [x] Commands: Fire (town cannons & ship broadsides)
 - [x] Commands: Hole Up & Camp (repair/camping)
 - [x] Commands: Exit/Enter
- - [x] Commands: Klimb (ladders/grates; small maps + dungeon)
- - [x] Commands: Pass Turn (Space)
- - [x] Commands: Search (surface + dungeon ahead)
- - [x] Commands: View (gem map)
- - [x] Commands: Ztats (party member stats)
+- [x] Commands: Klimb (ladders/grates; small maps + dungeon)
+- [x] Commands: Pass Turn (Space)
+- [x] Commands: Search (surface + dungeon ahead)
+- [x] Commands: View (gem map)
+- [x] Commands: Ztats (party member stats)
 
 - [x] Hit calculation (physical/magical)
 - [x] Damage calculation (weapons/armor; Glass Sword)
@@ -161,10 +161,11 @@ Notes:
 - [ ] Shop pricing data: per-town multipliers and item lists (full tables).
 - [ ] Testing guidance snippets per module (seeded PRNG, deterministic checks).
 - [x] Expand spell list coverage (targeting, durations, town/overworld vs dungeon constraints).
-- [ ] NPC schedule transitions (time-of-day) deeper dive.
-- [ ] Fixture-specific overrides by location (wells/fountains/lamps); expand Wish outcomes.
+- [x] NPC schedule transitions (time-of-day) deeper dive.
+- [x] Fixture-specific overrides by location (wells/fountains/lamps); expand Wish outcomes.
 - [ ] Rare fixtures/objects edge cases (as discovered).
- - [ ] Shoppes deep dive: Non-trivial. Reverse-engineer canonical per-town multipliers, per-shop inventories, restock rules, and services pricing (healers/shipwright). Capture hours/closures, special locations (e.g., Buccaneer’s Den), and any rank/quality modifiers in a dedicated data doc.
+ - [x] Rare fixtures/objects edge cases (as discovered).
+- [ ] Shoppes deep dive: Non-trivial. Reverse-engineer canonical per-town multipliers, per-shop inventories, restock rules, and services pricing (healers/shipwright). Capture hours/closures, special locations (e.g., Buccaneer’s Den), and any rank/quality modifiers in a dedicated data doc.
 
 ## Notes
 
