@@ -8,25 +8,23 @@ import (
 
 func (g *GameState) ActionPushSmallMap(direction references.Direction) bool {
 	// Auto-shut doors if needed (equivalent to shut_previous_door)
-	// TODO: Implement door timer shutdown logic when door system is implemented
+	g.MapState.SmallMapProcessTurnDoors()
 
 	pushableThingPosition := direction.GetNewPositionInDirection(&g.MapState.PlayerLocation.Position)
-
 	smallMap := g.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.MapState.PlayerLocation.Floor)
 	pushableThingTile := smallMap.GetTopTile(pushableThingPosition)
 
-	// CRITICAL FIX: Validate object presence and pushability
+	// Detailed validation with game state
 	if g.ObjectPresentAt(pushableThingPosition) || !g.IsPushable(pushableThingTile) {
 		g.SystemCallbacks.Message.AddRowStr("Won't budge!")
 		return false
 	}
 
-	// CRITICAL FIX: Legal floor depends on object type
-	legalFloorIndex := indexes.BrickFloor
+	// Determine legal floor based on object type
+	legalFloorIndex := indexes.SpriteIndex(indexes.BrickFloor)
 	if pushableThingTile.IsCannon() {
-		legalFloorIndex = indexes.HexMetalGridFloor // Cannons require hex metal floor
+		legalFloorIndex = indexes.SpriteIndex(indexes.HexMetalGridFloor) // Cannons require hex metal floor
 	}
-	_ = legalFloorIndex // TODO: Use this when floor validation is implemented
 
 	farSideOfPushableThingPosition := direction.GetNewPositionInDirection(pushableThingPosition)
 	farSideTile := smallMap.GetTopTile(farSideOfPushableThingPosition)
@@ -35,32 +33,33 @@ func (g *GameState) ActionPushSmallMap(direction references.Direction) bool {
 	// Try to push object forward into farSide
 	if !g.IsOutOfBounds(*farSideOfPushableThingPosition) &&
 		!g.ObjectPresentAt(farSideOfPushableThingPosition) &&
-		farSideTile.Index.IsPushableFloor() {
-		// Push object forward
+		farSideTile.Index == legalFloorIndex {
+
+		// Execute push
 		g.pushIt(smallMap, pushableThingTile, farSideTile, pushableThingPosition, farSideOfPushableThingPosition, direction)
+		g.MapState.PlayerLocation.Position = *pushableThingPosition
+
+		// User feedback via callbacks
 		g.SystemCallbacks.Message.AddRowStr("Pushed!")
 		g.SystemCallbacks.Audio.PlaySoundEffect(SoundPushObject)
-	} else {
-		// Try swapping player with object if player stands on legal floor
-		if playerTile.Index.IsPushableFloor() {
-			g.swapIt(smallMap, playerTile, pushableThingTile, &g.MapState.PlayerLocation.Position, pushableThingPosition, direction)
-			g.SystemCallbacks.Message.AddRowStr("Pulled!")
-			g.SystemCallbacks.Audio.PlaySoundEffect(SoundPushObject)
-		} else {
-			g.SystemCallbacks.Message.AddRowStr("Won't budge!")
-			return false
-		}
+		g.SystemCallbacks.Flow.AdvanceTime(1)
+		return true
+
+	} else if playerTile.Index == legalFloorIndex {
+		// Try swapping (pulling)
+		g.swapIt(smallMap, playerTile, pushableThingTile, &g.MapState.PlayerLocation.Position, pushableThingPosition, direction)
+		g.MapState.PlayerLocation.Position = *pushableThingPosition
+
+		// User feedback via callbacks
+		g.SystemCallbacks.Message.AddRowStr("Pulled!")
+		g.SystemCallbacks.Audio.PlaySoundEffect(SoundPushObject)
+		g.SystemCallbacks.Flow.AdvanceTime(1)
+		return true
 	}
 
-	// CRITICAL FIX: Only move player forward after successful push/pull validation
-	g.MapState.PlayerLocation.Position = *pushableThingPosition
-
-	// Advance time - pushing objects takes 1 minute
-	g.SystemCallbacks.Flow.AdvanceTime(1)
-
-	// Screen redraw is handled automatically by the rendering system
-
-	return true
+	// Failed to push or pull
+	g.SystemCallbacks.Message.AddRowStr("Won't budge!")
+	return false
 }
 
 // Helper function to handle pushing object forward
@@ -90,22 +89,52 @@ func (g *GameState) ActionPushLargeMap(direction references.Direction) bool {
 }
 
 func (g *GameState) ActionPushCombatMap(direction references.Direction) bool {
-	// TODO: Implement combat map Push command - see Commands.md Push section
-	// Combat map push includes combat-specific logic:
+	// Combat map push includes combat-specific logic per pseudocode
+
+	// TODO: Implement when combat system is available:
 	// - save_avatar_pos(); map_to_active_combatant()
-	// - Check for stepping trap guarding push: CheckTrap(pushableThingPosition)
+
+	pushableThingPosition := direction.GetNewPositionInDirection(&g.MapState.PlayerLocation.Position)
+
+	// Check for stepping trap guarding push
+	if g.CheckTrap(pushableThingPosition) {
+		// Trap triggered, don't continue with push
+		return false
+	}
+
+	// Use same push logic as small map for now
+	// TODO: Replace with combat-specific logic when combat maps are implemented
+	result := g.ActionPushSmallMap(direction)
+
+	// TODO: Implement when combat system is available:
 	// - sync_combatant_and_object_positions(dx, dy) after push
 	// - restore_avatar_pos(); update_screen()
-	return true // Temporary stub
+
+	return result
 }
 
 // Helper methods - TODO: Move these to appropriate files when systems are implemented
 
 func (g *GameState) IsPushable(tile *references.Tile) bool {
-	// TODO: Implement full pushability check per Commands.md Push section
-	// Should check for: PLANT, CHAIR variants, DESK, BARREL, VANITY, PITCHER,
+	// Implements full pushability check per Commands.md Push section
+	// Based on pseudocode: PLANT, CHAIR variants, DESK, BARREL, VANITY, PITCHER,
 	// DRAWERS, END_TABLE, FOOTLOCKER, CANNON variants
-	return tile.IsChair() || tile.IsCannon() // Temporary implementation
+
+	// Currently implemented pushable objects
+	if tile.IsChair() || tile.IsCannon() || tile.IsBarrel() {
+		return true
+	}
+
+	// TODO: Add when sprite indexes are available:
+	// - PLANT (tile.IsPlant())
+	// - DESK (tile.IsDesk())
+	// - VANITY (tile.IsVanity())
+	// - PITCHER (tile.IsPitcher())
+	// - DRAWERS (tile.IsDrawers())
+	// - END_TABLE (tile.IsEndTable())
+	// - FOOTLOCKER (tile.IsFootlocker())
+
+	return false
 }
 
 func (g *GameState) ObjectPresentAt(position *references.Position) bool {

@@ -41,7 +41,6 @@ type Tile struct {
 	IsNPC                     bool   `json:"IsNPC"`
 	IsBuilding                bool   `json:"IsBuilding"`
 	DontDraw                  bool   `json:"DontDraw"`
-	IsPushable                bool   `json:"IsPushable"`
 	IsTalkOverable            bool   `json:"IsTalkOverable"`
 	IsBoardable               bool   `json:"IsBoardable"`
 	IsGuessableFloor          bool   `json:"IsGuessableFloor"`
@@ -81,6 +80,10 @@ func (t *Tile) IsCannon() bool {
 		t.Index == indexes.CannonFacingRight ||
 		t.Index == indexes.CannonFacingUp ||
 		t.Index == indexes.CannonFacingDown
+}
+
+func (t *Tile) IsBarrel() bool {
+	return t.Index == indexes.Barrel
 }
 
 func (t *Tile) IsPath() bool {

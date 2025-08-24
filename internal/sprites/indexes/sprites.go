@@ -61,6 +61,7 @@ const (
 	MirrorBroken                         = 159
 	Well                                 = 161
 	HitchingPost                         = 162
+	Barrel                               = 166
 	LeftBed                              = 171
 	RightBed                             = 172
 	RightSconce                          = 176

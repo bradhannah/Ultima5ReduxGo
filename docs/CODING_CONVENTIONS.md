@@ -115,18 +115,283 @@ Goals:
 - Tests: Are new behaviors covered by tests or at least easy to test?
 - Docs: Are exported symbols documented and comments accurate?
 
-## Action/Command Patterns
+## Command Input Patterns
 
-Player actions (commands like Look, Push, Get, Klimb) should follow these patterns:
+Player commands (Look, Push, Get, Klimb, Open, Jimmy, etc.) should follow a consistent separation of concerns between UI layer and GameState logic.
+
+### UI Layer Command Methods
+```go
+// Small map UI commands - handle input, validation, call core logic
+func (g *GameScene) smallMap[Command]Secondary(direction references.Direction)
+func (g *GameScene) smallMap[Command]()
+
+// Large map UI commands
+func (g *GameScene) largeMap[Command]Secondary(direction references.Direction) 
+func (g *GameScene) largeMap[Command]Primary()
+
+// Combat map UI commands
+func (g *GameScene) combatMap[Command]Secondary(direction references.Direction)
+```
 
 ### GameState Action Methods
 ```go
-// Small map actions - require direction parameter
+// GameState logic methods - contain core game logic, use injected callbacks
 func (g *GameState) Action[Command]SmallMap(direction references.Direction) bool
-
-// Large map actions - require direction parameter  
 func (g *GameState) Action[Command]LargeMap(direction references.Direction) bool
+func (g *GameState) Action[Command]CombatMap(direction references.Direction) bool
 ```
+
+### Separation of Concerns
+
+**UI Layer Responsibilities** (`GameScene` methods):
+- Input handling and direction gathering
+- Early validation that can be done without game logic
+- Calling appropriate GameState action methods
+- Handling cases where GameState methods aren't needed
+
+**GameState Responsibilities** (`Action*` methods):
+- Core game logic and validation
+- State modifications (player position, inventory, doors, etc.)
+- Time advancement via injected callbacks
+- User feedback via injected callbacks
+- Sound effects via injected callbacks
+- Return success/failure status
+
+### SystemCallbacks - Injected Function Usage
+
+GameState uses dependency injection to communicate with the outer system without knowing implementation details. All UI interactions should go through `SystemCallbacks`:
+
+#### Message System
+```go
+// Basic user message
+g.SystemCallbacks.Message.AddRowStr("Won't budge!")
+
+// Multi-line messages
+g.SystemCallbacks.Message.AddRowStr("Found:")
+g.SystemCallbacks.Message.AddRowStr("Gold coins, Magic sword")
+
+// Critical system messages
+g.SystemCallbacks.Message.AddRowStr("The door slams shut!")
+```
+
+#### Audio System
+```go
+// Action-specific sound effects
+g.SystemCallbacks.Audio.PlaySoundEffect(SoundPushObject)
+g.SystemCallbacks.Audio.PlaySoundEffect(SoundOpenDoor)
+g.SystemCallbacks.Audio.PlaySoundEffect(SoundKeyBreak)
+
+// Combat sounds (when implemented)
+g.SystemCallbacks.Audio.PlaySoundEffect(SoundHit)
+g.SystemCallbacks.Audio.PlaySoundEffect(SoundMiss)
+```
+
+#### Time and Flow Control
+```go
+// Advance game time (in minutes)
+g.SystemCallbacks.Flow.AdvanceTime(1)   // Most actions take 1 minute
+g.SystemCallbacks.Flow.AdvanceTime(5)   // Longer actions (searching, etc.)
+
+// Special time events
+g.SystemCallbacks.Flow.AdvanceTime(15)  // Complex actions
+```
+
+#### Screen and Display Updates
+```go
+// Trigger screen refresh when needed
+g.SystemCallbacks.Screen.UpdateDisplay()
+
+// Map updates are usually automatic, but can be forced
+g.SystemCallbacks.Screen.RefreshMap()
+```
+
+#### Callback Usage Patterns
+
+**Pattern 1: Simple Success/Failure**
+```go
+func (g *GameState) ActionPushSmallMap(direction references.Direction) bool {
+    // Validation logic...
+    if validationFails {
+        g.SystemCallbacks.Message.AddRowStr("Won't budge!")
+        return false
+    }
+    
+    // Core logic...
+    if success {
+        g.SystemCallbacks.Message.AddRowStr("Pushed!")
+        g.SystemCallbacks.Audio.PlaySoundEffect(SoundPushObject)
+        g.SystemCallbacks.Flow.AdvanceTime(1)
+        return true
+    }
+    
+    g.SystemCallbacks.Message.AddRowStr("Won't budge!")
+    return false
+}
+```
+
+**Pattern 2: Multiple Outcome States**
+```go
+func (g *GameState) ActionGetSmallMap(direction references.Direction) bool {
+    // Logic determines outcome...
+    switch outcome {
+    case GetSuccess:
+        g.SystemCallbacks.Message.AddRowStr("Taken!")
+        g.SystemCallbacks.Audio.PlaySoundEffect(SoundGetItem)
+        g.SystemCallbacks.Flow.AdvanceTime(1)
+        return true
+    case GetTooHeavy:
+        g.SystemCallbacks.Message.AddRowStr("Too heavy!")
+        return false
+    case GetNothing:
+        g.SystemCallbacks.Message.AddRowStr("Nothing there!")
+        return false
+    }
+}
+```
+
+**Pattern 3: Complex State Changes**
+```go
+func (g *GameState) ActionOpenSmallMap(direction references.Direction) bool {
+    switch doorResult := g.MapState.OpenDoor(direction); doorResult {
+    case map_state.OpenDoorOpened:
+        g.SystemCallbacks.Message.AddRowStr("Opened!")
+        g.SystemCallbacks.Audio.PlaySoundEffect(SoundOpenDoor)
+        g.SystemCallbacks.Flow.AdvanceTime(1)
+        return true
+    case map_state.OpenDoorLocked:
+        g.SystemCallbacks.Message.AddRowStr("Locked!")
+        return false
+    case map_state.OpenDoorLockedMagical:
+        g.SystemCallbacks.Message.AddRowStr("Magically Locked!")
+        return false
+    default:
+        g.SystemCallbacks.Message.AddRowStr("Bang to open!")
+        return false
+    }
+}
+```
+
+### Command Flow Pattern
+
+1. **Input Gathering**: UI captures command key and direction
+2. **Early Validation**: UI performs simple checks (if any)
+3. **Core Logic**: GameState `Action*` method performs game logic
+4. **Callback Execution**: GameState uses SystemCallbacks for user feedback
+5. **Result Handling**: UI interprets return value if additional logic needed
+
+### When to Use Direct UI vs SystemCallbacks
+
+**Use Direct UI** (`g.output.AddRowStr()`) when:
+- The UI layer handles the logic entirely (early validation)
+- GameState method isn't called
+- Simple error cases that don't involve game state changes
+
+**Use SystemCallbacks** (`g.SystemCallbacks.Message.AddRowStr()`) when:
+- Inside GameState Action methods
+- Game state is being modified
+- Core game logic determines the message
+- Sound effects or time advancement are involved
+
+### Example: Complete Command Implementation
+
+```go
+// UI Layer - minimal, delegates to GameState
+func (g *GameScene) smallMapPushSecondary(direction references.Direction) {
+    pushThingPos := direction.GetNewPositionInDirection(&g.gameState.MapState.PlayerLocation.Position)
+    pushThingTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(pushThingPos)
+
+    // Early validation - avoid GameState call if obviously invalid
+    if !g.gameState.IsPushable(pushThingTile) {
+        g.output.AddRowStrWithTrim("Won't budge!") // Direct UI - no game logic
+        return
+    }
+
+    // Delegate everything else to GameState
+    g.gameState.ActionPushSmallMap(direction) // GameState handles all feedback
+}
+
+// GameState - complete logic with proper callback usage
+func (g *GameState) ActionPushSmallMap(direction references.Direction) bool {
+    // Auto-shut doors if needed (game logic)
+    g.MapState.SmallMapProcessTurnDoors()
+
+    pushableThingPosition := direction.GetNewPositionInDirection(&g.MapState.PlayerLocation.Position)
+    smallMap := g.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, g.MapState.PlayerLocation.Floor)
+    pushableThingTile := smallMap.GetTopTile(pushableThingPosition)
+
+    // Detailed validation with game state
+    if g.ObjectPresentAt(pushableThingPosition) || !g.IsPushable(pushableThingTile) {
+        g.SystemCallbacks.Message.AddRowStr("Won't budge!") // SystemCallback - in game logic
+        return false
+    }
+
+    // Determine legal floor based on object type
+    legalFloorIndex := indexes.SpriteIndex(indexes.BrickFloor)
+    if pushableThingTile.IsCannon() {
+        legalFloorIndex = indexes.SpriteIndex(indexes.HexMetalGridFloor)
+    }
+
+    farSidePosition := direction.GetNewPositionInDirection(pushableThingPosition)
+    farSideTile := smallMap.GetTopTile(farSidePosition)
+    playerTile := smallMap.GetTopTile(&g.MapState.PlayerLocation.Position)
+
+    // Try to push object forward
+    if !g.IsOutOfBounds(*farSidePosition) && 
+       !g.ObjectPresentAt(farSidePosition) && 
+       farSideTile.Index == legalFloorIndex {
+        
+        // Execute push
+        g.pushIt(smallMap, pushableThingTile, farSideTile, pushableThingPosition, farSidePosition, direction)
+        g.MapState.PlayerLocation.Position = *pushableThingPosition
+        
+        // User feedback via callbacks
+        g.SystemCallbacks.Message.AddRowStr("Pushed!")
+        g.SystemCallbacks.Audio.PlaySoundEffect(SoundPushObject)
+        g.SystemCallbacks.Flow.AdvanceTime(1)
+        return true
+        
+    } else if playerTile.Index == legalFloorIndex {
+        // Try swapping (pulling)
+        g.swapIt(smallMap, playerTile, pushableThingTile, &g.MapState.PlayerLocation.Position, pushableThingPosition, direction)
+        g.MapState.PlayerLocation.Position = *pushableThingPosition
+        
+        // User feedback via callbacks
+        g.SystemCallbacks.Message.AddRowStr("Pulled!")
+        g.SystemCallbacks.Audio.PlaySoundEffect(SoundPushObject)
+        g.SystemCallbacks.Flow.AdvanceTime(1)
+        return true
+    }
+
+    // Failed to push or pull
+    g.SystemCallbacks.Message.AddRowStr("Won't budge!")
+    return false
+}
+```
+
+### GameState Helper Methods
+
+GameState can provide helper methods that don't follow the Action pattern:
+- `IsPushable(tile)` - validation helpers (no callbacks)
+- `SelectCharacterForJimmy()` - selection logic (no callbacks)
+- `JimmyDoor(direction, character)` - detailed operations returning enums (no callbacks)
+- `OpenDoor(direction)` - specific operations with detailed results (may use callbacks)
+
+### SystemCallbacks Interface Guidelines
+
+- **Always use callbacks** for messages that result from game logic changes
+- **Consistent naming**: Use present tense for actions ("Pushed!", "Opened!", "Taken!")
+- **Audio timing**: Play sounds immediately when action succeeds
+- **Time advancement**: Call at the end of successful actions
+- **Error consistency**: Use similar phrasing for similar error types across commands
+
+### Migration Guidelines
+
+When refactoring existing code:
+1. **Keep** `Action*Map` methods in GameState for core logic
+2. **Use SystemCallbacks** for all messages, sounds, and time advancement in GameState
+3. **Move early validation** to GameScene methods when appropriate
+4. **Use return values** for GameScene to interpret when additional logic needed
+5. **Update tests** to work with separated concerns
 
 ### Conventions:
 - **Naming**: Always prefix with `Action`, use PascalCase command name, suffix with map type

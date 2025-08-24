@@ -1,13 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
-	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
 	"github.com/hajimehoshi/ebiten/v2"
 
-	gamestate "github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
@@ -118,13 +115,6 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 
 	switch g.secondaryKeyState {
 	case JimmyDoorDirectionInput:
-		if !g.gameState.PartyState.Inventory.Provisions.Keys.HasSome() {
-			g.addRowStr("No Keys!")
-			g.secondaryKeyState = PrimaryInput
-			g.keyboard.SetLastKeyPressedNow()
-			return
-		}
-
 		if g.isDirectionKeyValidAndOutput() {
 			g.smallMapJimmySecondary(getCurrentPressedArrowKeyAsDirection())
 			g.secondaryKeyState = PrimaryInput
@@ -234,161 +224,53 @@ func (g *GameScene) smallMapKlimbSecondary(direction references2.Direction) {
 
 func (g *GameScene) smallMapPushSecondary(direction references2.Direction) {
 	pushThingPos := direction.GetNewPositionInDirection(&g.gameState.MapState.PlayerLocation.Position)
-
 	pushThingTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(pushThingPos)
 
-	if !pushThingTile.IsPushable {
-		g.output.AddRowStrWithTrim("Won't budge!")
+	// Early validation - avoid GameState call if obviously invalid
+	if !g.gameState.IsPushable(pushThingTile) {
+		g.output.AddRowStrWithTrim("Won't budge!") // Direct UI - no game logic
 		return
 	}
 
-	if g.gameState.ActionPushSmallMap(direction) {
-		// moved
-	} else {
-		// didn't move
-	}
+	// Delegate everything else to GameState - it handles all feedback via SystemCallbacks
+	g.gameState.ActionPushSmallMap(direction)
 }
 
 func (g *GameScene) smallMapOpenSecondary(direction references2.Direction) {
-	openThingPos := direction.GetNewPositionInDirection(&g.gameState.MapState.PlayerLocation.Position)
-	openThingTile := g.gameState.GetLayeredMapByCurrentLocation().GetTileTopMapOnlyTile(openThingPos)
-
-	if openThingTile.Index.IsDoor() {
-		switch g.gameState.MapState.OpenDoor(direction) {
-		case map_state.OpenDoorNotADoor:
-			g.addRowStr("Bang to open!")
-		case map_state.OpenDoorLocked:
-			g.addRowStr("Locked!")
-		case map_state.OpenDoorLockedMagical:
-			g.addRowStr("Magically Locked!")
-		case map_state.OpenDoorOpened:
-			g.addRowStr("Opened!")
-		default:
-			log.Fatal("Unrecognized door open state")
-		}
-		return
-	}
-
-	openThingTopTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(openThingPos)
-	if openThingTopTile.Index == indexes.Chest {
-		if g.gameState.MapState.PlayerLocation.Location == references2.Lord_Britishs_Castle && g.gameState.MapState.PlayerLocation.Floor == references2.Basement {
-			itemStack := references2.CreateNewItemStack(references2.LordBritishTreasure)
-			g.output.AddRowStrWithTrim("Found:")
-			g.output.AddRowStrWithTrim(g.gameReferences.InventoryItemReferences.GetListOfItems(&itemStack))
-			g.gameState.ItemStacksMap.Push(openThingPos, &itemStack)
-			g.gameState.CurrentNPCAIController.GetNpcs().RemoveNPCAtPosition(*openThingPos)
-			g.gameState.CurrentNPCAIController.FreshenExistingNPCsOnMap()
-		}
-	}
+	// Delegate all logic to GameState - it handles all feedback via SystemCallbacks
+	g.gameState.ActionOpenSmallMap(direction)
 }
 
 func (g *GameScene) smallMapJimmySecondary(direction references2.Direction) {
-	// Get detailed result directly instead of calling twice
-	selectedCharacter := g.gameState.SelectCharacterForJimmy()
-	if selectedCharacter == nil {
-		g.addRowStr("No characters available!")
-		return
-	}
-
-	jimmyResult := g.gameState.JimmyDoor(direction, selectedCharacter)
-	switch jimmyResult {
-	case gamestate.JimmyUnlocked:
-		g.addRowStr("Unlocked!")
-	case gamestate.JimmyNotADoor:
-		g.addRowStr("Not lock!")
-	case gamestate.JimmyBrokenPick:
-		g.addRowStr("Key broke!")
-	case gamestate.JimmyLockedMagical:
-		g.addRowStr("Magically Locked!")
-	case gamestate.JimmyDoorNoLockPicks:
-		g.addRowStr("No keys!")
-	default:
-		g.addRowStr("Failed!")
-	}
+	// Delegate all logic to GameState - it handles all feedback via SystemCallbacks
+	g.gameState.ActionJimmySmallMap(direction)
 }
 
 func (g *GameScene) smallMapGetSecondary(direction references2.Direction) {
-	getThingPos := direction.GetNewPositionInDirection(&g.gameState.MapState.PlayerLocation.Position)
-	getThingTile := g.gameState.MapState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references2.SmallMapType, getThingPos, g.gameState.MapState.PlayerLocation.Floor)
-	mapLayers := g.gameState.MapState.LayeredMaps.GetLayeredMap(references2.SmallMapType, g.gameState.MapState.PlayerLocation.Floor)
-
-	if g.gameState.ItemStacksMap.HasItemStackAtPosition(getThingPos) {
-		item := g.gameState.ItemStacksMap.Pop(getThingPos)
-		g.gameState.PartyState.Inventory.PutItemInInventory(item)
-
-		itemRef := g.gameReferences.InventoryItemReferences.GetReferenceByItem(item.Item)
-		// if item.
-		g.addRowStr(fmt.Sprintf("%s!", itemRef.ItemName))
-		return
-	}
-
-	switch getThingTile.Index {
-	case indexes.WheatInField:
-		g.addRowStr("Crops picked! Those aren't yours Avatar!")
-		mapLayers.SetTileByLayer(map_state.MapLayer, getThingPos, indexes.PlowedField)
-		g.gameState.PartyState.Karma.DecreaseKarma(1)
-	case indexes.RightSconce, indexes.LeftScone:
-		g.addRowStr("Borrowed!")
-		g.gameState.PartyState.Inventory.Provisions.Torches.IncrementByOne()
-		mapLayers.SetTileByLayer(map_state.MapLayer, getThingPos, indexes.BrickFloor)
-	case indexes.TableFoodBoth, indexes.TableFoodBottom, indexes.TableFoodTop:
-		if g.getFoodFromTable(direction) {
-			g.addRowStr("Mmmmm...! But that food isn't yours!")
-			g.gameState.PartyState.Inventory.Provisions.Food.IncrementByOne()
-			g.gameState.PartyState.Karma.DecreaseKarma(1)
-		}
-	case indexes.Carpet2_MagicCarpet:
-	}
-}
-
-func (g *GameScene) getFoodFromTable(direction references2.Direction) bool {
-	getThingPos := direction.GetNewPositionInDirection(&g.gameState.MapState.PlayerLocation.Position)
-	getThingTile := g.gameState.MapState.LayeredMaps.GetTileTopMapOnlyTileByPosition(references2.SmallMapType, getThingPos, g.gameState.MapState.PlayerLocation.Floor)
-	mapLayers := g.gameState.MapState.LayeredMaps.GetLayeredMap(references2.SmallMapType, g.gameState.MapState.PlayerLocation.Floor)
-
-	var newTileIndex indexes.SpriteIndex
-
-	switch direction {
-	case references2.Down:
-		if getThingTile.Index == indexes.TableFoodBoth {
-			newTileIndex = indexes.TableFoodBottom
-		} else if getThingTile.Index == indexes.TableFoodTop {
-			newTileIndex = indexes.TableMiddle
-		} else {
-			return false
-		}
-	case references2.Up:
-		if getThingTile.Index == indexes.TableFoodBoth {
-			newTileIndex = indexes.TableFoodTop
-		} else if getThingTile.Index == indexes.TableFoodBottom {
-			newTileIndex = indexes.TableMiddle
-		} else {
-			return false
-		}
-	default:
-		return false
-	}
-
-	mapLayers.SetTileByLayer(map_state.MapLayer, getThingPos, newTileIndex)
-	return true
+	// Delegate all logic to GameState - it handles all feedback via SystemCallbacks
+	g.gameState.ActionGetSmallMap(direction)
 }
 
 func (g *GameScene) smallMapTalkSecondary(direction references2.Direction) bool {
-	talkThingPos := direction.GetNewPositionInDirection(&g.gameState.MapState.PlayerLocation.Position)
-	npc := g.gameState.CurrentNPCAIController.GetNpcs().GetMapUnitAtPositionOrNil(*talkThingPos)
+	// Get detailed result from GameState
+	talkResult := g.gameState.ActionTalkSmallMap(direction)
 
-	if npc == nil {
+	if !talkResult.Success {
+		if talkResult.Message != "" {
+			g.addRowStr(talkResult.Message)
+		}
 		return false
 	}
 
-	if friendly, ok := (*npc).(*map_units.NPCFriendly); ok {
-		// Use linear conversation system
-		linearTalkDialog := NewLinearTalkDialog(g, friendly.NPCReference)
+	if talkResult.NPC != nil {
+		// Use linear conversation system - UI responsibility
+		linearTalkDialog := NewLinearTalkDialog(g, talkResult.NPC.NPCReference)
 		linearTalkDialog.AddTestTest()
 		g.dialogStack.PushModalDialog(linearTalkDialog)
+		return true
 	}
 
-	return true
+	return false
 }
 
 func (g *GameScene) smallMapSearchSecondary(direction references2.Direction) {
