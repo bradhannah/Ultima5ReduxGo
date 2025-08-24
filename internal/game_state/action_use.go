@@ -21,3 +21,9 @@ func (g *GameState) ActionUseLargeMap(direction references.Direction) bool {
 	// Large map variant of use command
 	return true
 }
+
+func (g *GameState) ActionUseCombatMap(direction references.Direction) bool {
+	// TODO: Implement combat map Use command - see Commands.md Use section
+	// Combat map variant of use command - items/spells during combat
+	return true
+}

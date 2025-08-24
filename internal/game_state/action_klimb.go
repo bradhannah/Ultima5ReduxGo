@@ -18,3 +18,9 @@ func (g *GameState) ActionKlimbSmallMap(direction references.Direction) bool {
 func (g *GameState) ActionKlimbLargeMap(direction references.Direction) bool {
 	return true
 }
+
+func (g *GameState) ActionKlimbCombatMap(direction references.Direction) bool {
+	// TODO: Implement combat map Klimb command - see Commands.md Klimb section
+	// Combat map variant of klimb command - likely limited functionality
+	return true
+}

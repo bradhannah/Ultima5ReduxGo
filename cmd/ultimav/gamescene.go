@@ -9,6 +9,7 @@ import (
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/clock"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
@@ -107,6 +108,57 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 		gameScene.gameReferences,
 		xTilesVisibleOnGameScreen,
 		yTilesVisibleOnGameScreen)
+
+	// Wire up system callbacks dependency injection using constructors
+	messageCallbacks, err := game_state.NewMessageCallbacks(
+		gameScene.addRowStr,
+		gameScene.appendToCurrentRowStr,
+		gameScene.addRowStr, // Use addRowStr for command prompts
+	)
+	if err != nil {
+		log.Fatalf("Failed to create MessageCallbacks: %v", err)
+	}
+
+	visualCallbacks := game_state.NewVisualCallbacks(
+		nil, // KapowAt - TODO: implement when visual system is ready
+		nil, // ShowMissileEffect - TODO: implement when visual system is ready
+		nil, // DelayGlide - TODO: implement when visual system is ready
+	)
+
+	audioCallbacks := game_state.NewAudioCallbacks(
+		func(effect game_state.SoundEffect) {
+			// TODO: Implement sound system - for now just log
+			// log.Printf("Playing sound effect: %v", effect)
+		},
+	)
+
+	screenCallbacks := game_state.NewScreenCallbacks(
+		nil, // MarkStatsChanged - TODO: implement when stats UI is ready
+		nil, // UpdateStatsDisplay - TODO: implement when stats UI is ready
+		nil, // RefreshInventoryDisplay - TODO: implement when inventory UI is ready
+		nil, // ShowModalDialog - TODO: implement when modal system is ready
+		nil, // PromptYesNo - TODO: implement when dialog system is ready
+	)
+
+	flowCallbacks := game_state.NewFlowCallbacks(
+		gameScene.gameState.FinishTurn, // Wire to existing FinishTurn method
+		nil,                            // ActivateGuards - TODO: implement when guard system is ready
+		func(minutes int) { // Wire to existing UltimaDate time system
+			gameScene.gameState.DateTime.Advance(minutes)
+		},
+		func(timeOfDay datetime.TimeOfDay) { // Wire to existing TimeOfDay system
+			gameScene.gameState.DateTime.SetTimeOfDay(timeOfDay)
+		},
+		nil, // DelayFx - TODO: implement when timing system is ready
+		nil, // CheckUpdate - TODO: implement when update system is ready
+	)
+
+	systemCallbacks, err := game_state.NewSystemCallbacks(messageCallbacks, visualCallbacks, audioCallbacks, screenCallbacks, flowCallbacks)
+	if err != nil {
+		log.Fatalf("Failed to create SystemCallbacks: %v", err)
+	}
+
+	gameScene.gameState.SystemCallbacks = systemCallbacks
 
 	gameScene.spriteSheet = sprites.NewSpriteSheet()
 	gameScene.keyboard = input.NewKeyboard(keyPressDelay)

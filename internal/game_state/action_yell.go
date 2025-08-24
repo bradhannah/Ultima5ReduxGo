@@ -20,3 +20,9 @@ func (g *GameState) ActionYellLargeMap(direction references.Direction) bool {
 	// Large map variant of yell command - primarily overworld Words of Power
 	return true
 }
+
+func (g *GameState) ActionYellCombatMap(direction references.Direction) bool {
+	// TODO: Implement combat map Yell command - see Commands.md Yell section
+	// Combat map variant of yell command - likely limited functionality
+	return true
+}

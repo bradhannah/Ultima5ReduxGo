@@ -59,6 +59,7 @@ func (g *GameScene) Update(_ *Game) error {
 		case references.SmallMapType:
 			g.smallMapHandleSecondaryInput()
 		case references.CombatMapType:
+			g.combatMapHandleSecondaryInput()
 		case references.DungeonMapType:
 		}
 		return nil
@@ -82,6 +83,7 @@ func (g *GameScene) Update(_ *Game) error {
 	case references.SmallMapType:
 		g.smallMapInputHandler(*boundKey)
 	case references.CombatMapType:
+		g.combatMapInputHandler(*boundKey)
 	case references.DungeonMapType:
 	}
 

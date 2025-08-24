@@ -20,3 +20,9 @@ func (g *GameState) ActionOpenLargeMap(direction references.Direction) bool {
 	// Large map variant of open command
 	return true
 }
+
+func (g *GameState) ActionOpenCombatMap(direction references.Direction) bool {
+	// TODO: Implement combat map Open command - see Commands.md Open section
+	// Combat map variant of open command - likely limited to chests
+	return true
+}

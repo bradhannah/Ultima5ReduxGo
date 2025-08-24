@@ -48,6 +48,9 @@ type GameState struct {
 	DateTime datetime.UltimaDate
 
 	ItemStacksMap references.ItemStacksMap
+
+	// Dependency injection callbacks for external systems
+	SystemCallbacks *SystemCallbacks
 }
 
 func initBlankGameState(gameConfig *config.UltimaVConfiguration,

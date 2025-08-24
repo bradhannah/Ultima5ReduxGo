@@ -16,3 +16,9 @@ func (g *GameState) ActionJimmyLargeMap(direction references.Direction) bool {
 	// Large map variant of jimmy command - may need different targeting logic
 	return g.ActionJimmySmallMap(direction) // Temporary fallback
 }
+
+func (g *GameState) ActionJimmyCombatMap(direction references.Direction) bool {
+	// TODO: Implement combat map Jimmy command - see Commands.md Jimmy section
+	// Combat map variant of jimmy command - likely limited functionality
+	return true
+}

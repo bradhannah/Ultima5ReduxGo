@@ -19,3 +19,9 @@ func (g *GameState) ActionTalkLargeMap(direction references.Direction) bool {
 	// Large map variant of talk command
 	return true
 }
+
+func (g *GameState) ActionTalkCombatMap(direction references.Direction) bool {
+	// TODO: Implement combat map Talk command - see Commands.md Talk section
+	// Combat map variant of talk command - likely disabled during combat
+	return true
+}

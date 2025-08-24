@@ -21,3 +21,9 @@ func (g *GameState) ActionAttackLargeMap(direction references.Direction) bool {
 	// Large map variant of attack command
 	return true
 }
+
+func (g *GameState) ActionAttackCombatMap(direction references.Direction) bool {
+	// TODO: Implement combat map Attack command - see Commands.md Attack section
+	// Combat map variant of attack command - primary combat action
+	return true
+}

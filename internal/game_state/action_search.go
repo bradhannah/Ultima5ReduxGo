@@ -20,3 +20,9 @@ func (g *GameState) ActionSearchLargeMap(direction references.Direction) bool {
 	// Large map variant of search command
 	return true
 }
+
+func (g *GameState) ActionSearchCombatMap(direction references.Direction) bool {
+	// TODO: Implement combat map Search command - see Commands.md Search section
+	// Combat map variant of search command
+	return true
+}
