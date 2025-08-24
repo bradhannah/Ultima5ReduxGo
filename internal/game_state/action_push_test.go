@@ -84,6 +84,26 @@ func TestIsPushable_Chest_Success(t *testing.T) {
 	}
 }
 
+func TestIsPushable_EndTable_Success(t *testing.T) {
+	endTableTile := &references.Tile{Index: indexes.EndTable}
+
+	result := endTableTile.IsPushable()
+
+	if !result {
+		t.Error("Expected EndTable to be pushable")
+	}
+}
+
+func TestIsPushable_Plant_Success(t *testing.T) {
+	plantTile := &references.Tile{Index: indexes.Plant}
+
+	result := plantTile.IsPushable()
+
+	if !result {
+		t.Error("Expected Plant to be pushable")
+	}
+}
+
 func TestActionPushSmallMap_Chair_PushForward_Success(t *testing.T) {
 	gs, _ := createTestGameStateForPush(t)
 

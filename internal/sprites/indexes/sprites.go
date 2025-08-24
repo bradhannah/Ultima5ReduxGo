@@ -36,6 +36,7 @@ const (
 	StoneBrickWallSecret                 = 78
 	StoneBrickWall                       = 79
 	Telescope                            = 89
+	Plant                                = 91
 	TrollBridgeHoriz                     = 106
 	TrollBridgeVert                      = 107
 	Grate                                = 134
@@ -61,9 +62,14 @@ const (
 	MirrorBroken                         = 159
 	Well                                 = 161
 	HitchingPost                         = 162
+	EndTable                             = 165
 	Barrel                               = 166
+	Vanity                               = 168
+	WaterJugTable                        = 169
 	LeftBed                              = 171
 	RightBed                             = 172
+	Dresser                              = 173
+	Box                                  = 175
 	RightSconce                          = 176
 	LeftScone                            = 177
 	Brazier                              = 178

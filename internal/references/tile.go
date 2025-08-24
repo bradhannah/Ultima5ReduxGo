@@ -205,8 +205,15 @@ func (t *Tile) IsPushable() bool {
 		return true
 	}
 
-	// Single tile checks using generic Is() pattern
+	// Single tile checks using generic Is() pattern - based on original game data
 	return t.Is(indexes.Barrel) ||
+		t.Is(indexes.EndTable) ||
+		t.Is(indexes.Vanity) ||
+		t.Is(indexes.WaterJugTable) ||
+		t.Is(indexes.Dresser) ||
+		t.Is(indexes.Box) ||
+		t.Is(indexes.Plant) ||
+		// Additional pushable items (extended beyond original data)
 		t.Is(indexes.TableMiddle) ||
 		t.Is(indexes.TableFoodTop) ||
 		t.Is(indexes.TableFoodBottom) ||
