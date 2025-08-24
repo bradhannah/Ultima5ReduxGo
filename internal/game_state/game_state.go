@@ -51,6 +51,9 @@ type GameState struct {
 
 	// Dependency injection callbacks for external systems
 	SystemCallbacks *SystemCallbacks
+
+	// Testing overrides
+	jimmySuccessForTesting func(*party_state.PlayerCharacter) bool
 }
 
 func initBlankGameState(gameConfig *config.UltimaVConfiguration,

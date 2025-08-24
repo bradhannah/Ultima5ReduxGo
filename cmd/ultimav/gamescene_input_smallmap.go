@@ -283,21 +283,27 @@ func (g *GameScene) smallMapOpenSecondary(direction references2.Direction) {
 }
 
 func (g *GameScene) smallMapJimmySecondary(direction references2.Direction) {
-	// Use the standardized Action method
-	success := g.gameState.ActionJimmySmallMap(direction)
-	if success {
+	// Get detailed result directly instead of calling twice
+	selectedCharacter := g.gameState.SelectCharacterForJimmy()
+	if selectedCharacter == nil {
+		g.addRowStr("No characters available!")
+		return
+	}
+
+	jimmyResult := g.gameState.JimmyDoor(direction, selectedCharacter)
+	switch jimmyResult {
+	case gamestate.JimmyUnlocked:
 		g.addRowStr("Unlocked!")
-	} else {
-		// Get more detailed result from the original method for error messages
-		jimmyResult := g.gameState.JimmyDoor(direction, &g.gameState.PartyState.Characters[0])
-		switch jimmyResult {
-		case gamestate.JimmyNotADoor:
-			g.addRowStr("Not lock!")
-		case gamestate.JimmyBrokenPick, gamestate.JimmyLockedMagical:
-			g.addRowStr("Key broke!")
-		default:
-			g.addRowStr("Failed!")
-		}
+	case gamestate.JimmyNotADoor:
+		g.addRowStr("Not lock!")
+	case gamestate.JimmyBrokenPick:
+		g.addRowStr("Key broke!")
+	case gamestate.JimmyLockedMagical:
+		g.addRowStr("Magically Locked!")
+	case gamestate.JimmyDoorNoLockPicks:
+		g.addRowStr("No keys!")
+	default:
+		g.addRowStr("Failed!")
 	}
 }
 

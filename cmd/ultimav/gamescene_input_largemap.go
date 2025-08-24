@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	gamestate "github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
 	"github.com/hajimehoshi/ebiten/v2"
 
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
@@ -67,8 +68,9 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyO:
 		g.addRowStr("Open what?")
 	case ebiten.KeyJ:
+		g.debugMessage = "Jimmy"
 		g.addRowStr("Jimmy-")
-		g.appendToCurrentRowStr("Cannot")
+		g.secondaryKeyState = JimmyDoorDirectionInput
 	case ebiten.KeyI:
 		g.debugMessage = "Ignite Torch"
 		g.addRowStr("Ignite Torch!")
@@ -101,8 +103,38 @@ func (g *GameScene) largeMapHandleSecondaryInput() {
 			g.addRowStr(fmt.Sprintf("Thou dost see %s", g.gameReferences.LookReferences.GetTileLookDescription(topTile.Index)))
 			g.secondaryKeyState = PrimaryInput
 		}
+	case JimmyDoorDirectionInput:
+		if g.isDirectionKeyValidAndOutput() {
+			g.largeMapJimmySecondary(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
+		}
 	default:
 		// better safe than sorry
 		g.secondaryKeyState = PrimaryInput
+	}
+}
+
+func (g *GameScene) largeMapJimmySecondary(direction references2.Direction) {
+	// Get detailed result directly instead of calling twice
+	selectedCharacter := g.gameState.SelectCharacterForJimmy()
+	if selectedCharacter == nil {
+		g.addRowStr("No characters available!")
+		return
+	}
+
+	jimmyResult := g.gameState.JimmyDoor(direction, selectedCharacter)
+	switch jimmyResult {
+	case gamestate.JimmyUnlocked:
+		g.addRowStr("Unlocked!")
+	case gamestate.JimmyNotADoor:
+		g.addRowStr("Not lock!")
+	case gamestate.JimmyBrokenPick:
+		g.addRowStr("Key broke!")
+	case gamestate.JimmyLockedMagical:
+		g.addRowStr("Magically Locked!")
+	case gamestate.JimmyDoorNoLockPicks:
+		g.addRowStr("No keys!")
+	default:
+		g.addRowStr("Failed!")
 	}
 }
