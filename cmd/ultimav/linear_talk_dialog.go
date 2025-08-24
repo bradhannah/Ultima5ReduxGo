@@ -5,6 +5,7 @@ import (
 	"image"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/conversation"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/text"
@@ -16,6 +17,7 @@ import (
 )
 
 var _ widgets.Widget = &LinearTalkDialog{}
+var _ game_state.TalkDialog = &LinearTalkDialog{}
 
 const (
 	talkFontPoint       = 20
@@ -250,9 +252,4 @@ func (d *LinearTalkDialog) createTalkFunctions(gameScene *GameScene) *grammar.Te
 	//textCommands = append(textCommands, *d.createTeleportCommand(gameScene))
 
 	return &textCommands
-}
-
-// AddTestTest - exact copy from original TalkDialog
-func (d *LinearTalkDialog) AddTestTest() {
-	//d.Output.AddRowStrWithTrim("dsdsadsadsadsadsa\\ndsdsadsadsadsadsa\\ndsdsadsadsadsadsa\\ndsdsadsadsadsadsa\\ndsdsadsa\\ndsadsadsadsadsadsadsadsa\\nsdsadsadsadsa\\ntesting 123\\nand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some moreand then some more...")
 }

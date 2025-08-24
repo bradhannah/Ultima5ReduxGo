@@ -1,13 +1,9 @@
 package main
 
 import (
-	"log"
-
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
-	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 )
 
 func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
@@ -183,43 +179,19 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 }
 
 func (g *GameScene) smallMapKlimb() {
-	currentTile := g.gameState.MapState.LayeredMaps.GetTileRefByPosition(
-		references2.SmallMapType,
-		map_state.MapLayer,
-		&g.gameState.MapState.PlayerLocation.Position,
-		g.gameState.MapState.PlayerLocation.Floor)
-
-	switch currentTile.Index {
-	case indexes.AvatarOnLadderDown, indexes.LadderDown, indexes.Grate:
-		if g.GetCurrentLocationReference().CanGoDownOneFloor(g.gameState.MapState.PlayerLocation.Floor) {
-			g.gameState.MapState.PlayerLocation.Floor--
-			g.gameState.UpdateSmallMap(g.gameReferences.TileReferences, g.gameReferences.LocationReferences)
-			g.output.AddRowStrWithTrim("Klimb-Down!")
-
-			return
-		} else {
-			log.Fatal("Can't go lower my dude")
-		}
-
-	case indexes.AvatarOnLadderUp, indexes.LadderUp:
-		if g.GetCurrentLocationReference().CanGoUpOneFloor(g.gameState.MapState.PlayerLocation.Floor) {
-			g.gameState.MapState.PlayerLocation.Floor++
-			g.gameState.UpdateSmallMap(g.gameReferences.TileReferences, g.gameReferences.LocationReferences)
-			g.output.AddRowStrWithTrim("Klimb-Up!")
-
-			return
-		} else {
-			log.Fatal("Can't go higher my dude")
-		}
+	// Try direct klimb first (ladders/grates at current position)
+	if g.gameState.ActionKlimbSmallMap(references2.Direction(0)) {
+		return
 	}
-	g.output.AddRowStrWithTrim("Klimb-")
+
+	// If direct klimb failed, prompt for direction (fence climbing)
+	g.addRowStr("Klimb-")
 	g.secondaryKeyState = KlimbDirectionInput
 }
 
 func (g *GameScene) smallMapKlimbSecondary(direction references2.Direction) {
-	if !g.gameState.ActionKlimbSmallMap(direction) {
-		g.output.AddRowStrWithTrim("What?")
-	}
+	// Delegate all logic to GameState - it handles all feedback via SystemCallbacks
+	g.gameState.ActionKlimbSmallMap(direction)
 }
 
 func (g *GameScene) smallMapPushSecondary(direction references2.Direction) {
@@ -252,25 +224,8 @@ func (g *GameScene) smallMapGetSecondary(direction references2.Direction) {
 }
 
 func (g *GameScene) smallMapTalkSecondary(direction references2.Direction) bool {
-	// Get detailed result from GameState
-	talkResult := g.gameState.ActionTalkSmallMap(direction)
-
-	if !talkResult.Success {
-		if talkResult.Message != "" {
-			g.addRowStr(talkResult.Message)
-		}
-		return false
-	}
-
-	if talkResult.NPC != nil {
-		// Use linear conversation system - UI responsibility
-		linearTalkDialog := NewLinearTalkDialog(g, talkResult.NPC.NPCReference)
-		linearTalkDialog.AddTestTest()
-		g.dialogStack.PushModalDialog(linearTalkDialog)
-		return true
-	}
-
-	return false
+	// Delegate all logic to GameState - it handles all feedback via SystemCallbacks
+	return g.gameState.ActionTalkSmallMap(direction)
 }
 
 func (g *GameScene) smallMapSearchSecondary(direction references2.Direction) {

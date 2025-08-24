@@ -15,6 +15,8 @@ is encoded with special codes and compressed words.
 
 **🔄 Migration Status (2025)**: This project has completed migration from a channel-based conversation system to a **LinearConversationEngine**. The linear system is now the primary and only conversation implementation, providing synchronous processing with ActionCallbacks integration.
 
+**🆕 Dependency Injection Update (2025)**: The Talk action now uses **TalkCallbacks interface** for dependency injection, avoiding circular dependencies between GameState and GameScene. Dialog creation and pushing are now handled via SystemCallbacks.Talk interface methods.
+
 ---
 
 # TLK Script TalkCommand Reference

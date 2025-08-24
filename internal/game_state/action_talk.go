@@ -5,42 +5,31 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
-// TalkResult represents the result of attempting to talk
-type TalkResult struct {
-	Success bool
-	NPC     *map_units.NPCFriendly // nil if no NPC found or not friendly
-	Message string                 // Error message if any
-}
-
-func (g *GameState) ActionTalkSmallMap(direction references.Direction) TalkResult {
+func (g *GameState) ActionTalkSmallMap(direction references.Direction) bool {
 	talkThingPos := direction.GetNewPositionInDirection(&g.MapState.PlayerLocation.Position)
 	npc := g.CurrentNPCAIController.GetNpcs().GetMapUnitAtPositionOrNil(*talkThingPos)
 
 	if npc == nil {
-		return TalkResult{
-			Success: false,
-			NPC:     nil,
-			Message: "No-one to talk to!",
-		}
+		g.SystemCallbacks.Message.AddRowStr("No-one to talk to!")
+		return false
 	}
 
 	if friendly, ok := (*npc).(*map_units.NPCFriendly); ok {
 		// TODO: Handle freed NPC acknowledgement (stocks/manacles with karma +2) here
-		// For now, return the friendly NPC for the UI to handle dialog
-		g.SystemCallbacks.Flow.AdvanceTime(1) // Talking takes time
-		return TalkResult{
-			Success: true,
-			NPC:     friendly,
-			Message: "",
+
+		// Create and push dialog using dependency injection
+		dialog := g.SystemCallbacks.Talk.CreateTalkDialog(friendly)
+		if dialog != nil {
+			g.SystemCallbacks.Talk.PushDialog(dialog)
+			g.SystemCallbacks.Flow.AdvanceTime(1) // Talking takes time
+			return true
 		}
+		return false
 	}
 
 	// NPC found but not friendly (hostile?)
-	return TalkResult{
-		Success: false,
-		NPC:     nil,
-		Message: "Can't talk to that!",
-	}
+	g.SystemCallbacks.Message.AddRowStr("Can't talk to that!")
+	return false
 }
 
 func (g *GameState) ActionTalkLargeMap(direction references.Direction) bool {

@@ -11,6 +11,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/text"
@@ -153,7 +154,12 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 		nil, // CheckUpdate - TODO: implement when update system is ready
 	)
 
-	systemCallbacks, err := game_state.NewSystemCallbacks(messageCallbacks, visualCallbacks, audioCallbacks, screenCallbacks, flowCallbacks)
+	talkCallbacks := game_state.NewTalkCallbacks(
+		gameScene.CreateTalkDialog,
+		gameScene.PushDialog,
+	)
+
+	systemCallbacks, err := game_state.NewSystemCallbacks(messageCallbacks, visualCallbacks, audioCallbacks, screenCallbacks, flowCallbacks, talkCallbacks)
 	if err != nil {
 		log.Fatalf("Failed to create SystemCallbacks: %v", err)
 	}
@@ -234,4 +240,15 @@ func (g *GameScene) toggleDebug() {
 	// g.dialogs = append(g.dialogs[:nIndex], g.dialogs[nIndex+1:]...)
 	dc := (*DebugConsole)(nil)
 	g.dialogStack.RemoveWidget(dc)
+}
+
+// TalkCallbacks interface implementation
+func (g *GameScene) CreateTalkDialog(npc *map_units.NPCFriendly) game_state.TalkDialog {
+	return NewLinearTalkDialog(g, npc.NPCReference)
+}
+
+func (g *GameScene) PushDialog(dialog game_state.TalkDialog) {
+	if linearDialog, ok := dialog.(*LinearTalkDialog); ok {
+		g.dialogStack.PushModalDialog(linearDialog)
+	}
 }

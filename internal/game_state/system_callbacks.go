@@ -40,6 +40,9 @@ type SystemCallbacks struct {
 
 	// Game Flow System
 	Flow FlowCallbacks
+
+	// Talk Dialog System
+	Talk TalkCallbacks
 }
 
 // VisualCallbacks handles visual effects
@@ -190,7 +193,7 @@ func NewFlowCallbacks(finishTurn, activateGuards func(), advanceTime func(int), 
 }
 
 // NewSystemCallbacks creates SystemCallbacks with validation for all subsystems
-func NewSystemCallbacks(message MessageCallbacks, visual VisualCallbacks, audio AudioCallbacks, screen ScreenCallbacks, flow FlowCallbacks) (*SystemCallbacks, error) {
+func NewSystemCallbacks(message MessageCallbacks, visual VisualCallbacks, audio AudioCallbacks, screen ScreenCallbacks, flow FlowCallbacks, talk TalkCallbacks) (*SystemCallbacks, error) {
 	// Validate that all callback structs have required functions
 	if message.AddRowStr == nil {
 		return nil, fmt.Errorf("MessageCallbacks.AddRowStr is required")
@@ -211,5 +214,6 @@ func NewSystemCallbacks(message MessageCallbacks, visual VisualCallbacks, audio 
 		Audio:   audio,
 		Screen:  screen,
 		Flow:    flow,
+		Talk:    talk,
 	}, nil
 }

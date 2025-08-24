@@ -390,8 +390,9 @@ func createTestGameStateForPush(t *testing.T) (*GameState, *TestCallbackData) {
 
 	visualCallbacks := NewVisualCallbacks(nil, nil, nil)
 	screenCallbacks := NewScreenCallbacks(nil, nil, nil, nil, nil)
+	talkCallbacks := NewTalkCallbacks(nil, nil) // No-op for tests
 
-	systemCallbacks, err := NewSystemCallbacks(messageCallbacks, visualCallbacks, audioCallbacks, screenCallbacks, flowCallbacks)
+	systemCallbacks, err := NewSystemCallbacks(messageCallbacks, visualCallbacks, audioCallbacks, screenCallbacks, flowCallbacks, talkCallbacks)
 	if err != nil {
 		t.Fatalf("Failed to create SystemCallbacks: %v", err)
 	}

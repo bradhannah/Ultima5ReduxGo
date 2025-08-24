@@ -11,15 +11,17 @@ GameScene → TalkDialog → Conversation (goroutine) → TalkScript
   Input → TextInput.OnEnter → channels (In/Out) → Script Processing
 ```
 
-### New Linear System  
+### New Linear System with Dependency Injection (2025)
 ```
-GameScene → LinearTalkDialog → LinearConversationEngine → TalkScript
-    ↓              ↓                    ↓                     ↓
-  Input → TextInput.OnEnter → ProcessInput() → Sequential Processing
-                                  ↓
-                            ActionCallbacks (GameActionCallbacks)
-                                  ↓
-                              GameState Updates
+GameScene → ActionTalkSmallMap → SystemCallbacks.Talk → LinearTalkDialog
+    ↓              ↓                      ↓                    ↓
+  Input → GameState Logic → TalkCallbacks Interface → UI Dialog Stack
+                                  ↓                    ↓
+                        CreateTalkDialog()     ProcessInput()
+                        PushDialog()              ↓
+                                  ↓        ActionCallbacks (GameActionCallbacks)
+                              No Circular         ↓
+                              Dependencies   GameState Updates
 ```
 
 ## Component Details
@@ -56,7 +58,54 @@ GameScene → LinearTalkDialog → LinearConversationEngine → TalkScript
 - **Game Queries**: HasMet, GetAvatarName, GetKarmaLevel
 - **Helpers**: ExtractGoldAmountFromText for GoldPrompt parsing
 
-### 3. Integration Points
+### 3. TalkCallbacks Interface System (2025)
+
+**Purpose**: Provides dependency injection for talk dialog operations without circular dependencies.
+
+**Architecture**:
+```go
+// Interface definition (in game_state package)
+type TalkCallbacks struct {
+    CreateTalkDialog func(npc *map_units.NPCFriendly) TalkDialog
+    PushDialog      func(dialog TalkDialog)
+}
+
+// Implementation (in GameScene)
+func (g *GameScene) CreateTalkDialog(npc *map_units.NPCFriendly) game_state.TalkDialog {
+    return NewLinearTalkDialog(g, npc.NPCReference)
+}
+
+func (g *GameScene) PushDialog(dialog game_state.TalkDialog) {
+    if linearDialog, ok := dialog.(*LinearTalkDialog); ok {
+        g.dialogStack.PushModalDialog(linearDialog)
+    }
+}
+```
+
+**Integration with ActionTalkSmallMap**:
+```go
+func (g *GameState) ActionTalkSmallMap(direction references.Direction) bool {
+    // Find NPC and validate...
+    if friendly, ok := (*npc).(*map_units.NPCFriendly); ok {
+        // Create and push dialog using dependency injection
+        dialog := g.SystemCallbacks.Talk.CreateTalkDialog(friendly)
+        if dialog != nil {
+            g.SystemCallbacks.Talk.PushDialog(dialog)
+            g.SystemCallbacks.Flow.AdvanceTime(1) // Time advances after dialog setup
+            return true
+        }
+    }
+    // Handle errors with SystemCallbacks.Message.AddRowStr()...
+}
+```
+
+**Key Benefits**:
+- **No Circular Dependencies**: GameState only knows about interfaces, not concrete GameScene
+- **Proper Timing**: AdvanceTime() happens after dialog setup, not before
+- **Clean Separation**: Dialog creation/pushing is UI concern, game logic stays in GameState
+- **Testable**: Interface allows easy mocking for unit tests
+
+### 4. Integration Points
 
 **GameScene Integration**:
 - `smallMapTalkSecondary()`: Modified to support both systems via debug flag
@@ -103,15 +152,24 @@ talk dwelling 2    # Talk to NPC 2 in dwelling
 #### Core Integration
 - [x] LinearTalkDialog UI component
 - [x] GameActionCallbacks implementation
+- [x] **TalkCallbacks dependency injection system (2025)**
+- [x] **ActionTalkSmallMap refactored with SystemCallbacks (2025)**
+- [x] **Circular dependency resolution (2025)**
 - [x] Debug flag integration
 - [x] Runtime system switching
 - [x] Compilation and basic functionality
 
-#### UI Components
+#### UI Components  
 - [x] Identical visual layout to original
 - [x] Text input handling
 - [x] Output display and formatting
 - [x] Border and styling consistency
+
+#### Talk System Refactoring (2025)
+- [x] **Removed TalkResult struct** - no longer needed with dependency injection
+- [x] **Simplified ActionTalkSmallMap** - now returns bool instead of complex result
+- [x] **Unified messaging** - all talk messages use SystemCallbacks.Message
+- [x] **Proper time advancement** - AdvanceTime() called after dialog setup
 
 #### Callback System
 - [x] All ActionCallbacks interface methods

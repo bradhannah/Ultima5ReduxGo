@@ -36,20 +36,22 @@ g.appendToCurrentRowStr("North")       // Direction completion
 
 ### Game Logic Layer (`internal/game_state`)
 
-Action methods like `ActionPushSmallMap` need to output messages but currently have TODO comments:
+Action methods like `ActionPushSmallMap` use SystemCallbacks for message output:
 
 ```go
 func (g *GameState) ActionPushSmallMap(direction references.Direction) bool {
     if g.ObjectPresentAt(pushableThingPosition) || !g.IsPushable(pushableThingTile) {
-        // TODO: Show message when messaging system is available
-        // g.ShowMessage("Won't budge!\n")
+        g.SystemCallbacks.Message.AddRowStr("Won't budge!")
         return false
     }
     
     // Push logic...
+    g.pushIt(...)
+    g.SystemCallbacks.Message.AddRowStr("Pushed!")
+    g.SystemCallbacks.Audio.PlaySoundEffect(SoundPushObject)
+    g.SystemCallbacks.Flow.AdvanceTime(1)
     
-    // TODO: Show message when messaging system is available
-    // g.ShowMessage("Pushed!\n")
+    return true
 }
 ```
 
@@ -88,6 +90,7 @@ type SystemCallbacks struct {
     Audio   AudioCallbacks    // Sound effects (enum-based)
     Screen  ScreenCallbacks   // UI updates (stats, inventory)
     Flow    FlowCallbacks     // Game flow (guards, time, turns)
+    Talk    TalkCallbacks     // Dialog creation and pushing (2025)
 }
 
 // Created with validation
@@ -115,8 +118,13 @@ audioCallbacks := game_state.NewAudioCallbacks(
     },
 )
 
+talkCallbacks := game_state.NewTalkCallbacks(
+    gameScene.CreateTalkDialog,
+    gameScene.PushDialog,
+)
+
 systemCallbacks, err := game_state.NewSystemCallbacks(
-    messageCallbacks, visualCallbacks, audioCallbacks, screenCallbacks, flowCallbacks)
+    messageCallbacks, visualCallbacks, audioCallbacks, screenCallbacks, flowCallbacks, talkCallbacks)
 ```
 
 ### Usage in Action Methods ✅ IMPLEMENTED
@@ -136,6 +144,28 @@ func (g *GameState) ActionPushSmallMap(direction references.Direction) bool {
     g.SystemCallbacks.Audio.PlaySoundEffect(SoundPushObject)
     
     return true
+}
+
+// Talk action with dependency injection (2025)
+func (g *GameState) ActionTalkSmallMap(direction references.Direction) bool {
+    // Find NPC and validate...
+    if npc == nil {
+        g.SystemCallbacks.Message.AddRowStr("No-one to talk to!")
+        return false
+    }
+    
+    if friendly, ok := (*npc).(*map_units.NPCFriendly); ok {
+        // Create and push dialog using dependency injection
+        dialog := g.SystemCallbacks.Talk.CreateTalkDialog(friendly)
+        if dialog != nil {
+            g.SystemCallbacks.Talk.PushDialog(dialog)
+            g.SystemCallbacks.Flow.AdvanceTime(1) // Time advances after dialog setup
+            return true
+        }
+    }
+    
+    g.SystemCallbacks.Message.AddRowStr("Can't talk to that!")
+    return false
 }
 ```
 

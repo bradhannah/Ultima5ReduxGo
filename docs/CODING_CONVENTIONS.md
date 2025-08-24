@@ -205,6 +205,28 @@ g.SystemCallbacks.Screen.UpdateDisplay()
 g.SystemCallbacks.Screen.RefreshMap()
 ```
 
+#### Talk Dialog System
+```go
+// Create and push dialogs via dependency injection
+dialog := g.SystemCallbacks.Talk.CreateTalkDialog(npcFriendly)
+if dialog != nil {
+    g.SystemCallbacks.Talk.PushDialog(dialog)
+    g.SystemCallbacks.Flow.AdvanceTime(1) // Advance time after dialog setup
+    return true
+}
+
+// For UI implementations (GameScene):
+func (g *GameScene) CreateTalkDialog(npc *map_units.NPCFriendly) game_state.TalkDialog {
+    return NewLinearTalkDialog(g, npc.NPCReference)
+}
+
+func (g *GameScene) PushDialog(dialog game_state.TalkDialog) {
+    if linearDialog, ok := dialog.(*LinearTalkDialog); ok {
+        g.dialogStack.PushModalDialog(linearDialog)
+    }
+}
+```
+
 #### Callback Usage Patterns
 
 **Pattern 1: Simple Success/Failure**
@@ -268,6 +290,33 @@ func (g *GameState) ActionOpenSmallMap(direction references.Direction) bool {
         g.SystemCallbacks.Message.AddRowStr("Bang to open!")
         return false
     }
+}
+```
+
+**Pattern 4: Dialog System Integration**
+```go
+func (g *GameState) ActionTalkSmallMap(direction references.Direction) bool {
+    talkThingPos := direction.GetNewPositionInDirection(&g.MapState.PlayerLocation.Position)
+    npc := g.CurrentNPCAIController.GetNpcs().GetMapUnitAtPositionOrNil(*talkThingPos)
+
+    if npc == nil {
+        g.SystemCallbacks.Message.AddRowStr("No-one to talk to!")
+        return false
+    }
+
+    if friendly, ok := (*npc).(*map_units.NPCFriendly); ok {
+        // Create and push dialog using dependency injection
+        dialog := g.SystemCallbacks.Talk.CreateTalkDialog(friendly)
+        if dialog != nil {
+            g.SystemCallbacks.Talk.PushDialog(dialog)
+            g.SystemCallbacks.Flow.AdvanceTime(1) // Time advances after dialog setup
+            return true
+        }
+        return false
+    }
+
+    g.SystemCallbacks.Message.AddRowStr("Can't talk to that!")
+    return false
 }
 ```
 
