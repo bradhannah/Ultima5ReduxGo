@@ -15,7 +15,7 @@ func (g *GameState) ActionPushSmallMap(direction references.Direction) bool {
 	pushableThingTile := smallMap.GetTopTile(pushableThingPosition)
 
 	// Detailed validation with game state
-	if g.ObjectPresentAt(pushableThingPosition) || !g.IsPushable(pushableThingTile) {
+	if g.ObjectPresentAt(pushableThingPosition) || !pushableThingTile.IsPushable() {
 		g.SystemCallbacks.Message.AddRowStr("Won't budge!")
 		return false
 	}
@@ -114,34 +114,6 @@ func (g *GameState) ActionPushCombatMap(direction references.Direction) bool {
 }
 
 // Helper methods - TODO: Move these to appropriate files when systems are implemented
-
-func (g *GameState) IsPushable(tile *references.Tile) bool {
-	// Implements full pushability check per Commands.md Push section
-	// Using generic Is() pattern instead of specific Is* functions for each item
-
-	// Chair variants (logical grouping - keep IsChair() for multiple chairs)
-	if tile.IsChair() {
-		return true
-	}
-
-	// Cannon variants (logical grouping - keep IsCannon() for multiple cannons)
-	if tile.IsCannon() {
-		return true
-	}
-
-	// Single tile checks using generic Is() pattern
-	return tile.Is(indexes.Barrel) ||
-		tile.Is(indexes.TableMiddle) ||
-		tile.Is(indexes.TableFoodTop) ||
-		tile.Is(indexes.TableFoodBottom) ||
-		tile.Is(indexes.TableFoodBoth) ||
-		tile.Is(indexes.Mirror) ||
-		tile.Is(indexes.Well) ||
-		tile.Is(indexes.Brazier) ||
-		tile.Is(indexes.CookStove) ||
-		tile.Is(indexes.Chest) ||
-		tile.Is(indexes.WoodenBox)
-}
 
 func (g *GameState) ObjectPresentAt(position *references.Position) bool {
 	// TODO: Implement object presence check when object system is available

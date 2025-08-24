@@ -1,35 +1,24 @@
 package main
 
 import (
-	"fmt"
-
-	gamestate "github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
 	"github.com/hajimehoshi/ebiten/v2"
 
 	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
-	// if ebiten.IsKeyPressed(ebiten.KeyControl) {
-	// 	if ebiten.IsKeyPressed(ebiten.KeyX) {
-
-	// 		return
-	// 	}
-	// }
-
 	switch key {
 	case ebiten.KeyEscape:
 		g.DoEscapeMenu()
 
 		return
 	case ebiten.KeySpace:
-		g.addRowStr("Pass")
-		// g.gameState.FinishTurn()
+		g.gameState.ActionPass()
 	case ebiten.KeyBackquote:
 		g.toggleDebug()
 		return
 	case ebiten.KeyEnter:
-		g.addRowStr("Enter")
+		g.gameState.ActionEnterInput()
 	case ebiten.KeyUp:
 		g.handleMovement(references2.Up.GetDirectionCompassName(), ebiten.KeyUp)
 	case ebiten.KeyDown:
@@ -44,42 +33,38 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 		g.addRowStr("Klimb-")
 		g.secondaryKeyState = KlimbDirectionInput
 	case ebiten.KeyG:
-		g.addRowStr("Get what?")
+		g.addRowStr("Get-")
+		g.secondaryKeyState = GetDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
 	case ebiten.KeyX:
 		g.actionExit()
 	case ebiten.KeyP:
-		g.addRowStr("Push what?")
+		g.addRowStr("Push-")
+		g.secondaryKeyState = PushDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
 	case ebiten.KeyL:
 		g.addRowStr("Look-")
 		g.secondaryKeyState = LookDirectionInput
 	case ebiten.KeyE:
 		g.debugMessage = "Enter a place"
-		newLocation := g.gameReferences.LocationReferences.WorldLocations.GetLocationByPosition(
-			g.gameState.MapState.PlayerLocation.Position)
-
-		if newLocation != references2.EmptyLocation {
-			slr := g.gameReferences.LocationReferences.GetLocationReference(newLocation)
-			g.gameState.EnterBuilding(slr)
-			g.addRowStr(g.gameReferences.LocationReferences.GetLocationReference(newLocation).EnteringText)
-		} else {
-			g.addRowStr("Enter what?")
-		}
+		g.gameState.ActionEnterLargeMap()
 
 	case ebiten.KeyO:
-		g.addRowStr("Open what?")
+		g.addRowStr("Open-")
+		g.secondaryKeyState = OpenDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
 	case ebiten.KeyJ:
 		g.debugMessage = "Jimmy"
 		g.addRowStr("Jimmy-")
 		g.secondaryKeyState = JimmyDoorDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
 	case ebiten.KeyI:
 		g.debugMessage = "Ignite Torch"
-		g.addRowStr("Ignite Torch!")
-
-		if !g.gameState.IgniteTorch() {
-			g.addRowStr("None owned!")
-		}
+		g.gameState.ActionIgnite()
 	case ebiten.KeyT:
-		g.addRowStr("Talk to who?")
+		g.addRowStr("Talk-")
+		g.secondaryKeyState = TalkDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
 	default:
 		return
 	}
@@ -94,18 +79,37 @@ func (g *GameScene) largeMapHandleSecondaryInput() {
 	switch g.secondaryKeyState {
 	case KlimbDirectionInput:
 		if g.isDirectionKeyValidAndOutput() {
+			g.gameState.ActionKlimbLargeMap(getCurrentPressedArrowKeyAsDirection())
 			g.secondaryKeyState = PrimaryInput
 		}
 	case LookDirectionInput:
 		if g.isDirectionKeyValidAndOutput() {
-			newPosition := getCurrentPressedArrowKeyAsDirection().GetNewPositionInDirection(&g.gameState.MapState.PlayerLocation.Position)
-			topTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(newPosition)
-			g.addRowStr(fmt.Sprintf("Thou dost see %s", g.gameReferences.LookReferences.GetTileLookDescription(topTile.Index)))
+			g.gameState.ActionLookLargeMap(getCurrentPressedArrowKeyAsDirection())
 			g.secondaryKeyState = PrimaryInput
 		}
 	case JimmyDoorDirectionInput:
 		if g.isDirectionKeyValidAndOutput() {
 			g.largeMapJimmySecondary(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
+		}
+	case GetDirectionInput:
+		if g.isDirectionKeyValidAndOutput() {
+			g.gameState.ActionGetLargeMap(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
+		}
+	case PushDirectionInput:
+		if g.isDirectionKeyValidAndOutput() {
+			g.gameState.ActionPushLargeMap(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
+		}
+	case OpenDirectionInput:
+		if g.isDirectionKeyValidAndOutput() {
+			g.gameState.ActionOpenLargeMap(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
+		}
+	case TalkDirectionInput:
+		if g.isDirectionKeyValidAndOutput() {
+			g.gameState.ActionTalkLargeMap(getCurrentPressedArrowKeyAsDirection())
 			g.secondaryKeyState = PrimaryInput
 		}
 	default:
@@ -115,26 +119,6 @@ func (g *GameScene) largeMapHandleSecondaryInput() {
 }
 
 func (g *GameScene) largeMapJimmySecondary(direction references2.Direction) {
-	// Get detailed result directly instead of calling twice
-	selectedCharacter := g.gameState.SelectCharacterForJimmy()
-	if selectedCharacter == nil {
-		g.addRowStr("No characters available!")
-		return
-	}
-
-	jimmyResult := g.gameState.JimmyDoor(direction, selectedCharacter)
-	switch jimmyResult {
-	case gamestate.JimmyUnlocked:
-		g.addRowStr("Unlocked!")
-	case gamestate.JimmyNotADoor:
-		g.addRowStr("Not lock!")
-	case gamestate.JimmyBrokenPick:
-		g.addRowStr("Key broke!")
-	case gamestate.JimmyLockedMagical:
-		g.addRowStr("Magically Locked!")
-	case gamestate.JimmyDoorNoLockPicks:
-		g.addRowStr("No keys!")
-	default:
-		g.addRowStr("Failed!")
-	}
+	// Delegate all logic to GameState - it handles all feedback via SystemCallbacks
+	g.gameState.ActionJimmyLargeMap(direction)
 }

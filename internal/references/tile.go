@@ -12,7 +12,13 @@ const (
 	weightDefault    = 10
 )
 
-// Tile represents a single tile and it's properties.
+// Tile represents a single tile and its properties.
+//
+// The Tile struct contains both static properties (loaded from JSON) and methods
+// for tile-specific behavior checks. Methods that return boolean values based solely
+// on tile type/index (like IsPushable, IsOpenable, IsKlimable) should be placed here
+// rather than in external structs like GameState, as these are intrinsic properties
+// of the tile itself.
 //
 //nolint:tagliatelle
 type Tile struct {
@@ -184,4 +190,31 @@ func (t *Tile) IsForest() bool {
 		t.Index != indexes.Swamp &&
 		!t.IsPath() &&
 		!t.IsMountain()
+}
+
+// IsPushable checks if this tile can be pushed/moved by the player.
+// This is an intrinsic property of the tile type, not dependent on game state.
+func (t *Tile) IsPushable() bool {
+	// Chair variants (logical grouping - keep IsChair() for multiple chairs)
+	if t.IsChair() {
+		return true
+	}
+
+	// Cannon variants (logical grouping - keep IsCannon() for multiple cannons)
+	if t.IsCannon() {
+		return true
+	}
+
+	// Single tile checks using generic Is() pattern
+	return t.Is(indexes.Barrel) ||
+		t.Is(indexes.TableMiddle) ||
+		t.Is(indexes.TableFoodTop) ||
+		t.Is(indexes.TableFoodBottom) ||
+		t.Is(indexes.TableFoodBoth) ||
+		t.Is(indexes.Mirror) ||
+		t.Is(indexes.Well) ||
+		t.Is(indexes.Brazier) ||
+		t.Is(indexes.CookStove) ||
+		t.Is(indexes.Chest) ||
+		t.Is(indexes.WoodenBox)
 }

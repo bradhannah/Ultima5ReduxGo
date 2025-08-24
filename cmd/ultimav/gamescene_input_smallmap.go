@@ -19,13 +19,12 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		g.DoEscapeMenu()
 		return
 	case ebiten.KeySpace:
-		g.addRowStr("Pass")
-		// g.gameState.FinishTurn()
+		g.gameState.ActionPass()
 	case ebiten.KeyBackquote:
 		g.toggleDebug()
 		return
 	case ebiten.KeyEnter:
-		g.addRowStr("Enter")
+		g.gameState.ActionEnterInput()
 	case ebiten.KeyUp:
 		g.handleMovement(references2.Up.GetDirectionCompassName(), ebiten.KeyUp)
 	case ebiten.KeyDown:
@@ -66,10 +65,7 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		g.keyboard.SetAllowKeyPressImmediately()
 	case ebiten.KeyI:
 		g.debugMessage = "Ignite Torch"
-		g.addRowStr("Ignite Torch!")
-		if !g.gameState.IgniteTorch() {
-			g.addRowStr("None owned!")
-		}
+		g.gameState.ActionIgnite()
 	case ebiten.KeyT:
 		g.debugMessage = "Talk to..."
 		g.addRowStr("Talk-")
@@ -137,7 +133,7 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 		}
 	case LookDirectionInput:
 		if g.isDirectionKeyValidAndOutput() {
-			g.commonMapLookSecondary(getCurrentPressedArrowKeyAsDirection())
+			g.gameState.ActionLookSmallMap(getCurrentPressedArrowKeyAsDirection())
 			g.secondaryKeyState = PrimaryInput
 		}
 	case TalkDirectionInput:
@@ -199,7 +195,7 @@ func (g *GameScene) smallMapPushSecondary(direction references2.Direction) {
 	pushThingTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(pushThingPos)
 
 	// Early validation - avoid GameState call if obviously invalid
-	if !g.gameState.IsPushable(pushThingTile) {
+	if !pushThingTile.IsPushable() {
 		g.output.AddRowStrWithTrim("Won't budge!") // Direct UI - no game logic
 		return
 	}
