@@ -107,6 +107,13 @@ func (m *NPCAIControllerLargeMap) calculateNextNPCPosition(mapUnit map_units.Map
 		return
 	}
 
+	// Respect per-enemy immobility flags (e.g., Reapers, Mimics, fields)
+	if enemy, ok := mapUnit.(*map_units.NPCEnemy); ok {
+		if enemy.EnemyReference.AdditionalEnemyFlags.DoNotMove {
+			return
+		}
+	}
+
 	if mapUnit.PosPtr().IsNextTo(m.mapState.PlayerLocation.Position) {
 		// if the NPC is next to the player, we don't want to move them
 		return

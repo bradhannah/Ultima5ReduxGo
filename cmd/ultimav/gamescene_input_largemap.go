@@ -65,8 +65,7 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 		}
 
 	case ebiten.KeyO:
-		g.addRowStr("Open-")
-		g.appendToCurrentRowStr("Cannot")
+		g.addRowStr("Open what?")
 	case ebiten.KeyJ:
 		g.addRowStr("Jimmy-")
 		g.appendToCurrentRowStr("Cannot")

@@ -8,6 +8,7 @@ Use this index to find systems quickly. Each file contains focused sections and 
 
 - RNG and Saves: `RNG.md`
 - Encounters and Spawning: `Encounters.md`
+- Enemies and Weights: `../ENEMIES.md` (OVL stats, AdditionalEnemyFlags, environment weights, missiles)
 - Movement (Overworld): `Movement_Overworld.md`
 - Movement (Combat AI): `Movement_Combat_AI.md`
 - NPC Schedules: `NPC_Schedules.md`
