@@ -10,9 +10,10 @@
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
     "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "WaterWeight": 0,
+    "DesertWeight": 0,
+    "LandWeight": 5,
+    "UnderworldWeight": 10
   },
   {
     "Name": "Bard1/BARD",
@@ -24,10 +25,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Fighter1/FIGHTER",
@@ -39,10 +37,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Avatar1/x",
@@ -54,10 +49,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "TownsPerson1/VILLAGER",
@@ -69,10 +61,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Merchant1/MERCHANT",
@@ -84,10 +73,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Jester1/JESTER",
@@ -99,10 +85,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "BardPlaying1/BARD",
@@ -114,10 +97,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "PersonStocks1/PIRATES",
@@ -129,10 +109,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "CannonBall",
-    "LargeMapMissileRange": 4,
-    "Era1Weight": 50,
-    "Era2Weight": 50,
-    "Era3Weight": 50
+    "LargeMapMissileRange": 4
   },
   {
     "Name": "WallPrisoner1/x",
@@ -144,10 +121,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": false,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Child1/CHILD",
@@ -159,10 +133,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Begger1/BEGGAR",
@@ -174,10 +145,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Guard1/GUARDS",
@@ -189,10 +157,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Apparation1/x",
@@ -204,10 +169,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Blackthorn1/BLACKTHORN",
@@ -219,10 +181,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "LordBritish1/LORD BRITISH",
@@ -234,10 +193,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Seahorse1/SEA HORSES",
@@ -250,9 +206,10 @@
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
     "LargeMapMissileRange": 0,
-    "Era1Weight": 10,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "WaterWeight": 8,
+    "DesertWeight": 0,
+    "LandWeight": 0,
+    "UnderworldWeight": 2
   },
   {
     "Name": "Squid1/SQUIDS",
@@ -264,10 +221,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 10,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "SeaSerpent1/SEA SERPENTS",
@@ -280,9 +234,10 @@
     "ActivelyAttacks": true,
     "LargeMapMissile": "Red",
     "LargeMapMissileRange": 4,
-    "Era1Weight": 10,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "WaterWeight": 15,
+    "DesertWeight": 0,
+    "LandWeight": 0,
+    "UnderworldWeight": 8
   },
   {
     "Name": "Shark1/SHARKS",
@@ -294,10 +249,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 10,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Rat1/GIANT RATS",
@@ -309,10 +261,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 10,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Bat1/BATS",
@@ -324,10 +273,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 10,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Spider1/SPIDERS",
@@ -339,10 +285,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 10,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Ghost1/GHOSTS",
@@ -354,10 +297,7 @@
     "CanPassThroughWalls": true,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Slime1/SLIME",
@@ -369,10 +309,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Gremlin1/GREMLINS",
@@ -384,10 +321,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Mimic1/MIMICS",
@@ -399,10 +333,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Reaper1/REAPERS",
@@ -414,10 +345,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Gazer1/GAZERS",
@@ -429,10 +357,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Shard/x",
@@ -444,10 +369,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "StoneGargoyle1/GARGOYLE",
@@ -459,10 +381,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "InsectSwarm1/INSECTS",
@@ -474,10 +393,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 10,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Orc1/ORCS",
@@ -490,9 +406,10 @@
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
     "LargeMapMissileRange": 0,
-    "Era1Weight": 10,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "WaterWeight": 0,
+    "DesertWeight": 5,
+    "LandWeight": 12,
+    "UnderworldWeight": 6
   },
   {
     "Name": "Skeleton1/SKELETONS",
@@ -504,10 +421,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 10,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Snake1/SNAKES",
@@ -519,10 +433,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 10,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Ettin1/ETTINS",
@@ -534,10 +445,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Headless1/HEADLESSES",
@@ -549,10 +457,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Wisp1/WISPS",
@@ -564,10 +469,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Daemon1/DAEMONS",
@@ -579,10 +481,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Dragon1/DRAGONS",
@@ -594,10 +493,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "Red",
-    "LargeMapMissileRange": 3,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 3
   },
   {
     "Name": "SandTrap1/SAND TRAPS",
@@ -609,10 +505,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Troll1/TROLLS",
@@ -624,10 +517,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "PoisonField/x",
@@ -639,10 +529,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": false,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Whirpool1/x",
@@ -654,10 +541,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": false,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "MongBat1/MONGBATS",
@@ -669,10 +553,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "Corpser1/CORPSERS",
@@ -684,10 +565,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 10,
-    "Era3Weight": 10
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "RotWork1/ROTWORMS",
@@ -699,10 +577,7 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 10,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   },
   {
     "Name": "ShadowLord1/SHADOW LORD",
@@ -714,9 +589,6 @@
     "CanPassThroughWalls": false,
     "ActivelyAttacks": true,
     "LargeMapMissile": "None",
-    "LargeMapMissileRange": 0,
-    "Era1Weight": 0,
-    "Era2Weight": 0,
-    "Era3Weight": 0
+    "LargeMapMissileRange": 0
   }
 ]

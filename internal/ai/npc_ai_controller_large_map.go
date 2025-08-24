@@ -96,8 +96,8 @@ func (m *NPCAIControllerLargeMap) AdvanceNextTurnCalcAndMoveNPCs() {
 	}
 	m.FreshenExistingNPCsOnMap()
 
-	if len(m.mapUnits) < map_units.MaximumNpcsPerMap && m.ShouldGenerateLargeMapMonster() {
-		m.generateEraBoundMonster()
+	if len(m.mapUnits) < map_units.MaximumNpcsPerMap && m.shouldGenerateTileBasedMonster() {
+		m.generateTileBasedMonster()
 	}
 }
 
@@ -187,7 +187,7 @@ func (m *NPCAIControllerLargeMap) FreshenExistingNPCsOnMap() {
 	m.placeNPCsOnLayeredMap()
 }
 
-func (m *NPCAIControllerLargeMap) generateEraBoundMonster() {
+func (m *NPCAIControllerLargeMap) generateTileBasedMonster() {
 	const nYDistanceAway = 6
 	const nXDistanceAway = 9
 	const nTriesToGetValidEnemy = 10
@@ -197,6 +197,9 @@ func (m *NPCAIControllerLargeMap) generateEraBoundMonster() {
 	if !m.debugOptions.MonsterGen {
 		return
 	}
+
+	// Probability checking now handled in shouldGenerateTileBasedMonster()
+	// This method only executes when a monster should actually spawn
 
 	for range nTriesToGetValidEnemy {
 		if helpers.OneInXOdds(2) { // do dY
@@ -215,14 +218,19 @@ func (m *NPCAIControllerLargeMap) generateEraBoundMonster() {
 		}
 
 		tile := m.mapState.GetLayeredMapByCurrentLocation().GetTopTile(&pos)
-		enemy, err := m.enemyReferences.GetRandomEnemyReferenceByEraAndTile(m.dateTime.GetEra(), tile)
 
-		if err != nil {
-			log.Printf("Error getting random enemy reference: %v", err)
+		// Use environment-based monster selection instead of era-based
+		environment := m.determineEnvironmentType(tile)
+		enemy := m.pickMonsterByEnvironment(environment, tile)
+		if enemy == nil {
 			continue
-			// return
-		} else if enemy == nil {
-			log.Fatal("Unexpected nil")
+		}
+
+		// Monster selection now handled by environment-based logic above
+
+		// Simplified error handling for new system
+		if enemy == nil {
+			continue // Try another position
 		}
 
 		npc := map_units.NewEnemyNPC(*enemy, len(m.mapUnits))
@@ -235,8 +243,22 @@ func (m *NPCAIControllerLargeMap) generateEraBoundMonster() {
 	}
 }
 
-func (m *NPCAIControllerLargeMap) ShouldGenerateLargeMapMonster() bool {
-	return helpers.OneInXOdds(m.theOdds.GetOneInXLargeMapMonsterGeneration())
+func (m *NPCAIControllerLargeMap) shouldGenerateTileBasedMonster() bool {
+	// Calculate tile-based probability first
+	probability := m.calculateTileBasedProbability()
+	if probability == 0 {
+		return false // Never spawn on roads
+	}
+
+	// Apply night bonus
+	if m.dateTime.IsNight() {
+		probability += 3
+	}
+
+	// Use the combined probability with base odds
+	// This gives: Roads=never, Grass=1in32, Swamp=2in32, SwampNight=5in32
+	combinedOdds := m.theOdds.GetOneInXLargeMapMonsterGeneration() / probability
+	return helpers.OneInXOdds(combinedOdds)
 }
 
 func (m *NPCAIControllerLargeMap) ShouldEnemyMove() bool {
@@ -245,4 +267,113 @@ func (m *NPCAIControllerLargeMap) ShouldEnemyMove() bool {
 
 func (m *NPCAIControllerLargeMap) RemoveAllEnemies() {
 	m.mapUnits = make(map_units.MapUnits, 0, map_units.MaximumNpcsPerMap)
+}
+
+// calculateTileBasedProbability implements the original MONSTER.C genprob() logic
+func (m *NPCAIControllerLargeMap) calculateTileBasedProbability() int {
+	playerTile := m.mapState.GetLayeredMapByCurrentLocation().GetTopTile(&m.mapState.PlayerLocation.Position)
+
+	// Roads = 0 probability (no monsters spawn)
+	if playerTile.IsRoad() {
+		return 0
+	}
+
+	// Swamp, forest, mountains = 2 probability
+	if playerTile.IsSwamp() || playerTile.IsForest() || playerTile.IsMountain() {
+		return 2
+	}
+
+	// All other tiles = 1 probability
+	return 1
+}
+
+// MonsterEnvironment represents the environment type for monster selection
+type MonsterEnvironment int
+
+const (
+	WaterEnvironment MonsterEnvironment = iota
+	DesertEnvironment
+	LandEnvironment
+	UnderworldEnvironment
+)
+
+// determineEnvironmentType categorizes a tile for monster selection
+func (m *NPCAIControllerLargeMap) determineEnvironmentType(tile *references2.Tile) MonsterEnvironment {
+	if tile.IsWater() {
+		return WaterEnvironment
+	}
+	if tile.IsDesert() {
+		return DesertEnvironment
+	}
+	// TODO: Add underworld detection based on floor/map type if needed
+
+	return LandEnvironment
+}
+
+// pickMonsterByEnvironment selects a monster based on environment and tile compatibility using weighted selection
+func (m *NPCAIControllerLargeMap) pickMonsterByEnvironment(environment MonsterEnvironment, tile *references2.Tile) *references2.EnemyReference {
+	// Get monsters valid for this environment and tile
+	validMonsters := make([]*references2.EnemyReference, 0)
+	weights := make([]int, 0)
+
+	for _, enemy := range *m.enemyReferences {
+		if enemy.CanSpawnToTile(tile) {
+			weight := m.getMonsterEnvironmentWeight(&enemy, environment)
+			if weight > 0 {
+				validMonsters = append(validMonsters, &enemy)
+				weights = append(weights, weight)
+			}
+		}
+	}
+
+	if len(validMonsters) == 0 {
+		return nil
+	}
+
+	// Weighted random selection based on environment
+	return m.weightedRandomSelection(validMonsters, weights)
+}
+
+// getMonsterEnvironmentWeight returns the weight for a monster in a specific environment
+func (m *NPCAIControllerLargeMap) getMonsterEnvironmentWeight(enemy *references2.EnemyReference, environment MonsterEnvironment) int {
+	switch environment {
+	case WaterEnvironment:
+		return enemy.AdditionalEnemyFlags.WaterWeight
+	case DesertEnvironment:
+		return enemy.AdditionalEnemyFlags.DesertWeight
+	case LandEnvironment:
+		return enemy.AdditionalEnemyFlags.LandWeight
+	case UnderworldEnvironment:
+		return enemy.AdditionalEnemyFlags.UnderworldWeight
+	default:
+		return 1 // Default weight for unknown environments
+	}
+}
+
+// weightedRandomSelection selects a monster based on weights
+func (m *NPCAIControllerLargeMap) weightedRandomSelection(monsters []*references2.EnemyReference, weights []int) *references2.EnemyReference {
+	// Calculate total weight
+	totalWeight := 0
+	for _, weight := range weights {
+		totalWeight += weight
+	}
+
+	if totalWeight == 0 {
+		return nil
+	}
+
+	// Generate random number in range [0, totalWeight)
+	randomValue := helpers.RandomIntInRange(0, totalWeight-1)
+
+	// Find the selected monster
+	currentWeight := 0
+	for i, weight := range weights {
+		currentWeight += weight
+		if randomValue < currentWeight {
+			return monsters[i]
+		}
+	}
+
+	// Fallback (should not happen)
+	return monsters[len(monsters)-1]
 }

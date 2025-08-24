@@ -146,3 +146,34 @@ func (t *Tile) GetExtraMovementString() string {
 func (t *Tile) IsWall() bool {
 	return t.Index == indexes.LargeRockWall || t.Index == indexes.StoneBrickWall || t.Index == indexes.StoneBrickWallSecret
 }
+
+func (t *Tile) IsRoad() bool {
+	return t.IsPath() // Roads are paths in this context
+}
+
+func (t *Tile) IsSwamp() bool {
+	return t.Index == indexes.Swamp
+}
+
+func (t *Tile) IsWater() bool {
+	return t.Index == indexes.Water1 || t.Index == indexes.Water2 || t.Index == indexes.WaterShallow
+}
+
+func (t *Tile) IsDesert() bool {
+	return t.Index == indexes.Desert || t.Index == indexes.LeftDesert2 || t.Index == indexes.RightDesert2
+}
+
+func (t *Tile) IsMountain() bool {
+	return t.Index == indexes.SmallMountains
+}
+
+func (t *Tile) IsForest() bool {
+	// Forest tiles are identified as passable land tiles that are not other terrain types
+	// This logic may need refinement based on actual forest tile indexes
+	return t.IsLandEnemyPassable &&
+		t.Index != indexes.Grass &&
+		t.Index != indexes.Desert &&
+		t.Index != indexes.Swamp &&
+		!t.IsPath() &&
+		!t.IsMountain()
+}

@@ -121,7 +121,11 @@ func (d *UltimaDate) SetTimeOfDay(timeOfDay TimeOfDay) {
 }
 
 func (d *UltimaDate) IsDayLight() bool {
-	return d.Hour >= 6 && d.Hour > 20
+	return d.Hour >= hourOfSunrise && d.Hour < hourOfSunset
+}
+
+func (d *UltimaDate) IsNight() bool {
+	return !d.IsDayLight()
 }
 
 // GetVisibilityFactorWithoutTorch returns a 0–1 visibility factor

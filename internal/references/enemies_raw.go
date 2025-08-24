@@ -29,9 +29,6 @@ type AdditionalEnemyFlags struct {
 	CanFlyOverWater      bool        `json:"CanFlyOverWater"`
 	CanPassThroughWalls  bool        `json:"CanPassThroughWalls"`
 	DoNotMove            bool        `json:"DoNotMove"`
-	Era1Weight           int         `json:"Era1Weight"`
-	Era2Weight           int         `json:"Era2Weight"`
-	Era3Weight           int         `json:"Era3Weight"`
 	Experience           int         `json:"Experience"`
 	IsSandEnemy          bool        `json:"IsSandEnemy"`
 	IsWaterEnemy         bool        `json:"IsWaterEnemy"`
@@ -39,6 +36,12 @@ type AdditionalEnemyFlags struct {
 	LargeMapMissile      MissileType `json:"-"`
 	LargeMapMissileRange int         `json:"LargeMapMissileRange"`
 	Name                 string      `json:"Name"`
+
+	// Environment-based weights for tile-based monster generation
+	WaterWeight      int `json:"WaterWeight"`
+	DesertWeight     int `json:"DesertWeight"`
+	LandWeight       int `json:"LandWeight"`
+	UnderworldWeight int `json:"UnderworldWeight"`
 }
 
 type rawEnemyReferences struct {

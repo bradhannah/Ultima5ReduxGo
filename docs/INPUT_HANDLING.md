@@ -63,19 +63,19 @@ case ebiten.KeyL:
 ```
 
 ### Command Key Mappings
-| Key | Command | Secondary State | Description |
-|-----|---------|----------------|-------------|
-| L   | Look    | LookDirectionInput | Examine adjacent tile |
-| G   | Get     | GetDirectionInput | Pick up items |
-| P   | Push    | PushDirectionInput | Move objects |
-| O   | Open    | OpenDirectionInput | Open doors/chests |
-| J   | Jimmy   | JimmyDoorDirectionInput | Pick locks |
-| K   | Klimb   | KlimbDirectionInput | Use ladders/climb |
-| T   | Talk    | TalkDirectionInput | Converse with NPCs |
-| S   | Search  | SearchDirectionInput | Find hidden items |
-| A   | Attack  | AttackDirectionInput | Combat actions |
-| U   | Use     | UseDirectionInput | Use items |
-| Y   | Yell    | YellDirectionInput | Shout commands |
+| Key | Command | Secondary State         | Description           |
+|-----|---------|-------------------------|-----------------------|
+| L   | Look    | LookDirectionInput      | Examine adjacent tile |
+| G   | Get     | GetDirectionInput       | Pick up items         |
+| P   | Push    | PushDirectionInput      | Move objects          |
+| O   | Open    | OpenDirectionInput      | Open doors/chests     |
+| J   | Jimmy   | JimmyDoorDirectionInput | Pick locks            |
+| K   | Klimb   | KlimbDirectionInput     | Use ladders/climb     |
+| T   | Talk    | TalkDirectionInput      | Converse with NPCs    |
+| S   | Search  | SearchDirectionInput    | Find hidden items     |
+| A   | Attack  | AttackDirectionInput    | Combat actions        |
+| U   | Use     | UseDirectionInput       | Use items             |
+| Y   | Yell    | YellDirectionInput      | Shout commands        |
 
 ### Non-Directional Commands
 Some commands execute immediately without secondary input:
