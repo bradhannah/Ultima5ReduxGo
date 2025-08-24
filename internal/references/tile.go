@@ -68,6 +68,11 @@ func (t *Tile) IsPassable(vehicle VehicleType) bool {
 	return false
 }
 
+// Is provides a generic method for checking if a tile matches a specific sprite index
+func (t *Tile) Is(spriteIndex indexes.SpriteIndex) bool {
+	return t.Index == spriteIndex
+}
+
 func (t *Tile) IsChair() bool {
 	return t.Index == indexes.ChairFacingDown ||
 		t.Index == indexes.ChairFacingUp ||

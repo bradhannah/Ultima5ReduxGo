@@ -117,24 +117,30 @@ func (g *GameState) ActionPushCombatMap(direction references.Direction) bool {
 
 func (g *GameState) IsPushable(tile *references.Tile) bool {
 	// Implements full pushability check per Commands.md Push section
-	// Based on pseudocode: PLANT, CHAIR variants, DESK, BARREL, VANITY, PITCHER,
-	// DRAWERS, END_TABLE, FOOTLOCKER, CANNON variants
+	// Using generic Is() pattern instead of specific Is* functions for each item
 
-	// Currently implemented pushable objects
-	if tile.IsChair() || tile.IsCannon() || tile.IsBarrel() {
+	// Chair variants (logical grouping - keep IsChair() for multiple chairs)
+	if tile.IsChair() {
 		return true
 	}
 
-	// TODO: Add when sprite indexes are available:
-	// - PLANT (tile.IsPlant())
-	// - DESK (tile.IsDesk())
-	// - VANITY (tile.IsVanity())
-	// - PITCHER (tile.IsPitcher())
-	// - DRAWERS (tile.IsDrawers())
-	// - END_TABLE (tile.IsEndTable())
-	// - FOOTLOCKER (tile.IsFootlocker())
+	// Cannon variants (logical grouping - keep IsCannon() for multiple cannons)
+	if tile.IsCannon() {
+		return true
+	}
 
-	return false
+	// Single tile checks using generic Is() pattern
+	return tile.Is(indexes.Barrel) ||
+		tile.Is(indexes.TableMiddle) ||
+		tile.Is(indexes.TableFoodTop) ||
+		tile.Is(indexes.TableFoodBottom) ||
+		tile.Is(indexes.TableFoodBoth) ||
+		tile.Is(indexes.Mirror) ||
+		tile.Is(indexes.Well) ||
+		tile.Is(indexes.Brazier) ||
+		tile.Is(indexes.CookStove) ||
+		tile.Is(indexes.Chest) ||
+		tile.Is(indexes.WoodenBox)
 }
 
 func (g *GameState) ObjectPresentAt(position *references.Position) bool {

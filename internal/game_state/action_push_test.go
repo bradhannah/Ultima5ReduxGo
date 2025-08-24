@@ -74,6 +74,30 @@ func TestIsPushable_NotPushable_Wall(t *testing.T) {
 	}
 }
 
+func TestIsPushable_TableMiddle_Success(t *testing.T) {
+	gs := &GameState{}
+
+	tableMiddleTile := &references.Tile{Index: indexes.TableMiddle}
+
+	result := gs.IsPushable(tableMiddleTile)
+
+	if !result {
+		t.Error("Expected TableMiddle to be pushable")
+	}
+}
+
+func TestIsPushable_Chest_Success(t *testing.T) {
+	gs := &GameState{}
+
+	chestTile := &references.Tile{Index: indexes.Chest}
+
+	result := gs.IsPushable(chestTile)
+
+	if !result {
+		t.Error("Expected Chest to be pushable")
+	}
+}
+
 func TestActionPushSmallMap_Chair_PushForward_Success(t *testing.T) {
 	gs, _ := createTestGameStateForPush(t)
 

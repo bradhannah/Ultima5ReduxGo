@@ -69,6 +69,51 @@ Goals:
 - It is acceptable to hardcode small, well-named rules when it materially improves clarity (e.g., special-case mirror behavior, chair/ladder substitutions).
 - When hardcoding, isolate rules behind small helpers so they can be replaced by data later if needed.
 
+### Tile Checking Patterns
+
+**DO NOT create individual Is* functions for single tile matches**. Instead, use a generic `Is(SpriteIndex)` function:
+
+```go
+// ❌ AVOID: Creating individual functions for every tile type
+func (t *Tile) IsCactus() bool { return t.Index == indexes.Cactus }
+func (t *Tile) IsTree() bool { return t.Index == indexes.Tree }
+func (t *Tile) IsRock() bool { return t.Index == indexes.Rock }
+
+// ✅ PREFERRED: Generic function for single tile checks
+func (t *Tile) Is(spriteIndex indexes.SpriteIndex) bool {
+    return t.Index == spriteIndex
+}
+
+// Usage examples:
+if tile.Is(indexes.Cactus) { /* handle cactus */ }
+if tile.Is(indexes.Tree) { /* handle tree */ }
+if tile.Is(indexes.Rock) { /* handle rock */ }
+```
+
+**Create specific functions only for logical groupings or complex checks**:
+
+```go
+// ✅ GOOD: Logical groupings that represent game concepts
+func (t *Tile) IsDoor() bool {
+    return t.Index == indexes.RegularDoor || t.Index == indexes.LockedDoor || t.Index == indexes.MagicLockDoor
+}
+
+func (t *Tile) IsPushable() bool {
+    return t.IsChair() || t.IsCannon() || // Logical groupings for multiple variants
+           t.Is(indexes.Barrel) || t.Is(indexes.TableMiddle) || t.Is(indexes.Chest) // Single tiles
+}
+
+func (t *Tile) IsPassable() bool {
+    // Complex logic for determining if tile can be walked through
+}
+```
+
+This pattern:
+- **Reduces code duplication** - One generic function instead of many specific ones
+- **Maintains readability** - `tile.Is(indexes.Cactus)` is clear and concise  
+- **Prevents function proliferation** - Avoids hundreds of single-purpose Is* functions
+- **Preserves type safety** - Still uses strongly-typed sprite indexes
+
 ## Rendering and Animation
 
 - All animations should read from the tick/elapsed time (not `time.Now`) to keep visuals in sync with gameplay.
