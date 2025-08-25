@@ -23,7 +23,7 @@ func NewSpriteSlice(rawSprites [][]byte) []*ebiten.Image {
 	for i, sprite := range rawSprites {
 		img, err := png.Decode(bytes.NewReader(sprite))
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal(err) // Embedded animation data should always load successfully
 		}
 		ebitenSprite := ebiten.NewImageFromImage(img)
 		images[i] = ebitenSprite

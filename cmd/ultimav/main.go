@@ -34,6 +34,6 @@ func main() {
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeDisabled)
 
 	if err := ebiten.RunGame(game); err != nil {
-		log.Fatal(err)
+		log.Fatal(err) // Core game engine failure prevents operation
 	}
 }

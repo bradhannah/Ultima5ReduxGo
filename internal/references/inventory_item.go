@@ -46,7 +46,7 @@ func NewInventoryItemsReferences() *InventoryItemReferences {
 	var inventoryItems InventoryItemReferences
 	err := json.Unmarshal(inventoryDetails, &inventoryItems)
 	if err != nil {
-		log.Fatalf("error unmarshaling JSON: %v", err)
+		log.Fatalf("error unmarshaling JSON: %v", err) // Original game data corruption
 	}
 
 	inventoryItems.Equipment = make(map[Equipment]InventoryItem)

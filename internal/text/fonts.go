@@ -25,7 +25,7 @@ func NewUltimaFont(size float64) *UltimaFont {
 	var err error
 	ultimaFont.ultimaFaceSource, err = text.NewGoTextFaceSource(bytes.NewReader(rawUltimaTTF))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err) // Embedded font data should always load successfully
 	}
 
 	ultimaFont.TextFace = &text.GoTextFace{

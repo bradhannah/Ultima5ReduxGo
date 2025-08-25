@@ -66,7 +66,7 @@ func (d *UltimaDate) Advance(nMinutes int) {
 
 	// nMinute that time advancement does not exceed 9 hours (for time-saving assumptions)
 	if nMinutes > MinutesPerHour*9 {
-		log.Fatal("you cannot advance more than 9 hours at a time")
+		log.Fatal("you cannot advance more than 9 hours at a time") // TODO: CONVERT TO SOFT ERROR - validation error should show user message
 	}
 
 	// Check if adding minutes moves to a new hour

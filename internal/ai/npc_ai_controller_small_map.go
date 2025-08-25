@@ -300,7 +300,7 @@ func (n *NPCAIControllerSmallMap) performAiMovementOnAssignedPosition(friendly *
 		// for a little randomness
 		return true
 	default:
-		log.Fatal("Unknown aiType")
+		log.Fatal("Unknown aiType") // TODO: CONVERT TO SOFT ERROR - validation error should show user message
 	}
 	return false
 }
@@ -375,7 +375,7 @@ func (n *NPCAIControllerSmallMap) performAiMovementNotOnAssignedPosition(friendl
 		}
 		return false
 	default:
-		log.Fatal("Unknown aiType")
+		log.Fatal("Unknown aiType") // TODO: CONVERT TO SOFT ERROR - validation error should show user message
 	}
 	return false
 }

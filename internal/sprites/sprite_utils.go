@@ -11,7 +11,7 @@ import (
 func NewPngSprite(rawBytes []byte) *ebiten.Image {
 	img, _, err := image.Decode(bytes.NewReader(rawBytes))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err) // Embedded sprite data should always load successfully
 	}
 	return ebiten.NewImageFromImage(img)
 }

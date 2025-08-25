@@ -134,7 +134,7 @@ func (g *GameScene) refreshProvisionsAndEquipmentMapTiles(pos *references.Positi
 
 	item := g.gameState.ItemStacksMap.Peek(pos)
 	if item == nil {
-		log.Fatal("Unexpected: item should exist since we checked ahead of it")
+		log.Fatal("Unexpected: item should exist since we checked ahead of it") // TODO: CONVERT TO SOFT ERROR - debug/development code should not crash production
 	}
 
 	tileIndex := g.gameReferences.InventoryItemReferences.GetReferenceByItem(item.Item).ItemSprite

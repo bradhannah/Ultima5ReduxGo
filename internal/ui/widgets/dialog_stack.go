@@ -61,7 +61,7 @@ func (d *DialogStack) GetOrAssertTopInputBox() *InputBox {
 	w := *d.Dialogs[len(d.Dialogs)-1]
 	ib, ok := (w).(*InputBox)
 	if !ok {
-		log.Fatal("Unexpected - should find input dialog box")
+		log.Fatal("Unexpected - should find input dialog box") // TODO: CONVERT TO SOFT ERROR - UI recovery possible, should not crash game
 	}
 	return ib
 }
@@ -69,7 +69,7 @@ func (d *DialogStack) GetOrAssertTopInputBox() *InputBox {
 func (d *DialogStack) RemoveWidget(iface interface{}) {
 	nIndex := d.GetIndexOfDialogType(iface)
 	if nIndex == -1 {
-		log.Fatal("Unexpected - should find debug dialog index")
+		log.Fatal("Unexpected - should find debug dialog index") // TODO: CONVERT TO SOFT ERROR - UI recovery possible, should not crash game
 	}
 	d.Dialogs = append(d.Dialogs[:nIndex], d.Dialogs[nIndex+1:]...)
 }

@@ -60,10 +60,10 @@ func NewUltimaVConfiguration() *UltimaVConfiguration {
 		if errors.As(err, &configFileNotFoundError) {
 			err = viper.SafeWriteConfig()
 			if err != nil {
-				log.Fatalf("Error writing config file, %s", err)
+				log.Fatalf("Error writing config file, %s", err) // TODO: CONVERT TO SOFT ERROR - config issues should use defaults and warn user
 			}
 		} else {
-			log.Fatalf("Error reading config file, %s", err)
+			log.Fatalf("Error reading config file, %s", err) // TODO: CONVERT TO SOFT ERROR - config issues should use defaults and warn user
 		}
 	}
 
@@ -82,7 +82,7 @@ func NewUltimaVConfiguration() *UltimaVConfiguration {
 	var err error
 	uc.RawDataOvl, err = os.ReadFile(path.Join(uc.SavedConfigData.DataFilePath, files.DATA_OVL))
 	if err != nil {
-		log.Fatal("Ooof, couldn't read DATA.OVL")
+		log.Fatal("Ooof, couldn't read DATA.OVL") // Core Ultima V data file required for operation
 	}
 
 	uc.allWindowConfigs = make([]ScreenResolution, 0)

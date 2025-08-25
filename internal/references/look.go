@@ -34,7 +34,7 @@ func NewLookReferences(gameConfig *config.UltimaVConfiguration) *LookReferences 
 	lookRefs.LookData, err = lookRefs.getLookFileAsBytes()
 	if err != nil {
 		log.Printf("Error reading look file: %v", err)
-		log.Fatal("can't read look file")
+		log.Fatal("can't read look file") // Original game data corruption
 	}
 
 	count := 0

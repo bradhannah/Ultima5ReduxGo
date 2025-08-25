@@ -29,7 +29,7 @@ type IndividualNPCBehaviour struct {
 
 func CreateNPCSchedule(rawData []byte) NPCSchedule {
 	if len(rawData) < sizeOfNPCSchedule {
-		log.Fatal("Not enough data to create NPCReference schedule")
+		log.Fatal("Not enough data to create NPCReference schedule") // Original game data corruption
 	}
 	npcSchedule := (*NPCSchedule)(unsafe.Pointer(&rawData[0]))
 	return *npcSchedule

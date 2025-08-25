@@ -100,7 +100,7 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 	var err error
 	gameScene.gameReferences, err = references2.NewGameReferences(gameConfig)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err) // Critical game references required for operation
 	}
 
 	saveFilePath := path.Join(gameScene.gameConfig.SavedConfigData.DataFilePath, "SAVED.GAM")
@@ -118,7 +118,7 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 		gameScene.addRowStr, // Use addRowStr for command prompts
 	)
 	if err != nil {
-		log.Fatalf("Failed to create MessageCallbacks: %v", err)
+		log.Fatalf("Failed to create MessageCallbacks: %v", err) // Critical system callbacks required for operation
 	}
 
 	visualCallbacks := game_state.NewVisualCallbacks(
@@ -162,7 +162,7 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 
 	systemCallbacks, err := game_state.NewSystemCallbacks(messageCallbacks, visualCallbacks, audioCallbacks, screenCallbacks, flowCallbacks, talkCallbacks)
 	if err != nil {
-		log.Fatalf("Failed to create SystemCallbacks: %v", err)
+		log.Fatalf("Failed to create SystemCallbacks: %v", err) // Critical system callbacks required for operation
 	}
 
 	gameScene.gameState.SystemCallbacks = systemCallbacks
@@ -236,7 +236,7 @@ func (g *GameScene) toggleDebug() {
 	nIndex := g.dialogStack.GetIndexOfDialogType((*DebugConsole)(nil))
 
 	if nIndex == -1 {
-		log.Fatal("Unexpected - should find debug dialog index")
+		log.Fatal("Unexpected - should find debug dialog index") // TODO: CONVERT TO SOFT ERROR - UI recovery possible, should not crash game
 	}
 	// g.dialogs = append(g.dialogs[:nIndex], g.dialogs[nIndex+1:]...)
 	dc := (*DebugConsole)(nil)
