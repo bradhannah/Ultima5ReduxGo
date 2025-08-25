@@ -69,3 +69,40 @@ func (g *GameState) ExitVehicle() *map_units.NPCFriendly {
 
 	return &prevVehicle
 }
+
+// ActionExit - handles exiting/dismounting from vehicles
+// Based on Commands.md patterns and vehicle system
+func (g *GameState) ActionExit() bool {
+	// Check if currently on/in a vehicle
+	currentVehicleType := g.PartyVehicle.GetVehicleDetails().VehicleType
+	if currentVehicleType == references2.NoPartyVehicle {
+		g.SystemCallbacks.Message.AddRowStr("X-it what?")
+		return false
+	}
+
+	// Attempt to exit the current vehicle
+	exittedVehicle := g.ExitVehicle()
+
+	if exittedVehicle == nil {
+		g.SystemCallbacks.Message.AddRowStr("X-it what?")
+		return false
+	}
+
+	// Print appropriate exit message based on vehicle type
+	switch exittedVehicle.GetVehicleDetails().VehicleType {
+	case references2.HorseVehicle:
+		g.SystemCallbacks.Message.AddRowStr("Xit- horse!")
+	case references2.CarpetVehicle:
+		g.SystemCallbacks.Message.AddRowStr("Xit- carpet!")
+	case references2.SkiffVehicle:
+		g.SystemCallbacks.Message.AddRowStr("Xit- skiff!")
+	case references2.FrigateVehicle:
+		g.SystemCallbacks.Message.AddRowStr("Xit- frigate!")
+	default:
+		g.SystemCallbacks.Message.AddRowStr("X-it what?")
+		return false
+	}
+
+	g.SystemCallbacks.Flow.AdvanceTime(1)
+	return true
+}

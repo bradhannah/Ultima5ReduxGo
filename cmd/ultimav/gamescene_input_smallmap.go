@@ -34,14 +34,14 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyRight:
 		g.handleMovement(references2.Right.GetDirectionCompassName(), ebiten.KeyRight)
 	case ebiten.KeyB:
-		g.actionBoard()
+		g.gameState.ActionBoard()
 	case ebiten.KeyK:
 		g.smallMapKlimb()
 	case ebiten.KeyL:
 		g.addRowStr("Look-")
 		g.secondaryKeyState = LookDirectionInput
 	case ebiten.KeyX:
-		g.actionExit()
+		g.gameState.ActionExit()
 	case ebiten.KeyG:
 		// get the thing - direction
 		g.addRowStr("Get-")

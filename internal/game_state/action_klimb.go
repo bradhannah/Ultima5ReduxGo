@@ -67,8 +67,10 @@ func (g *GameState) ActionKlimbLargeMap(direction references.Direction) bool {
 	}
 
 	// Check if player is on foot (no vehicles)
-	// TODO: Implement vehicle check when vehicle system is available
-	// For now, assume player is always on foot on large map
+	if g.PartyVehicle.GetVehicleDetails().VehicleType != references.NoPartyVehicle {
+		g.SystemCallbacks.Message.AddRowStr("On foot!")
+		return false
+	}
 
 	// Get target position and tile
 	newPosition := direction.GetNewPositionInDirection(&g.MapState.PlayerLocation.Position)

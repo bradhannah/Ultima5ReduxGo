@@ -28,7 +28,7 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyRight:
 		g.handleMovement(references2.Right.GetDirectionCompassName(), ebiten.KeyRight)
 	case ebiten.KeyB:
-		g.actionBoard()
+		g.gameState.ActionBoard()
 	case ebiten.KeyK:
 		g.addRowStr("Klimb-")
 		g.secondaryKeyState = KlimbDirectionInput
@@ -37,7 +37,7 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 		g.secondaryKeyState = GetDirectionInput
 		g.keyboard.SetAllowKeyPressImmediately()
 	case ebiten.KeyX:
-		g.actionExit()
+		g.gameState.ActionExit()
 	case ebiten.KeyP:
 		g.addRowStr("Push-")
 		g.secondaryKeyState = PushDirectionInput
