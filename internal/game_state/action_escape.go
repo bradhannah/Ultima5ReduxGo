@@ -1,33 +1,34 @@
 package game_state
 
+import "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+
 func (g *GameState) ActionEscapeSmallMap() bool {
-	// TODO: Implement small map Escape command - see Commands.md Escape section
-	// Should handle:
-	// - Exit combat screen after victory
-	// - Negative: "No effect!" if not in post-combat state
-	// - Return to previous map location
-	// - Clean up combat state
-	return true
+	// Escape is only valid from combat screens
+	g.SystemCallbacks.Message.AddRowStr("Not here!")
+	return false
 }
 
 func (g *GameState) ActionEscapeLargeMap() bool {
-	// TODO: Implement large map Escape command - see Commands.md Escape section
-	// Large map variant - typically not used
-	return true
+	// Escape is only valid from combat screens
+	g.SystemCallbacks.Message.AddRowStr("Not here!")
+	return false
 }
 
 func (g *GameState) ActionEscapeCombatMap() bool {
-	// TODO: Implement combat map Escape command - see Commands.md Escape section
-	// Should handle:
-	// - Check if battle is won (all enemies defeated)
-	// - Exit combat screen if victory achieved
-	// - Negative: "Not yet!" if enemies remain
-	// - Loot collection before exit
-	return true
+	// Check if in dungeon room combat (can't escape dungeon rooms)
+	if g.MapState.PlayerLocation.Location.GetMapType() == references.DungeonMapType {
+		g.SystemCallbacks.Message.AddRowStr("Not here!")
+		return false
+	}
+
+	// TODO: Check if battle is won (victory flag)
+	// For now, since combat isn't implemented, always deny escape
+	g.SystemCallbacks.Message.AddRowStr("Not yet!")
+	return false
 }
 
 func (g *GameState) ActionEscapeDungeonMap() bool {
-	// TODO: Implement dungeon map Escape command - see Commands.md Escape section
-	// Dungeon map variant - exit from dungeon combat
-	return true
+	// Escape is only valid from combat screens
+	g.SystemCallbacks.Message.AddRowStr("Not here!")
+	return false
 }

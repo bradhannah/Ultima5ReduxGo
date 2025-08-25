@@ -19,9 +19,10 @@ func (g *GameState) ActionReadyLargeMap() bool {
 }
 
 func (g *GameState) ActionReadyCombatMap() bool {
-	// TODO: Implement combat map Ready command - see Commands.md Ready section
-	// Combat map variant - should restrict armor changes during combat
-	return true
+	// Armor cannot be changed during combat, but weapons can be readied
+	// TODO: Implement weapon readying logic
+	g.SystemCallbacks.Message.AddRowStr("Ready weapon...")
+	return false
 }
 
 func (g *GameState) ActionReadyDungeonMap() bool {

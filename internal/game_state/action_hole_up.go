@@ -24,9 +24,9 @@ func (g *GameState) ActionHoleUpLargeMap() bool {
 }
 
 func (g *GameState) ActionHoleUpCombatMap() bool {
-	// TODO: Implement combat map Hole Up & Camp command - see Commands.md Hole Up & Camp section
-	// Combat map variant - likely disabled during active combat
-	return true
+	// Cannot camp during active combat
+	g.SystemCallbacks.Message.AddRowStr("Not here!")
+	return false
 }
 
 func (g *GameState) ActionHoleUpDungeonMap() bool {

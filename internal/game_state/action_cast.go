@@ -1,33 +1,29 @@
 package game_state
 
 func (g *GameState) ActionCastSmallMap() bool {
-	// TODO: Implement small map Cast command - see Commands.md Cast section and Spells.md
-	// Should handle:
-	// - Spell selection (1-48 or by syllables)
-	// - Context gating ("Not here!" in inappropriate locations)
-	// - MP/mixture availability checks
-	// - Spell effect application
-	// - Negative: "Absorbed!" in anti-magic zones
-	// - Negative: "No mixtures!" or "No magic points!"
-	// - Success/failure reporting
-	// - Turn advancement on cast
-	return true
+	// TODO: Check if party has any spell mixtures
+	// For now, just indicate no spells are mixed until spell system is implemented
+	g.SystemCallbacks.Message.AddRowStr("None mixed!")
+	return false
 }
 
 func (g *GameState) ActionCastLargeMap() bool {
-	// TODO: Implement large map Cast command - see Commands.md Cast section and Spells.md
-	// Large map variant - overworld spellcasting
-	return true
+	// TODO: Check if party has any spell mixtures
+	// For now, just indicate no spells are mixed until spell system is implemented
+	g.SystemCallbacks.Message.AddRowStr("None mixed!")
+	return false
 }
 
 func (g *GameState) ActionCastCombatMap() bool {
-	// TODO: Implement combat map Cast command - see Commands.md Cast section and Spells.md
-	// Combat map variant - tactical spellcasting with targeting
-	return true
+	// TODO: Check if party has any spell mixtures
+	// For now, just indicate no spells are mixed until spell system is implemented
+	g.SystemCallbacks.Message.AddRowStr("None mixed!")
+	return false
 }
 
 func (g *GameState) ActionCastDungeonMap() bool {
-	// TODO: Implement dungeon map Cast command - see Commands.md Cast section and Spells.md
-	// Dungeon map variant - dungeon-specific spell effects
-	return true
+	// TODO: Check if party has any spell mixtures
+	// For now, just indicate no spells are mixed until spell system is implemented
+	g.SystemCallbacks.Message.AddRowStr("None mixed!")
+	return false
 }

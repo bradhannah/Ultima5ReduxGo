@@ -16,13 +16,15 @@ func (g *GameState) ActionFireSmallMap(direction references.Direction) bool {
 }
 
 func (g *GameState) ActionFireLargeMap(direction references.Direction) bool {
-	// TODO: Implement large map Fire command - see Commands.md Fire (Cannons) section
-	// Should handle:
-	// - Ship broadside firing (port/starboard)
-	// - Negative: "Fire broadsides only!" if not on ship
-	// - Negative: "What?" or "Cannot!" based on context
-	// - Frigate special: all 4 cannons fire in broadside
-	return true
+	// Check if on a ship for broadside firing
+	if g.PartyVehicle.GetVehicleDetails().VehicleType == references.NoPartyVehicle {
+		g.SystemCallbacks.Message.AddRowStr("What?")
+		return false
+	}
+
+	// TODO: Check vehicle type and implement broadside logic
+	g.SystemCallbacks.Message.AddRowStr("Fire broadsides only!")
+	return false
 }
 
 func (g *GameState) ActionFireCombatMap(direction references.Direction) bool {
