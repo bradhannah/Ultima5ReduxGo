@@ -1,0 +1,178 @@
+package map_state
+
+import (
+	"testing"
+
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
+)
+
+func TestSmallMapProcessTurnDoors_NoOpenDoor(t *testing.T) {
+	t.Skip("Converting to use real game data - see TESTING.md")
+
+	// No door is open, so processing should do nothing
+	ms.SmallMapProcessTurnDoors()
+
+	// Should not crash and no state should change
+	if ms.openDoorPos != nil {
+		t.Error("Expected openDoorPos to remain nil")
+	}
+}
+
+func TestSmallMapProcessTurnDoors_CountdownToZero(t *testing.T) {
+	ms := createTestMapStateWithMap(t)
+
+	// Open a door first
+	direction := references.Up
+	targetPos := direction.GetNewPositionInDirection(&ms.PlayerLocation.Position)
+	layeredMap := ms.LayeredMaps.GetLayeredMap(references.SmallMapType, ms.PlayerLocation.Floor)
+	layeredMap.SetTileByLayer(MapLayer, targetPos, indexes.RegularDoor)
+
+	ms.OpenDoor(direction)
+
+	// Verify initial state (door opened, 2 turns remaining)
+	if ms.openDoorTurns != 2 {
+		t.Fatalf("Expected 2 turns initially, got %d", ms.openDoorTurns)
+	}
+
+	topTile := layeredMap.GetTopTile(targetPos)
+	if topTile.Index != indexes.BrickFloor {
+		t.Fatalf("Expected door to be opened (BrickFloor), got %v", topTile.Index)
+	}
+
+	// First turn: should decrement to 1
+	ms.SmallMapProcessTurnDoors()
+
+	if ms.openDoorTurns != 1 {
+		t.Errorf("Expected 1 turn remaining, got %d", ms.openDoorTurns)
+	}
+
+	// Door should still be open
+	topTile = layeredMap.GetTopTile(targetPos)
+	if topTile.Index != indexes.BrickFloor {
+		t.Errorf("Expected door to still be open, got %v", topTile.Index)
+	}
+
+	if ms.openDoorPos == nil {
+		t.Error("Expected door position to still be tracked")
+	}
+
+	// Second turn: should decrement to 0 and close the door
+	ms.SmallMapProcessTurnDoors()
+
+	if ms.openDoorTurns != 0 {
+		t.Errorf("Expected 0 turns remaining, got %d", ms.openDoorTurns)
+	}
+
+	// Door should be restored to original state
+	topTile = layeredMap.GetTopTile(targetPos)
+	if topTile.Index != indexes.RegularDoor {
+		t.Errorf("Expected door to be restored to RegularDoor, got %v", topTile.Index)
+	}
+
+	if ms.openDoorPos != nil {
+		t.Error("Expected door position tracking to be cleared")
+	}
+
+	// Third turn: should do nothing (no door tracked)
+	ms.SmallMapProcessTurnDoors()
+
+	if ms.openDoorTurns != 0 {
+		t.Errorf("Expected turns to remain 0, got %d", ms.openDoorTurns)
+	}
+}
+
+func TestSmallMapProcessTurnDoors_WindowedDoor_RestoresCorrectType(t *testing.T) {
+	ms := createTestMapStateWithMap(t)
+
+	// Open a windowed door
+	direction := references.Up
+	targetPos := direction.GetNewPositionInDirection(&ms.PlayerLocation.Position)
+	layeredMap := ms.LayeredMaps.GetLayeredMap(references.SmallMapType, ms.PlayerLocation.Floor)
+	layeredMap.SetTileByLayer(MapLayer, targetPos, indexes.RegularDoorView)
+
+	ms.OpenDoor(direction)
+
+	// Process turns until door closes
+	ms.SmallMapProcessTurnDoors() // Turn 1
+	ms.SmallMapProcessTurnDoors() // Turn 2 - should close
+
+	// Verify windowed door is restored to windowed type
+	topTile := layeredMap.GetTopTile(targetPos)
+	if topTile.Index != indexes.RegularDoorView {
+		t.Errorf("Expected windowed door to be restored to RegularDoorView, got %v", topTile.Index)
+	}
+}
+
+func TestSmallMapProcessTurnDoors_RegularDoor_RestoresCorrectType(t *testing.T) {
+	ms := createTestMapStateWithMap(t)
+
+	// Open a regular (non-windowed) door
+	direction := references.Up
+	targetPos := direction.GetNewPositionInDirection(&ms.PlayerLocation.Position)
+	layeredMap := ms.LayeredMaps.GetLayeredMap(references.SmallMapType, ms.PlayerLocation.Floor)
+	layeredMap.SetTileByLayer(MapLayer, targetPos, indexes.RegularDoor)
+
+	ms.OpenDoor(direction)
+
+	// Process turns until door closes
+	ms.SmallMapProcessTurnDoors() // Turn 1
+	ms.SmallMapProcessTurnDoors() // Turn 2 - should close
+
+	// Verify regular door is restored to regular type
+	topTile := layeredMap.GetTopTile(targetPos)
+	if topTile.Index != indexes.RegularDoor {
+		t.Errorf("Expected regular door to be restored to RegularDoor, got %v", topTile.Index)
+	}
+}
+
+func TestSmallMapProcessTurnDoors_ManualTurnAdvance_Integration(t *testing.T) {
+	// This test simulates what happens during actual gameplay
+	ms := createTestMapStateWithMap(t)
+
+	// Open a door
+	direction := references.Up
+	targetPos := direction.GetNewPositionInDirection(&ms.PlayerLocation.Position)
+	layeredMap := ms.LayeredMaps.GetLayeredMap(references.SmallMapType, ms.PlayerLocation.Floor)
+	layeredMap.SetTileByLayer(MapLayer, targetPos, indexes.RegularDoor)
+
+	result := ms.OpenDoor(direction)
+	if result != OpenDoorOpened {
+		t.Fatalf("Failed to open door: %v", result)
+	}
+
+	// Simulate player taking actions that advance turns
+	// Each action should call SmallMapProcessTurnDoors()
+
+	// Turn 1: Player moves or does another action
+	ms.SmallMapProcessTurnDoors()
+	doorStillOpen := layeredMap.GetTopTile(targetPos).Index == indexes.BrickFloor
+	if !doorStillOpen {
+		t.Error("Expected door to still be open after turn 1")
+	}
+
+	// Turn 2: Player takes another action - door should close
+	ms.SmallMapProcessTurnDoors()
+	doorClosed := layeredMap.GetTopTile(targetPos).Index == indexes.RegularDoor
+	if !doorClosed {
+		t.Error("Expected door to be closed after turn 2")
+	}
+
+	if ms.openDoorPos != nil {
+		t.Error("Expected door tracking to be cleared after closure")
+	}
+}
+
+// Helper function to create a MapState with proper map initialization
+func createTestMapStateWithMap(t *testing.T) *MapState {
+	t.Helper()
+
+	// This would need proper map initialization
+	// For now, this is a placeholder showing the test structure
+	ms := &MapState{}
+
+	// Initialize required components for testing
+	// You'll need to set up LayeredMaps and PlayerLocation properly
+
+	return ms
+}

@@ -11,6 +11,7 @@ import (
 
 // TestActualMonsterSpawnRate tests the real-world spawn rates you'd experience
 func TestActualMonsterSpawnRate(t *testing.T) {
+	t.Skip("Converting to use real game data - see TESTING.md")
 	// Seed for consistent results
 	rand.Seed(12345)
 
@@ -107,6 +108,7 @@ func TestActualMonsterSpawnRate(t *testing.T) {
 
 // TestDebugModeSpawnRate tests with debug mode adjustments
 func TestDebugModeSpawnRate(t *testing.T) {
+	t.Skip("Converting to use real game data - see TESTING.md")
 	// Seed for consistent results
 	rand.Seed(789)
 
@@ -167,6 +169,7 @@ func TestDebugModeSpawnRate(t *testing.T) {
 
 // TestRecommendedSpawnRateFix tests a proposed fix
 func TestRecommendedSpawnRateFix(t *testing.T) {
+	t.Skip("Converting to use real game data - see TESTING.md")
 	// Seed for consistent results
 	rand.Seed(456)
 

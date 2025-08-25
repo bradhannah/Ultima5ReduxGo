@@ -13,7 +13,7 @@ func TestGameScene_SmallMapOpenSecondary_Door_Success(t *testing.T) {
 	gs := createTestGameScene(t)
 
 	// Set up a regular door to the north
-	direction := references.North
+	direction := references.Up
 	targetPos := direction.GetNewPositionInDirection(&gs.gameState.MapState.PlayerLocation.Position)
 	layeredMap := gs.gameState.GetLayeredMapByCurrentLocation()
 	layeredMap.SetTileByLayer(map_state.MapLayer, targetPos, indexes.RegularDoor)
@@ -41,7 +41,7 @@ func TestGameScene_SmallMapOpenSecondary_Door_Locked(t *testing.T) {
 	gs := createTestGameScene(t)
 
 	// Set up a locked door
-	direction := references.North
+	direction := references.Up
 	targetPos := direction.GetNewPositionInDirection(&gs.gameState.MapState.PlayerLocation.Position)
 	layeredMap := gs.gameState.GetLayeredMapByCurrentLocation()
 	layeredMap.SetTileByLayer(map_state.MapLayer, targetPos, indexes.LockedDoor)
@@ -67,7 +67,7 @@ func TestGameScene_SmallMapOpenSecondary_Door_MagicallyLocked(t *testing.T) {
 	gs := createTestGameScene(t)
 
 	// Set up a magically locked door
-	direction := references.North
+	direction := references.Up
 	targetPos := direction.GetNewPositionInDirection(&gs.gameState.MapState.PlayerLocation.Position)
 	layeredMap := gs.gameState.GetLayeredMapByCurrentLocation()
 	layeredMap.SetTileByLayer(map_state.MapLayer, targetPos, indexes.MagicLockDoor)
@@ -97,7 +97,7 @@ func TestGameScene_SmallMapOpenSecondary_Chest_LordBritishTreasure(t *testing.T)
 	gs.gameState.MapState.PlayerLocation.Floor = references.Basement
 
 	// Set up a chest to the north
-	direction := references.North
+	direction := references.Up
 	targetPos := direction.GetNewPositionInDirection(&gs.gameState.MapState.PlayerLocation.Position)
 	layeredMap := gs.gameState.GetLayeredMapByCurrentLocation()
 	layeredMap.SetTileByLayer(map_state.MapLayer, targetPos, indexes.Chest)
@@ -135,7 +135,7 @@ func TestGameScene_SmallMapOpenSecondary_NotADoor_NormalChest(t *testing.T) {
 	gs.gameState.MapState.PlayerLocation.Location = references.Yew
 	gs.gameState.MapState.PlayerLocation.Floor = references.Ground
 
-	direction := references.North
+	direction := references.Up
 	targetPos := direction.GetNewPositionInDirection(&gs.gameState.MapState.PlayerLocation.Position)
 	layeredMap := gs.gameState.GetLayeredMapByCurrentLocation()
 	layeredMap.SetTileByLayer(map_state.MapLayer, targetPos, indexes.Chest)
@@ -176,7 +176,7 @@ func TestGameScene_OpenCommand_DirectionalFlow_SmallMap(t *testing.T) {
 	gs.currentMapType = references.SmallMapType
 
 	// Set up a door
-	direction := references.North
+	direction := references.Up
 	targetPos := direction.GetNewPositionInDirection(&gs.gameState.MapState.PlayerLocation.Position)
 	layeredMap := gs.gameState.GetLayeredMapByCurrentLocation()
 	layeredMap.SetTileByLayer(map_state.MapLayer, targetPos, indexes.RegularDoor)
@@ -211,7 +211,7 @@ func TestGameScene_TimedDoorClosure_Integration(t *testing.T) {
 	gs := createTestGameScene(t)
 
 	// Open a door
-	direction := references.North
+	direction := references.Up
 	targetPos := direction.GetNewPositionInDirection(&gs.gameState.MapState.PlayerLocation.Position)
 	layeredMap := gs.gameState.GetLayeredMapByCurrentLocation()
 	layeredMap.SetTileByLayer(map_state.MapLayer, targetPos, indexes.RegularDoor)

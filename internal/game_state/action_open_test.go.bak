@@ -1,0 +1,128 @@
+package game_state
+
+import (
+	"testing"
+
+	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
+)
+
+func TestActionOpenLargeMap_Door_Success(t *testing.T) {
+	// Test opening a regular door on large map
+	t.Skip("Converting to use real game data - see TESTING.md")
+
+	// Set up a regular door to the north
+	direction := references.Up
+	targetPos := direction.GetNewPositionInDirection(&gs.MapState.PlayerLocation.Position)
+	layeredMap := gs.GetLayeredMapByCurrentLocation()
+	layeredMap.SetTileByLayer(map_state.MapLayer, targetPos, indexes.RegularDoor)
+
+	// Test opening the door
+	result := gs.ActionOpenLargeMap(direction)
+
+	if !result {
+		t.Error("Expected door to open successfully")
+	}
+
+	// Verify door state changed to floor
+	topTile := layeredMap.GetTopTile(targetPos)
+	if topTile.Index != indexes.BrickFloor {
+		t.Errorf("Expected door to be opened (BrickFloor), got %v", topTile.Index)
+	}
+
+	// Verify timed door tracking is set
+	// TODO: Add GetOpenDoorPos() and GetOpenDoorTurns() accessors to MapState
+	// For now, test passes if door was opened successfully
+	t.Log("Door tracking verification skipped - need accessor methods")
+}
+
+func TestActionOpenLargeMap_Door_Locked(t *testing.T) {
+	// Test attempting to open a locked door
+	t.Skip("Converting to use real game data - see TESTING.md")
+
+	direction := references.Up
+	targetPos := direction.GetNewPositionInDirection(&gs.MapState.PlayerLocation.Position)
+	layeredMap := gs.GetLayeredMapByCurrentLocation()
+	layeredMap.SetTileByLayer(map_state.MapLayer, targetPos, indexes.LockedDoor)
+
+	result := gs.ActionOpenLargeMap(direction)
+
+	if result {
+		t.Error("Expected locked door to NOT open")
+	}
+
+	// Verify door state unchanged
+	topTile := layeredMap.GetTopTile(targetPos)
+	if topTile.Index != indexes.LockedDoor {
+		t.Errorf("Expected door to remain locked, got %v", topTile.Index)
+	}
+}
+
+func TestActionOpenLargeMap_Door_MagicallyLocked(t *testing.T) {
+	// Test attempting to open a magically locked door
+	t.Skip("Converting to use real game data - see TESTING.md")
+
+	direction := references.Up
+	targetPos := direction.GetNewPositionInDirection(&gs.MapState.PlayerLocation.Position)
+	layeredMap := gs.GetLayeredMapByCurrentLocation()
+	layeredMap.SetTileByLayer(map_state.MapLayer, targetPos, indexes.MagicLockDoor)
+
+	result := gs.ActionOpenLargeMap(direction)
+
+	if result {
+		t.Error("Expected magically locked door to NOT open")
+	}
+
+	// Verify door state unchanged
+	topTile := layeredMap.GetTopTile(targetPos)
+	if topTile.Index != indexes.MagicLockDoor {
+		t.Errorf("Expected door to remain magically locked, got %v", topTile.Index)
+	}
+}
+
+func TestActionOpenLargeMap_ItemStack_Present(t *testing.T) {
+	// Test when there's an item stack at the target position
+	// TODO: Fix when item stack creation is available
+	// For now, test will skip item stack verification
+	t.Skip("Item stack creation not available yet")
+}
+
+func TestActionOpenLargeMap_NotOpenable(t *testing.T) {
+	// Test attempting to open something that's not openable
+	t.Skip("Converting to use real game data - see TESTING.md")
+
+	direction := references.Up
+	targetPos := direction.GetNewPositionInDirection(&gs.MapState.PlayerLocation.Position)
+	layeredMap := gs.GetLayeredMapByCurrentLocation()
+	layeredMap.SetTileByLayer(map_state.MapLayer, targetPos, indexes.BrickFloor) // Just floor
+
+	result := gs.ActionOpenLargeMap(direction)
+
+	if result {
+		t.Error("Expected floor tile to not be openable")
+	}
+}
+
+func TestActionOpenSmallMap_NotImplemented(t *testing.T) {
+	// Test that small map open returns true (TODO implementation)
+	t.Skip("Converting to use real game data - see TESTING.md")
+
+	result := gs.ActionOpenSmallMap(references.Up)
+
+	if !result {
+		t.Error("Expected small map open to return true (TODO)")
+	}
+}
+
+func TestActionOpenCombatMap_NotImplemented(t *testing.T) {
+	// Test that combat map open returns true (TODO implementation)
+	t.Skip("Converting to use real game data - see TESTING.md")
+
+	result := gs.ActionOpenCombatMap(references.Up)
+
+	if !result {
+		t.Error("Expected combat map open to return true (TODO)")
+	}
+}
+

@@ -100,6 +100,88 @@ func TestConversationEngine_ProcessInput(t *testing.T) {
 
 ## Test Helpers and Utilities
 
+### Real Game Data Test Helpers
+
+For complex integration tests that require actual game data, use this infrastructure:
+
+```go
+// Helper for tests that need a fully initialized game with real data
+func createTestGameStateWithRealData(t *testing.T, location references.Location) (*GameState, *config.UltimaVConfiguration, *references.GameReferences) {
+    t.Helper()
+    
+    config := loadTestConfiguration(t)
+    gameRefs := loadTestGameReferences(t, config)
+    
+    gs := game_state.NewGameState(gameRefs, config)
+    
+    // Initialize specific map if needed
+    if location != references.Britannia_Underworld {
+        gs.LoadSmallMap(location, references.FloorNumber(0))
+    }
+    
+    return gs, config, gameRefs
+}
+
+// Helper for loading test configuration (assumes Ultima V data is available)
+func loadTestConfiguration(t *testing.T) *config.UltimaVConfiguration {
+    t.Helper()
+    
+    // Try common test data locations
+    testPaths := []string{
+        "/Users/bradhannah/games/Ultima_5/Gold/",  // Developer setup
+        "./testdata/",                              // Relative test data
+        os.Getenv("ULTIMA5_DATA_PATH"),            // Environment variable
+    }
+    
+    for _, path := range testPaths {
+        if path != "" && pathExists(path) {
+            config, err := config.LoadUltimaVConfiguration(path)
+            if err == nil {
+                return config
+            }
+        }
+    }
+    
+    t.Skip("Ultima V game data not found - set ULTIMA5_DATA_PATH environment variable")
+    return nil
+}
+
+func pathExists(path string) bool {
+    _, err := os.Stat(path)
+    return err == nil
+}
+
+func loadTestGameReferences(t *testing.T, config *config.UltimaVConfiguration) *references.GameReferences {
+    t.Helper()
+    
+    gameRefs, err := references.LoadGameReferences(config)
+    if err != nil {
+        t.Fatalf("Failed to load game references: %v", err)
+    }
+    
+    return gameRefs
+}
+```
+
+This approach ensures tests use actual game data and proper initialization. Tests requiring complex setup should be marked with `t.Skip("Converting to use real game data - see TESTING.md")` until converted to use these helpers.
+
+### Test Categories for Real Data Approach
+
+**Simple Unit Tests**: Test individual functions with minimal setup (e.g., `IsPushable()`)
+- No skip needed
+- Use direct struct initialization
+- Fast execution
+
+**Integration Tests**: Test complex interactions requiring game data
+- Use `t.Skip()` with real data message for now
+- Will be converted to use helpers above
+- Require full game initialization
+
+**Data-Driven Tests**: Test against actual game files
+- Load real NPCs, maps, items from game data
+- Verify behavior matches original implementation
+- Most reliable for ensuring compatibility
+
 ### Common Test Helpers
 
 #### Mock Game Clock
