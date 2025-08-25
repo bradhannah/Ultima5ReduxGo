@@ -190,10 +190,11 @@ Beyond identification, tiles have various boolean properties:
 When adding new tile identification methods:
 
 1. Check if sprite indexes exist in `sprites.go`
-2. Add the Is* method to `tile.go` following the pattern
-3. Handle all related sprite variations (facing directions, animation frames)
-4. Update this documentation
-5. Replace any existing string-based identification with the new method
+2. **If missing tile constants are found, simply add them and proceed implementing your feature**
+3. Add the Is* method to `tile.go` following the pattern
+4. Handle all related sprite variations (facing directions, animation frames)
+5. Update this documentation
+6. Replace any existing string-based identification with the new method
 
 ## Integration with Game Systems
 

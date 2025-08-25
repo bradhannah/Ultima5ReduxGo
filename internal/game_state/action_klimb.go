@@ -80,11 +80,11 @@ func (g *GameState) ActionKlimbLargeMap(direction references.Direction) bool {
 		return false
 	}
 
-	// TODO: Check for impassable peaks when that tile type is defined
-	// if targetTile.Index == indexes.Peaks {
-	//     g.SystemCallbacks.Message.AddRowStr("Impassable!")
-	//     return false
-	// }
+	// Check for impassable peaks
+	if targetTile.Index == indexes.Peaks {
+		g.SystemCallbacks.Message.AddRowStr("Impassable!")
+		return false
+	}
 
 	// Perform dexterity checks for all living party members
 	// Each member risks 1-5 damage on failure

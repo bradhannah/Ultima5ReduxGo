@@ -13,8 +13,30 @@ const (
 	WaterShallow                         = 3
 	Swamp                                = 4
 	Grass                                = 5
+	Brush                                = 6
 	Desert                               = 7
+	ThickBrush                           = 8
+	Forest                               = 9
+	Tropical                             = 10
+	Hills                                = 11
 	SmallMountains                       = 12
+	Peaks                                = 13
+	LeftHills                            = 14
+	RightHills                           = 15
+	Hut                                  = 16
+	Codex                                = 17
+	Keep                                 = 18
+	Village                              = 19
+	Towne                                = 20
+	Castle                               = 21
+	Cave                                 = 22
+	Mine                                 = 23
+	Dungeon                              = 24
+	Shrine                               = 25
+	RuinedShrine                         = 26
+	Lighthouse                           = 27
+	Oasis                                = 28
+	RedBridge                            = 29
 	LeftDesert2                          = 30
 	RightDesert2                         = 31
 	PathUpDown                           = 32
@@ -26,7 +48,10 @@ const (
 	PathAllWays                          = 38
 	PlowedField                          = 44
 	WheatInField                         = 45
+	FruitTree                            = 46
 	Cactus                               = 47
+	Beach                                = 48
+	SmallRocks                           = 76
 	WoodenPlankHorizFloor                = 64
 	BrickFloor                           = 68
 	HexMetalGridFloor                    = 69
@@ -35,10 +60,24 @@ const (
 	LargeRockWall                        = 77
 	StoneBrickWallSecret                 = 78
 	StoneBrickWall                       = 79
+	Rocks                                = 80
+	SecretDoor                           = 81
+	Wall                                 = 82
+	ArrowSlit                            = 83
+	Window                               = 84
+	Anvil                                = 88
 	Telescope                            = 89
+	WindowShelf                          = 90
 	Plant                                = 91
+	LeftShelf                            = 92
+	RightShelf                           = 93
+	LeftGuardian                         = 94
+	RightGuardian                        = 95
 	TrollBridgeHoriz                     = 106
 	TrollBridgeVert                      = 107
+	Bridge                               = 108
+	Sign                                 = 160
+	SmallSign                            = 164
 	Grate                                = 134
 	Manacles                             = 133
 	Stocks                               = 132
@@ -94,6 +133,11 @@ const (
 	LadderDown                           = 201
 	FenceHoriz                           = 202
 	FenceVert                            = 203
+	Waterfall                            = 212
+	Fountain                             = 216
+	Moongate                             = 220
+	SealedDungeon                        = 223
+	Flag                                 = 236
 	Clock1                               = 250
 	Clock2                               = 251
 	StarPattern                          = 256
@@ -159,7 +203,8 @@ const (
 
 //goland:noinspection GoSnakeCaseUsage,GoUnusedConst
 const (
-	Wizard_KeyIndex                  SpriteIndex = 320
+	Mage_KeyIndex                    SpriteIndex = 320
+	Wizard_KeyIndex                              = 320
 	Bard_KeyIndex                                = 324
 	Fighter_KeyIndex                             = 328
 	Avatar_KeyIndex                              = 332
@@ -178,8 +223,18 @@ const (
 	Beggar_KeyIndex        = 365
 	Guard_KeyIndex         = 368
 	Rat_KeyIndex           = 400
+	Spider_KeyIndex        = 408
+	Ghost_KeyIndex         = 412
+	Slime_KeyIndex         = 416
+	Reaper_KeyIndex        = 420
+	Gazer_KeyIndex         = 424
+	Orc_KeyIndex           = 432
+	Skeleton_KeyIndex      = 436
+	Snake_KeyIndex         = 440
+	Dragon_KeyIndex        = 456
 	Troll_KeyIndex         = 484
 	Whirlpool_KeyIndex     = 492
+	Sandtrap_KeyIndex      = 496
 	Manacles_Prisoner      = 356
 )
 
