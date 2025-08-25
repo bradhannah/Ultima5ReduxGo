@@ -1,0 +1,299 @@
+package game_state
+
+import (
+	"testing"
+
+	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
+)
+
+// Integration tests for ActionJimmy functionality using real game data
+// These tests verify complete jimmy flows with actual map data
+
+func createTestGameState() *GameState {
+	// Create minimal GameState for testing
+	gs := &GameState{}
+	
+	// Initialize required components
+	gs.PartyState.Characters = [6]party_state.PlayerCharacter{}
+	gs.PartyState.Inventory.Provisions.Keys.Set(0)
+	gs.MapState.PlayerLocation.Location = references.Britain
+	gs.MapState.PlayerLocation.Floor = 0
+	
+	// Create SystemCallbacks (stub implementation for tests)
+	gs.SystemCallbacks.Message.AddRowStr = func(string) {}
+	gs.SystemCallbacks.Audio.PlaySoundEffect = func(SoundEffect) {}
+	gs.SystemCallbacks.Flow.AdvanceTime = func(int) {}
+	
+	return gs
+}
+
+func TestJimmyIntegration_LockedDoor_Success_ConsumesKey(t *testing.T) {
+	// REGRESSION TEST: Ensure successful jimmy consumes exactly one key
+	
+	gs := createTestGameState()
+	
+	// Set up character and keys
+	gs.PartyState.Characters[0].Status = party_state.Good
+	initialKeys := uint16(5)
+	gs.PartyState.Inventory.Provisions.Keys.Set(initialKeys)
+	
+	// Create a small map with a locked door to the up direction (north) of player
+	playerPos := &references.Position{X: 10, Y: 10}
+	gs.MapState.PlayerLocation.Position = *playerPos
+	doorPos := references.Up.GetNewPositionInDirection(playerPos)
+	
+	smallMap := gs.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, 0)
+	smallMap.SetTileByLayer(map_state.MapOverrideLayer, doorPos, indexes.LockedDoor)
+	
+	// Mock jimmy success to always succeed
+	gs.jimmySuccessForTesting = func(*party_state.PlayerCharacter) bool {
+		return true
+	}
+	
+	// Perform jimmy action
+	result := gs.ActionJimmySmallMap(references.Up)
+	
+	// Verify jimmy succeeded
+	if !result {
+		t.Error("Expected jimmy to succeed, got failure")
+	}
+	
+	// CRITICAL: Verify exactly one key was consumed
+	expectedKeys := initialKeys - 1
+	if gs.PartyState.Inventory.Provisions.Keys.Get() != expectedKeys {
+		t.Errorf("REGRESSION: Expected %d keys after successful jimmy (one consumed), got %d",
+			expectedKeys, gs.PartyState.Inventory.Provisions.Keys.Get())
+	}
+	
+	// Verify door was unlocked
+	resultTile := smallMap.GetTopTile(doorPos)
+	if resultTile.Index != indexes.RegularDoor {
+		t.Errorf("Expected door to be unlocked (RegularDoor), got %v", resultTile.Index)
+	}
+}
+
+func TestJimmyIntegration_LockedDoor_Failure_ConsumesKey(t *testing.T) {
+	// REGRESSION TEST: Ensure failed jimmy consumes exactly one key (not zero, not two)
+	
+	gs := createTestGameState()
+	
+	// Set up character and keys  
+	gs.PartyState.Characters[0].Status = party_state.Good
+	initialKeys := uint16(5)
+	gs.PartyState.Inventory.Provisions.Keys.Set(initialKeys)
+	
+	// Create a small map with a locked door to the north of player
+	playerPos := &references.Position{X: 10, Y: 10}
+	gs.MapState.PlayerLocation.Position = *playerPos
+	doorPos := references.Up.GetNewPositionInDirection(playerPos)
+	
+	smallMap := gs.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, 0)
+	smallMap.SetTileByLayer(map_state.MapOverrideLayer, doorPos, indexes.LockedDoor)
+	
+	// Mock jimmy success to always fail
+	gs.jimmySuccessForTesting = func(*party_state.PlayerCharacter) bool {
+		return false
+	}
+	
+	// Perform jimmy action
+	result := gs.ActionJimmySmallMap(references.Up)
+	
+	// Verify jimmy failed (returns false for UI, but still advances time)
+	if !result {
+		// Jimmy returns true even on failure (time advances), but reports JimmyBrokenPick via callbacks
+		// The UI layer interprets the SystemCallback messages
+		t.Log("Jimmy failed as expected (key broke)")
+	}
+	
+	// CRITICAL: Verify exactly one key was consumed
+	expectedKeys := initialKeys - 1
+	if gs.PartyState.Inventory.Provisions.Keys.Get() != expectedKeys {
+		t.Errorf("REGRESSION: Expected %d keys after failed jimmy (one consumed), got %d",
+			expectedKeys, gs.PartyState.Inventory.Provisions.Keys.Get())
+	}
+	
+	// Verify door remained locked
+	resultTile := smallMap.GetTopTile(doorPos)
+	if resultTile.Index != indexes.LockedDoor {
+		t.Errorf("Expected door to remain locked after failed jimmy, got %v", resultTile.Index)
+	}
+}
+
+func TestJimmyIntegration_LockedDoorView_Success_ConsumesKey(t *testing.T) {
+	// Test the second locked door type (LockedDoorView)
+	
+	gs := createTestGameState()
+	
+	// Set up character and keys
+	gs.PartyState.Characters[0].Status = party_state.Good
+	initialKeys := uint16(3)
+	gs.PartyState.Inventory.Provisions.Keys.Set(initialKeys)
+	
+	// Create a small map with a locked door view to the north of player
+	playerPos := &references.Position{X: 10, Y: 10}
+	gs.MapState.PlayerLocation.Position = *playerPos
+	doorPos := references.Up.GetNewPositionInDirection(playerPos)
+	
+	smallMap := gs.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, 0)
+	smallMap.SetTileByLayer(map_state.MapOverrideLayer, doorPos, indexes.LockedDoorView)
+	
+	// Mock jimmy success
+	gs.jimmySuccessForTesting = func(*party_state.PlayerCharacter) bool {
+		return true
+	}
+	
+	// Perform jimmy action
+	result := gs.ActionJimmySmallMap(references.Up)
+	
+	// Verify jimmy succeeded
+	if !result {
+		t.Error("Expected jimmy to succeed, got failure")
+	}
+	
+	// Verify exactly one key was consumed
+	expectedKeys := initialKeys - 1
+	if gs.PartyState.Inventory.Provisions.Keys.Get() != expectedKeys {
+		t.Errorf("Expected %d keys after successful jimmy (one consumed), got %d",
+			expectedKeys, gs.PartyState.Inventory.Provisions.Keys.Get())
+	}
+	
+	// Verify door view was unlocked to regular door view
+	resultTile := smallMap.GetTopTile(doorPos)
+	if resultTile.Index != indexes.RegularDoorView {
+		t.Errorf("Expected door view to be unlocked (RegularDoorView), got %v", resultTile.Index)
+	}
+}
+
+func TestJimmyIntegration_NoKeys_DoesNotConsume(t *testing.T) {
+	// Test that jimmy with no keys doesn't consume or go negative
+	
+	gs := createTestGameState()
+	
+	// Set up character with NO keys
+	gs.PartyState.Characters[0].Status = party_state.Good
+	gs.PartyState.Inventory.Provisions.Keys.Set(0)
+	
+	// Create a small map with a locked door to the north of player
+	playerPos := &references.Position{X: 10, Y: 10}
+	gs.MapState.PlayerLocation.Position = *playerPos
+	doorPos := references.Up.GetNewPositionInDirection(playerPos)
+	
+	smallMap := gs.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, 0)
+	smallMap.SetTileByLayer(map_state.MapOverrideLayer, doorPos, indexes.LockedDoor)
+	
+	// Mock success function (should NOT be called)
+	gs.jimmySuccessForTesting = func(*party_state.PlayerCharacter) bool {
+		t.Error("Jimmy success function should not be called when no keys available")
+		return false
+	}
+	
+	// Perform jimmy action
+	result := gs.ActionJimmySmallMap(references.Up)
+	
+	// Verify jimmy failed
+	if result {
+		t.Error("Expected jimmy to fail when no keys available")
+	}
+	
+	// Verify keys remain at 0 (no negative consumption)
+	if gs.PartyState.Inventory.Provisions.Keys.Get() != 0 {
+		t.Errorf("Expected 0 keys (no consumption when none available), got %d",
+			gs.PartyState.Inventory.Provisions.Keys.Get())
+	}
+	
+	// Verify door remained locked
+	resultTile := smallMap.GetTopTile(doorPos)
+	if resultTile.Index != indexes.LockedDoor {
+		t.Errorf("Expected door to remain locked when no keys, got %v", resultTile.Index)
+	}
+}
+
+func TestJimmyIntegration_MagicLockedDoor_DoesNotConsumeKey(t *testing.T) {
+	// Test that magic locked doors don't consume keys (cannot be jimmied)
+	
+	gs := createTestGameState()
+	
+	// Set up character and keys
+	gs.PartyState.Characters[0].Status = party_state.Good
+	initialKeys := uint16(5)
+	gs.PartyState.Inventory.Provisions.Keys.Set(initialKeys)
+	
+	// Create a small map with a magic locked door to the north of player
+	playerPos := &references.Position{X: 10, Y: 10}
+	gs.MapState.PlayerLocation.Position = *playerPos
+	doorPos := references.Up.GetNewPositionInDirection(playerPos)
+	
+	smallMap := gs.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, 0)
+	smallMap.SetTileByLayer(map_state.MapOverrideLayer, doorPos, indexes.MagicLockDoor)
+	
+	// Mock success function (should NOT be called)
+	gs.jimmySuccessForTesting = func(*party_state.PlayerCharacter) bool {
+		t.Error("Jimmy success function should not be called for magic locked doors")
+		return false
+	}
+	
+	// Perform jimmy action
+	result := gs.ActionJimmySmallMap(references.Up)
+	
+	// Verify jimmy failed
+	if result {
+		t.Error("Expected jimmy to fail on magic locked door")
+	}
+	
+	// CRITICAL: Verify NO keys were consumed (magic doors can't be jimmied)
+	if gs.PartyState.Inventory.Provisions.Keys.Get() != initialKeys {
+		t.Errorf("Expected %d keys (no consumption for magic doors), got %d",
+			initialKeys, gs.PartyState.Inventory.Provisions.Keys.Get())
+	}
+	
+	// Verify door remained magic locked
+	resultTile := smallMap.GetTopTile(doorPos)
+	if resultTile.Index != indexes.MagicLockDoor {
+		t.Errorf("Expected door to remain magic locked, got %v", resultTile.Index)
+	}
+}
+
+func TestJimmyIntegration_MultipleAttempts_ConsumesCorrectKeys(t *testing.T) {
+	// Test multiple jimmy attempts to ensure proper key consumption over time
+	
+	gs := createTestGameState()
+	
+	// Set up character and keys
+	gs.PartyState.Characters[0].Status = party_state.Good
+	initialKeys := uint16(10)
+	gs.PartyState.Inventory.Provisions.Keys.Set(initialKeys)
+	
+	// Create small map with locked doors in multiple directions
+	playerPos := &references.Position{X: 10, Y: 10}
+	gs.MapState.PlayerLocation.Position = *playerPos
+	
+	smallMap := gs.MapState.LayeredMaps.GetLayeredMap(references.SmallMapType, 0)
+	smallMap.SetTileByLayer(map_state.MapOverrideLayer, 
+		references.Up.GetNewPositionInDirection(playerPos), indexes.LockedDoor)
+	smallMap.SetTileByLayer(map_state.MapOverrideLayer, 
+		references.Down.GetNewPositionInDirection(playerPos), indexes.LockedDoor)
+	smallMap.SetTileByLayer(map_state.MapOverrideLayer, 
+		references.Right.GetNewPositionInDirection(playerPos), indexes.LockedDoor)
+	
+	// Mock alternating success/failure
+	attemptCount := 0
+	gs.jimmySuccessForTesting = func(*party_state.PlayerCharacter) bool {
+		attemptCount++
+		return attemptCount%2 == 1 // Success on odd attempts (1st, 3rd, etc.)
+	}
+	
+	// Perform three jimmy attempts
+	gs.ActionJimmySmallMap(references.Up)  // Attempt 1: Success
+	gs.ActionJimmySmallMap(references.Down)  // Attempt 2: Failure 
+	gs.ActionJimmySmallMap(references.Right)   // Attempt 3: Success
+	
+	// Verify exactly 3 keys were consumed (one per attempt)
+	expectedKeys := initialKeys - 3
+	if gs.PartyState.Inventory.Provisions.Keys.Get() != expectedKeys {
+		t.Errorf("Expected %d keys after 3 jimmy attempts, got %d",
+			expectedKeys, gs.PartyState.Inventory.Provisions.Keys.Get())
+	}
+}

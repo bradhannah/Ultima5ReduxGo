@@ -135,6 +135,9 @@ func (g *GameState) jimmySurface(direction references.Direction, player *party_s
 			return JimmyDoorNoLockPicks
 		}
 
+		// Always consume a key when attempting jimmy (matches original Ultima V behavior)
+		g.PartyState.Inventory.Provisions.Keys.DecrementByOne()
+
 		// Try to jimmy the door
 		if g.isJimmySuccessful(player) {
 			var unlockedDoor indexes.SpriteIndex
@@ -146,8 +149,7 @@ func (g *GameState) jimmySurface(direction references.Direction, player *party_s
 			g.MapState.LayeredMaps.GetLayeredMap(mapType, g.MapState.PlayerLocation.Floor).SetTileByLayer(map_state.MapOverrideLayer, newPosition, unlockedDoor)
 			return JimmyUnlocked
 		} else {
-			// Key broke during failed jimmy attempt
-			g.PartyState.Inventory.Provisions.Keys.DecrementByOne()
+			// Key broke during failed jimmy attempt (key already consumed above)
 			return JimmyBrokenPick
 		}
 	case indexes.MagicLockDoor, indexes.MagicLockDoorWithView:
@@ -160,14 +162,16 @@ func (g *GameState) jimmySurface(direction references.Direction, player *party_s
 			return JimmyDoorNoLockPicks
 		}
 
+		// Always consume a key when attempting jimmy (matches original Ultima V behavior)
+		g.PartyState.Inventory.Provisions.Keys.DecrementByOne()
+
 		// Try to jimmy the chest
 		if g.isJimmySuccessful(player) {
 			// TODO: Open chest and handle contents/traps
 			// For now, just report success - full chest opening logic needed
 			return JimmyUnlocked
 		} else {
-			// Key broke during failed jimmy attempt
-			g.PartyState.Inventory.Provisions.Keys.DecrementByOne()
+			// Key broke during failed jimmy attempt (key already consumed above)
 			return JimmyBrokenPick
 		}
 	default:
