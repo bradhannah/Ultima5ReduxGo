@@ -2,9 +2,6 @@ package ai
 
 import (
 	"log"
-	"time"
-
-	"golang.org/x/exp/rand"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/astar"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
@@ -14,6 +11,12 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 )
 
+// RNGProvider provides deterministic random number generation for AI
+type RNGProvider interface {
+	OneInXOdds(odds int) bool
+	ShuffleDirections(directions []references.Position)
+}
+
 type NPCAIControllerSmallMap struct {
 	tileRefs *references.Tiles
 	slr      *references.SmallLocationReference
@@ -22,6 +25,9 @@ type NPCAIControllerSmallMap struct {
 	mapUnits map_units.MapUnits
 
 	positionOccupiedChance *map_units.XyOccupiedMap
+
+	// Dependency injection for deterministic RNG
+	rngProvider RNGProvider
 }
 
 func NewNPCAIControllerSmallMap(
@@ -29,12 +35,14 @@ func NewNPCAIControllerSmallMap(
 	tileRefs *references.Tiles,
 	mapState *map_state.MapState,
 	dateTime *datetime.UltimaDate,
+	rngProvider RNGProvider,
 ) *NPCAIControllerSmallMap {
 	npcsAiCont := &NPCAIControllerSmallMap{}
 	npcsAiCont.dateTime = dateTime
 	npcsAiCont.tileRefs = tileRefs
 	npcsAiCont.slr = slr
 	npcsAiCont.mapState = mapState
+	npcsAiCont.rngProvider = rngProvider
 	//npcsAiCont.guardsWantToArrest = false
 
 	xy := make(map_units.XyOccupiedMap)
@@ -275,7 +283,7 @@ func (n *NPCAIControllerSmallMap) performAiMovementOnAssignedPosition(friendly *
 		// set location of Avatar as way point, but only set the first movement from the list if within N of Avatar
 		return true
 	case references.HorseWander:
-		if helpers.OneInXOdds(4) {
+		if n.rngProvider.OneInXOdds(4) {
 			//			friendly.SetDirectionBasedOnNewPos(newPos)
 			return n.wanderOneTileWithinN(friendly, refBehaviour.Position, nWanderDistance)
 		}
@@ -321,7 +329,7 @@ func (n *NPCAIControllerSmallMap) performAiMovementNotOnAssignedPosition(friendl
 		references.MerchantBuyingSellingWander,
 		references.Wander,
 		references.HorseWander:
-		if helpers.OneInXOdds(2) {
+		if n.rngProvider.OneInXOdds(2) {
 			if !refBehaviour.Position.IsWithinN(friendly.PosPtr(), nWanderDistance) {
 				if n.createFreshPathToScheduledLocation(friendly) {
 					newPos := friendly.MapUnitDetails().DequeueNextPosition()
@@ -362,7 +370,7 @@ func (n *NPCAIControllerSmallMap) performAiMovementNotOnAssignedPosition(friendl
 			}
 			return false
 		}
-		if helpers.OneInXOdds(3) {
+		if n.rngProvider.OneInXOdds(3) {
 			return n.wanderOneTileWithinN(friendly, refBehaviour.Position, nWanderDistance)
 		}
 		return false
@@ -418,7 +426,7 @@ func (n *NPCAIControllerSmallMap) createFreshPathToScheduledLocation(friendly *m
 }
 
 func (n *NPCAIControllerSmallMap) wanderOneTileWithinN(friendly *map_units.NPCFriendly, anchorPos references.Position, withinN int) bool {
-	rand.Seed(uint64(time.Now().UnixNano())) // Seed the random number generator
+	// Use deterministic RNG instead of time.Now() seeding
 
 	// Define possible moves: up, down, left, right
 	directions := []references.Position{
@@ -428,10 +436,8 @@ func (n *NPCAIControllerSmallMap) wanderOneTileWithinN(friendly *map_units.NPCFr
 		{X: 1, Y: 0},  // Right
 	}
 
-	// Shuffle the directions for randomness
-	rand.Shuffle(len(directions), func(i, j int) {
-		directions[i], directions[j] = directions[j], directions[i]
-	})
+	// Shuffle the directions using deterministic RNG
+	n.rngProvider.ShuffleDirections(directions)
 
 	muDetails := friendly.MapUnitDetails()
 

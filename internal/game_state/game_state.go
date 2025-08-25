@@ -6,6 +6,8 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 
+	"golang.org/x/exp/rand"
+
 	"github.com/bradhannah/Ultima5ReduxGo/internal/ai"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
@@ -52,6 +54,9 @@ type GameState struct {
 	// Dependency injection callbacks for external systems
 	SystemCallbacks *SystemCallbacks
 
+	// Centralized deterministic random number generator
+	rng *rand.Rand
+
 	// Testing overrides
 	jimmySuccessForTesting func(*party_state.PlayerCharacter) bool
 }
@@ -63,6 +68,9 @@ func initBlankGameState(gameConfig *config.UltimaVConfiguration,
 	gameState := &GameState{} //nolint:exhaustruct
 
 	gameState.GameReferences = gameReferences
+
+	// Initialize deterministic RNG with fixed seed for consistent behavior
+	gameState.rng = rand.New(rand.NewSource(1))
 	gameState.MapState = *map_state.NewMapState(
 		map_state.NewMapStateInput{
 			GameDimensions:            gameState,
@@ -240,4 +248,53 @@ func (g *GameState) GetCurrentLargeMapNPCAIController() *ai.NPCAIControllerLarge
 		npcAiCon = g.LargeMapNPCAIController[references.UNDERWORLD]
 	}
 	return npcAiCon
+}
+
+// Centralized RNG methods - replace helpers package usage for deterministic behavior
+
+// SetRandomSeed sets the seed for the centralized RNG (for testing and deterministic behavior)
+func (g *GameState) SetRandomSeed(seed uint64) {
+	g.rng.Seed(seed)
+}
+
+// OneInXOdds returns true with probability 1/odds (deterministic replacement for helpers.OneInXOdds)
+func (g *GameState) OneInXOdds(odds int) bool {
+	if odds <= 0 {
+		return false
+	}
+	return g.rng.Intn(odds) == 0
+}
+
+// HappenedByPercentLikely returns true with given likelihood percentage (deterministic replacement for helpers.HappenedByPercentLikely)
+func (g *GameState) HappenedByPercentLikely(likelihoodToSucceedPercent int) bool {
+	if likelihoodToSucceedPercent >= 100 {
+		return true
+	}
+	if likelihoodToSucceedPercent <= 0 {
+		return false
+	}
+	return g.RandomIntInRange(0, 100) < likelihoodToSucceedPercent
+}
+
+// RandomIntInRange returns a random integer in [min, max] inclusive (deterministic replacement for helpers.RandomIntInRange)
+func (g *GameState) RandomIntInRange(min, max int) int {
+	if min > max {
+		log.Fatalf("RandomIntInRange: min (%d) cannot be greater than max (%d)", min, max)
+	}
+	return g.rng.Intn(max-min+1) + min
+}
+
+// PickOneOfInt returns one of two int values randomly (deterministic replacement for helpers.PickOneOf)
+func (g *GameState) PickOneOfInt(a, b int) int {
+	if g.OneInXOdds(2) {
+		return a
+	}
+	return b
+}
+
+// ShuffleDirections shuffles a slice of positions for deterministic randomness in AI movement
+func (g *GameState) ShuffleDirections(directions []references.Position) {
+	g.rng.Shuffle(len(directions), func(i, j int) {
+		directions[i], directions[j] = directions[j], directions[i]
+	})
 }
