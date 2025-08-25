@@ -119,6 +119,9 @@ func (g *GameScene) handleMovement(directionStr string, key ebiten.Key) {
 		}
 
 		g.output.AddRowStrWithTrim(fmt.Sprintf("X: %d, Y: %d", newPosition.X, newPosition.Y))
+
+		// Process environmental hazards after successful movement
+		g.gameState.ProcessEnvironmentalHazardsAfterMovement()
 	} else {
 		g.addRowStr("Blocked!")
 	}

@@ -48,7 +48,8 @@ func (g *GameState) smallMapProcessNPCs() {
 // processDamageOnAdvanceTimeNonCombat
 // Processes damage from lava, poison, etc. on the non-combat map
 func (g *GameState) processDamageOnAdvanceTimeNonCombat() {
-	// TODO: implement this
+	// Process environmental hazards for standing-on-tile effects during turn advancement
+	g.ProcessEnvironmentalHazardsOnTurnAdvancement()
 }
 
 // moveNonCombatMapMapUnitsToNextMove

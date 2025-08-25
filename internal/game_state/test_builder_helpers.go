@@ -25,6 +25,7 @@ type IntegrationTestBuilder struct {
 	playerY         int
 	systemCallbacks *MockSystemCallbacks
 	skipIfNoData    bool
+	randomSeed      *uint64 // Optional random seed for deterministic testing
 }
 
 // Global cache for game references to avoid reloading in each test
@@ -78,6 +79,12 @@ func (b *IntegrationTestBuilder) FailIfNoGameData() *IntegrationTestBuilder {
 	return b
 }
 
+// WithRandomSeed sets a deterministic random seed for testing
+func (b *IntegrationTestBuilder) WithRandomSeed(seed uint64) *IntegrationTestBuilder {
+	b.randomSeed = &seed
+	return b
+}
+
 // Build creates the fully configured GameState for testing
 func (b *IntegrationTestBuilder) Build() (*GameState, *MockSystemCallbacks) {
 	b.t.Helper()
@@ -111,6 +118,11 @@ func (b *IntegrationTestBuilder) Build() (*GameState, *MockSystemCallbacks) {
 	// Set up mock system callbacks if requested
 	if b.systemCallbacks != nil {
 		b.gameState.SystemCallbacks = b.systemCallbacks.ToSystemCallbacks()
+	}
+
+	// Set deterministic random seed if specified
+	if b.randomSeed != nil {
+		b.gameState.SetRandomSeed(*b.randomSeed)
 	}
 
 	// Update to specified map type and load NPCs/objects

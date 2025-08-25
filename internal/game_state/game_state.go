@@ -10,6 +10,7 @@ import (
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/ai"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/environment"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/party_state"
@@ -56,6 +57,9 @@ type GameState struct {
 
 	// Centralized deterministic random number generator
 	rng *rand.Rand
+
+	// Environmental hazards system
+	environmentalHazards *environment.EnvironmentalHazards
 
 	// Testing overrides
 	jimmySuccessForTesting func(*party_state.PlayerCharacter) bool

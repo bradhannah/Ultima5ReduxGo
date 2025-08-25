@@ -281,6 +281,21 @@ func (t *Tile) IsWalkingPassable() bool {
 			strings.Contains(strings.ToLower(t.Name), "entrace")) { // Handle typo in data
 			return true
 		}
+
+		// Allow specific building tiles that represent location entrances
+		if t.Is(indexes.Village) || t.Is(indexes.Keep) || t.Is(indexes.Hut) ||
+			t.Is(indexes.Castle) || t.Is(indexes.Cave) || t.Is(indexes.Mine) ||
+			t.Is(indexes.Shrine) || t.Is(indexes.RuinedShrine) || t.Is(indexes.Lighthouse) ||
+			// Additional building entrances by index (from TileData.csv)
+			t.Index == 20 || // SmallCastle
+			t.Index == 21 || // LargeCastle
+			t.Index == 24 || // DoomEntrance
+			t.Index == 57 || // EvilCastleEntrance
+			t.Index == 62 || // CastleBritianEntrace
+			t.Index == 71 { // Dock
+			return true
+		}
+
 		return false
 	}
 

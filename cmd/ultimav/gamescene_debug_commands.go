@@ -31,6 +31,7 @@ func (d *DebugConsole) createDebugFunctions(gameScene *GameScene) *grammar.TextC
 	textCommands = append(textCommands, *d.createRemoveAllMonsters())
 	textCommands = append(textCommands, *d.talkWithNpc())
 	textCommands = append(textCommands, *d.createDebugBoard())
+	textCommands = append(textCommands, *d.createEnvHazardTest())
 	return &textCommands
 }
 
@@ -424,5 +425,28 @@ func (d *DebugConsole) createDebugBoard() *grammar.TextCommand {
 			// Force board the vehicle by bypassing all normal checks
 			result := d.gameScene.debugBoardVehicle(vehicleType)
 			d.dumpQuickState(fmt.Sprintf("Debug board %s: %t", vehicleTypeStr, result))
+		})
+}
+
+func (d *DebugConsole) createEnvHazardTest() *grammar.TextCommand {
+	return grammar.NewTextCommand([]grammar.Match{
+		grammar.MatchString{
+			Str:           "envhazard",
+			Description:   "Test environmental hazards on current tile",
+			CaseSensitive: false,
+		},
+	},
+		func(s string, command *grammar.TextCommand) {
+			// Manually trigger environmental hazards check on current position
+			d.gameScene.gameState.ProcessEnvironmentalHazardsAfterMovement()
+
+			// Get current tile info for debug output
+			currentTile := d.gameScene.gameState.MapState.GetLayeredMapByCurrentLocation().GetTopTile(&d.gameScene.gameState.MapState.PlayerLocation.Position)
+			tileName := "unknown"
+			if currentTile != nil {
+				tileName = currentTile.Name
+			}
+
+			d.dumpQuickState(fmt.Sprintf("Environmental hazards tested on tile: %s", tileName))
 		})
 }
