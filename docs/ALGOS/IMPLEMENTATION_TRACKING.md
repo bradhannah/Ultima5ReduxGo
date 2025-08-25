@@ -19,11 +19,11 @@ Columns:
 | Partial     | Look (tile descriptions)       | [Commands.md → Look — Towns/Overworld](./Commands.md#look-—-townsoverworld)         | `internal/references/look.go` (LookReferences)         | Similar    | Loads `LOOK` data and returns descriptions; special tiles (telescope, wells) and trace‑to‑sign logic not visible here. |
 | Partial     | Windows/Arrow Slit LoS         | [Fixtures.md → Rare Fixtures & Edge Cases](./Fixtures.md#rare-fixtures--edge-cases) | `internal/map_state/layered_map.go` (comments 170–171) | Similar    | Notes treating windows as opaque unless adjacent; ensure missiles pass and LoS aligns with our table.                  |
 | Partial     | Light sources & vision         | [Environment.md → Light Sources & Vision](./Environment.md#light-sources--vision)   | `internal/map_state/lighting.go`                       | Similar    | Torch radius and static light sources exist; tie‑ins to commands/spells not wired.                                     |
-| Partial     | Torch duration                 | [Environment.md → Torch Duration](./Environment.md#torch-duration)                  | `internal/map_state/lighting.go`                       | Similar    | `LightTorch()`/`AdvanceTurn()` exist; no UI command to ignite/consume torches wired.                                   |
-| Yes         | Vehicle system                 | [VEHICLES.md](../VEHICLES.md)                                                       | `internal/references/vehicle.go`, `internal/map_units/npc_vehicle.go` | Similar    | Complete vehicle system with boarding/exit mechanics, vehicle types, and integration documented. Tests: vehicle action tests. |
+| Yes         | Torch duration                 | [Environment.md → Torch Duration](./Environment.md#torch-duration)                  | `internal/map_state/lighting.go` + `action_ignite.go`  | Similar    | ✅ Complete: `LightTorch()`/`AdvanceTurn()` + UI command implemented. Torch consumption and lighting integration working. |
+| Yes         | Vehicle system                 | [VEHICLES.md](../VEHICLES.md)                                                       | `internal/references/vehicles.go`, `internal/map_units/npc_vehicle.go` | Similar    | ✅ Complete vehicle system with boarding/exit mechanics, vehicle types, and integration. ❌ Magic carpet use/placement flows not fully implemented. Tests: vehicle action tests. |
 | Yes         | Sprite constants (indexes)     | —                                                                                   | `internal/sprites/indexes/sprites.go`                 | Identical  | Complete set of sprite constants including Peaks, terrain types, structures from OLD references. Used by action implementations. |
 | Yes         | Tile identification system     | [TILES.md](../TILES.md)                                                            | `internal/references/tile.go`                         | Similar    | Function-based tile checking with Is() pattern for single tiles, specific methods for logical groupings. Data fields converted to functions (IsWalkingPassable, IsOpenable, etc.). |
-| No          | RNG & INT saves                | [RNG.md](./RNG.md)                                                                  | —                                                      | —          | No central RNG helpers nor `saveint` equivalents in Go tree.                                                           |
+| Partial     | RNG & INT saves                | [RNG.md](./RNG.md)                                                                  | `internal/game_state/game_state.go` (OneInXOdds, etc.) | Similar    | ✅ Centralized deterministic RNG implemented (OneInXOdds, RandomIntInRange, etc.). ❌ INT save system not implemented. |
 | No          | Field expiration (fieldkill)   | [Combat_Effects.md → Field Expiration](./Combat_Effects.md#field-expiration)        | —                                                      | —          | Missing.                                                                                                               |
 | No          | Aiming UI (plraim)             | [Combat_Effects.md → Aiming UI](./Combat_Effects.md#aiming-ui)                      | —                                                      | —          | Missing.                                                                                                               |
 | No          | Diagnose post‑hit messaging    | [Combat_Effects.md → Diagnose](./Combat_Effects.md#diagnose)                        | —                                                      | —          | Missing.                                                                                                               |
@@ -173,7 +173,7 @@ Columns:
 
 | Implemented | Feature                     | Pseudocode Ref                                      | Code Ref                                            | Similarity | Notes                                |
 |-------------|-----------------------------|-----------------------------------------------------|-----------------------------------------------------|------------|--------------------------------------|
-| Yes         | Spell metadata (names/info) | [Spells.md](./Spells.md)                            | `internal/references/data/InventoryDetails.csv`     | N/A        | Data present; no runtime casting.    |
+| Partial     | Spell metadata (names/info) | [Spells.md](./Spells.md)                            | `internal/references/data/InventoryDetails.csv`     | Similar    | ✅ Complete spell data with descriptions; ❌ No runtime casting, spell effects, or use flows implemented. |
 | Partial     | Inventory quantities        | [SAVED_GAM_STRUCTURE.md](../SAVED_GAM_STRUCTURE.md) | `internal/party_state/inventory.go` (Scrolls, etc.) | N/A        | Data structures exist; no use flows. |
 
 ### Potions & Scrolls
@@ -376,7 +376,48 @@ Legend: Implemented = No (unless otherwise noted), Similarity = —, Code Ref co
 
 ---
 
-This tracker is a starting point. As features land in Go code, update the "Implemented" and "Similarity" columns, and add concrete function references.
+## Implementation Status Summary (Updated August 2025)
+
+### ✅ COMPLETED SYSTEMS
+- **Command System Core**: Most player commands have UI handlers and GameState actions (Jimmy, Open, Push, Get, Board, Exit, Klimb, Look, Ignite, etc.)
+- **Vehicle System**: Complete boarding/exit mechanics, vehicle types, movement integration
+- **Tile System**: Function-based identification with Is() patterns, passability logic, comprehensive tile checking
+- **NPC Schedules**: Data model and basic schedule-driven behavior implemented
+- **Conversation System**: Robust LinearConversationEngine with TLK integration and ActionCallbacks
+- **RNG System**: Centralized deterministic random number generation for reproducible behavior
+- **Lighting System**: Torch ignition, duration tracking, and lighting radius implemented
+- **AI Pathfinding**: A* pathfinding integrated with NPC movement and terrain analysis
+- **Monster Generation**: Environment-based spawning with tile probability systems
+
+### ⚠️ PARTIALLY IMPLEMENTED SYSTEMS
+- **Combat System**: ❌ Core combat mechanics not implemented (all combat commands are stubs)
+- **Magic System**: ✅ Spell data present ❌ No casting, effects, or use flows
+- **Item Usage**: ✅ Inventory tracking ❌ Special item effects (Crown, Sceptre, etc.)
+- **Town Systems**: ❌ No guard pursuit, jail, shop pricing, or economic mechanics
+- **Environment**: ❌ No wind system, moongates, hazards, or weather effects
+
+### ❌ MISSING MAJOR SYSTEMS
+- **Save/Load System**: Complete SAVED.GAM structure documented but not implemented in runtime
+- **Dungeon Systems**: Most dungeon-specific mechanics missing (secret doors, ahead-targeting, etc.)
+- **Spell Casting**: Zero spell effects or casting mechanics implemented
+- **Combat**: No combat mechanics, damage, hit/miss, or combat AI
+- **Special Items**: No Crown/Sceptre/Amulet use effects implemented
+- **Economic System**: No shop interactions, pricing, or merchant mechanics
+
+**Development Priority**: Focus on combat system implementation as it's the largest missing core gameplay mechanic.
+
+### 🔄 RECENT REMEDIATION WORK (August 2025)
+**Critical Logic Errors Fixed**: 
+- ✅ Jimmy key consumption logic (was backwards - consuming keys on failure only)
+- ✅ Non-deterministic animation system (removed time.Now() usage) 
+- ✅ Non-deterministic RNG in AI (centralized deterministic RNG system)
+- ✅ Object collision detection (walking through castles/NPCs now properly blocked)
+
+**Note**: This implementation status audit was performed as part of Task #6 remediation work to ensure accurate development planning.
+
+---
+
+This tracker is actively maintained. Status indicators use: ✅ (working), ❌ (not implemented), ⚠️ (needs attention).
 
 ## Sleep & Rest (Overview)
 
