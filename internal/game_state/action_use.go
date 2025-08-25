@@ -13,24 +13,39 @@ func (g *GameState) ActionUseSmallMap(direction references.Direction) bool {
 	// - Sceptre usage (clear chests/dispel fields)
 	// - Spyglass usage (astronomy at night)
 	// - Item validation and context gating
-	return true
+
+	// Special items not implemented yet
+	g.SystemCallbacks.Message.AddRowStr("Nothing happens.")
+	g.SystemCallbacks.Flow.AdvanceTime(1)
+	return false
 }
 
 func (g *GameState) ActionUseLargeMap(direction references.Direction) bool {
 	// TODO: Implement large map Use command - see Commands.md Use section
 	// Large map variant of use command
-	return true
+
+	// Special items not implemented yet
+	g.SystemCallbacks.Message.AddRowStr("Nothing happens.")
+	g.SystemCallbacks.Flow.AdvanceTime(1)
+	return false
 }
 
 func (g *GameState) ActionUseCombatMap(direction references.Direction) bool {
 	// TODO: Implement combat map Use command - see Commands.md Use section
 	// Combat map variant of use command - items/spells during combat
-	return true
+
+	// Not allowed during combat
+	g.SystemCallbacks.Message.AddRowStr("Not now!")
+	return false
 }
 
 func (g *GameState) ActionUseDungeonMap(direction references.Direction) bool {
 	// TODO: Implement dungeon map Use command - see Commands.md Use section
 	// Dungeon map variant of use command
 	// Should handle special dungeon items and fixtures
-	return true
+
+	// Special items not implemented yet
+	g.SystemCallbacks.Message.AddRowStr("Nothing happens.")
+	g.SystemCallbacks.Flow.AdvanceTime(1)
+	return false
 }

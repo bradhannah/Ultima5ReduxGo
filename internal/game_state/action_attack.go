@@ -13,23 +13,35 @@ func (g *GameState) ActionAttackSmallMap(direction references.Direction) bool {
 	// - Guard activation on aggression
 	// - Stocks/manacles murder handling
 	// - Combat initiation for valid targets
-	return true
+
+	// Combat system not implemented yet
+	g.SystemCallbacks.Message.AddRowStr("Not here!")
+	return false
 }
 
 func (g *GameState) ActionAttackLargeMap(direction references.Direction) bool {
 	// TODO: Implement large map Attack command - see Commands.md Attack section
 	// Large map variant of attack command
-	return true
+
+	// Overworld attacks not supported
+	g.SystemCallbacks.Message.AddRowStr("Not here!")
+	return false
 }
 
 func (g *GameState) ActionAttackCombatMap(direction references.Direction) bool {
 	// TODO: Implement combat map Attack command - see Commands.md Attack section
 	// Combat map variant of attack command - primary combat action
-	return true
+
+	// Combat system not implemented yet
+	g.SystemCallbacks.Message.AddRowStr("Not yet!")
+	return false
 }
 
 func (g *GameState) ActionAttackDungeonMap(direction references.Direction) bool {
 	// TODO: Implement dungeon map Attack command - see Commands.md Attack section
 	// Dungeon map variant of attack command
-	return true
+
+	// Combat system not implemented yet
+	g.SystemCallbacks.Message.AddRowStr("Not here!")
+	return false
 }

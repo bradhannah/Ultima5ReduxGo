@@ -12,19 +12,30 @@ func (g *GameState) ActionSearchSmallMap(direction references.Direction) bool {
 	// - Reagent cache searching
 	// - Hidden objects (daily skull keys, castle keys, glass swords)
 	// - Integration with Secrets.md for location-specific spawns
-	return true
+
+	// For now, just return not found since search systems aren't implemented
+	g.SystemCallbacks.Message.AddRowStr("Not found!")
+	g.SystemCallbacks.Flow.AdvanceTime(1)
+	return false
 }
 
 func (g *GameState) ActionSearchLargeMap(direction references.Direction) bool {
 	// TODO: Implement large map Search command - see Commands.md Search section
 	// Large map variant of search command
-	return true
+
+	// For now, just return not found since search systems aren't implemented
+	g.SystemCallbacks.Message.AddRowStr("Not found!")
+	g.SystemCallbacks.Flow.AdvanceTime(1)
+	return false
 }
 
 func (g *GameState) ActionSearchCombatMap(direction references.Direction) bool {
 	// TODO: Implement combat map Search command - see Commands.md Search section
 	// Combat map variant of search command
-	return true
+
+	// Not allowed during combat
+	g.SystemCallbacks.Message.AddRowStr("Not now!")
+	return false
 }
 
 func (g *GameState) ActionSearchDungeonMap(direction references.Direction) bool {
@@ -35,5 +46,15 @@ func (g *GameState) ActionSearchDungeonMap(direction references.Direction) bool 
 	// - Secret door discovery mechanics
 	// - Hidden passage detection
 	// - Time cost for searching
-	return true
+
+	// Check if there's light (torch or magic light)
+	if !g.MapState.Lighting.HasTorchLit() {
+		g.SystemCallbacks.Message.AddRowStr("It's too dark!")
+		return false
+	}
+
+	// For now, just return not found since search systems aren't implemented
+	g.SystemCallbacks.Message.AddRowStr("Not found!")
+	g.SystemCallbacks.Flow.AdvanceTime(1)
+	return false
 }

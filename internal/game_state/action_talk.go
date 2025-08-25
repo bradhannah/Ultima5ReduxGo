@@ -33,8 +33,9 @@ func (g *GameState) ActionTalkSmallMap(direction references.Direction) bool {
 }
 
 func (g *GameState) ActionTalkLargeMap(direction references.Direction) bool {
-	// TODO: Implement large map Talk command - see Commands.md Talk section
-	// Large map variant of talk command
+	// Per Commands.md: Talk on overworld always returns "Funny, no response!"
+	g.SystemCallbacks.Message.AddRowStr("Talk-Funny, no response!")
+	g.SystemCallbacks.Flow.AdvanceTime(1)
 	return true
 }
 
