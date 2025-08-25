@@ -28,7 +28,24 @@ Goals:
 
 ## Imports and Dependencies
 
-- Standard library first, external second, internal last; keep groups separated by a blank line.
+- **Import grouping**: Standard library first, external packages second, internal packages third; keep groups separated by blank lines:
+  ```go
+  import (
+      "fmt"           // Standard library
+      "strings"       // Standard library
+
+      "github.com/hajimehoshi/ebiten/v2"                    // External packages
+      "github.com/spf13/viper"
+
+      "github.com/bradhannah/Ultima5ReduxGo/internal/config"    // Internal packages
+      "github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
+  )
+  ```
+- **Import aliases**: Avoid unnecessary aliases like `references2`, `ucolor`. Only use aliases when:
+  - Genuine naming conflicts exist (e.g., `etext` for ebiten text vs internal text package)
+  - Package names are extremely long and used frequently
+  - Standard library conflicts require disambiguation
+- **Import formatting**: Use `goimports` to maintain consistent formatting and grouping
 - Do not import the adapter layer (e.g., rendering/input libraries) into core logic. Inject via interfaces if needed.
 - Keep external dependencies minimal and pinned via go.mod/go.sum.
 

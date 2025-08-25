@@ -461,6 +461,29 @@ This tracker is actively maintained. Status indicators use: ✅ (working), ❌ (
   - Updated all callers: gamescene.go, debug_console.go, linear_talk_dialog.go, widgets
 - **Result**: ✅ Centralized screen management ready for multi-resolution support, ✅ clean package boundaries, ✅ backward compatibility maintained, ✅ all tests pass
 
+### 📋 TASK #9: Clean Up Import Organization (PLAN READY)
+
+**Problem**: Import organization violations affecting code maintainability and consistency
+- 16 files use unnecessary `references2` alias (violates Go conventions)
+- 8 files use unnecessary `ucolor` alias  
+- Multiple files missing proper standard/external/internal grouping
+- Import formatting inconsistencies across codebase
+
+**Solution Plan**:
+- **Phase 1**: Remove `references2` aliases (16 files) - highest priority, biggest impact
+- **Phase 2**: Remove `ucolor` aliases (8 files) - medium priority  
+- **Phase 3**: Fix import grouping with `goimports` - automated cleanup
+- **Phase 4**: Evaluate remaining aliases, update linting rules
+
+**Updated Coding Conventions**: Added comprehensive import organization standards to CODING_CONVENTIONS.md:
+- Clear grouping requirements (standard/external/internal with blank line separation)
+- Alias usage guidelines (avoid unless genuine naming conflicts)
+- `goimports` formatting requirements
+
+**Estimated Effort**: 2-3 weeks systematic cleanup
+**Risk**: Low (cosmetic changes only, no functionality impact)
+**Ready for Implementation**: ✅ Detailed plan with specific files and examples
+
 ### 🔄 REMAINING HIGH-PRIORITY TASKS
 
 **Task #5: AI Determinism Issues** (PENDING)
@@ -468,14 +491,9 @@ This tracker is actively maintained. Status indicators use: ✅ (working), ❌ (
 - Review random seed usage in monster spawning and movement
 - Ensure reproducible behavior for testing and debugging
 
-**Task #9: Performance Bottlenecks** (PENDING)  
-- Profile game loop performance and identify hot paths
-- Optimize frequent operations (tile checking, pathfinding, rendering)
-- Address any memory allocation patterns causing GC pressure
-
 **Task #10: Missing Integration Tests** (PENDING)
 - Add integration tests for command workflows (push→door closure, jimmy→key consumption)
 - Test NPC schedule transitions and pathfinding integration  
 - Verify conversation system works end-to-end with game state changes
 
-**Progress**: 3 of 10 high-priority remediation tasks completed. Focus areas: AI determinism, performance optimization, integration testing.
+**Progress**: 3 of 10 high-priority remediation tasks completed, 1 planned and ready for implementation. Focus areas: import organization, AI determinism, integration testing.
