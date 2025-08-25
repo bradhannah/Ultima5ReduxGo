@@ -18,7 +18,7 @@ import (
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/text"
-	ucolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	ultimacolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 )
@@ -109,9 +109,9 @@ func NewTextInput(
 
 	textInput.inputColors = TextInputColors{
 		DefaultColor:          color.White,
-		NoMatchesColor:        ucolor.Red,
-		OneMatchColor:         ucolor.Green,
-		MoreThanOneMatchColor: ucolor.Yellow,
+		NoMatchesColor:        ultimacolor.Red,
+		OneMatchColor:         ultimacolor.Green,
+		MoreThanOneMatchColor: ultimacolor.Yellow,
 	}
 
 	return textInput

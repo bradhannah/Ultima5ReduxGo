@@ -1,7 +1,7 @@
 package map_state
 
 import (
-	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 )
 
@@ -14,11 +14,11 @@ const (
 	OpenDoorOpened
 )
 
-func (m *MapState) OpenDoor(direction references2.Direction) DoorOpenState {
+func (m *MapState) OpenDoor(direction references.Direction) DoorOpenState {
 	const defaultTurnsForDoorOpen = 2
 
 	newPosition := direction.GetNewPositionInDirection(&m.PlayerLocation.Position)
-	theMap := m.LayeredMaps.GetLayeredMap(references2.SmallMapType, m.PlayerLocation.Floor)
+	theMap := m.LayeredMaps.GetLayeredMap(references.SmallMapType, m.PlayerLocation.Floor)
 	targetTile := theMap.GetTileTopMapOnlyTile(newPosition)
 
 	switch targetTile.Index {

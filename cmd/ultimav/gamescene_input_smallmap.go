@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 
-	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
@@ -26,13 +26,13 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyEnter:
 		g.gameState.ActionEnterInput()
 	case ebiten.KeyUp:
-		g.handleMovement(references2.Up.GetDirectionCompassName(), ebiten.KeyUp)
+		g.handleMovement(references.Up.GetDirectionCompassName(), ebiten.KeyUp)
 	case ebiten.KeyDown:
-		g.handleMovement(references2.Down.GetDirectionCompassName(), ebiten.KeyDown)
+		g.handleMovement(references.Down.GetDirectionCompassName(), ebiten.KeyDown)
 	case ebiten.KeyLeft:
-		g.handleMovement(references2.Left.GetDirectionCompassName(), ebiten.KeyLeft)
+		g.handleMovement(references.Left.GetDirectionCompassName(), ebiten.KeyLeft)
 	case ebiten.KeyRight:
-		g.handleMovement(references2.Right.GetDirectionCompassName(), ebiten.KeyRight)
+		g.handleMovement(references.Right.GetDirectionCompassName(), ebiten.KeyRight)
 	case ebiten.KeyB:
 		g.gameState.ActionBoard()
 	case ebiten.KeyK:
@@ -218,7 +218,7 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 
 func (g *GameScene) smallMapKlimb() {
 	// Try direct klimb first (ladders/grates at current position)
-	if g.gameState.ActionKlimbSmallMap(references2.Direction(0)) {
+	if g.gameState.ActionKlimbSmallMap(references.Direction(0)) {
 		return
 	}
 
@@ -227,12 +227,12 @@ func (g *GameScene) smallMapKlimb() {
 	g.secondaryKeyState = KlimbDirectionInput
 }
 
-func (g *GameScene) smallMapKlimbSecondary(direction references2.Direction) {
+func (g *GameScene) smallMapKlimbSecondary(direction references.Direction) {
 	// Delegate all logic to GameState - it handles all feedback via SystemCallbacks
 	g.gameState.ActionKlimbSmallMap(direction)
 }
 
-func (g *GameScene) smallMapPushSecondary(direction references2.Direction) {
+func (g *GameScene) smallMapPushSecondary(direction references.Direction) {
 	pushThingPos := direction.GetNewPositionInDirection(&g.gameState.MapState.PlayerLocation.Position)
 	pushThingTile := g.gameState.GetLayeredMapByCurrentLocation().GetTopTile(pushThingPos)
 
@@ -246,27 +246,27 @@ func (g *GameScene) smallMapPushSecondary(direction references2.Direction) {
 	g.gameState.ActionPushSmallMap(direction)
 }
 
-func (g *GameScene) smallMapOpenSecondary(direction references2.Direction) {
+func (g *GameScene) smallMapOpenSecondary(direction references.Direction) {
 	// Delegate all logic to GameState - it handles all feedback via SystemCallbacks
 	g.gameState.ActionOpenSmallMap(direction)
 }
 
-func (g *GameScene) smallMapJimmySecondary(direction references2.Direction) {
+func (g *GameScene) smallMapJimmySecondary(direction references.Direction) {
 	// Delegate all logic to GameState - it handles all feedback via SystemCallbacks
 	g.gameState.ActionJimmySmallMap(direction)
 }
 
-func (g *GameScene) smallMapGetSecondary(direction references2.Direction) {
+func (g *GameScene) smallMapGetSecondary(direction references.Direction) {
 	// Delegate all logic to GameState - it handles all feedback via SystemCallbacks
 	g.gameState.ActionGetSmallMap(direction)
 }
 
-func (g *GameScene) smallMapTalkSecondary(direction references2.Direction) bool {
+func (g *GameScene) smallMapTalkSecondary(direction references.Direction) bool {
 	// Delegate all logic to GameState - it handles all feedback via SystemCallbacks
 	return g.gameState.ActionTalkSmallMap(direction)
 }
 
-func (g *GameScene) smallMapSearchSecondary(direction references2.Direction) {
+func (g *GameScene) smallMapSearchSecondary(direction references.Direction) {
 	// TODO: Implement Search secondary action
 	success := g.gameState.ActionSearchSmallMap(direction)
 	if !success {
@@ -274,7 +274,7 @@ func (g *GameScene) smallMapSearchSecondary(direction references2.Direction) {
 	}
 }
 
-func (g *GameScene) smallMapAttackSecondary(direction references2.Direction) {
+func (g *GameScene) smallMapAttackSecondary(direction references.Direction) {
 	// TODO: Implement Attack secondary action
 	success := g.gameState.ActionAttackSmallMap(direction)
 	if !success {
@@ -282,7 +282,7 @@ func (g *GameScene) smallMapAttackSecondary(direction references2.Direction) {
 	}
 }
 
-func (g *GameScene) smallMapUseSecondary(direction references2.Direction) {
+func (g *GameScene) smallMapUseSecondary(direction references.Direction) {
 	// TODO: Implement Use secondary action
 	success := g.gameState.ActionUseSmallMap(direction)
 	if !success {
@@ -290,12 +290,12 @@ func (g *GameScene) smallMapUseSecondary(direction references2.Direction) {
 	}
 }
 
-func (g *GameScene) smallMapYellSecondary(direction references2.Direction) {
+func (g *GameScene) smallMapYellSecondary(direction references.Direction) {
 	// Delegate all logic to GameState - it handles all feedback via SystemCallbacks
 	g.gameState.ActionYellSmallMap(direction)
 }
 
-func (g *GameScene) smallMapFireSecondary(direction references2.Direction) {
+func (g *GameScene) smallMapFireSecondary(direction references.Direction) {
 	// Delegate all logic to GameState - it handles all feedback via SystemCallbacks
 	g.gameState.ActionFireSmallMap(direction)
 }

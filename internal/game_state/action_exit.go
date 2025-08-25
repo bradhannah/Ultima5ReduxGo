@@ -2,11 +2,11 @@ package game_state
 
 import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
-	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 func (g *GameState) DebugQuickExitSmallMap() {
-	g.MapState.PlayerLocation.Location = references2.Britannia_Underworld
+	g.MapState.PlayerLocation.Location = references.Britannia_Underworld
 	g.MapState.PlayerLocation.Floor = g.LastLargeMapFloor
 	g.MapState.PlayerLocation.Position = g.LastLargeMapPosition
 	g.CurrentNPCAIController = g.GetCurrentLargeMapNPCAIController()
@@ -18,20 +18,20 @@ func (g *GameState) DebugQuickExitSmallMap() {
 func (g *GameState) ExitVehicle() *map_units.NPCFriendly {
 	exittingVehicleType := g.PartyVehicle.GetVehicleDetails().VehicleType
 
-	if exittingVehicleType == references2.NoPartyVehicle {
+	if exittingVehicleType == references.NoPartyVehicle {
 		return nil
 	}
 
-	if exittingVehicleType == references2.SkiffVehicle {
+	if exittingVehicleType == references.SkiffVehicle {
 		mapVehicle := g.CurrentNPCAIController.GetNpcs().GetVehicleAtPositionOrNil(g.MapState.PlayerLocation.Position)
 		if mapVehicle != nil {
-			if mapVehicle.GetVehicleDetails().VehicleType == references2.FrigateVehicle {
+			if mapVehicle.GetVehicleDetails().VehicleType == references.FrigateVehicle {
 				return nil
 			}
 		}
 	}
 
-	if exittingVehicleType == references2.FrigateVehicle {
+	if exittingVehicleType == references.FrigateVehicle {
 		frigate := g.PartyVehicle
 
 		// if we have no skiffs, then we are on the boat without a paddle
@@ -46,7 +46,7 @@ func (g *GameState) ExitVehicle() *map_units.NPCFriendly {
 		frigate.GetVehicleDetails().DecrementSkiffQuantity()
 		g.CurrentNPCAIController.GetNpcs().AddVehicle(frigate)
 
-		skiff := map_units.NewNPCFriendlyVehiceNewRef(references2.SkiffVehicle,
+		skiff := map_units.NewNPCFriendlyVehiceNewRef(references.SkiffVehicle,
 			g.MapState.PlayerLocation.Position,
 			g.MapState.PlayerLocation.Floor)
 		skiff.SetPos(g.MapState.PlayerLocation.Position)
@@ -75,7 +75,7 @@ func (g *GameState) ExitVehicle() *map_units.NPCFriendly {
 func (g *GameState) ActionExit() bool {
 	// Check if currently on/in a vehicle
 	currentVehicleType := g.PartyVehicle.GetVehicleDetails().VehicleType
-	if currentVehicleType == references2.NoPartyVehicle {
+	if currentVehicleType == references.NoPartyVehicle {
 		g.SystemCallbacks.Message.AddRowStr("X-it what?")
 		return false
 	}
@@ -90,13 +90,13 @@ func (g *GameState) ActionExit() bool {
 
 	// Print appropriate exit message based on vehicle type
 	switch exittedVehicle.GetVehicleDetails().VehicleType {
-	case references2.HorseVehicle:
+	case references.HorseVehicle:
 		g.SystemCallbacks.Message.AddRowStr("Xit- horse!")
-	case references2.CarpetVehicle:
+	case references.CarpetVehicle:
 		g.SystemCallbacks.Message.AddRowStr("Xit- carpet!")
-	case references2.SkiffVehicle:
+	case references.SkiffVehicle:
 		g.SystemCallbacks.Message.AddRowStr("Xit- skiff!")
-	case references2.FrigateVehicle:
+	case references.FrigateVehicle:
 		g.SystemCallbacks.Message.AddRowStr("Xit- frigate!")
 	default:
 		g.SystemCallbacks.Message.AddRowStr("X-it what?")

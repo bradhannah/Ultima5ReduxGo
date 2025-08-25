@@ -8,7 +8,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/config"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/text"
-	ucolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 )
@@ -90,7 +90,7 @@ func NewInputBox(question string, textCommand *grammar.TextCommand, keyboard *in
 	inputBox.border = NewBorder(
 		inputBox.borderBoxPercents,
 		inputBoxBorderWidthScaling,
-		ucolor.Black,
+		color.Black,
 	)
 
 	return inputBox

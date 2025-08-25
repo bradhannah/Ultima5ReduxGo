@@ -1,7 +1,7 @@
 package game_state
 
 import (
-	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 const (
@@ -15,7 +15,7 @@ func (g *GameState) ActionEnterLargeMap() bool {
 	newLocation := g.GameReferences.LocationReferences.WorldLocations.GetLocationByPosition(
 		g.MapState.PlayerLocation.Position)
 
-	if newLocation != references2.EmptyLocation {
+	if newLocation != references.EmptyLocation {
 		slr := g.GameReferences.LocationReferences.GetLocationReference(newLocation)
 		if g.ActionEnter(slr) {
 			g.SystemCallbacks.Message.AddRowStr(slr.EnteringText)
@@ -29,14 +29,14 @@ func (g *GameState) ActionEnterLargeMap() bool {
 }
 
 // ActionEnter handles entering buildings/locations - non-directional action
-func (g *GameState) ActionEnter(slr *references2.SmallLocationReference) bool {
-	if slr.Location == references2.EmptyLocation {
+func (g *GameState) ActionEnter(slr *references.SmallLocationReference) bool {
+	if slr.Location == references.EmptyLocation {
 		return false
 	}
 
 	g.LastLargeMapPosition = g.MapState.PlayerLocation.Position
 	g.LastLargeMapFloor = g.MapState.PlayerLocation.Floor
-	g.MapState.PlayerLocation.Position = references2.Position{
+	g.MapState.PlayerLocation.Position = references.Position{
 		X: smallMapStartingPositionX,
 		Y: smallMapStartingPositionY,
 	}
@@ -48,6 +48,6 @@ func (g *GameState) ActionEnter(slr *references2.SmallLocationReference) bool {
 
 // EnterBuilding - deprecated, use ActionEnter instead
 // TODO: Remove once all callers are updated
-func (g *GameState) EnterBuilding(slr *references2.SmallLocationReference) {
+func (g *GameState) EnterBuilding(slr *references.SmallLocationReference) {
 	g.ActionEnter(slr)
 }

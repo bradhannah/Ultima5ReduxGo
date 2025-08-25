@@ -3,34 +3,34 @@ package map_units
 import (
 	"log"
 
-	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 )
 
 type VehicleDetails struct {
-	VehicleType   references2.VehicleType
+	VehicleType   references.VehicleType
 	skiffQuantity int
 
-	currentDirection  references2.Direction
-	previousDirection references2.Direction
+	currentDirection  references.Direction
+	previousDirection references.Direction
 }
 
-func NewVehicleDetails(vehicleType references2.VehicleType) VehicleDetails {
+func NewVehicleDetails(vehicleType references.VehicleType) VehicleDetails {
 	return VehicleDetails{
 		VehicleType:       vehicleType,
 		skiffQuantity:     0,
-		currentDirection:  references2.Right,
-		previousDirection: references2.Right,
+		currentDirection:  references.Right,
+		previousDirection: references.Right,
 	}
 }
 
-func (v *VehicleDetails) SetPartyVehicleDirection(direction references2.Direction) {
+func (v *VehicleDetails) SetPartyVehicleDirection(direction references.Direction) {
 	switch v.VehicleType { //nolint:exhaustive
-	case references2.HorseVehicle, references2.CarpetVehicle:
-		if direction == references2.Up || direction == references2.Down {
+	case references.HorseVehicle, references.CarpetVehicle:
+		if direction == references.Up || direction == references.Down {
 			return
 		}
-	case references2.FrigateVehicle, references2.SkiffVehicle, references2.NoPartyVehicle:
+	case references.FrigateVehicle, references.SkiffVehicle, references.NoPartyVehicle:
 	default:
 		panic("unhandled default case")
 	}
@@ -47,8 +47,8 @@ func (v *VehicleDetails) GetUnBoardedSpriteIndex() indexes.SpriteIndex {
 	return v.VehicleType.GetUnBoardedSpriteByDirection(v.currentDirection)
 }
 
-func (v *VehicleDetails) DoesMoveResultInMovement(newDirection references2.Direction) bool {
-	if v.VehicleType != references2.FrigateVehicle {
+func (v *VehicleDetails) DoesMoveResultInMovement(newDirection references.Direction) bool {
+	if v.VehicleType != references.FrigateVehicle {
 		return true
 	}
 

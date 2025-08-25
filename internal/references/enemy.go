@@ -1,7 +1,5 @@
 package references
 
-import ()
-
 type EnemyAbility int
 
 //goland:noinspection GoUnusedConst

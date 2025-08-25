@@ -2,6 +2,7 @@ package game_state
 
 import (
 	"fmt"
+
 	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
 )
 

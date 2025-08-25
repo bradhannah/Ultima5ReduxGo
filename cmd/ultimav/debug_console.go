@@ -9,7 +9,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/text"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/ui/widgets"
-	ucolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 )
 
 var _ widgets.Widget = &DebugConsole{}
@@ -56,7 +56,7 @@ func (d *DebugConsole) initializeResizeableVisualElements() {
 			EndPercentY:   1,
 		},
 		borderWidthScaling,
-		ucolor.Black)
+		color.Black)
 
 	d.font = text.NewUltimaFont(text.GetScaledNumberToResolution(d.gameScene.gameConfig.DisplayManager, debugFontPoint))
 

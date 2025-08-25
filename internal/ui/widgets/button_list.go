@@ -8,7 +8,7 @@ import (
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/text"
-	ucolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 )
@@ -164,5 +164,5 @@ func (b *ButtonListModal) initializeBorder() {
 		EndPercentY:   buttonListModalStartYPercent + (float64(len(b.buttons)) * GetButtonHeightPercent(buttonSize) * buttonSpacingPercent),
 	}
 
-	b.border = NewBorder(p, 601, ucolor.Black)
+	b.border = NewBorder(p, 601, color.Black)
 }

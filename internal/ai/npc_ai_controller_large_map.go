@@ -7,17 +7,17 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
-	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 )
 
 type NPCAIControllerLargeMap struct {
-	World           references2.World
-	tileRefs        *references2.Tiles
+	World           references.World
+	tileRefs        *references.Tiles
 	mapState        *map_state.MapState
-	debugOptions    *references2.DebugOptions
-	enemyReferences *references2.EnemyReferences
-	theOdds         *references2.TheOdds
+	debugOptions    *references.DebugOptions
+	enemyReferences *references.EnemyReferences
+	theOdds         *references.TheOdds
 	dateTime        *datetime.UltimaDate
 
 	mapUnits               map_units.MapUnits
@@ -25,12 +25,12 @@ type NPCAIControllerLargeMap struct {
 }
 
 type NewNPCAIControllerLargeMapInput struct {
-	World           references2.World
-	TileRefs        *references2.Tiles
+	World           references.World
+	TileRefs        *references.Tiles
 	MapState        *map_state.MapState
-	DebugOptions    *references2.DebugOptions
-	TheOdds         *references2.TheOdds
-	EnemyReferences *references2.EnemyReferences
+	DebugOptions    *references.DebugOptions
+	TheOdds         *references.TheOdds
+	EnemyReferences *references.EnemyReferences
 	DateTime        *datetime.UltimaDate
 }
 
@@ -133,12 +133,12 @@ func (m *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePoint(
 		// mapUnit.MapUnitDetails().AStarMap.InitializeByLayeredMapWithLimit(
 		mapUnit,
 		m.mapState.GetLayeredMapByCurrentLocation(),
-		[]references2.Position{},
+		[]references.Position{},
 		true,
 		m.mapState.PlayerLocation.Position,
 		15,
-		references2.XLargeMapTiles,
-		references2.YLargeMapTiles)
+		references.XLargeMapTiles,
+		references.YLargeMapTiles)
 
 	// make sure the correct enemies spawn on the correct tiles (water, sand, ground)
 
@@ -156,13 +156,13 @@ func (m *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePoint(
 }
 
 func (m *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePointDumb(mapUnit map_units.MapUnit) {
-	allDirections := mapUnit.PosPtr().GetFourDirectionsWrapped(references2.XLargeMapTiles, references2.YLargeMapTiles)
+	allDirections := mapUnit.PosPtr().GetFourDirectionsWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
 	// getting the current distance to the player will make sure they never move further away
-	fCurrentShortestDistance := mapUnit.PosPtr().GetWrappedDistanceBetweenWrapped(&m.mapState.PlayerLocation.Position, references2.XLargeMapTiles, references2.YLargeMapTiles)
+	fCurrentShortestDistance := mapUnit.PosPtr().GetWrappedDistanceBetweenWrapped(&m.mapState.PlayerLocation.Position, references.XLargeMapTiles, references.YLargeMapTiles)
 	bestPos := *mapUnit.PosPtr()
 	bFound := false
 	for _, newPos := range allDirections {
-		fNewDistance := newPos.GetWrappedDistanceBetweenWrapped(&m.mapState.PlayerLocation.Position, references2.XLargeMapTiles, references2.YLargeMapTiles)
+		fNewDistance := newPos.GetWrappedDistanceBetweenWrapped(&m.mapState.PlayerLocation.Position, references.XLargeMapTiles, references.YLargeMapTiles)
 
 		if fNewDistance < fCurrentShortestDistance {
 			topTile := m.mapState.GetLayeredMapByCurrentLocation().GetTopTile(&newPos)
@@ -199,7 +199,7 @@ func (m *NPCAIControllerLargeMap) generateTileBasedMonster() {
 	const nXDistanceAway = 9
 	const nTriesToGetValidEnemy = 10
 
-	var dX, dY references2.Coordinate
+	var dX, dY references.Coordinate
 
 	if !m.debugOptions.MonsterGen {
 		return
@@ -210,16 +210,16 @@ func (m *NPCAIControllerLargeMap) generateTileBasedMonster() {
 
 	for range nTriesToGetValidEnemy {
 		if helpers.OneInXOdds(2) { // do dY
-			dY = references2.Coordinate(helpers.PickOneOf(nYDistanceAway, -nYDistanceAway))
-			dX = references2.Coordinate(helpers.RandomIntInRange(-nXDistanceAway, nXDistanceAway))
+			dY = references.Coordinate(helpers.PickOneOf(nYDistanceAway, -nYDistanceAway))
+			dX = references.Coordinate(helpers.RandomIntInRange(-nXDistanceAway, nXDistanceAway))
 
 		} else { // do dX
-			dY = references2.Coordinate(helpers.RandomIntInRange(-nYDistanceAway, nYDistanceAway))
-			dX = references2.Coordinate(helpers.PickOneOf(nXDistanceAway, -nXDistanceAway))
+			dY = references.Coordinate(helpers.RandomIntInRange(-nYDistanceAway, nYDistanceAway))
+			dX = references.Coordinate(helpers.PickOneOf(nXDistanceAway, -nXDistanceAway))
 		}
 
-		pos := references2.Position{X: m.mapState.PlayerLocation.Position.X + dX, Y: m.mapState.PlayerLocation.Position.Y + dY}
-		pos = *pos.GetWrapped(references2.XLargeMapTiles, references2.YLargeMapTiles)
+		pos := references.Position{X: m.mapState.PlayerLocation.Position.X + dX, Y: m.mapState.PlayerLocation.Position.Y + dY}
+		pos = *pos.GetWrapped(references.XLargeMapTiles, references.YLargeMapTiles)
 		if pos.X < 0 || pos.Y < 0 {
 			log.Fatalf("Unexpected negative position X=%d Y=%d", pos.X, pos.Y)
 		}
@@ -292,13 +292,13 @@ func (m *NPCAIControllerLargeMap) RemoveAllEnemies() {
 }
 
 // isHeavyTerrain classifies terrain that slows movement to 1-in-3 chance
-func (m *NPCAIControllerLargeMap) isHeavyTerrain(tile *references2.Tile) bool {
+func (m *NPCAIControllerLargeMap) isHeavyTerrain(tile *references.Tile) bool {
 	// Heavy terrain: mountains only (game only has one forest type)
 	return tile.IsMountain()
 }
 
 // isDifficultTerrain classifies terrain that slows movement to 1-in-2 chance
-func (m *NPCAIControllerLargeMap) isDifficultTerrain(tile *references2.Tile) bool {
+func (m *NPCAIControllerLargeMap) isDifficultTerrain(tile *references.Tile) bool {
 	// Difficult terrain: swamps, forests (game only has one forest type)
 	return tile.IsSwamp() || tile.IsForest()
 }
@@ -332,7 +332,7 @@ const (
 )
 
 // determineEnvironmentType categorizes a tile for monster selection
-func (m *NPCAIControllerLargeMap) determineEnvironmentType(tile *references2.Tile) MonsterEnvironment {
+func (m *NPCAIControllerLargeMap) determineEnvironmentType(tile *references.Tile) MonsterEnvironment {
 	if tile.IsWater() {
 		return WaterEnvironment
 	}
@@ -345,9 +345,9 @@ func (m *NPCAIControllerLargeMap) determineEnvironmentType(tile *references2.Til
 }
 
 // pickMonsterByEnvironment selects a monster based on environment and tile compatibility using weighted selection
-func (m *NPCAIControllerLargeMap) pickMonsterByEnvironment(environment MonsterEnvironment, tile *references2.Tile) *references2.EnemyReference {
+func (m *NPCAIControllerLargeMap) pickMonsterByEnvironment(environment MonsterEnvironment, tile *references.Tile) *references.EnemyReference {
 	// Get monsters valid for this environment and tile
-	validMonsters := make([]*references2.EnemyReference, 0)
+	validMonsters := make([]*references.EnemyReference, 0)
 	weights := make([]int, 0)
 
 	for _, enemy := range *m.enemyReferences {
@@ -369,7 +369,7 @@ func (m *NPCAIControllerLargeMap) pickMonsterByEnvironment(environment MonsterEn
 }
 
 // getMonsterEnvironmentWeight returns the weight for a monster in a specific environment
-func (m *NPCAIControllerLargeMap) getMonsterEnvironmentWeight(enemy *references2.EnemyReference, environment MonsterEnvironment) int {
+func (m *NPCAIControllerLargeMap) getMonsterEnvironmentWeight(enemy *references.EnemyReference, environment MonsterEnvironment) int {
 	switch environment {
 	case WaterEnvironment:
 		return enemy.AdditionalEnemyFlags.WaterWeight
@@ -385,7 +385,7 @@ func (m *NPCAIControllerLargeMap) getMonsterEnvironmentWeight(enemy *references2
 }
 
 // weightedRandomSelection selects a monster based on weights
-func (m *NPCAIControllerLargeMap) weightedRandomSelection(monsters []*references2.EnemyReference, weights []int) *references2.EnemyReference {
+func (m *NPCAIControllerLargeMap) weightedRandomSelection(monsters []*references.EnemyReference, weights []int) *references.EnemyReference {
 	// Calculate total weight
 	totalWeight := 0
 	for _, weight := range weights {

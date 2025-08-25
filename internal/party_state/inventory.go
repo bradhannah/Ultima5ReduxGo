@@ -1,7 +1,7 @@
 package party_state
 
 import (
-	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 type ProvisionsQuantity struct {
@@ -16,44 +16,44 @@ type Inventory struct {
 	Provisions ProvisionsQuantity
 	Gold       ItemQuantityLarge
 
-	Equipment    InventoryQuantities[references2.Equipment, *ItemQuantitySmall]
-	Spells       InventoryQuantities[references2.Spell, *ItemQuantitySmall]
-	Scrolls      InventoryQuantities[references2.Scroll, *ItemQuantityLarge]
-	SpecialItems InventoryQuantities[references2.SpecialItem, *ItemQuantitySmall]
-	QuestItems   InventoryQuantities[references2.QuestItem, *ItemQuantitySmall]
-	Shards       InventoryQuantities[references2.Shard, *ItemQuantitySmall]
-	Reagent      InventoryQuantities[references2.Reagent, *ItemQuantitySmall]
+	Equipment    InventoryQuantities[references.Equipment, *ItemQuantitySmall]
+	Spells       InventoryQuantities[references.Spell, *ItemQuantitySmall]
+	Scrolls      InventoryQuantities[references.Scroll, *ItemQuantityLarge]
+	SpecialItems InventoryQuantities[references.SpecialItem, *ItemQuantitySmall]
+	QuestItems   InventoryQuantities[references.QuestItem, *ItemQuantitySmall]
+	Shards       InventoryQuantities[references.Shard, *ItemQuantitySmall]
+	Reagent      InventoryQuantities[references.Reagent, *ItemQuantitySmall]
 }
 
 func NewInventory() *Inventory {
 	inv := &Inventory{}
-	inv.Equipment = NewInventoryQuantities[references2.Equipment, *ItemQuantitySmall]()
-	inv.Spells = NewInventoryQuantities[references2.Spell, *ItemQuantitySmall]()
-	inv.Scrolls = NewInventoryQuantities[references2.Scroll, *ItemQuantityLarge]()
-	inv.SpecialItems = NewInventoryQuantities[references2.SpecialItem, *ItemQuantitySmall]()
-	inv.QuestItems = NewInventoryQuantities[references2.QuestItem, *ItemQuantitySmall]()
-	inv.Shards = NewInventoryQuantities[references2.Shard, *ItemQuantitySmall]()
-	inv.Reagent = NewInventoryQuantities[references2.Reagent, *ItemQuantitySmall]()
+	inv.Equipment = NewInventoryQuantities[references.Equipment, *ItemQuantitySmall]()
+	inv.Spells = NewInventoryQuantities[references.Spell, *ItemQuantitySmall]()
+	inv.Scrolls = NewInventoryQuantities[references.Scroll, *ItemQuantityLarge]()
+	inv.SpecialItems = NewInventoryQuantities[references.SpecialItem, *ItemQuantitySmall]()
+	inv.QuestItems = NewInventoryQuantities[references.QuestItem, *ItemQuantitySmall]()
+	inv.Shards = NewInventoryQuantities[references.Shard, *ItemQuantitySmall]()
+	inv.Reagent = NewInventoryQuantities[references.Reagent, *ItemQuantitySmall]()
 
 	return inv
 }
 
-func (i *Inventory) PutItemInInventory(item *references2.ItemAndQuantity) {
-	if item.Item.Type() == references2.ItemTypeProvision {
-		switch references2.Provision(item.Item.ID()) {
-		case references2.Food:
+func (i *Inventory) PutItemInInventory(item *references.ItemAndQuantity) {
+	if item.Item.Type() == references.ItemTypeProvision {
+		switch references.Provision(item.Item.ID()) {
+		case references.Food:
 			i.Provisions.Food.IncrementBy(item.Quantity)
-		case references2.Key:
+		case references.Key:
 			i.Provisions.Keys.IncrementBy(item.Quantity)
-		case references2.Gem:
+		case references.Gem:
 			i.Provisions.Gems.IncrementBy(item.Quantity)
-		case references2.Torches:
+		case references.Torches:
 			i.Provisions.Torches.IncrementBy(item.Quantity)
-		case references2.SkullKeys:
+		case references.SkullKeys:
 			i.Provisions.SkullKeys.IncrementBy(item.Quantity)
-		case references2.Gold:
+		case references.Gold:
 			i.Gold.IncrementBy(item.Quantity)
-		case references2.NoProvision:
+		case references.NoProvision:
 			panic("unhandled default case with NoProvision")
 		default:
 			panic("unhandled default case for PutItemInInventory")

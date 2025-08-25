@@ -9,7 +9,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
-	ucolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	ultimacolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 )
 
 // const maxCharsPerLine = 16
@@ -31,7 +31,7 @@ func NewOutput(font *UltimaFont, lineSpacing float64, maxLines, maxCharsPerLine 
 	output.maxLines = maxLines
 	output.maxCharsPerLine = maxCharsPerLine
 	output.lines = make([]string, maxLines)
-	output.SetColor(ucolor.White)
+	output.SetColor(ultimacolor.White)
 	return output
 }
 

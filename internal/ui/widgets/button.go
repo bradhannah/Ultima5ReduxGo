@@ -10,7 +10,7 @@ import (
 
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/text"
-	ucolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	ultimacolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 )
 
 const borderWidthScaling = 1202
@@ -133,9 +133,9 @@ func (b *Button) SetButtonStatus(buttonStatus ButtonStatus) {
 	b.buttonStatus = buttonStatus
 	switch buttonStatus {
 	case Selected:
-		b.interiorColor = ucolor.UltimaBlue
+		b.interiorColor = ultimacolor.UltimaBlue
 	case NotSelected:
-		b.interiorColor = ucolor.LighterBlackSemi
+		b.interiorColor = ultimacolor.LighterBlackSemi
 	}
 	b.initializeBorder(b.interiorColor)
 }

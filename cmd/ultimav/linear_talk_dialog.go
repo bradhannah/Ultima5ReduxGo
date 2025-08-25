@@ -10,7 +10,7 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/text"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/ui/widgets"
-	ucolor "github.com/bradhannah/Ultima5ReduxGo/pkg/color"
+	"github.com/bradhannah/Ultima5ReduxGo/pkg/color"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/grammar"
 	"github.com/hajimehoshi/ebiten/v2"
 	etext "github.com/hajimehoshi/ebiten/v2/text/v2"
@@ -109,7 +109,7 @@ func (d *LinearTalkDialog) initializeResizeableVisualElements() {
 			EndPercentY:   borderEndPercentY,
 		},
 		borderWidthScaling,
-		ucolor.Black)
+		color.Black)
 
 	d.font = text.NewUltimaFont(text.GetScaledNumberToResolution(d.gameScene.gameConfig.DisplayManager, talkFontPoint))
 
@@ -144,10 +144,10 @@ func (d *LinearTalkDialog) initializeResizeableVisualElements() {
 			},
 			d.gameScene.keyboard)
 		d.TextInput.SetInputColors(widgets.TextInputColors{
-			DefaultColor:          ucolor.Green,
-			NoMatchesColor:        ucolor.Green,
-			OneMatchColor:         ucolor.Green,
-			MoreThanOneMatchColor: ucolor.Green,
+			DefaultColor:          color.Green,
+			NoMatchesColor:        color.Green,
+			OneMatchColor:         color.Green,
+			MoreThanOneMatchColor: color.Green,
 		})
 	} else {
 		d.TextInput.SetFontPoint(text.GetScaledNumberToResolution(d.gameScene.gameConfig.DisplayManager, talkFontPoint))

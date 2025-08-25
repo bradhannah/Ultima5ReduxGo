@@ -1,8 +1,9 @@
 package main
 
 import (
-	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 func (g *GameScene) dungeonMapInputHandler(key ebiten.Key) {
@@ -25,13 +26,13 @@ func (g *GameScene) dungeonMapInputHandler(key ebiten.Key) {
 		g.toggleDebug()
 		return
 	case ebiten.KeyUp:
-		g.handleMovement(references2.Up.GetDirectionCompassName(), ebiten.KeyUp)
+		g.handleMovement(references.Up.GetDirectionCompassName(), ebiten.KeyUp)
 	case ebiten.KeyDown:
-		g.handleMovement(references2.Down.GetDirectionCompassName(), ebiten.KeyDown)
+		g.handleMovement(references.Down.GetDirectionCompassName(), ebiten.KeyDown)
 	case ebiten.KeyLeft:
-		g.handleMovement(references2.Left.GetDirectionCompassName(), ebiten.KeyLeft)
+		g.handleMovement(references.Left.GetDirectionCompassName(), ebiten.KeyLeft)
 	case ebiten.KeyRight:
-		g.handleMovement(references2.Right.GetDirectionCompassName(), ebiten.KeyRight)
+		g.handleMovement(references.Right.GetDirectionCompassName(), ebiten.KeyRight)
 	case ebiten.KeyL:
 		g.addRowStr("Look-")
 		g.secondaryKeyState = LookDirectionInput
@@ -199,82 +200,82 @@ func (g *GameScene) dungeonMapHandleSecondaryInput() {
 
 // Dungeon Map Secondary Action Handlers
 
-func (g *GameScene) dungeonMapKlimbSecondary(direction references2.Direction) {
+func (g *GameScene) dungeonMapKlimbSecondary(direction references.Direction) {
 	success := g.gameState.ActionKlimbDungeonMap(direction)
 	if !success {
 		g.addRowStr("Nothing to klimb!")
 	}
 }
 
-func (g *GameScene) dungeonMapPushSecondary(direction references2.Direction) {
+func (g *GameScene) dungeonMapPushSecondary(direction references.Direction) {
 	success := g.gameState.ActionPushDungeonMap(direction)
 	if !success {
 		g.addRowStr("Won't budge!")
 	}
 }
 
-func (g *GameScene) dungeonMapOpenSecondary(direction references2.Direction) {
+func (g *GameScene) dungeonMapOpenSecondary(direction references.Direction) {
 	success := g.gameState.ActionOpenDungeonMap(direction)
 	if !success {
 		g.addRowStr("Nothing to open!")
 	}
 }
 
-func (g *GameScene) dungeonMapJimmySecondary(direction references2.Direction) {
+func (g *GameScene) dungeonMapJimmySecondary(direction references.Direction) {
 	success := g.gameState.ActionJimmyDungeonMap(direction)
 	if !success {
 		g.addRowStr("Nothing to jimmy!")
 	}
 }
 
-func (g *GameScene) dungeonMapGetSecondary(direction references2.Direction) {
+func (g *GameScene) dungeonMapGetSecondary(direction references.Direction) {
 	success := g.gameState.ActionGetDungeonMap(direction)
 	if !success {
 		g.addRowStr("Nothing to get!")
 	}
 }
 
-func (g *GameScene) dungeonMapLookSecondary(direction references2.Direction) {
+func (g *GameScene) dungeonMapLookSecondary(direction references.Direction) {
 	success := g.gameState.ActionLookDungeonMap(direction)
 	if !success {
 		g.addRowStr("Too dark to see!")
 	}
 }
 
-func (g *GameScene) dungeonMapTalkSecondary(direction references2.Direction) bool {
+func (g *GameScene) dungeonMapTalkSecondary(direction references.Direction) bool {
 	success := g.gameState.ActionTalkDungeonMap(direction)
 	return success
 }
 
-func (g *GameScene) dungeonMapSearchSecondary(direction references2.Direction) {
+func (g *GameScene) dungeonMapSearchSecondary(direction references.Direction) {
 	success := g.gameState.ActionSearchDungeonMap(direction)
 	if !success {
 		g.addRowStr("Nothing found!")
 	}
 }
 
-func (g *GameScene) dungeonMapAttackSecondary(direction references2.Direction) {
+func (g *GameScene) dungeonMapAttackSecondary(direction references.Direction) {
 	success := g.gameState.ActionAttackDungeonMap(direction)
 	if !success {
 		g.addRowStr("Nothing to attack!")
 	}
 }
 
-func (g *GameScene) dungeonMapUseSecondary(direction references2.Direction) {
+func (g *GameScene) dungeonMapUseSecondary(direction references.Direction) {
 	success := g.gameState.ActionUseDungeonMap(direction)
 	if !success {
 		g.addRowStr("Can't use that!")
 	}
 }
 
-func (g *GameScene) dungeonMapYellSecondary(direction references2.Direction) {
+func (g *GameScene) dungeonMapYellSecondary(direction references.Direction) {
 	success := g.gameState.ActionYellDungeonMap(direction)
 	if !success {
 		g.addRowStr("No effect!")
 	}
 }
 
-func (g *GameScene) dungeonMapFireSecondary(direction references2.Direction) {
+func (g *GameScene) dungeonMapFireSecondary(direction references.Direction) {
 	success := g.gameState.ActionFireDungeonMap(direction)
 	if !success {
 		g.addRowStr("Can't fire here!")

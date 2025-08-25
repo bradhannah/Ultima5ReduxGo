@@ -491,9 +491,38 @@ This tracker is actively maintained. Status indicators use: ✅ (working), ❌ (
 - Review random seed usage in monster spawning and movement
 - Ensure reproducible behavior for testing and debugging
 
-**Task #10: Missing Integration Tests** (PENDING)
-- Add integration tests for command workflows (push→door closure, jimmy→key consumption)
-- Test NPC schedule transitions and pathfinding integration  
-- Verify conversation system works end-to-end with game state changes
+### 📋 TASK #10: Missing Integration Tests (PLAN READY)
 
-**Progress**: 3 of 10 high-priority remediation tasks completed, 1 planned and ready for implementation. Focus areas: import organization, AI determinism, integration testing.
+**Problem**: Significant integration testing gaps across system interactions
+- Only 9 integration test files vs 33 total test files  
+- 35 skipped tests awaiting real game data conversion
+- 21 commands missing integration tests (Jimmy, Get, Talk, Search, etc.)
+- Critical system interactions untested (NPC+AI+Pathfinding, Conversation+GameState)
+
+**Solution Plan**:
+- **Phase 1**: Convert 35 skipped tests to real data, build integration test framework
+- **Phase 2**: Critical command workflows (Jimmy key consumption, Get inventory, Talk conversation, Push timing)
+- **Phase 3**: System integration (NPC schedules, SystemCallbacks, Map+UI)
+- **Phase 4**: End-to-end workflows and multi-system scenarios
+
+**Infrastructure Needed**:
+- `IntegrationTestBuilder` framework for complex test scenarios
+- Enhanced `MockSystemCallbacks` for end-to-end callback verification
+- Real game data loading patterns standardized across test suite
+
+**Target Coverage**:
+- Integration test files: 9 → 30+ files
+- Command integration coverage: 100% (all 21 missing commands)
+- Skipped test conversion: 35 → 0
+- System interaction coverage: All major system pairs tested
+
+**Estimated Effort**: 10-12 weeks for comprehensive coverage
+**Risk**: Medium (requires stable core systems from Tasks 1-8)
+**Ready for Implementation**: ✅ Detailed 4-phase plan with specific test scenarios
+
+**Task #5: AI Determinism Issues** (PENDING)
+- Fix non-deterministic behavior in AI pathfinding and decision making
+- Review random seed usage in monster spawning and movement
+- Ensure reproducible behavior for testing and debugging
+
+**Progress**: 3 of 10 high-priority remediation tasks completed, 2 planned and ready for implementation. Focus areas: import organization, integration testing, AI determinism.

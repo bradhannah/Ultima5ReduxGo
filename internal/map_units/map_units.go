@@ -1,7 +1,7 @@
 package map_units
 
 import (
-	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 )
 
@@ -20,7 +20,7 @@ func (m *MapUnits) getNextAvailableNPCIndexNumber() int {
 	return -1
 }
 
-func (m *MapUnits) RemoveNPCAtPosition(position references2.Position) bool {
+func (m *MapUnits) RemoveNPCAtPosition(position references.Position) bool {
 	// NOTE: the deletion could cause indexing issues - but shouldn't
 	for i, mu := range *m {
 		if mu.Pos() == position {
@@ -35,7 +35,7 @@ func (m *MapUnits) RemoveNPCAtPosition(position references2.Position) bool {
 	return false
 }
 
-func (m *MapUnits) GetMapUnitAtPositionOrNil(pos references2.Position) *MapUnit {
+func (m *MapUnits) GetMapUnitAtPositionOrNil(pos references.Position) *MapUnit {
 	for _, mu := range *m {
 		if mu.Pos() == pos {
 			return &mu
@@ -45,7 +45,7 @@ func (m *MapUnits) GetMapUnitAtPositionOrNil(pos references2.Position) *MapUnit 
 	return nil
 }
 
-func (m *MapUnits) GetVehicleAtPositionOrNil(pos references2.Position) *NPCFriendly {
+func (m *MapUnits) GetVehicleAtPositionOrNil(pos references.Position) *NPCFriendly {
 	mu := m.GetMapUnitAtPositionOrNil(pos)
 
 	if mu == nil {
@@ -53,7 +53,7 @@ func (m *MapUnits) GetVehicleAtPositionOrNil(pos references2.Position) *NPCFrien
 	}
 
 	if friendly, ok := (*mu).(*NPCFriendly); ok {
-		if friendly.NPCReference.GetNPCType() == references2.Vehicle {
+		if friendly.NPCReference.GetNPCType() == references.Vehicle {
 			return friendly
 		}
 	}
@@ -68,9 +68,9 @@ func (m *MapUnits) AddVehicle(vehicle NPCFriendly) bool {
 	}
 
 	vehicle.mapUnitDetails.NPCNum = index
-	vehicle.SetPos(references2.Position{
-		X: references2.Coordinate(vehicle.NPCReference.Schedule.X[0]),
-		Y: references2.Coordinate(vehicle.NPCReference.Schedule.Y[0]),
+	vehicle.SetPos(references.Position{
+		X: references.Coordinate(vehicle.NPCReference.Schedule.X[0]),
+		Y: references.Coordinate(vehicle.NPCReference.Schedule.Y[0]),
 	})
 
 	vehicle.SetVisible(true)

@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 
-	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
@@ -20,13 +20,13 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 	case ebiten.KeyEnter:
 		g.gameState.ActionEnterInput()
 	case ebiten.KeyUp:
-		g.handleMovement(references2.Up.GetDirectionCompassName(), ebiten.KeyUp)
+		g.handleMovement(references.Up.GetDirectionCompassName(), ebiten.KeyUp)
 	case ebiten.KeyDown:
-		g.handleMovement(references2.Down.GetDirectionCompassName(), ebiten.KeyDown)
+		g.handleMovement(references.Down.GetDirectionCompassName(), ebiten.KeyDown)
 	case ebiten.KeyLeft:
-		g.handleMovement(references2.Left.GetDirectionCompassName(), ebiten.KeyLeft)
+		g.handleMovement(references.Left.GetDirectionCompassName(), ebiten.KeyLeft)
 	case ebiten.KeyRight:
-		g.handleMovement(references2.Right.GetDirectionCompassName(), ebiten.KeyRight)
+		g.handleMovement(references.Right.GetDirectionCompassName(), ebiten.KeyRight)
 	case ebiten.KeyB:
 		g.gameState.ActionBoard()
 	case ebiten.KeyK:
@@ -187,7 +187,7 @@ func (g *GameScene) largeMapHandleSecondaryInput() {
 	}
 }
 
-func (g *GameScene) largeMapJimmySecondary(direction references2.Direction) {
+func (g *GameScene) largeMapJimmySecondary(direction references.Direction) {
 	// Delegate all logic to GameState - it handles all feedback via SystemCallbacks
 	g.gameState.ActionJimmyLargeMap(direction)
 }

@@ -12,10 +12,10 @@ import (
 	"github.com/bradhannah/Ultima5ReduxGo/internal/datetime"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/game_state"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/map_units"
-	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/text"
-	mainscreen2 "github.com/bradhannah/Ultima5ReduxGo/internal/ui/mainscreen"
+	"github.com/bradhannah/Ultima5ReduxGo/internal/ui/mainscreen"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/ui/widgets"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/input"
 )
@@ -54,7 +54,7 @@ const (
 // GameScene is another scene (e.g., the actual game)
 type GameScene struct {
 	gameConfig       *config.UltimaVConfiguration
-	gameReferences   *references2.GameReferences
+	gameReferences   *references.GameReferences
 	spriteSheet      *sprites.SpriteSheet
 	keyboard         *input.Keyboard
 	output           *text.Output
@@ -65,8 +65,8 @@ type GameScene struct {
 	// debugWindowImage    *ebiten.Image
 	// debugWindowSizeRect *image.Rectangle
 	// debugWindowPosRect  *image.Rectangle
-	characterSummary *mainscreen2.CharacterSummary
-	provisionSummary *mainscreen2.ProvisionSummary
+	characterSummary *mainscreen.CharacterSummary
+	provisionSummary *mainscreen.ProvisionSummary
 
 	dialogStack widgets.DialogStack
 
@@ -98,7 +98,7 @@ func NewGameScene(gameConfig *config.UltimaVConfiguration) *GameScene {
 
 	// load the files man
 	var err error
-	gameScene.gameReferences, err = references2.NewGameReferences(gameConfig)
+	gameScene.gameReferences, err = references.NewGameReferences(gameConfig)
 	if err != nil {
 		log.Fatal(err) // Critical game references required for operation
 	}
@@ -204,8 +204,8 @@ func (g *GameScene) initializeResizeableVisualElements() {
 		g.debugConsole.Refresh()
 	}
 
-	g.characterSummary = mainscreen2.NewCharacterSummary(g.spriteSheet)
-	g.provisionSummary = mainscreen2.NewProvisionSummary(g.spriteSheet)
+	g.characterSummary = mainscreen.NewCharacterSummary(g.spriteSheet)
+	g.provisionSummary = mainscreen.NewProvisionSummary(g.spriteSheet)
 }
 
 func (g *GameScene) appendToCurrentRowStr(str string) {
@@ -218,7 +218,7 @@ func (g *GameScene) addRowStr(str string) {
 	g.debugConsole.Output.AddRowStrWithTrim(str)
 }
 
-func (g *GameScene) GetCurrentLocationReference() *references2.SmallLocationReference {
+func (g *GameScene) GetCurrentLocationReference() *references.SmallLocationReference {
 	return g.gameReferences.LocationReferences.GetLocationReference(g.gameState.MapState.PlayerLocation.Location)
 }
 

@@ -1,8 +1,9 @@
 package main
 
 import (
-	references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
 	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/bradhannah/Ultima5ReduxGo/internal/references"
 )
 
 func (g *GameScene) combatMapInputHandler(key ebiten.Key) {
@@ -25,13 +26,13 @@ func (g *GameScene) combatMapInputHandler(key ebiten.Key) {
 		g.toggleDebug()
 		return
 	case ebiten.KeyUp:
-		g.handleMovement(references2.Up.GetDirectionCompassName(), ebiten.KeyUp)
+		g.handleMovement(references.Up.GetDirectionCompassName(), ebiten.KeyUp)
 	case ebiten.KeyDown:
-		g.handleMovement(references2.Down.GetDirectionCompassName(), ebiten.KeyDown)
+		g.handleMovement(references.Down.GetDirectionCompassName(), ebiten.KeyDown)
 	case ebiten.KeyLeft:
-		g.handleMovement(references2.Left.GetDirectionCompassName(), ebiten.KeyLeft)
+		g.handleMovement(references.Left.GetDirectionCompassName(), ebiten.KeyLeft)
 	case ebiten.KeyRight:
-		g.handleMovement(references2.Right.GetDirectionCompassName(), ebiten.KeyRight)
+		g.handleMovement(references.Right.GetDirectionCompassName(), ebiten.KeyRight)
 	case ebiten.KeyL:
 		g.addRowStr("Look-")
 		g.secondaryKeyState = LookDirectionInput
@@ -201,82 +202,82 @@ func (g *GameScene) combatMapHandleSecondaryInput() {
 
 // Combat Map Secondary Action Handlers
 
-func (g *GameScene) combatMapKlimbSecondary(direction references2.Direction) {
+func (g *GameScene) combatMapKlimbSecondary(direction references.Direction) {
 	success := g.gameState.ActionKlimbCombatMap(direction)
 	if !success {
 		g.addRowStr("Nothing to klimb!")
 	}
 }
 
-func (g *GameScene) combatMapPushSecondary(direction references2.Direction) {
+func (g *GameScene) combatMapPushSecondary(direction references.Direction) {
 	success := g.gameState.ActionPushCombatMap(direction)
 	if !success {
 		g.addRowStr("Won't budge!")
 	}
 }
 
-func (g *GameScene) combatMapOpenSecondary(direction references2.Direction) {
+func (g *GameScene) combatMapOpenSecondary(direction references.Direction) {
 	success := g.gameState.ActionOpenCombatMap(direction)
 	if !success {
 		g.addRowStr("Nothing to open!")
 	}
 }
 
-func (g *GameScene) combatMapJimmySecondary(direction references2.Direction) {
+func (g *GameScene) combatMapJimmySecondary(direction references.Direction) {
 	success := g.gameState.ActionJimmyCombatMap(direction)
 	if !success {
 		g.addRowStr("Nothing to jimmy!")
 	}
 }
 
-func (g *GameScene) combatMapGetSecondary(direction references2.Direction) {
+func (g *GameScene) combatMapGetSecondary(direction references.Direction) {
 	success := g.gameState.ActionGetCombatMap(direction)
 	if !success {
 		g.addRowStr("Nothing to get!")
 	}
 }
 
-func (g *GameScene) combatMapLookSecondary(direction references2.Direction) {
+func (g *GameScene) combatMapLookSecondary(direction references.Direction) {
 	success := g.gameState.ActionLookCombatMap(direction)
 	if !success {
 		g.addRowStr("Nothing to see!")
 	}
 }
 
-func (g *GameScene) combatMapTalkSecondary(direction references2.Direction) bool {
+func (g *GameScene) combatMapTalkSecondary(direction references.Direction) bool {
 	success := g.gameState.ActionTalkCombatMap(direction)
 	return success
 }
 
-func (g *GameScene) combatMapSearchSecondary(direction references2.Direction) {
+func (g *GameScene) combatMapSearchSecondary(direction references.Direction) {
 	success := g.gameState.ActionSearchCombatMap(direction)
 	if !success {
 		g.addRowStr("Nothing found!")
 	}
 }
 
-func (g *GameScene) combatMapAttackSecondary(direction references2.Direction) {
+func (g *GameScene) combatMapAttackSecondary(direction references.Direction) {
 	success := g.gameState.ActionAttackCombatMap(direction)
 	if !success {
 		g.addRowStr("Nothing to attack!")
 	}
 }
 
-func (g *GameScene) combatMapUseSecondary(direction references2.Direction) {
+func (g *GameScene) combatMapUseSecondary(direction references.Direction) {
 	success := g.gameState.ActionUseCombatMap(direction)
 	if !success {
 		g.addRowStr("Can't use that!")
 	}
 }
 
-func (g *GameScene) combatMapYellSecondary(direction references2.Direction) {
+func (g *GameScene) combatMapYellSecondary(direction references.Direction) {
 	success := g.gameState.ActionYellCombatMap(direction)
 	if !success {
 		g.addRowStr("No effect!")
 	}
 }
 
-func (g *GameScene) combatMapFireSecondary(direction references2.Direction) {
+func (g *GameScene) combatMapFireSecondary(direction references.Direction) {
 	success := g.gameState.ActionFireCombatMap(direction)
 	if !success {
 		g.addRowStr("Can't fire!")
