@@ -32,8 +32,15 @@ func NewSpriteSlice(rawSprites [][]byte) []*ebiten.Image {
 }
 
 func (s *ImageAnimation) GetCurrentImage() *ebiten.Image {
-	// get current time
+	// get current time - NOTE: This is non-deterministic, prefer GetCurrentImageAtTime() for core logic
 
 	nFrame := int((time.Now().UnixMilli() / s.millisecondsBetweenChange) % int64(len(s.images)))
+	return s.images[nFrame]
+}
+
+// GetCurrentImageAtTime returns the animation frame for a specific time (deterministic)
+// Use this variant for core game logic that needs to be reproducible
+func (s *ImageAnimation) GetCurrentImageAtTime(elapsedMs int64) *ebiten.Image {
+	nFrame := int((elapsedMs / s.millisecondsBetweenChange) % int64(len(s.images)))
 	return s.images[nFrame]
 }

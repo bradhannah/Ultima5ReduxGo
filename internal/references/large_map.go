@@ -52,7 +52,9 @@ func (m *LargeMapReference) GetSpriteIndex(x, y Coordinate) indexes.SpriteIndex 
 	pos := Position{X: x, Y: y}
 	wrappedPos := pos.GetWrapped(XLargeMapTiles, YLargeMapTiles)
 
-	return sprites.GetSpriteIndexWithAnimationBySpriteIndex(indexes.SpriteIndex(m.rawData[wrappedPos.X][wrappedPos.Y]), 0)
+	// Use deterministic animation function with fixed time (0) for map initialization
+	// This ensures consistent map setup regardless of when initialization occurs
+	return sprites.GetSpriteIndexWithAnimationBySpriteIndexTick(indexes.SpriteIndex(m.rawData[wrappedPos.X][wrappedPos.Y]), 0, 0)
 }
 
 func loadLargeMapFromFile(world World, gameConfig *config.UltimaVConfiguration) (*LargeMapReference, error) {

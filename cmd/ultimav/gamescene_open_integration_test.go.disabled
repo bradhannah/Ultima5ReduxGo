@@ -1,3 +1,0 @@
-// This file is temporarily disabled due to interface changes
-// The ClearRows() and GetLastRowString() methods are no longer available on Output
-// TODO: Update this test when the Output interface is stabilized
