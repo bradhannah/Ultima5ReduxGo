@@ -183,18 +183,18 @@ func (g *GameScene) initializeResizeableVisualElements() {
 	g.lastCheckedResolution = config.GetWindowResolutionFromEbiten()
 
 	g.initializeBorders()
-	g.ultimaFont = text.NewUltimaFont(text.GetScaledNumberToResolution(defaultOutputFontPoint))
+	g.ultimaFont = text.NewUltimaFont(text.GetScaledNumberToResolution(g.gameConfig.DisplayManager, defaultOutputFontPoint))
 
 	if g.output == nil {
 		g.output = text.NewOutput(
 			g.ultimaFont,
-			text.GetScaledNumberToResolution(defaultLineSpacing),
+			text.GetScaledNumberToResolution(g.gameConfig.DisplayManager, defaultLineSpacing),
 			maxLinesForOutput,
 			maxCharsPerLine)
 	} else {
 		g.output.SetFont(
 			g.ultimaFont,
-			text.GetScaledNumberToResolution(defaultLineSpacing),
+			text.GetScaledNumberToResolution(g.gameConfig.DisplayManager, defaultLineSpacing),
 		)
 	}
 

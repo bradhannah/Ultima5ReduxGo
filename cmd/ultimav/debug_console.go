@@ -58,17 +58,17 @@ func (d *DebugConsole) initializeResizeableVisualElements() {
 		borderWidthScaling,
 		ucolor.Black)
 
-	d.font = text.NewUltimaFont(text.GetScaledNumberToResolution(debugFontPoint))
+	d.font = text.NewUltimaFont(text.GetScaledNumberToResolution(d.gameScene.gameConfig.DisplayManager, debugFontPoint))
 
 	if d.Output == nil {
 		d.Output = text.NewOutput(d.font,
-			text.GetScaledNumberToResolution(debugFontLineSpacing),
+			text.GetScaledNumberToResolution(d.gameScene.gameConfig.DisplayManager, debugFontLineSpacing),
 			debugMaxLines,
 			debugMaxCharsInput)
 	} else {
 		d.Output.SetFont(
 			d.font,
-			text.GetScaledNumberToResolution(debugFontLineSpacing),
+			text.GetScaledNumberToResolution(d.gameScene.gameConfig.DisplayManager, debugFontLineSpacing),
 		)
 	}
 	if d.TextInput == nil {
@@ -79,7 +79,7 @@ func (d *DebugConsole) initializeResizeableVisualElements() {
 				StartPercentY: .955,
 				EndPercentY:   1,
 			},
-			text.GetScaledNumberToResolution(debugFontPoint),
+			text.GetScaledNumberToResolution(d.gameScene.gameConfig.DisplayManager, debugFontPoint),
 			debugMaxCharsInput,
 			d.createDebugFunctions(d.gameScene),
 			widgets.TextInputCallbacks{
@@ -89,7 +89,7 @@ func (d *DebugConsole) initializeResizeableVisualElements() {
 			},
 			d.gameScene.keyboard)
 	} else {
-		d.TextInput.SetFontPoint(text.GetScaledNumberToResolution(debugFontPoint))
+		d.TextInput.SetFontPoint(text.GetScaledNumberToResolution(d.gameScene.gameConfig.DisplayManager, debugFontPoint))
 	}
 }
 

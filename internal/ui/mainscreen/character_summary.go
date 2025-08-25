@@ -30,10 +30,10 @@ func NewCharacterSummary(spriteSheet *sprites.SpriteSheet) *CharacterSummary {
 	characterSummary := &CharacterSummary{}
 
 	characterSummary.spriteSheet = spriteSheet
-	characterSummary.ultimaFont = text.NewUltimaFont(text.GetScaledNumberToResolution(fontPoint))
+	characterSummary.ultimaFont = text.NewUltimaFont(text.GetScaledNumberToResolutionLegacy(fontPoint))
 	characterSummary.output = text.NewOutput(
 		characterSummary.ultimaFont,
-		text.GetScaledNumberToResolution(lineSpacing),
+		text.GetScaledNumberToResolutionLegacy(lineSpacing),
 		10,
 		maxCharsPerLine)
 

@@ -42,7 +42,7 @@ type InputBox struct {
 
 func NewInputBox(question string, textCommand *grammar.TextCommand, keyboard *input.Keyboard) *InputBox {
 	inputBox := &InputBox{}
-	inputBox.font = text.NewUltimaFont(text.GetScaledNumberToResolution(inputBoxFontPoint))
+	inputBox.font = text.NewUltimaFont(text.GetScaledNumberToResolutionLegacy(inputBoxFontPoint))
 
 	inputBox.Question = question
 
@@ -68,7 +68,7 @@ func NewInputBox(question string, textCommand *grammar.TextCommand, keyboard *in
 
 	inputBox.textInput = NewTextInput(
 		inputBox.inputBoxPercents,
-		text.GetScaledNumberToResolution(inputBoxFontPoint), 20,
+		text.GetScaledNumberToResolutionLegacy(inputBoxFontPoint), 20,
 		textCommands,
 		TextInputCallbacks{
 			AmbiguousAutoComplete: func(message string) {

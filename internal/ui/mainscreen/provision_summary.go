@@ -23,7 +23,7 @@ func NewProvisionSummary(spriteSheet *sprites.SpriteSheet) *ProvisionSummary {
 	provisionSummary := ProvisionSummary{}
 	provisionSummary.spriteSheet = spriteSheet
 
-	provisionSummary.ultimaFont = text.NewUltimaFont(text.GetScaledNumberToResolution(fontPoint))
+	provisionSummary.ultimaFont = text.NewUltimaFont(text.GetScaledNumberToResolutionLegacy(fontPoint))
 	provisionSummary.output = text.NewOutput(provisionSummary.ultimaFont, lineSpacing, 1, maxCharsPerLine)
 
 	return &provisionSummary

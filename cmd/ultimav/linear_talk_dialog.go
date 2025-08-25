@@ -111,17 +111,17 @@ func (d *LinearTalkDialog) initializeResizeableVisualElements() {
 		borderWidthScaling,
 		ucolor.Black)
 
-	d.font = text.NewUltimaFont(text.GetScaledNumberToResolution(talkFontPoint))
+	d.font = text.NewUltimaFont(text.GetScaledNumberToResolution(d.gameScene.gameConfig.DisplayManager, talkFontPoint))
 
 	if d.Output == nil {
 		d.Output = text.NewOutput(d.font,
-			text.GetScaledNumberToResolution(talkFontLineSpacing),
+			text.GetScaledNumberToResolution(d.gameScene.gameConfig.DisplayManager, talkFontLineSpacing),
 			talkMaxLines,
 			talkMaxCharsInput)
 	} else {
 		d.Output.SetFont(
 			d.font,
-			text.GetScaledNumberToResolution(talkFontLineSpacing),
+			text.GetScaledNumberToResolution(d.gameScene.gameConfig.DisplayManager, talkFontLineSpacing),
 		)
 	}
 
@@ -133,7 +133,7 @@ func (d *LinearTalkDialog) initializeResizeableVisualElements() {
 				StartPercentY: textInputStartPercentY,
 				EndPercentY:   textInputEndPercentY,
 			},
-			text.GetScaledNumberToResolution(talkFontPoint),
+			text.GetScaledNumberToResolution(d.gameScene.gameConfig.DisplayManager, talkFontPoint),
 			talkMaxCharsInput,
 			d.createTalkFunctions(d.gameScene),
 			widgets.TextInputCallbacks{
@@ -150,7 +150,7 @@ func (d *LinearTalkDialog) initializeResizeableVisualElements() {
 			MoreThanOneMatchColor: ucolor.Green,
 		})
 	} else {
-		d.TextInput.SetFontPoint(text.GetScaledNumberToResolution(talkFontPoint))
+		d.TextInput.SetFontPoint(text.GetScaledNumberToResolution(d.gameScene.gameConfig.DisplayManager, talkFontPoint))
 	}
 }
 

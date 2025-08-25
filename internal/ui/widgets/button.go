@@ -77,11 +77,11 @@ func NewButton(
 	button.setPosition(centerPoint)
 	button.initializeBorder(button.interiorColor)
 
-	button.font = text.NewUltimaFont(text.GetScaledNumberToResolution(MediumButtonFontPoint))
-	button.Output = text.NewOutput(button.font, text.GetScaledNumberToResolution(MediumButtonFontPoint), 1, 20)
+	button.font = text.NewUltimaFont(text.GetScaledNumberToResolutionLegacy(MediumButtonFontPoint))
+	button.Output = text.NewOutput(button.font, text.GetScaledNumberToResolutionLegacy(MediumButtonFontPoint), 1, 20)
 	button.Output.SetFont(
 		button.font,
-		text.GetScaledNumberToResolution(MediumButtonLineSpacing),
+		text.GetScaledNumberToResolutionLegacy(MediumButtonLineSpacing),
 	)
 
 	button.Output.AddRowStrWithTrim(buttonText)

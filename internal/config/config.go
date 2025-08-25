@@ -6,10 +6,9 @@ import (
 	"os"
 	"path"
 
-	"github.com/hajimehoshi/ebiten/v2"
-
 	"github.com/spf13/viper"
 
+	"github.com/bradhannah/Ultima5ReduxGo/internal/display"
 	"github.com/bradhannah/Ultima5ReduxGo/internal/files"
 	"github.com/bradhannah/Ultima5ReduxGo/pkg/helpers"
 )
@@ -46,10 +45,14 @@ type UltimaVConfiguration struct {
 	allWindowConfigs []ScreenResolution
 
 	SavedConfigData *UltimaVConfigurationFlags
+
+	// Display manager for centralized screen management
+	DisplayManager *display.DisplayManager
 }
 
 func NewUltimaVConfiguration() *UltimaVConfiguration {
 	uc := UltimaVConfiguration{}
+	uc.DisplayManager = display.NewDisplayManager()
 
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
@@ -100,8 +103,9 @@ func (uc *UltimaVConfiguration) GetLookDataFilePath() string {
 }
 
 func (uc *UltimaVConfiguration) GetCurrentTrackedWindowResolution() ScreenResolution {
-	if ebiten.IsFullscreen() {
-		return GetWindowResolutionFromEbiten()
+	if uc.DisplayManager.IsFullscreen() {
+		w, h := uc.DisplayManager.GetCurrentSize()
+		return ScreenResolution{X: w, Y: h}
 	}
 	return uc.allWindowConfigs[uc.SavedConfigData.Resolution]
 }
@@ -117,7 +121,7 @@ func (uc *UltimaVConfiguration) DecrementLowerResolution() {
 }
 
 func (uc *UltimaVConfiguration) SetFullScreen(bFullScreen bool) {
-	ebiten.SetFullscreen(bFullScreen)
+	uc.DisplayManager.SetFullscreen(bFullScreen)
 	uc.SavedConfigData.FullScreen = bFullScreen
 	uc.UpdateSaveFile()
 }

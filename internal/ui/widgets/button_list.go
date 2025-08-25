@@ -58,7 +58,7 @@ func NewButtonListModal(
 	buttonListModal.gameScreenPercents = gameScreenPercents
 	buttonListModal.gameScreenCenter = gameScreenPercents.GetCenterPoint()
 
-	buttonListModal.ultimaFont = text.NewUltimaFont(text.GetScaledNumberToResolution(fontPoint))
+	buttonListModal.ultimaFont = text.NewUltimaFont(text.GetScaledNumberToResolutionLegacy(fontPoint))
 	buttonListModal.titleTextOutput = text.NewOutput(buttonListModal.ultimaFont, fontPoint, 1, 30)
 
 	textRect := sprites.GetRectangleFromPercents(sprites.PercentBasedPlacement{

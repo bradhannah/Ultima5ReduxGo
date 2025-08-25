@@ -23,16 +23,23 @@ type Game struct {
 
 // Update calls the current scene's Update method
 func (g *Game) Update() error {
-	// if lastResolution.X == 0 || lastResolution.Y == 0 || lastResolution != config.GetWindowResolutionFromEbiten() {
+	// Use DisplayManager to handle resolution changes
+	if g.currentScene != nil && g.currentScene.GetUltimaConfiguration() != nil {
+		dm := g.currentScene.GetUltimaConfiguration().DisplayManager
+		if dm != nil {
+			// DisplayManager handles all resolution change detection internally
+			dm.Update()
+		}
 
-	if lastResolution.X == 0 || lastResolution.Y == 0 || lastResolution != g.currentScene.GetUltimaConfiguration().GetCurrentTrackedWindowResolution() || lastResolution != config.GetWindowResolutionFromEbiten() {
-
-		lastResolution = g.currentScene.GetUltimaConfiguration().GetCurrentTrackedWindowResolution()
-
-		// lastResolution = config.GetWindowResolutionFromEbiten()
-
-		config.SetWindowSize(config.ScreenResolution{X: lastResolution.X, Y: lastResolution.Y})
-		g.currentScene.InvalidateResolution()
+		// Handle tracked resolution changes for window resizing
+		trackedRes := g.currentScene.GetUltimaConfiguration().GetCurrentTrackedWindowResolution()
+		if lastResolution.X == 0 || lastResolution.Y == 0 || lastResolution != trackedRes {
+			lastResolution = trackedRes
+			if !dm.IsFullscreen() {
+				dm.SetWindowSize(trackedRes.X, trackedRes.Y)
+			}
+			g.currentScene.InvalidateResolution()
+		}
 	}
 
 	if g.currentScene != nil {

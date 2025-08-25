@@ -429,3 +429,53 @@ This tracker is actively maintained. Status indicators use: ✅ (working), ❌ (
 | No          | Potions: Blue/Orange  | Potions.md                                                                                       | `internal/party_state/inventory.go` (types only) | —          | Blue cures Sleep; Orange applies Sleep; items exist as types only.                                               |
 | No          | Hole Up & Camp (rest) | Commands.md → Hole Up & Camp                                                                     | —                                                | —          | Camping/repair flows absent; should handle guard watch, time advance, HP/MP regen, food ticks, encounter checks. |
 | No          | In‑bed sleep/ejection | Fixtures.md → Beds; NPC_Schedules.md (eject sleepers at schedule boundaries)                     | —                                                | —          | No in‑bed sleep flow; must prevent sleeping in occupied beds and eject sleepers around hour changes.             |
+
+---
+
+## Remediation Tasks Progress
+
+### ✅ COMPLETED TASKS
+
+**Task #6: Fix Inaccurate Documentation** (COMPLETED)
+- Audited all 23 implementation status claims in this document
+- Corrected overstated claims (RNG: No→Partial, Spell metadata: Yes→Partial)  
+- Added understated claims (Torch duration: Partial→Yes)
+- Created comprehensive Implementation Status Summary with visual indicators
+- Result: Accurate documentation foundation for development planning
+
+**Task #7: Error Handling Standards** (COMPLETED)
+- Created `/docs/ERROR_HANDLING.md` with comprehensive fatal vs recoverable error guidelines
+- Analyzed all 55 log.Fatal calls in codebase: 32 legitimate (keep), 23 need conversion (TODO)
+- Added appropriate comments to all log.Fatal calls
+- Added ERROR_HANDLING.md references to CLAUDE.md documentation section
+- Result: Clean TODO tracking system and standardized error handling practices
+
+**Task #8: Package Boundary Violations** (COMPLETED)
+- **Problem**: Internal packages directly importing Ebitengine for screen resolution, violating architecture
+- **Solution**: Created DisplayManager for centralized screen management (not abstraction, management layer)
+- **Implementation**:
+  - Created `internal/display/manager.go` with resolution change detection and callback system
+  - Updated `internal/config/` to use DisplayManager instead of direct Ebitengine calls
+  - Updated `cmd/ultimav/scene.go` to use DisplayManager.Update() in game loop
+  - Updated `internal/text/scale.go` with DisplayManager support + legacy compatibility
+  - Updated all callers: gamescene.go, debug_console.go, linear_talk_dialog.go, widgets
+- **Result**: ✅ Centralized screen management ready for multi-resolution support, ✅ clean package boundaries, ✅ backward compatibility maintained, ✅ all tests pass
+
+### 🔄 REMAINING HIGH-PRIORITY TASKS
+
+**Task #5: AI Determinism Issues** (PENDING)
+- Fix non-deterministic behavior in AI pathfinding and decision making
+- Review random seed usage in monster spawning and movement
+- Ensure reproducible behavior for testing and debugging
+
+**Task #9: Performance Bottlenecks** (PENDING)  
+- Profile game loop performance and identify hot paths
+- Optimize frequent operations (tile checking, pathfinding, rendering)
+- Address any memory allocation patterns causing GC pressure
+
+**Task #10: Missing Integration Tests** (PENDING)
+- Add integration tests for command workflows (push→door closure, jimmy→key consumption)
+- Test NPC schedule transitions and pathfinding integration  
+- Verify conversation system works end-to-end with game state changes
+
+**Progress**: 3 of 10 high-priority remediation tasks completed. Focus areas: AI determinism, performance optimization, integration testing.
