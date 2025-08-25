@@ -41,23 +41,32 @@ The `@OLD` directory contains a fan remake implementation for behavioral referen
 ├── internal/
 │   ├── package_name/
 │   │   ├── file.go
-│   │   └── file_test.go          # Unit tests
-│   └── integration/
-│       └── component_test.go      # Integration tests
+│   │   ├── file_unit_test.go         # Unit tests
+│   │   └── file_integration_test.go  # Integration tests
 ├── testdata/
 │   ├── fixtures/
 │   └── mocks/
 └── test/
-    ├── helpers/                   # Shared test utilities
-    └── regression/                # Regression test suite
+    ├── helpers/                      # Shared test utilities
+    └── regression/                   # Regression test suite
 ```
 
 ## Test Conventions
 
 ### File Naming
-- **Unit Tests**: `filename_test.go` alongside source files
-- **Integration Tests**: `integration/*_test.go` 
+- **Unit Tests**: `filename_unit_test.go` alongside source files
+- **Integration Tests**: `filename_integration_test.go` alongside source files
 - **Regression Tests**: `test/regression/bug_YYYYMMDD_description_test.go`
+
+#### Unit vs Integration Test Separation
+To clearly distinguish between unit and integration tests, use the following naming convention:
+- `action_jimmy_unit_test.go` - Unit tests that test isolated logic without external dependencies
+- `action_jimmy_integration_test.go` - Integration tests that use real game data and complex setup
+
+This separation helps:
+- **Faster CI**: Unit tests can run quickly without game data dependencies
+- **Clear Intent**: Test purpose is immediately obvious from filename
+- **Parallel Execution**: Unit and integration test suites can run independently
 
 ### Function Naming
 ```go

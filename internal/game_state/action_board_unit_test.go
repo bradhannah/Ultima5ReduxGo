@@ -120,19 +120,6 @@ func TestActionBoard_VehicleTypeValidation(t *testing.T) {
 	}
 }
 
-// Integration test placeholder - following TESTING.md guidance
-func TestActionBoard_IntegrationWithRealData(t *testing.T) {
-	t.Skip("Converting to use real game data - see TESTING.md")
-
-	// TODO: Convert this to use createTestGameStateWithRealData helper
-	// This would test:
-	// - Complete boarding flow with actual NPCAIController
-	// - Real vehicle positioning and map data
-	// - Integration with BoardVehicle method and all its logic
-	// - Vehicle-specific messages and time advancement
-	// - SystemCallbacks integration with UI layer
-}
-
 // REGRESSION TEST: Test for vehicle boarding edge cases
 // Following TESTING.md regression test documentation requirements
 func TestActionBoard_EdgeCases_Regression(t *testing.T) {
