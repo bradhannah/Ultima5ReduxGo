@@ -51,9 +51,9 @@ func (e *EnemyReference) CanSpawnToTile(tile *Tile) bool {
 	if e.AdditionalEnemyFlags.IsSandEnemy {
 		bCanSpawnOnTile = tile.IsDesert()
 	} else if e.AdditionalEnemyFlags.IsWaterEnemy {
-		bCanSpawnOnTile = tile.IsWaterEnemyPassable
+		bCanSpawnOnTile = tile.IsWaterEnemyPassable()
 	} else {
-		bCanSpawnOnTile = tile.IsLandEnemyPassable
+		bCanSpawnOnTile = tile.IsLandEnemyPassable()
 	}
 	return bCanSpawnOnTile
 }
@@ -68,9 +68,9 @@ func (e *EnemyReference) CanMoveToTile(tile *Tile) bool {
 	if e.AdditionalEnemyFlags.IsSandEnemy {
 		bCanMoveToTile = tile.IsDesert()
 	} else if e.AdditionalEnemyFlags.IsWaterEnemy {
-		bCanMoveToTile = tile.IsWaterEnemyPassable
+		bCanMoveToTile = tile.IsWaterEnemyPassable()
 	} else {
-		bCanMoveToTile = tile.IsLandEnemyPassable
+		bCanMoveToTile = tile.IsLandEnemyPassable()
 	}
 
 	if e.AdditionalEnemyFlags.CanFlyOverWater {
@@ -85,8 +85,8 @@ func (e *EnemyReference) CanMoveToTile(tile *Tile) bool {
 }
 
 func (e *EnemyReference) isMonsterSpawnableOnTile(tile *Tile) bool {
-	return tile.IsBoatPassable || tile.IsCarpetPassable || tile.IsHorsePassable ||
-		tile.IsWalkingPassable || tile.IsWaterEnemyPassable || tile.IsLandEnemyPassable
+	return tile.IsBoatPassable() || tile.IsCarpetPassable() || tile.IsHorsePassable() ||
+		tile.IsWalkingPassable() || tile.IsWaterEnemyPassable() || tile.IsLandEnemyPassable()
 }
 
 func (e *EnemyReference) HasAbility(ability EnemyAbility) bool {

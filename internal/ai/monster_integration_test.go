@@ -158,7 +158,7 @@ func TestMonsterSelectionDistribution(t *testing.T) {
 	}
 
 	grassTile := createTestTileForMonsterGen(indexes.Grass)
-	grassTile.IsLandEnemyPassable = true
+	// Grass tiles are automatically land enemy passable via IsLandEnemyPassable() function
 
 	// Run many selections
 	selections := make(map[string]int)

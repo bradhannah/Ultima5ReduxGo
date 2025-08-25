@@ -22,53 +22,38 @@ const (
 //
 //nolint:tagliatelle
 type Tile struct {
-	Index                     indexes.SpriteIndex
-	Name                      string `json:"Name"`
-	Description               string `json:"Description"`
-	IsWalkingPassable         bool   `json:"IsWalking_Passable"`
-	RangeWeaponPassable       bool   `json:"RangeWeapon_Passable"`
-	IsBoatPassable            bool   `json:"IsBoat_Passable"`
-	IsSkiffPassable           bool   `json:"IsSkiff_Passable"`
-	IsCarpetPassable          bool   `json:"IsCarpet_Passable"`
-	IsHorsePassable           bool   `json:"IsHorse_Passable"`
-	IsKlimable                bool   `json:"IsKlimable"`
-	IsOpenable                bool   `json:"IsOpenable"`
-	IsLandEnemyPassable       bool   `json:"IsLandEnemyPassable"`
-	IsWaterEnemyPassable      bool   `json:"IsWaterEnemyPassable"`
-	SpeedFactor               int    `json:"SpeedFactor"`
-	LightEmission             int    `json:"LightEmission"`
-	IsPartOfAnimation         bool   `json:"IsPartOfAnimation"`
-	TotalAnimationFrames      int    `json:"TotalAnimationFrames"`
-	AnimationIndex            int    `json:"AnimationIndex"`
-	IsUpright                 bool   `json:"IsUpright"`
-	FlatTileSubstitutionIndex int    `json:"FlatTileSubstitutionIndex"`
-	FlatTileSubstitutionName  string `json:"FlatTileSubstitutionName"`
-	IsEnemy                   bool   `json:"IsEnemy"`
-	IsNPC                     bool   `json:"IsNPC"`
-	IsBuilding                bool   `json:"IsBuilding"`
-	DontDraw                  bool   `json:"DontDraw"`
-	IsTalkOverable            bool   `json:"IsTalkOverable"`
-	IsBoardable               bool   `json:"IsBoardable"`
-	IsGuessableFloor          bool   `json:"IsGuessableFloor"`
-	BlocksLight               bool   `json:"BlocksLight"`
-	IsWindow                  bool   `json:"IsWindow"`
-	CombatMapIndex            string `json:"CombatMapIndex"`
+	Index                indexes.SpriteIndex
+	Name                 string `json:"Name"`
+	Description          string `json:"Description"`
+	SpeedFactor          int    `json:"SpeedFactor"`
+	LightEmission        int    `json:"LightEmission"`
+	IsPartOfAnimation    bool   `json:"IsPartOfAnimation"`
+	TotalAnimationFrames int    `json:"TotalAnimationFrames"`
+	AnimationIndex       int    `json:"AnimationIndex"`
+	IsEnemy              bool   `json:"IsEnemy"`
+	IsNPC                bool   `json:"IsNPC"`
+	IsBuilding           bool   `json:"IsBuilding"`
+	DontDraw             bool   `json:"DontDraw"`
+	IsGuessableFloor     bool   `json:"IsGuessableFloor"`
+	BlocksLight          bool   `json:"BlocksLight"`
+	IsWindow             bool   `json:"IsWindow"`
+	CombatMapIndex       string `json:"CombatMapIndex"`
 }
 
 func (t *Tile) IsPassable(vehicle VehicleType) bool {
 	switch vehicle {
 	case CarpetVehicle:
-		return t.IsCarpetPassable
+		return t.IsCarpetPassable()
 	case HorseVehicle:
-		return t.IsHorsePassable
+		return t.IsHorsePassable()
 	case SkiffVehicle:
-		return t.IsSkiffPassable
+		return t.IsSkiffPassable()
 	case FrigateVehicle:
-		return t.IsWaterEnemyPassable
+		return t.IsBoatPassable()
 	case NoPartyVehicle:
-		return t.IsWalkingPassable
+		return t.IsWalkingPassable()
 	case NPC:
-		return t.IsLandEnemyPassable
+		return t.IsLandEnemyPassable()
 	}
 
 	return false
@@ -94,7 +79,7 @@ func (t *Tile) IsCannon() bool {
 }
 
 func (t *Tile) IsBarrel() bool {
-	return t.Index == indexes.Barrel
+	return t.Is(indexes.Barrel)
 }
 
 func (t *Tile) IsPath() bool {
@@ -113,7 +98,7 @@ func (t *Tile) GetStairsFloorDirection() LadderOrStairType {
 }
 
 func (t *Tile) isNPCNoPenaltyWalkable() bool {
-	return t.Index == indexes.BrickFloor || t.Index == indexes.HexMetalGridFloor || t.Index == indexes.WoodenPlankVert1Floor || t.Index == indexes.WoodenPlankVert2Floor || t.Index == indexes.WoodenPlankHorizFloor
+	return t.Is(indexes.BrickFloor) || t.Is(indexes.HexMetalGridFloor) || t.Is(indexes.WoodenPlankVert1Floor) || t.Is(indexes.WoodenPlankVert2Floor) || t.Is(indexes.WoodenPlankHorizFloor)
 }
 
 func (t *Tile) GetWalkableWeight() int {
@@ -121,7 +106,7 @@ func (t *Tile) GetWalkableWeight() int {
 		return weightIdealPath
 	}
 
-	if !t.IsWalkingPassable {
+	if !t.IsWalkingPassable() {
 		return weightImpassable
 	}
 
@@ -133,7 +118,7 @@ func (t *Tile) GetWalkableWeight() int {
 		return weightPath
 	}
 
-	if t.Index == indexes.Grass {
+	if t.Is(indexes.Grass) {
 		return weightGrass
 	}
 
@@ -141,7 +126,7 @@ func (t *Tile) GetWalkableWeight() int {
 }
 
 func (t *Tile) IsWalkableDuringWander() bool {
-	return t.IsWalkingPassable && !t.Index.IsBed() && !t.Index.IsDoor()
+	return t.IsWalkingPassable() && !t.Index.IsBed() && !t.Index.IsDoor()
 }
 
 func (t *Tile) GetExtraMovementString() string {
@@ -158,7 +143,7 @@ func (t *Tile) GetExtraMovementString() string {
 }
 
 func (t *Tile) IsWall() bool {
-	return t.Index == indexes.LargeRockWall || t.Index == indexes.StoneBrickWall || t.Index == indexes.StoneBrickWallSecret
+	return t.Is(indexes.LargeRockWall) || t.Is(indexes.StoneBrickWall) || t.Is(indexes.StoneBrickWallSecret)
 }
 
 func (t *Tile) IsRoad() bool {
@@ -166,25 +151,25 @@ func (t *Tile) IsRoad() bool {
 }
 
 func (t *Tile) IsSwamp() bool {
-	return t.Index == indexes.Swamp
+	return t.Is(indexes.Swamp)
 }
 
 func (t *Tile) IsWater() bool {
-	return t.Index == indexes.Water1 || t.Index == indexes.Water2 || t.Index == indexes.WaterShallow
+	return t.Is(indexes.Water1) || t.Is(indexes.Water2) || t.Is(indexes.WaterShallow)
 }
 
 func (t *Tile) IsDesert() bool {
-	return t.Index == indexes.Desert || t.Index == indexes.LeftDesert2 || t.Index == indexes.RightDesert2
+	return t.Is(indexes.Desert) || t.Is(indexes.LeftDesert2) || t.Is(indexes.RightDesert2)
 }
 
 func (t *Tile) IsMountain() bool {
-	return t.Index == indexes.SmallMountains
+	return t.Is(indexes.SmallMountains)
 }
 
 func (t *Tile) IsForest() bool {
 	// Forest tiles are identified as passable land tiles that are not other terrain types
 	// This logic may need refinement based on actual forest tile indexes
-	return t.IsLandEnemyPassable &&
+	return t.IsLandEnemyPassable() &&
 		t.Index != indexes.Grass &&
 		t.Index != indexes.Desert &&
 		t.Index != indexes.Swamp &&
@@ -224,4 +209,79 @@ func (t *Tile) IsPushable() bool {
 		t.Is(indexes.CookStove) ||
 		t.Is(indexes.Chest) ||
 		t.Is(indexes.WoodenBox)
+}
+
+// IsBoatPassable returns true if boats (frigates) can pass through this tile
+func (t *Tile) IsBoatPassable() bool {
+	// Boats need deep water
+	return t.Is(indexes.Water1) || t.Is(indexes.Water2)
+}
+
+// IsSkiffPassable returns true if skiffs can pass through this tile
+func (t *Tile) IsSkiffPassable() bool {
+	// Skiffs can handle shallow water and some coastal areas
+	return t.IsWater() || t.Is(indexes.Grass) || t.IsSwamp()
+}
+
+// IsCarpetPassable returns true if magic carpets can pass through this tile
+func (t *Tile) IsCarpetPassable() bool {
+	// Magic carpets can fly over most terrain, limited by impassable obstacles
+	return !t.IsMountain() // Can't fly through solid mountains
+}
+
+// IsHorsePassable returns true if horses can pass through this tile
+func (t *Tile) IsHorsePassable() bool {
+	// Horses are land-based like walking but avoid difficult terrain
+	return t.IsWalkingPassable() &&
+		!t.IsWater() &&
+		!t.IsSwamp() &&
+		!t.IsMountain()
+}
+
+// IsKlimable returns true if this tile can be climbed by players
+func (t *Tile) IsKlimable() bool {
+	// Based on typical Ultima V mechanics: mountains, ladders, and some structures
+	return t.IsMountain() ||
+		t.Is(indexes.LadderUp) ||
+		t.Is(indexes.LadderDown)
+}
+
+// IsLandEnemyPassable returns true if land-based enemies can move through this tile
+func (t *Tile) IsLandEnemyPassable() bool {
+	// Land enemies can move on walkable land tiles
+	return t.IsWalkingPassable() && !t.IsWater()
+}
+
+// IsWaterEnemyPassable returns true if water-based enemies can move through this tile
+func (t *Tile) IsWaterEnemyPassable() bool {
+	// Water enemies move in water tiles
+	return t.IsWater()
+}
+
+// IsOpenable returns true if this tile can be opened (doors, chests, etc.)
+func (t *Tile) IsOpenable() bool {
+	// Doors and chests can be opened
+	return t.Index.IsDoor() || t.Is(indexes.Chest)
+}
+
+// IsWalkingPassable returns true if this tile can be walked through by players on foot
+func (t *Tile) IsWalkingPassable() bool {
+	// Basic walkable terrain: grass, paths, floors, and some others
+	return t.Is(indexes.Grass) ||
+		t.IsPath() ||
+		t.Is(indexes.BrickFloor) ||
+		t.Is(indexes.HexMetalGridFloor) ||
+		t.Is(indexes.WoodenPlankVert1Floor) ||
+		t.Is(indexes.WoodenPlankVert2Floor) ||
+		t.Is(indexes.WoodenPlankHorizFloor) ||
+		t.IsDesert() ||
+		t.IsSwamp() ||
+		// Add other walkable terrain as needed
+		(!t.IsMountain() && !t.IsWater() && !t.IsWall())
+}
+
+// IsRangeWeaponPassable returns true if ranged weapons (arrows, etc.) can pass through this tile
+func (t *Tile) IsRangeWeaponPassable() bool {
+	// Range weapons can pass through most open spaces but not walls, mountains, etc.
+	return !t.IsWall() && !t.IsMountain() && !t.Index.IsDoor()
 }

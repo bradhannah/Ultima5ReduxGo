@@ -22,6 +22,7 @@ Columns:
 | Partial     | Torch duration                 | [Environment.md → Torch Duration](./Environment.md#torch-duration)                  | `internal/map_state/lighting.go`                       | Similar    | `LightTorch()`/`AdvanceTurn()` exist; no UI command to ignite/consume torches wired.                                   |
 | Yes         | Vehicle system                 | [VEHICLES.md](../VEHICLES.md)                                                       | `internal/references/vehicle.go`, `internal/map_units/npc_vehicle.go` | Similar    | Complete vehicle system with boarding/exit mechanics, vehicle types, and integration documented. Tests: vehicle action tests. |
 | Yes         | Sprite constants (indexes)     | —                                                                                   | `internal/sprites/indexes/sprites.go`                 | Identical  | Complete set of sprite constants including Peaks, terrain types, structures from OLD references. Used by action implementations. |
+| Yes         | Tile identification system     | [TILES.md](../TILES.md)                                                            | `internal/references/tile.go`                         | Similar    | Function-based tile checking with Is() pattern for single tiles, specific methods for logical groupings. Data fields converted to functions (IsWalkingPassable, IsOpenable, etc.). |
 | No          | RNG & INT saves                | [RNG.md](./RNG.md)                                                                  | —                                                      | —          | No central RNG helpers nor `saveint` equivalents in Go tree.                                                           |
 | No          | Field expiration (fieldkill)   | [Combat_Effects.md → Field Expiration](./Combat_Effects.md#field-expiration)        | —                                                      | —          | Missing.                                                                                                               |
 | No          | Aiming UI (plraim)             | [Combat_Effects.md → Aiming UI](./Combat_Effects.md#aiming-ui)                      | —                                                      | —          | Missing.                                                                                                               |
@@ -54,7 +55,7 @@ Columns:
 | Stub        | Ready          | Dungeon  | [Commands.md → Ready](./Commands.md#ready)                                         | `internal/game_state/action_ready.go`                                                               | Stub       | Stub implementation with TODO comment. Input handler wired.                                                                                                           |
 | Stub        | Ready          | Combat   | [Commands.md → Ready](./Commands.md#ready)                                         | `internal/game_state/action_ready.go`                                                               | Stub       | Stub implementation with TODO comment. Input handler wired.                                                                                                           |
 | Partial     | Talk           | Small    | [Commands.md → Talk](./Commands.md#talk-freed-npc-nuance)                          | `cmd/ultimav/gamescene_input_smallmap.go:326`                                                        | Dissimilar | Uses linear dialog engine; TLK/merchant flows not integrated yet.                                                                                                                                                          |
-| Stub        | Talk           | Large    | [Commands.md → Talk](./Commands.md#talk-freed-npc-nuance)                          | `cmd/ultimav/gamescene_input_largemap.go:80` + `internal/game_state/action_talk.go:35-40`           | Stub       | Returns "Talk-Funny, no response!" per Commands.md specification. Input handler wired.                                                                                                                                    |
+| Stub        | Talk           | Large    | [Commands.md → Talk](./Commands.md#talk-freed-npc-nuance)                          | `cmd/ultimav/gamescene_input_largemap.go:80` + `internal/game_state/action_talk.go:35-40`           | Stub       | Returns "Talk-Funny, no response!" per Commands.md specification. Input handler wired. Updated per recent stub implementation. |
 | Stub        | Talk           | Dungeon  | [Commands.md → Talk](./Commands.md#talk-freed-npc-nuance)                          | `internal/game_state/action_talk.go:47-52`                                                          | Stub       | Stub implementation with TODO comment. Input handler wired.                                                                                                                                                                |
 | Stub        | Talk           | Combat   | [Commands.md → Talk](./Commands.md#talk-freed-npc-nuance)                          | `internal/game_state/action_talk.go:41-46`                                                          | Stub       | Stub implementation with TODO comment. Input handler wired.                                                                                                                                                                |
 | Yes         | Klimb          | Small    | [Commands.md → Klimb](./Commands.md#klimb)                                         | `cmd/ultimav/gamescene_input_smallmap.go:177,188` + `internal/game_state/action_klimb.go:9-57`       | Similar    | Complete: ladders/grates up/down with floor validation, directional fence climbing, proper messaging and time advancement. Tests: `action_klimb_test.go`.                                                                  |
@@ -156,8 +157,8 @@ Columns:
 |-------------|-----------------------------------|--------------------------------------------------------------------------------|----------------------------------------------------------|------------|----------------------------------------------------------------------------|
 | Yes         | NPC schedules (data/model)        | [NPC_Schedules.md → Data Model](./NPC_Schedules.md#data-model)                 | `internal/references/npc_schedule.go`                    | Similar    | Schedule model present; details may differ.                                |
 | Partial     | NPC schedule driver (hour change) | [NPC_Schedules.md → Hourly Transitions](./NPC_Schedules.md#hourly-transitions) | `internal/ai/npc_ai_controller_small_map.go` (various)   | Similar    | Controller selects behaviors and floors; exact LEAV/ARIV/POP not verbatim. |
-| Yes         | Small map pathfinding             | [NPC_Schedules.md → Pathfinding](./NPC_Schedules.md#pathfinding)               | `internal/astar/*.go`, `internal/ai/npc_ai_controller_*` | Similar    | Pathfinding exists; integration with schedules ongoing.                    |
-| Yes         | Large map monster generation      | [Movement_Combat_AI.md → Monster Generation](./Movement_Combat_AI.md)          | `internal/ai/npc_ai_controller_large_map.go`            | Similar    | Environment-based monster spawning with tile probability system implemented. Fixed double-gating issue in spawn rates. |
+| Yes         | Small map pathfinding             | [NPC_Schedules.md → Pathfinding](./NPC_Schedules.md#pathfinding)               | `internal/astar/*.go`, `internal/ai/npc_ai_controller_*` | Similar    | Pathfinding exists; integration with schedules ongoing. Terrain-based movement throttling implemented per Movement_Overworld.md. |
+| Yes         | Large map monster generation      | [Movement_Combat_AI.md → Monster Generation](./Movement_Combat_AI.md)          | `internal/ai/npc_ai_controller_large_map.go`            | Similar    | Environment-based monster spawning with tile probability system implemented. Fixed double-gating issue in spawn rates. Terrain-based AI movement with proper tile classification. |
 | No          | Combat AI (seek, special moves)   | [Movement_Combat_AI.md](./Movement_Combat_AI.md)                               | —                                                        | —          | Combat not implemented.                                                    |
 | No          | Mass charm targeting ('C')        | [Spells.md → Quas An Wis](./Spells.md#quas-an-wis-mass-charmconfusion)         | —                                                        | —          | Not applicable yet.                                                        |
 
@@ -348,7 +349,34 @@ Legend: Implemented = No (unless otherwise noted), Similarity = —, Code Ref co
 
 ---
 
-This tracker is a starting point. As features land in Go code, update the “Implemented” and “Similarity” columns, and add concrete function references.
+## Recent Updates (August 2025)
+
+**Data-to-Function Architecture Migration**: 
+- Converted tile passability from JSON data fields to function-based logic (`IsWalkingPassable()`, `IsOpenable()`, `IsRangeWeaponPassable()`)
+- Implemented consistent tile identification patterns: generic `Is()` for single tiles, specific methods for logical groupings
+- Updated all tile checking functions to use consistent patterns per coding conventions
+- Benefits: Better maintainability, clearer logic, follows established patterns
+
+**Command System Completion**:
+- Implemented stub responses for all missing command variants (Talk/Search/Attack/Use/Yell across all map types)
+- All commands now have proper input handlers and SystemCallbacks integration
+- Proper time advancement and context-appropriate responses implemented
+- Commands follow consistent Action pattern with separated UI/GameState concerns
+
+**AI System Improvements**:
+- Enhanced terrain-based monster movement with proper tile classification (heavy/difficult terrain)
+- Fixed monster spawn probability system with tile-based calculation
+- Implemented environment-based monster selection with weighted random distribution
+- Updated tile checking to use function-based patterns throughout AI systems
+
+**Documentation Updates**:
+- TILES.md updated with comprehensive pattern guide and coding conventions
+- Implementation tracking updated to reflect current system state
+- All recent changes documented with proper code references
+
+---
+
+This tracker is a starting point. As features land in Go code, update the "Implemented" and "Similarity" columns, and add concrete function references.
 
 ## Sleep & Rest (Overview)
 

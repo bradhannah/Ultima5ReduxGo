@@ -12,15 +12,8 @@ import (
 // Test helper function to create tiles with specific properties
 func createTestTileForMonsterGen(spriteIndex indexes.SpriteIndex) *references.Tile {
 	tile := &references.Tile{
-		Index:                spriteIndex,
-		IsLandEnemyPassable:  true,
-		IsWaterEnemyPassable: false,
-	}
-
-	// Set water tiles to be water passable
-	if spriteIndex == indexes.Water1 || spriteIndex == indexes.Water2 || spriteIndex == indexes.WaterShallow {
-		tile.IsWaterEnemyPassable = true
-		tile.IsLandEnemyPassable = false
+		Index: spriteIndex,
+		// Passability is now determined by functions based on sprite index
 	}
 
 	return tile

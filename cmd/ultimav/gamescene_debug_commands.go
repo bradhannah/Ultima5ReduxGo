@@ -103,7 +103,7 @@ func (d *DebugConsole) createMonsterGenerationOdds() *grammar.TextCommand {
 		func(s string, command *grammar.TextCommand) {
 			outputStr := d.TextInput.GetText()
 			n := command.GetIndexAsInt(1, outputStr)
-			d.gameScene.gameState.TheOdds.SetGenerateLargeMapMonster(n)
+			d.gameScene.gameState.TheOdds.SetMonsterGeneration(n)
 
 			d.dumpQuickState(fmt.Sprintf("One In X odds of Monster=%d", n))
 		})

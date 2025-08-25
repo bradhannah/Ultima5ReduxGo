@@ -119,7 +119,7 @@ func (m *NPCAIControllerLargeMap) calculateNextNPCPosition(mapUnit map_units.Map
 		return
 	}
 
-	if !m.ShouldEnemyMove() {
+	if !m.ShouldEnemyMoveThisTick(mapUnit) {
 		return
 	}
 
@@ -171,7 +171,7 @@ func (m *NPCAIControllerLargeMap) setBestNextPositionToMoveTowardsWalkablePointD
 					continue
 				}
 			} else {
-				if !topTile.IsLandEnemyPassable {
+				if !topTile.IsLandEnemyPassable() {
 					continue
 				}
 			}
@@ -264,16 +264,43 @@ func (m *NPCAIControllerLargeMap) shouldGenerateTileBasedMonster() bool {
 
 	// Use the combined probability with base odds
 	// This gives: Roads=never, Grass=1in32, Swamp=2in32, SwampNight=5in32
-	combinedOdds := m.theOdds.GetOneInXLargeMapMonsterGeneration() / probability
+	combinedOdds := m.theOdds.GetOneInXMonsterGeneration() / probability
 	return helpers.OneInXOdds(combinedOdds)
 }
 
-func (m *NPCAIControllerLargeMap) ShouldEnemyMove() bool {
-	return helpers.HappenedByPercentLikely(m.theOdds.GetPercentLikeyLargeMapMonsterMoves())
+// ShouldEnemyMoveThisTick implements terrain-based movement throttling from Movement_Overworld.md pseudocode
+func (m *NPCAIControllerLargeMap) ShouldEnemyMoveThisTick(mapUnit map_units.MapUnit) bool {
+	tile := m.mapState.GetLayeredMapByCurrentLocation().GetTopTile(mapUnit.PosPtr())
+
+	// Implement should_move_this_tick(tile) logic from pseudocode
+	if m.isHeavyTerrain(tile) {
+		// Heavy terrain (mountains, deep forest): 1-in-3 chance
+		return helpers.RandomIntInRange(0, 2) == 2
+	}
+
+	if m.isDifficultTerrain(tile) {
+		// Difficult terrain (swamps, light forest): 1-in-2 chance
+		return helpers.RandomIntInRange(0, 1) == 0
+	}
+
+	// Open terrain (grass, roads): Always move
+	return true
 }
 
 func (m *NPCAIControllerLargeMap) RemoveAllEnemies() {
 	m.mapUnits = make(map_units.MapUnits, 0, map_units.MaximumNpcsPerMap)
+}
+
+// isHeavyTerrain classifies terrain that slows movement to 1-in-3 chance
+func (m *NPCAIControllerLargeMap) isHeavyTerrain(tile *references2.Tile) bool {
+	// Heavy terrain: mountains only (game only has one forest type)
+	return tile.IsMountain()
+}
+
+// isDifficultTerrain classifies terrain that slows movement to 1-in-2 chance
+func (m *NPCAIControllerLargeMap) isDifficultTerrain(tile *references2.Tile) bool {
+	// Difficult terrain: swamps, forests (game only has one forest type)
+	return tile.IsSwamp() || tile.IsForest()
 }
 
 // calculateTileBasedProbability implements the original MONSTER.C genprob() logic

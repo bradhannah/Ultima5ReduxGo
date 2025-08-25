@@ -1,30 +1,20 @@
 package references
 
 type TheOdds struct {
-	oneInXLargeMapMonsterGeneration   int
-	percentLikelyLargeMapMonsterMoves int
+	oneInXMonsterGeneration int
 }
 
 func NewDefaultTheOdds() TheOdds {
 	theOdds := TheOdds{
-		oneInXLargeMapMonsterGeneration:   32,
-		percentLikelyLargeMapMonsterMoves: 75,
+		oneInXMonsterGeneration: 32,
 	}
 	return theOdds
 }
 
-func (o *TheOdds) GetOneInXLargeMapMonsterGeneration() int {
-	return o.oneInXLargeMapMonsterGeneration
+func (o *TheOdds) GetOneInXMonsterGeneration() int {
+	return o.oneInXMonsterGeneration
 }
 
-func (o *TheOdds) SetGenerateLargeMapMonster(oneInX int) {
-	o.oneInXLargeMapMonsterGeneration = oneInX
-}
-
-func (o *TheOdds) GetPercentLikeyLargeMapMonsterMoves() int {
-	return o.percentLikelyLargeMapMonsterMoves
-}
-
-func (o *TheOdds) SetPercentLikeyLargeMapMonsterMoves(percent int) {
-	o.percentLikelyLargeMapMonsterMoves = percent
+func (o *TheOdds) SetMonsterGeneration(oneInX int) {
+	o.oneInXMonsterGeneration = oneInX
 }

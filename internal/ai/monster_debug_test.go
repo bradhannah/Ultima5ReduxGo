@@ -143,7 +143,7 @@ func TestDebugModeSpawnRate(t *testing.T) {
 	for _, setting := range debugSettings {
 		t.Run(setting.name, func(t *testing.T) {
 			theOdds := references.NewDefaultTheOdds()
-			theOdds.SetGenerateLargeMapMonster(setting.oneInX)
+			theOdds.SetMonsterGeneration(setting.oneInX)
 			controller.theOdds = &theOdds
 
 			numTrials := 1000

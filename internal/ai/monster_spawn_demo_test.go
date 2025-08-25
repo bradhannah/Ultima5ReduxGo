@@ -23,7 +23,7 @@ func TestMonsterSpawnProblemDemonstration(t *testing.T) {
 
 	t.Logf("=== MONSTER SPAWN PROBLEM ANALYSIS ===")
 	t.Logf("Your scenario: Date 4-7-139, walking on grass at noon")
-	t.Logf("Default odds: 1 in %d chance per step", controller.theOdds.GetOneInXLargeMapMonsterGeneration())
+	t.Logf("Default odds: 1 in %d chance per step", controller.theOdds.GetOneInXMonsterGeneration())
 
 	// Simulate OLD BROKEN SYSTEM (before our fix)
 	t.Logf("\n--- OLD SYSTEM (before fix) ---")
@@ -108,7 +108,7 @@ func TestDifferentTerrainSpawnRates(t *testing.T) {
 		{"Swamp/Forest/Mountain", 2, "Dangerous terrain"},
 	}
 
-	baseOdds := controller.theOdds.GetOneInXLargeMapMonsterGeneration() // 32
+	baseOdds := controller.theOdds.GetOneInXMonsterGeneration() // 32
 
 	for _, terrain := range terrainTypes {
 		t.Logf("\n%s (%s):", terrain.name, terrain.description)
@@ -171,7 +171,7 @@ func TestNightBonusEffect(t *testing.T) {
 				grassProbability += 3
 			}
 
-			combinedOdds := controller.theOdds.GetOneInXLargeMapMonsterGeneration() / grassProbability
+			combinedOdds := controller.theOdds.GetOneInXMonsterGeneration() / grassProbability
 			expectedRate := (1.0 / float64(combinedOdds)) * 100
 
 			t.Logf("  Grass probability: %d", grassProbability)
@@ -185,7 +185,7 @@ func TestNightBonusEffect(t *testing.T) {
 				swampProbability += 3
 			}
 
-			swampOdds := controller.theOdds.GetOneInXLargeMapMonsterGeneration() / swampProbability
+			swampOdds := controller.theOdds.GetOneInXMonsterGeneration() / swampProbability
 			swampRate := (1.0 / float64(swampOdds)) * 100
 
 			t.Logf("  Swamp probability: %d", swampProbability)
@@ -214,7 +214,7 @@ func TestRecommendedSettings(t *testing.T) {
 
 	for _, setting := range settings {
 		theOdds := references.NewDefaultTheOdds()
-		theOdds.SetGenerateLargeMapMonster(setting.oneInX)
+		theOdds.SetMonsterGeneration(setting.oneInX)
 
 		// Test grass spawn rate
 		grassRate := (1.0 / float64(setting.oneInX)) * 100
@@ -226,12 +226,12 @@ func TestRecommendedSettings(t *testing.T) {
 		t.Logf("  Verdict: %s", setting.verdict)
 
 		if setting.oneInX == 16 {
-			t.Logf("  ⭐ RECOMMENDED: SetGenerateLargeMapMonster(%d)", setting.oneInX)
+			t.Logf("  ⭐ RECOMMENDED: SetMonsterGeneration(%d)", setting.oneInX)
 		}
 	}
 
 	t.Logf("\nTo fix your issue, consider calling:")
-	t.Logf("  controller.theOdds.SetGenerateLargeMapMonster(16)")
+	t.Logf("  controller.theOdds.SetMonsterGeneration(16)")
 	t.Logf("This will give you a monster every ~16 steps on grass instead of ~32.")
 }
 

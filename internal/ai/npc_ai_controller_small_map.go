@@ -208,7 +208,7 @@ func (n *NPCAIControllerSmallMap) performAiMovementFromDifferentFloorToOurFloor(
 	// check if something or someone else is on the ladder, if so then we skip it for this turn
 	// and try again next turn
 	tile := n.mapState.GetLayeredMapByCurrentLocation().GetTopTile(&closestLadderPos)
-	if !tile.IsWalkingPassable {
+	if !tile.IsWalkingPassable() {
 		return false
 	}
 
@@ -236,7 +236,7 @@ func (n *NPCAIControllerSmallMap) performAiMovementFromCurrentFloorToDifferentFl
 	// // current floor matters - if they are coming to your floor - then teleport them
 	closestLadderPos := n.slr.GetClosestLadder(refBehaviour.Position, friendly.Floor(), refBehaviour.Floor) // n.gameState.Floor)
 	tile := n.mapState.GetLayeredMapByCurrentLocation().GetTopTile(&closestLadderPos)
-	if !tile.IsWalkingPassable {
+	if !tile.IsWalkingPassable() {
 		return false
 	}
 
@@ -379,7 +379,7 @@ func (n *NPCAIControllerSmallMap) moveNPCOnCalculatedPath(friendly *map_units.NP
 
 	newPos := friendly.MapUnitDetails().DequeueNextPosition()
 	newPosTile := n.mapState.GetLayeredMapByCurrentLocation().GetTopTile(&newPos)
-	passable := newPosTile.IsWalkingPassable || newPosTile.Index.IsUnlockedDoor()
+	passable := newPosTile.IsWalkingPassable() || newPosTile.Index.IsUnlockedDoor()
 	if passable && n.mapState.PlayerLocation.Position != newPos {
 		friendly.SetPos(newPos)
 		return true
