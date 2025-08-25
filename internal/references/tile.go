@@ -1,6 +1,8 @@
 package references
 
 import (
+	"strings"
+
 	"github.com/bradhannah/Ultima5ReduxGo/internal/sprites/indexes"
 )
 
@@ -266,18 +268,56 @@ func (t *Tile) IsOpenable() bool {
 
 // IsWalkingPassable returns true if this tile can be walked through by players on foot
 func (t *Tile) IsWalkingPassable() bool {
-	// Basic walkable terrain: grass, paths, floors, and some others
-	return t.Is(indexes.Grass) ||
-		t.IsPath() ||
-		t.Is(indexes.BrickFloor) ||
-		t.Is(indexes.HexMetalGridFloor) ||
-		t.Is(indexes.WoodenPlankVert1Floor) ||
-		t.Is(indexes.WoodenPlankVert2Floor) ||
-		t.Is(indexes.WoodenPlankHorizFloor) ||
-		t.IsDesert() ||
-		t.IsSwamp() ||
-		// Add other walkable terrain as needed
-		(!t.IsMountain() && !t.IsWater() && !t.IsWall())
+	// Use game data properties when available for more accurate logic
+	// If SpeedFactor is -1, tile is explicitly impassable
+	if t.SpeedFactor == -1 {
+		return false
+	}
+
+	// Buildings are generally not walkable, but entrances should be passable
+	if t.IsBuilding {
+		// Allow entrances to be walkable
+		if len(t.Name) > 0 && (strings.Contains(strings.ToLower(t.Name), "entrance") ||
+			strings.Contains(strings.ToLower(t.Name), "entrace")) { // Handle typo in data
+			return true
+		}
+		return false
+	}
+
+	// Castle tiles should not be passable even if isBuilding=false
+	if len(t.Name) > 0 && strings.Contains(strings.ToLower(t.Name), "castle") {
+		return false
+	}
+
+	// Basic walkable terrain: grass, paths, floors
+	if t.Is(indexes.Grass) || t.IsPath() ||
+		t.Is(indexes.BrickFloor) || t.Is(indexes.HexMetalGridFloor) ||
+		t.Is(indexes.WoodenPlankVert1Floor) || t.Is(indexes.WoodenPlankVert2Floor) ||
+		t.Is(indexes.WoodenPlankHorizFloor) {
+		return true
+	}
+
+	// Terrain types that should be walkable
+	if t.IsDesert() || t.IsSwamp() || t.Is(indexes.Beach) ||
+		t.Is(indexes.Brush) || t.Is(indexes.ThickBrush) ||
+		t.Is(indexes.Forest) || t.Is(indexes.Hills) ||
+		t.Is(indexes.LeftHills) || t.Is(indexes.RightHills) {
+		return true
+	}
+
+	// For tiles with names containing "Path", they should be walkable
+	// This handles cases like "OutsidePath3" that aren't in the standard path index range
+	if len(t.Name) > 0 &&
+		(strings.Contains(strings.ToLower(t.Name), "path") ||
+			strings.Contains(strings.ToLower(t.Name), "road")) {
+		return true
+	}
+
+	// Use original catch-all but with more restrictions
+	// Only allow for basic terrain tiles, not structures or unknown tiles
+	return !t.IsMountain() && !t.IsWater() && !t.IsWall() &&
+		t.SpeedFactor > 0 && t.SpeedFactor <= 6 && // Reasonable speed factors
+		!t.IsBuilding // Not a building
 }
 
 // IsRangeWeaponPassable returns true if ranged weapons (arrows, etc.) can pass through this tile

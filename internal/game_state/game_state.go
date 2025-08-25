@@ -168,7 +168,18 @@ func (g *GameState) IsPassable(pos *references.Position) bool {
 		return false
 	}
 
-	return topTile.IsPassable(g.PartyVehicle.GetVehicleDetails().VehicleType)
+	// Check terrain passability first (like legalmove() in original)
+	if !topTile.IsPassable(g.PartyVehicle.GetVehicleDetails().VehicleType) {
+		return false
+	}
+
+	// Check for object collision (like looklist() in original)
+	// This is what was missing - objects were not blocking movement!
+	if g.ObjectPresentAt(pos) {
+		return false
+	}
+
+	return true
 }
 
 func (g *GameState) GetArchwayPortcullisSpriteByTime() indexes.SpriteIndex {

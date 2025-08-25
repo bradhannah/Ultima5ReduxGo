@@ -122,8 +122,10 @@ func (g *GameState) ActionPushCombatMap(direction references.Direction) bool {
 // Helper methods - TODO: Move these to appropriate files when systems are implemented
 
 func (g *GameState) ObjectPresentAt(position *references.Position) bool {
-	// TODO: Implement object presence check when object system is available
-	return false // Temporary stub
+	// Check if any NPC/object is present at this position
+	// This implements the original Ultima V looklist() functionality
+	mapUnit := g.CurrentNPCAIController.GetNpcs().GetMapUnitAtPositionOrNil(*position)
+	return mapUnit != nil
 }
 
 func (g *GameState) CheckTrap(position *references.Position) bool {
