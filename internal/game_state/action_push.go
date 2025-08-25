@@ -88,6 +88,12 @@ func (g *GameState) ActionPushLargeMap(direction references.Direction) bool {
 	return true
 }
 
+func (g *GameState) ActionPushDungeonMap(direction references.Direction) bool {
+	// TODO: Implement dungeon map Push command - see Commands.md Push section
+	// Dungeon map variant of push command
+	return true
+}
+
 func (g *GameState) ActionPushCombatMap(direction references.Direction) bool {
 	// Combat map push includes combat-specific logic per pseudocode
 

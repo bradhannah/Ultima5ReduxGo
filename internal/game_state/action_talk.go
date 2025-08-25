@@ -43,3 +43,9 @@ func (g *GameState) ActionTalkCombatMap(direction references.Direction) bool {
 	// Combat map variant of talk command - likely disabled during combat
 	return true
 }
+
+func (g *GameState) ActionTalkDungeonMap(direction references.Direction) bool {
+	// TODO: Implement dungeon map Talk command - see Commands.md Talk section
+	// Dungeon map variant of talk command - may be limited
+	return true
+}

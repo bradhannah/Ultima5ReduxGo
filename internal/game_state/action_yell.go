@@ -26,3 +26,10 @@ func (g *GameState) ActionYellCombatMap(direction references.Direction) bool {
 	// Combat map variant of yell command - likely limited functionality
 	return true
 }
+
+func (g *GameState) ActionYellDungeonMap(direction references.Direction) bool {
+	// TODO: Implement dungeon map Yell command - see Commands.md Yell section
+	// Dungeon map variant of yell command
+	// Should handle dungeon-specific yell effects if any
+	return true
+}

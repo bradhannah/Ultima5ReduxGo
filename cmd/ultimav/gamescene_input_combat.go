@@ -81,6 +81,34 @@ func (g *GameScene) combatMapInputHandler(key ebiten.Key) {
 		g.addRowStr("Yell-")
 		g.secondaryKeyState = YellDirectionInput
 		g.keyboard.SetAllowKeyPressImmediately()
+	case ebiten.KeyF:
+		g.addRowStr("Fire-")
+		g.secondaryKeyState = FireDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
+	case ebiten.KeyR:
+		g.addRowStr("Ready...")
+		g.gameState.ActionReadyCombatMap()
+	case ebiten.KeyV:
+		g.addRowStr("View...")
+		g.gameState.ActionViewCombatMap()
+	case ebiten.KeyZ:
+		g.addRowStr("Ztats...")
+		g.gameState.ActionZtatsCombatMap()
+	case ebiten.KeyM:
+		g.addRowStr("Mix...")
+		g.gameState.ActionMixCombatMap()
+	case ebiten.KeyC:
+		g.addRowStr("Cast...")
+		g.gameState.ActionCastCombatMap()
+	case ebiten.KeyN:
+		g.addRowStr("New Order...")
+		g.gameState.ActionNewOrderCombatMap()
+	case ebiten.KeyH:
+		g.addRowStr("Hole up & camp...")
+		g.gameState.ActionHoleUpCombatMap()
+	case ebiten.KeyQ:
+		g.addRowStr("Escape...")
+		g.gameState.ActionEscapeCombatMap()
 	default:
 		return
 	}
@@ -156,6 +184,11 @@ func (g *GameScene) combatMapHandleSecondaryInput() {
 	case YellDirectionInput:
 		if g.isDirectionKeyValidAndOutput() {
 			g.combatMapYellSecondary(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
+		}
+	case FireDirectionInput:
+		if g.isDirectionKeyValidAndOutput() {
+			g.combatMapFireSecondary(getCurrentPressedArrowKeyAsDirection())
 			g.secondaryKeyState = PrimaryInput
 		}
 	}
@@ -240,5 +273,12 @@ func (g *GameScene) combatMapYellSecondary(direction references2.Direction) {
 	success := g.gameState.ActionYellCombatMap(direction)
 	if !success {
 		g.addRowStr("No effect!")
+	}
+}
+
+func (g *GameScene) combatMapFireSecondary(direction references2.Direction) {
+	success := g.gameState.ActionFireCombatMap(direction)
+	if !success {
+		g.addRowStr("Can't fire!")
 	}
 }

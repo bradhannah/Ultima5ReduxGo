@@ -122,9 +122,20 @@ func (g *GameState) ActionKlimbLargeMap(direction references.Direction) bool {
 	return true
 }
 
+func (g *GameState) ActionKlimbDungeonMap(direction references.Direction) bool {
+	// Dungeon/Combat map Klimb - handles ladders for level transitions
+	// Uses current position tile examination like original implementation
+	return g.klimbDungeonOrCombat(direction)
+}
+
 func (g *GameState) ActionKlimbCombatMap(direction references.Direction) bool {
 	// Combat map Klimb - handles ladders for level transitions
 	// Uses current position tile examination like original implementation
+	return g.klimbDungeonOrCombat(direction)
+}
+
+func (g *GameState) klimbDungeonOrCombat(direction references.Direction) bool {
+	// Shared implementation for dungeon and combat map ladder climbing
 
 	currentTile := g.MapState.LayeredMaps.GetTileRefByPosition(
 		references.CombatMapType,

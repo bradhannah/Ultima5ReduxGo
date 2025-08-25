@@ -42,3 +42,13 @@ func (g *GameState) ActionLookCombatMap(direction references.Direction) bool {
 	// Combat map variant of look command
 	return true
 }
+
+func (g *GameState) ActionLookDungeonMap(direction references.Direction) bool {
+	// TODO: Implement dungeon map Look command - see Commands.md Look — Dungeon section
+	// Should handle:
+	// - Light requirement for visibility
+	// - Tile-family descriptions for dungeon tiles
+	// - Fountain drink prompt integration
+	// - Field type identification
+	return true
+}

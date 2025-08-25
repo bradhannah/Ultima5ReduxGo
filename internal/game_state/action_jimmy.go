@@ -87,6 +87,15 @@ func (g *GameState) ActionJimmyCombatMap(direction references.Direction) bool {
 	return true
 }
 
+func (g *GameState) ActionJimmyDungeonMap(direction references.Direction) bool {
+	// TODO: Implement dungeon map Jimmy command - see Commands.md Jimmy section
+	// Should handle:
+	// - Ahead-of-avatar targeting for dungeon doors/chests
+	// - Dungeon chest jimmy odds
+	// - Light requirement for seeing targets
+	return true
+}
+
 func (g *GameState) SelectCharacterForJimmy() *party_state.PlayerCharacter {
 	// TODO: Implement character selection UI as per Commands.md Jimmy section
 	// For now, default to first character if alive and in party

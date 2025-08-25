@@ -91,6 +91,43 @@ func (g *GameScene) smallMapInputHandler(key ebiten.Key) {
 		g.addRowStr("Yell-")
 		g.secondaryKeyState = YellDirectionInput
 		g.keyboard.SetAllowKeyPressImmediately()
+	case ebiten.KeyR:
+		g.debugMessage = "Ready"
+		g.addRowStr("Ready...")
+		g.gameState.ActionReadySmallMap()
+	case ebiten.KeyV:
+		g.debugMessage = "View"
+		g.addRowStr("View...")
+		g.gameState.ActionViewSmallMap()
+	case ebiten.KeyZ:
+		g.debugMessage = "Ztats"
+		g.addRowStr("Ztats...")
+		g.gameState.ActionZtatsSmallMap()
+	case ebiten.KeyM:
+		g.debugMessage = "Mix Reagents"
+		g.addRowStr("Mix...")
+		g.gameState.ActionMixSmallMap()
+	case ebiten.KeyC:
+		g.debugMessage = "Cast"
+		g.addRowStr("Cast...")
+		g.gameState.ActionCastSmallMap()
+	case ebiten.KeyN:
+		g.debugMessage = "New Order"
+		g.addRowStr("New Order...")
+		g.gameState.ActionNewOrderSmallMap()
+	case ebiten.KeyF:
+		g.debugMessage = "Fire"
+		g.addRowStr("Fire-")
+		g.secondaryKeyState = FireDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
+	case ebiten.KeyH:
+		g.debugMessage = "Hole Up & Camp"
+		g.addRowStr("Hole up & camp...")
+		g.gameState.ActionHoleUpSmallMap()
+	case ebiten.KeyQ:
+		g.debugMessage = "Escape"
+		g.addRowStr("Escape...")
+		g.gameState.ActionEscapeSmallMap()
 	default:
 		return
 	}
@@ -163,6 +200,11 @@ func (g *GameScene) smallMapHandleSecondaryInput() {
 	case YellDirectionInput:
 		if g.isDirectionKeyValidAndOutput() {
 			g.smallMapYellSecondary(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
+		}
+	case FireDirectionInput:
+		if g.isDirectionKeyValidAndOutput() {
+			g.smallMapFireSecondary(getCurrentPressedArrowKeyAsDirection())
 			g.secondaryKeyState = PrimaryInput
 		}
 	default:
@@ -249,9 +291,11 @@ func (g *GameScene) smallMapUseSecondary(direction references2.Direction) {
 }
 
 func (g *GameScene) smallMapYellSecondary(direction references2.Direction) {
-	// TODO: Implement Yell secondary action
-	success := g.gameState.ActionYellSmallMap(direction)
-	if !success {
-		g.addRowStr("No effect!")
-	}
+	// Delegate all logic to GameState - it handles all feedback via SystemCallbacks
+	g.gameState.ActionYellSmallMap(direction)
+}
+
+func (g *GameScene) smallMapFireSecondary(direction references2.Direction) {
+	// Delegate all logic to GameState - it handles all feedback via SystemCallbacks
+	g.gameState.ActionFireSmallMap(direction)
 }

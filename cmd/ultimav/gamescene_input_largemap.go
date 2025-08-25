@@ -65,6 +65,50 @@ func (g *GameScene) largeMapInputHandler(key ebiten.Key) {
 		g.addRowStr("Talk-")
 		g.secondaryKeyState = TalkDirectionInput
 		g.keyboard.SetAllowKeyPressImmediately()
+	case ebiten.KeyS:
+		g.addRowStr("Search-")
+		g.secondaryKeyState = SearchDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
+	case ebiten.KeyA:
+		g.addRowStr("Attack-")
+		g.secondaryKeyState = AttackDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
+	case ebiten.KeyU:
+		g.addRowStr("Use-")
+		g.secondaryKeyState = UseDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
+	case ebiten.KeyY:
+		g.addRowStr("Yell-")
+		g.secondaryKeyState = YellDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
+	case ebiten.KeyF:
+		g.addRowStr("Fire-")
+		g.secondaryKeyState = FireDirectionInput
+		g.keyboard.SetAllowKeyPressImmediately()
+	case ebiten.KeyR:
+		g.addRowStr("Ready...")
+		g.gameState.ActionReadyLargeMap()
+	case ebiten.KeyV:
+		g.addRowStr("View...")
+		g.gameState.ActionViewLargeMap()
+	case ebiten.KeyZ:
+		g.addRowStr("Ztats...")
+		g.gameState.ActionZtatsLargeMap()
+	case ebiten.KeyM:
+		g.addRowStr("Mix...")
+		g.gameState.ActionMixLargeMap()
+	case ebiten.KeyC:
+		g.addRowStr("Cast...")
+		g.gameState.ActionCastLargeMap()
+	case ebiten.KeyN:
+		g.addRowStr("New Order...")
+		g.gameState.ActionNewOrderLargeMap()
+	case ebiten.KeyH:
+		g.addRowStr("Hole up & camp...")
+		g.gameState.ActionHoleUpLargeMap()
+	case ebiten.KeyQ:
+		g.addRowStr("Escape...")
+		g.gameState.ActionEscapeLargeMap()
 	default:
 		return
 	}
@@ -110,6 +154,31 @@ func (g *GameScene) largeMapHandleSecondaryInput() {
 	case TalkDirectionInput:
 		if g.isDirectionKeyValidAndOutput() {
 			g.gameState.ActionTalkLargeMap(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
+		}
+	case SearchDirectionInput:
+		if g.isDirectionKeyValidAndOutput() {
+			g.gameState.ActionSearchLargeMap(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
+		}
+	case AttackDirectionInput:
+		if g.isDirectionKeyValidAndOutput() {
+			g.gameState.ActionAttackLargeMap(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
+		}
+	case UseDirectionInput:
+		if g.isDirectionKeyValidAndOutput() {
+			g.gameState.ActionUseLargeMap(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
+		}
+	case YellDirectionInput:
+		if g.isDirectionKeyValidAndOutput() {
+			g.gameState.ActionYellLargeMap(getCurrentPressedArrowKeyAsDirection())
+			g.secondaryKeyState = PrimaryInput
+		}
+	case FireDirectionInput:
+		if g.isDirectionKeyValidAndOutput() {
+			g.gameState.ActionFireLargeMap(getCurrentPressedArrowKeyAsDirection())
 			g.secondaryKeyState = PrimaryInput
 		}
 	default:

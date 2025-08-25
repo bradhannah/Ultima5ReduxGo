@@ -99,3 +99,12 @@ func (g *GameState) ActionGetCombatMap(direction references.Direction) bool {
 	// Combat map variant of get command
 	return true
 }
+
+func (g *GameState) ActionGetDungeonMap(direction references.Direction) bool {
+	// TODO: Implement dungeon map Get command - see Commands.md Get — Dungeon section
+	// Should handle:
+	// - Picking from underfoot opened chest
+	// - Light requirement for seeing items
+	// - Distinct from surface object pickup
+	return true
+}

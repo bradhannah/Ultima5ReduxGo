@@ -48,6 +48,7 @@ const (
 	AttackDirectionInput
 	UseDirectionInput
 	YellDirectionInput
+	FireDirectionInput
 )
 
 // GameScene is another scene (e.g., the actual game)

@@ -97,3 +97,12 @@ func (g *GameState) ActionOpenCombatMap(direction references.Direction) bool {
 	// Combat map variant of open command - likely limited to chests
 	return true
 }
+
+func (g *GameState) ActionOpenDungeonMap(direction references.Direction) bool {
+	// TODO: Implement dungeon map Open command - see Commands.md Open — Dungeon section
+	// Should handle:
+	// - Dungeon doors and underfoot chests
+	// - Light requirement for seeing targets
+	// - Integration with spells (An Sanct/In Ex Por)
+	return true
+}

@@ -26,3 +26,14 @@ func (g *GameState) ActionSearchCombatMap(direction references.Direction) bool {
 	// Combat map variant of search command
 	return true
 }
+
+func (g *GameState) ActionSearchDungeonMap(direction references.Direction) bool {
+	// TODO: Implement dungeon map Search command - see Commands.md Search — Dungeon section
+	// Should handle:
+	// - Ahead-of-avatar search for secret doors/passages
+	// - Light requirement for searching
+	// - Secret door discovery mechanics
+	// - Hidden passage detection
+	// - Time cost for searching
+	return true
+}

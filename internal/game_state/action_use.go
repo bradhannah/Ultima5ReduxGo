@@ -27,3 +27,10 @@ func (g *GameState) ActionUseCombatMap(direction references.Direction) bool {
 	// Combat map variant of use command - items/spells during combat
 	return true
 }
+
+func (g *GameState) ActionUseDungeonMap(direction references.Direction) bool {
+	// TODO: Implement dungeon map Use command - see Commands.md Use section
+	// Dungeon map variant of use command
+	// Should handle special dungeon items and fixtures
+	return true
+}

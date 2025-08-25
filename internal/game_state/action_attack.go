@@ -27,3 +27,9 @@ func (g *GameState) ActionAttackCombatMap(direction references.Direction) bool {
 	// Combat map variant of attack command - primary combat action
 	return true
 }
+
+func (g *GameState) ActionAttackDungeonMap(direction references.Direction) bool {
+	// TODO: Implement dungeon map Attack command - see Commands.md Attack section
+	// Dungeon map variant of attack command
+	return true
+}
