@@ -58,6 +58,8 @@ func NewNPCReferenceForVehicle(vehicle VehicleType, position Position, floorNumb
 	npcRef.Position = position
 	npcRef.NpcType = Vehicle
 	npcRef.SetKeyIndex(vehicle.GetBoardedSpriteByDirection(Right, Right))
+	// SetKeyIndex overwrites NpcType based on sprite index, but for vehicles we need it to remain Vehicle
+	npcRef.NpcType = Vehicle
 	npcRef.Schedule = CreateNPCScheduledFixedOneLocation(position, floorNumber)
 	return npcRef
 }

@@ -30,6 +30,7 @@ func (d *DebugConsole) createDebugFunctions(gameScene *GameScene) *grammar.TextC
 	textCommands = append(textCommands, *d.createMonsterGenerationOdds())
 	textCommands = append(textCommands, *d.createRemoveAllMonsters())
 	textCommands = append(textCommands, *d.talkWithNpc())
+	textCommands = append(textCommands, *d.createDebugBoard())
 	return &textCommands
 }
 
@@ -385,5 +386,43 @@ func (d *DebugConsole) createFullScreenToggle() *grammar.TextCommand {
 	},
 		func(s string, command *grammar.TextCommand) {
 			d.gameScene.gameConfig.SetFullScreen(!d.gameScene.gameConfig.SavedConfigData.FullScreen)
+		})
+}
+
+func (d *DebugConsole) createDebugBoard() *grammar.TextCommand {
+	return grammar.NewTextCommand([]grammar.Match{
+		grammar.MatchString{
+			Str:           "board",
+			Description:   "Force board any vehicle type at current location",
+			CaseSensitive: false,
+		},
+		grammar.MatchStringList{
+			Strings:       []string{"horse", "carpet", "skiff", "frigate"},
+			Description:   "Vehicle type to board",
+			CaseSensitive: false,
+		},
+	},
+		func(s string, command *grammar.TextCommand) {
+			outputStr := strings.ToLower(d.TextInput.GetText())
+			vehicleTypeStr := command.GetIndexAsString(1, outputStr)
+
+			var vehicleType references.VehicleType
+			switch vehicleTypeStr {
+			case "horse":
+				vehicleType = references.HorseVehicle
+			case "carpet":
+				vehicleType = references.CarpetVehicle
+			case "skiff":
+				vehicleType = references.SkiffVehicle
+			case "frigate":
+				vehicleType = references.FrigateVehicle
+			default:
+				d.dumpQuickState("Unknown vehicle type")
+				return
+			}
+
+			// Force board the vehicle by bypassing all normal checks
+			result := d.gameScene.debugBoardVehicle(vehicleType)
+			d.dumpQuickState(fmt.Sprintf("Debug board %s: %t", vehicleTypeStr, result))
 		})
 }
