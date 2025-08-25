@@ -516,6 +516,203 @@ When refactoring existing code:
 - `ActionLookLargeMap(direction references.Direction) bool`
 - `ActionPushSmallMap(direction references.Direction) bool`
 
+---
+
+## Remediation Lessons Learned (2025-08-25)
+
+The following conventions were established during a comprehensive codebase remediation that addressed critical logic errors, architecture violations, and testing gaps. These patterns prevent regression of previously fixed issues.
+
+### Deterministic Systems - CRITICAL
+
+**Never use `time.Now()` in core game logic**:
+```go
+// ❌ BAD: Non-deterministic animation
+func GetAnimation(sprite SpriteIndex) SpriteIndex {
+    return GetSpriteIndexWithAnimationBySpriteIndex(sprite) // Uses time.Now()
+}
+
+// ✅ GOOD: Deterministic animation  
+func (gs *GameState) GetAnimation(sprite SpriteIndex) SpriteIndex {
+    return GetSpriteIndexWithAnimationBySpriteIndexTick(sprite, gs.ElapsedMs)
+}
+```
+
+**Always use GameState RNG methods**:
+```go
+// ❌ BAD: Non-deterministic randomness
+func AIDecision() bool {
+    rand.Seed(time.Now().UnixNano())
+    return rand.Intn(2) == 0
+}
+
+// ✅ GOOD: Controlled randomness
+func (gs *GameState) AIDecision() bool {
+    return gs.OneInXOdds(2)
+}
+```
+
+**Rationale**: Tasks 2 & 3 eliminated non-deterministic behavior that made testing unreliable and behavior inconsistent.
+
+### Game Logic Correctness - CRITICAL
+
+**Key consumption pattern**:
+```go
+// ❌ BAD: Backwards logic (consume only on failure)
+if successful {
+    return JimmyUnlocked
+} else {
+    keys.DecrementByOne()  // Wrong! Creates unlimited attempts
+    return JimmyBrokenPick
+}
+
+// ✅ GOOD: Consume before attempt
+if keys.Get() <= 0 {
+    return JimmyNoKeys
+}
+
+keys.DecrementByOne()  // Always consume on attempt
+if isSuccessful {
+    return JimmyUnlocked
+} else {
+    return JimmyBrokenPick
+}
+```
+
+**Object collision detection**:
+```go
+// ❌ BAD: Single-layer collision (can walk through objects)
+func CanMoveTo(pos Position) bool {
+    return tile.IsPassable() // Only checks terrain
+}
+
+// ✅ GOOD: Dual-layer collision
+func CanMoveTo(pos Position) bool {
+    return tile.IsPassable() && !gs.ObjectPresentAt(pos)
+}
+```
+
+**Rationale**: Tasks 1 & 4 fixed critical gameplay exploits and movement bugs.
+
+### Package Architecture - HIGH PRIORITY
+
+**Core logic independence**:
+```go
+// ❌ BAD: Core logic importing rendering
+package game_state
+import "github.com/hajimehoshi/ebiten/v2"
+
+// ✅ GOOD: Use DisplayManager
+package game_state  
+import "github.com/bradhannah/Ultima5ReduxGo/internal/display"
+
+func (gs *GameState) GetScreenBounds() (int, int) {
+    return display.GetManager().GetScreenSize()
+}
+```
+
+**SystemCallbacks for UI interaction**:
+```go
+// ❌ BAD: Direct UI calls from game logic
+func (gs *GameState) ActionPush() bool {
+    fmt.Println("Pushed!")  // Violates separation
+    return true
+}
+
+// ✅ GOOD: Dependency injection
+func (gs *GameState) ActionPush() bool {
+    gs.SystemCallbacks.Message.AddRowStr("Pushed!")
+    gs.SystemCallbacks.Audio.PlaySoundEffect(SoundPush)
+    gs.SystemCallbacks.Flow.AdvanceTime(1)
+    return true
+}
+```
+
+**Rationale**: Task 8 established clean package boundaries and proper dependency injection patterns.
+
+### Error Handling Standards
+
+**log.Fatal categorization**:
+```go
+// ✅ GOOD: Legitimate fatal (system corruption)
+if embeddedData == nil {
+    // System corruption: embedded game data missing or corrupted
+    log.Fatal("Critical system data unavailable")
+}
+
+// ✅ GOOD: Planned conversion (user/config issues)
+if configFile == "" {
+    // TODO: soften to recoverable error - config issues shouldn't crash
+    log.Fatal("Configuration not found")
+}
+
+// ❌ BAD: Uncommented log.Fatal
+log.Fatal("Something went wrong") // Unclear if legitimate or needs conversion
+```
+
+**Rationale**: Task 7 properly categorized 55 log.Fatal calls for appropriate error handling strategy.
+
+### Import Organization Standards
+
+**Clean import patterns**:
+```go
+// ✅ GOOD: Proper grouping and minimal aliases
+import (
+    "fmt"           // Standard
+    "strings"
+    
+    "github.com/hajimehoshi/ebiten/v2"  // External
+    
+    "github.com/bradhannah/Ultima5ReduxGo/internal/references"  // Internal
+)
+
+// ❌ BAD: Unnecessary aliases  
+import (
+    references2 "github.com/bradhannah/Ultima5ReduxGo/internal/references"
+    ucolor "github.com/bradhannah/Ultima5ReduxGo/internal/ultimacolor"
+)
+```
+
+**Rationale**: Task 9 cleaned up import organization for Go standards compliance.
+
+### Integration Testing Requirements
+
+**Use real game data**:
+```go
+// ✅ GOOD: Integration test with real data
+func TestJimmyIntegration(t *testing.T) {
+    gs, mockCallbacks := NewIntegrationTestBuilder(t).
+        WithLocation(references.Britain).        // Real location
+        WithSystemCallbacks().                   // Mock callbacks
+        Build()                                  // Loads real SAVED.GAM
+        
+    gs.SetRandomSeed(12345)                     // Deterministic
+    result := gs.ActionJimmySmallMap(references.Up)
+    
+    // Validate integration
+    assert.True(t, len(mockCallbacks.Messages) > 0)
+}
+
+// ❌ BAD: Stub/mock data
+func TestJimmyStub(t *testing.T) {
+    gs := &GameState{} // Empty stub
+    result := gs.ActionJimmy() // No real data validation
+}
+```
+
+**Rationale**: Task 10 built comprehensive integration testing with real Ultima V game data.
+
+### Critical Patterns Summary
+
+1. **Determinism**: Use GameState time and RNG sources, never `time.Now()` in core logic
+2. **Game Logic**: Key consumption before attempts, dual-layer collision detection  
+3. **Architecture**: Core logic independence, SystemCallbacks for UI interaction
+4. **Error Handling**: Categorize log.Fatal calls, plan conversion to soft errors
+5. **Testing**: Integration tests with real data, deterministic seeds, SystemCallbacks mocking
+
+**Remember**: These patterns prevent regression of critical fixes. Violating them can reintroduce serious bugs or architectural problems that required significant effort to resolve.
+
+---
+
 ## Examples
 
 Range vs index-based:

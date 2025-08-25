@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Git pre-commit hook to run validation checks
+# Install with: git config core.hooksPath .githooks
+
+# Run the comprehensive pre-commit checks
+exec ./scripts/pre-commit-checks.sh
